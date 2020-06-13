@@ -1,12 +1,12 @@
-const { BrowserWindow } = require("electron");
+const {BrowserWindow} = require("electron");
 const os = require("os");
-const { autoUpdater } = require("electron-updater");
+const {autoUpdater} = require("electron-updater");
 
 function AppUpdater() {
 }
 AppUpdater.prototype.checkForUpdates = function() {
     if (isDev()) {
-      return;
+        return;
     }
 
     const platform = os.platform();
@@ -18,21 +18,21 @@ AppUpdater.prototype.checkForUpdates = function() {
     log.transports.file.level = "info";
     autoUpdater.logger = log;
 
-    autoUpdater.signals.updateDownloaded(it => {
-        notify("A new update is ready to install", `Version ${it.version} is downloaded and will be automatically installed on Quit`)
-    })
+    autoUpdater.signals.updateDownloaded((it) => {
+        notify("A new update is ready to install", `Version ${it.version} is downloaded and will be automatically installed on Quit`);
+    });
     autoUpdater.checkForUpdates();
-    console.log('checking for update');
+    console.log("checking for update");
 };
 
 function notify(title, message) {
-  let windows = BrowserWindow.getAllWindows();
-  if (windows.length == 0) {;
-    return;
-  }
+    const windows = BrowserWindow.getAllWindows();
+    if (windows.length == 0) {
+        return;
+    }
 
-  windows[0].webContents.send("notify", title, message);
-  console.log(message);
+    windows[0].webContents.send("notify", title, message);
+    console.log(message);
 }
 
 function isDev() {

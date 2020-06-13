@@ -1,0 +1,9 @@
+archive
+css
+fonts
+lib
+node_modules
+stencils
+theme
+
+pencil-core/common/jspdf.min.js
