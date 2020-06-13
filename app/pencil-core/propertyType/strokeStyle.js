@@ -13,16 +13,16 @@ StrokeStyle.fromString = function(literal) {
     return style;
 };
 
-StrokeStyle.prototype.toString = function () {
+StrokeStyle.prototype.toString = function() {
     return this.w + "|" + this.array;
 };
-StrokeStyle.prototype.condensed = function (ratio) {
+StrokeStyle.prototype.condensed = function(ratio) {
     return new StrokeStyle(Math.round(this.w * (1 + ratio)), this.array);
 };
-StrokeStyle.prototype.styled = function (array) {
+StrokeStyle.prototype.styled = function(array) {
     return new StrokeStyle(this.w, array);
 };
-StrokeStyle.prototype.generateTransformTo = function (other) {
+StrokeStyle.prototype.generateTransformTo = function(other) {
     var transform = "";
 
     if (this.w != other.w && this.w > 0) {
@@ -37,10 +37,10 @@ StrokeStyle.prototype.generateTransformTo = function (other) {
 
 
 pencilSandbox.StrokeStyle = {
-    newStrokeStyle: function (w, array) {
+    newStrokeStyle: function(w, array) {
         return new StrokeStyle(w, array);
     }
 };
 for (var p in StrokeStyle) {
     pencilSandbox.StrokeStyle[p] = StrokeStyle[p];
-};
+}

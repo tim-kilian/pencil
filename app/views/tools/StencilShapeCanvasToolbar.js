@@ -5,6 +5,6 @@ function StencilShapeCanvasToolbar() {
 }
 __extend(BaseTemplatedWidget, StencilShapeCanvasToolbar);
 
-StencilShapeCanvasToolbar.prototype.startTesting = function () {
+StencilShapeCanvasToolbar.prototype.startTesting = function() {
     ShapeTestCanvasPane._instance.startTesting(this.canvas.page);
 };

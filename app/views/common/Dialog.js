@@ -10,43 +10,47 @@ function Dialog() {
 }
 __extend(BaseTemplatedWidget, Dialog);
 
-Dialog.ACTION_CANCEL = { type: "cancel", title: "Cancel", run: function () { return true; } };
-Dialog.ACTION_CLOSE = { type: "cancel", title: "Close", run: function () { return true; } };
+Dialog.ACTION_CANCEL = {type: "cancel", title: "Cancel", run: function() {
+    return true;
+}};
+Dialog.ACTION_CLOSE = {type: "cancel", title: "Close", run: function() {
+    return true;
+}};
 
-Dialog.ensureGlobalHandlers = function () {
+Dialog.ensureGlobalHandlers = function() {
     if (Dialog.globalHandlersRegistered) return;
 
     document.addEventListener("mousemove", Dialog.globalMouseMoveHandler, false);
-    document.addEventListener("mouseup", function (event) {
+    document.addEventListener("mouseup", function(event) {
         Dialog.heldInstance = null;
     }, false);
 
     Dialog.globalHandlersRegistered = true;
 };
 
-Dialog.prototype.canCloseNow = function () {
+Dialog.prototype.canCloseNow = function() {
     if (this.closeHandler) return this.closeHandler.apply(this);
     return false;
-}
-Dialog.prototype.getFrameTemplate = function () {
+};
+Dialog.prototype.getFrameTemplate = function() {
     return this.getTemplatePrefix() + "common/Dialog.xhtml";
 };
-Dialog.prototype.buildDOMNode = function () {
+Dialog.prototype.buildDOMNode = function() {
     var frameTemplate = this.getFrameTemplate();
     var node = widget.Util.loadTemplateAsNodeSync(frameTemplate, this);
 
-    //load also the sub-class template into the dialog body
-    //please note that the binding will be done for both templates
+    // load also the sub-class template into the dialog body
+    // please note that the binding will be done for both templates
     var contentNode = this.buildContentNode();
     this.dialogBody.appendChild(contentNode);
     this.dialogContentNode = contentNode;
 
     return node;
 };
-Dialog.prototype.buildContentNode = function () {
+Dialog.prototype.buildContentNode = function() {
     return widget.Util.loadTemplateAsNodeSync(this.getTemplatePath(), this);
 };
-Dialog.prototype.open = function (options) {
+Dialog.prototype.open = function(options) {
     if (this.setup) this.setup(options);
     this.invalidateElements();
     BaseWidget.handleGlobalMouseDown();
@@ -59,7 +63,7 @@ const DIALOG_BUTTON_ORDER = {
     "extra2": -9,
     "extra3": -8
 };
-Dialog.prototype.invalidateElements = function () {
+Dialog.prototype.invalidateElements = function() {
     var actions = this.getDialogActions();
 
     var startActions = [];
@@ -69,7 +73,7 @@ Dialog.prototype.invalidateElements = function () {
     this.positiveHandler = null;
     this.primaryButton = null;
 
-    actions.forEach(function (a) {
+    actions.forEach(function(a) {
         if (a.isValid && !a.isValid()) return;
         a.order = a.order || DIALOG_BUTTON_ORDER[a.type];
         if (typeof(a.order) == "undefined") a.order = -99;
@@ -81,7 +85,7 @@ Dialog.prototype.invalidateElements = function () {
         }
     }, this);
 
-    actions.sort(function (a1, a2) {
+    actions.sort(function(a1, a2) {
         return a1.order - a2.order;
     });
 
@@ -89,7 +93,7 @@ Dialog.prototype.invalidateElements = function () {
     Dom.empty(this.dialogFooterMiddlePane);
     Dom.empty(this.dialogFooterEndPane);
 
-    actions.forEach(function (a) {
+    actions.forEach(function(a) {
         if (a.isApplicable && !a.isApplicable()) return;
 
         var button = this.createButton(a);
@@ -114,7 +118,7 @@ Dialog.prototype.invalidateElements = function () {
     this.dialogClose.style.display = this.closeHandler ? "inline-block" : "none";
 };
 
-Dialog.prototype.createButton = function (action) {
+Dialog.prototype.createButton = function(action) {
     var button = document.createElement("button");
     button._action = action;
     var icon = this.e(action.icon);
@@ -133,7 +137,7 @@ Dialog.prototype.createButton = function (action) {
 
     return button;
 };
-Dialog.prototype.show = function () {
+Dialog.prototype.show = function() {
     this._originalFocusedTarget = Dialog.lastFocusedTarget;
     this.dialogFrame.parentNode.removeChild(this.dialogFrame);
     if (this.overlay) {
@@ -160,7 +164,7 @@ Dialog.prototype.show = function () {
 
 
     var thiz = this;
-    setTimeout(function () {
+    setTimeout(function() {
         thiz.invalidatePosition();
         thiz.dialogFrame.style.visibility = "visible";
         thiz.dialogFrame.style.opacity = "1";
@@ -172,13 +176,13 @@ Dialog.prototype.show = function () {
 
     BaseWidget.registerClosable(this);
 };
-Dialog.prototype.invalidatePosition = function () {
+Dialog.prototype.invalidatePosition = function() {
     var screenW = window.innerWidth - (this.widthMargin || 20);
     var screenH = window.innerHeight - (this.heightMargin || 20);
 
     var w = this.dialogFrame.offsetWidth;
     var h = this.dialogFrame.offsetHeight;
-    
+
     if (this.grabHeight || h > screenH) {
         h = screenH;
         this.dialogFrame.style.height = h + "px";
@@ -186,27 +190,27 @@ Dialog.prototype.invalidatePosition = function () {
     } else {
         this.dialogContentNode.removeAttribute("flex");
     }
-    
+
     if (this.grabWidth) {
         w = screenW;
         this.dialogFrame.style.width = w + "px";
     }
-    
+
     var x = (window.innerWidth - w) / 2;
     var y = (window.innerHeight - h) / 2;
 
     this.moveTo(x, y);
 };
-Dialog.prototype.moveTo = function (x, y) {
+Dialog.prototype.moveTo = function(x, y) {
     this.dialogFrame.style.left = x + "px";
     this.dialogFrame.style.top = Math.max(y, 0) + "px";
     this.dialogX = x;
     this.dialogY = y;
 };
-Dialog.prototype.moveBy = function (dx, dy) {
+Dialog.prototype.moveBy = function(dx, dy) {
     this.moveTo(this.dialogX + dx, this.dialogY + dy);
 };
-Dialog.prototype.close = function () {
+Dialog.prototype.close = function() {
     if (this.overlay && this.overlay.parentNode) this.overlay.parentNode.removeChild(this.overlay);
     this.dialogFrame.style.transition = "opacity 0.1s";
     this.dialogFrame.style.opacity = "0";
@@ -220,7 +224,7 @@ Dialog.prototype.close = function () {
 
     if (this.onClosed) this.onClosed();
 
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         if (this.dialogFrame.parentNode) this.dialogFrame.parentNode.removeChild(this.dialogFrame);
         this.dialogFrame.style.display = "none";
         if (this.overlay) this.overlay.style.display = "none";
@@ -239,19 +243,19 @@ Dialog.prototype.close = function () {
         }
     }.bind(this), 100);
 };
-Dialog.prototype.callback = function (callback) {
+Dialog.prototype.callback = function(callback) {
     this.callback = callback;
     return this;
 };
 
-Dialog.prototype.handleActionClick = function (event) {
+Dialog.prototype.handleActionClick = function(event) {
     var action = Dom.findUpwardForData(event.target, "_action");
     if (!action) return;
 
     var returnValue = action.run.apply(this);
     if (returnValue) this.close();
 };
-Dialog.globalMouseMoveHandler = function (event) {
+Dialog.globalMouseMoveHandler = function(event) {
     if (!Dialog.heldInstance) return;
 
     Dom.cancelEvent(event);
@@ -264,41 +268,41 @@ Dialog.globalMouseMoveHandler = function (event) {
 
     Dialog.heldInstance.moveBy(dx, dy);
 };
-Dialog.globalFocusHandler = function (event) {
+Dialog.globalFocusHandler = function(event) {
     Dialog.lastFocusedTarget = event.target;
     if (!BaseWidget.closables || BaseWidget.closables.length <= 0) return;
     var closable = BaseWidget.closables[BaseWidget.closables.length - 1];
     if (!__isSubClassOf(closable.constructor, Dialog)) return;
 
-    var frame = Dom.findUpward(event.target, function (node) {
+    var frame = Dom.findUpward(event.target, function(node) {
         return node == closable.dialogFrame;
     });
 
     if (frame) return;
     closable.dialogFrame.focus();
 };
-window.addEventListener("load", function () {
+window.addEventListener("load", function() {
     window.document.addEventListener("focus", Dialog.globalFocusHandler, true);
 }, false);
 
-Dialog.prototype.handleCloseClick = function () {
+Dialog.prototype.handleCloseClick = function() {
     if (!this.closeHandler) return;
     var returnValue = this.closeHandler.apply(this);
     if (returnValue) this.close();
 };
-Dialog.prototype.handleHeaderMouseDown = function (event) {
+Dialog.prototype.handleHeaderMouseDown = function(event) {
     Dom.cancelEvent(event);
     Dialog.heldInstance = this;
     Dialog._lastScreenX = event.screenX;
     Dialog._lastScreenY = event.screenY;
 };
-Dialog.prototype.handleBodyKeyPress = function (event) {
+Dialog.prototype.handleBodyKeyPress = function(event) {
     if (event.keyCode != DOM_VK_RETURN) return;
     if (!this.primaryButton) return;
 
-    let node = Dom.findUpward(event.target, function (node) {
+    const node = Dom.findUpward(event.target, function(node) {
         return node.localName == "input" || node.localName == "select";
-    })
+    });
 
     if (!node) return;
     this.primaryButton.click();
@@ -311,23 +315,23 @@ function BuilderBasedDialog(builder) {
     Dialog.call(this);
 
     this.title = typeof(builder.title) == "function" ? builder.title.bind(this.builder) : builder.title;
-};
+}
 
 __extend(Dialog, BuilderBasedDialog);
 
 const DIALOG_SIZE_SPECS = {
-        tiny: 120,
-        mini: 200,
-        smaller: 280,
-        small: 350,
-        normal: 450,
-        large: 600,
-        "slightly-larger": 700,
-        larger: 800,
-        huge: 1010
+    "tiny": 120,
+    "mini": 200,
+    "smaller": 280,
+    "small": 350,
+    "normal": 450,
+    "large": 600,
+    "slightly-larger": 700,
+    "larger": 800,
+    "huge": 1010
 };
 
-BuilderBasedDialog.prototype.buildContentNode = function () {
+BuilderBasedDialog.prototype.buildContentNode = function() {
     var div = document.createElement("div");
     if (this.builder.size) {
         var size = (DIALOG_SIZE_SPECS[this.builder.size] / 12) * Util.em();
@@ -336,8 +340,8 @@ BuilderBasedDialog.prototype.buildContentNode = function () {
     this.builder.buildContent.call(this.builder, div);
 
     return div;
-}
-BuilderBasedDialog.prototype._newLegacyAction = function (action) {
+};
+BuilderBasedDialog.prototype._newLegacyAction = function(action) {
     return {
         title: typeof(action.title) == "function" ? action.title.bind(this.builder) : action.title,
         type: action.isCloseHandler ? "cancel" : (action.primary ? "accept" : "extra1"),
@@ -345,35 +349,37 @@ BuilderBasedDialog.prototype._newLegacyAction = function (action) {
         run: action.run.bind(this.builder)
     };
 };
-BuilderBasedDialog.prototype.getDialogActions = function () {
+BuilderBasedDialog.prototype.getDialogActions = function() {
     var thiz = this;
-    return this.builder.actions.map(function (action) { return thiz._newLegacyAction(action); });
-}
-BuilderBasedDialog.prototype.quit = function () {
+    return this.builder.actions.map(function(action) {
+        return thiz._newLegacyAction(action);
+    });
+};
+BuilderBasedDialog.prototype.quit = function() {
     this.close();
 };
 
-Dialog.hasOpenDialog = function () {
+Dialog.hasOpenDialog = function() {
     for (var closable of BaseWidget.closables) {
         if (__isSubClassOf(closable.constructor, Dialog)) return true;
     }
 
     return false;
 };
-Dialog.alert = function (message, extra, onClose) {
+Dialog.alert = function(message, extra, onClose) {
     var builder = {
         title: "Information",
         size: message.size || "small",
-        buildContent: function (container) {
+        buildContent: function(container) {
             container.appendChild(Dom.newDOMElement({
-                _name: "hbox", "class": "MessageDialog",
-                _children: [
-                    { _name: "i", "class": "DialogIcon Alert", _text: "info" },
+                "_name": "hbox", "class": "MessageDialog",
+                "_children": [
+                    {"_name": "i", "class": "DialogIcon Alert", "_text": "info"},
                     {
-                        _name: "vbox", flex: 1, "class": "Messages",
-                        _children: [
-                            { _name: "strong", _text: message },
-                            { _name: "p", _text: extra || ""}
+                        "_name": "vbox", "flex": 1, "class": "Messages",
+                        "_children": [
+                            {_name: "strong", _text: message},
+                            {_name: "p", _text: extra || ""}
                         ]
                     }
                 ]
@@ -383,7 +389,7 @@ Dialog.alert = function (message, extra, onClose) {
             title: "Close",
             primary: true,
             isCloseHandler: true,
-            run: function () {
+            run: function() {
                 this._dialog.quit();
                 if (onClose) onClose();
                 return true;
@@ -391,21 +397,21 @@ Dialog.alert = function (message, extra, onClose) {
         }]
     };
     new BuilderBasedDialog(builder).open();
-}
-Dialog.error = function (message, extra, onClose) {
+};
+Dialog.error = function(message, extra, onClose) {
     var builder = {
         title: "Error",
         size: "small",
-        buildContent: function (container) {
+        buildContent: function(container) {
             container.appendChild(Dom.newDOMElement({
-                _name: "hbox", "class": "MessageDialog",
-                _children: [
-                    { _name: "i", "class": "DialogIcon Error", _text: "error" },
+                "_name": "hbox", "class": "MessageDialog",
+                "_children": [
+                    {"_name": "i", "class": "DialogIcon Error", "_text": "error"},
                     {
-                        _name: "vbox", flex: 1, "class": "Messages",
-                        _children: [
-                            { _name: "strong", _text: message },
-                            { _name: "p", _text: extra || ""}
+                        "_name": "vbox", "flex": 1, "class": "Messages",
+                        "_children": [
+                            {_name: "strong", _text: message},
+                            {_name: "p", _text: extra || ""}
                         ]
                     }
                 ]
@@ -415,7 +421,7 @@ Dialog.error = function (message, extra, onClose) {
             title: "Close",
             primary: true,
             isCloseHandler: true,
-            run: function () {
+            run: function() {
                 this._dialog.quit();
                 if (onClose) onClose();
                 return true;
@@ -423,12 +429,12 @@ Dialog.error = function (message, extra, onClose) {
         }]
     };
     new BuilderBasedDialog(builder).open();
-}
-Dialog.prompt = function (message, initialValue, acceptMessage, onInput, cancelMessage, onCancel) {
+};
+Dialog.prompt = function(message, initialValue, acceptMessage, onInput, cancelMessage, onCancel) {
     var builder = {
         title: "Prompt",
         size: "small",
-        buildContent: function (container) {
+        buildContent: function(container) {
             var i = document.createElement("i");
             i.appendChild(document.createTextNode("info"));
             i.setAttribute("class", "Icon DialogIcon");
@@ -441,9 +447,9 @@ Dialog.prompt = function (message, initialValue, acceptMessage, onInput, cancelM
             div.appendChild(p);
 
             this.input = Dom.newDOMElement({
-                _name: "input",
-                type: "text",
-                style: "width: calc(100% - 10px); padding: 5px;",
+                "_name": "input",
+                "type": "text",
+                "style": "width: calc(100% - 10px); padding: 5px;",
                 "class": "Focusable"
             });
 
@@ -453,42 +459,42 @@ Dialog.prompt = function (message, initialValue, acceptMessage, onInput, cancelM
             div.setAttribute("style", "margin-left: 4em;");
         },
         actions: [
-                  {
-                      title: acceptMessage ? acceptMessage : "OK",
-                      primary: true,
-                      run: function () {
-                          this._dialog.quit();
-                          if (onInput) onInput(this.input.value);
-                          return true;
-                      }
-                  },
-                  {
-                      title: cancelMessage ? cancelMessage : "Cancel",
-                      isCloseHandler: true,
-                      run: function () {
-                          this._dialog.quit();
-                          if (onCancel) onCancel();
-                          return true;
-                      }
-                  }
-              ]
+            {
+                title: acceptMessage ? acceptMessage : "OK",
+                primary: true,
+                run: function() {
+                    this._dialog.quit();
+                    if (onInput) onInput(this.input.value);
+                    return true;
+                }
+            },
+            {
+                title: cancelMessage ? cancelMessage : "Cancel",
+                isCloseHandler: true,
+                run: function() {
+                    this._dialog.quit();
+                    if (onCancel) onCancel();
+                    return true;
+                }
+            }
+        ]
     };
     new BuilderBasedDialog(builder).open();
-}
-Dialog.confirm = function (question, extra, positiveActionTitle, onPositiveAnswer, negativeActionTitle, onNegativeAnswer, extraActionTitle, onExtraActionAnswer) {
+};
+Dialog.confirm = function(question, extra, positiveActionTitle, onPositiveAnswer, negativeActionTitle, onNegativeAnswer, extraActionTitle, onExtraActionAnswer) {
     var builder = {
         title: "Confirm",
         size: "normal",
-        buildContent: function (container) {
+        buildContent: function(container) {
             container.appendChild(Dom.newDOMElement({
-                _name: "hbox", "class": "MessageDialog",
-                _children: [
-                    { _name: "i", "class": "DialogIcon", _text: "help" },
+                "_name": "hbox", "class": "MessageDialog",
+                "_children": [
+                    {"_name": "i", "class": "DialogIcon", "_text": "help"},
                     {
-                        _name: "vbox", flex: 1, "class": "Messages",
-                        _children: [
-                            { _name: "strong", _text: question },
-                            { _name: "p", _text: extra || ""}
+                        "_name": "vbox", "flex": 1, "class": "Messages",
+                        "_children": [
+                            {_name: "strong", _text: question},
+                            {_name: "p", _text: extra || ""}
                         ]
                     }
                 ]
@@ -498,7 +504,7 @@ Dialog.confirm = function (question, extra, positiveActionTitle, onPositiveAnswe
             {
                 title: positiveActionTitle ? positiveActionTitle : "Yes",
                 primary: true,
-                run: function () {
+                run: function() {
                     this._dialog.quit();
                     if (onPositiveAnswer) onPositiveAnswer();
                     return true;
@@ -507,7 +513,7 @@ Dialog.confirm = function (question, extra, positiveActionTitle, onPositiveAnswe
             {
                 title: negativeActionTitle ? negativeActionTitle : "No",
                 isCloseHandler: true,
-                run: function () {
+                run: function() {
                     this._dialog.quit();
                     if (onNegativeAnswer) onNegativeAnswer();
                     return true;
@@ -515,10 +521,10 @@ Dialog.confirm = function (question, extra, positiveActionTitle, onPositiveAnswe
             },
             {
                 title: extraActionTitle ? extraActionTitle : "Extra",
-                isApplicable: function () {
+                isApplicable: function() {
                     return extraActionTitle;
                 },
-                run: function () {
+                run: function() {
                     this._dialog.quit();
                     if (onExtraActionAnswer) onExtraActionAnswer();
                     return true;
@@ -528,16 +534,18 @@ Dialog.confirm = function (question, extra, positiveActionTitle, onPositiveAnswe
     };
     new BuilderBasedDialog(builder).open();
 };
-Dialog.select = function (items, callback, selectedItems, options) {
+Dialog.select = function(items, callback, selectedItems, options) {
     if (!options) options = {};
     if (!selectedItems) selectedItems = [];
     var same = options.same || sameRelax;
-    var formatter = options.formatter || function (x) {return "" + x};
+    var formatter = options.formatter || function(x) {
+        return "" + x;
+    };
     var columns = options.columns || 1;
     var builder = {
         title: options.title || "Select",
         size: options.size || "normal",
-        buildContent: function (container) {
+        buildContent: function(container) {
             if (options.message) {
                 var i = document.createElement("p");
                 Dom.addClass(i, "fa fa-question-circle");
@@ -559,9 +567,9 @@ Dialog.select = function (items, callback, selectedItems, options) {
                     _name: "span",
                     style: "display: inline-block",
                     _children: [
-                                {_name: "input", type: "checkbox", _id: "checkbox", id: id, style: "vertical-align: middle;"},
-                                {_name: "label", "for": id, _html: Dom.htmlEncode(formatter(items[i])), style: "padding-left: 1ex; vertical-align: middle;"},
-                                ]
+                        {_name: "input", type: "checkbox", _id: "checkbox", id: id, style: "vertical-align: middle;"},
+                        {"_name": "label", "for": id, "_html": Dom.htmlEncode(formatter(items[i])), "style": "padding-left: 1ex; vertical-align: middle;"}
+                    ]
                 }, document, holder);
 
                 this.inputs.push(holder.checkbox);
@@ -583,7 +591,7 @@ Dialog.select = function (items, callback, selectedItems, options) {
             {
                 title: options.selectActionTitle || "Select",
                 primary: true,
-                run: function () {
+                run: function() {
                     var selected = [];
                     for (var i = 0; i < this.inputs.length; i ++) {
                         if (this.inputs[i].checked) selected.push(this.inputs[i]._item);
@@ -596,7 +604,7 @@ Dialog.select = function (items, callback, selectedItems, options) {
             {
                 title: "Cancel",
                 isCloseHandler: true,
-                run: function () {
+                run: function() {
                     return true;
                 }
             }
@@ -604,13 +612,13 @@ Dialog.select = function (items, callback, selectedItems, options) {
     };
     new BuilderBasedDialog(builder).open();
 };
-Dialog.selectDir = function (title, defaultPath, callback) {
+Dialog.selectDir = function(title, defaultPath, callback) {
     dialog.showOpenDialog(remote.getCurrentWindow(), {
         title: title,
         defaultPath: defaultPath || (path.join(this.documentPath && path.dirname(this.documentPath) || os.homedir(), "")),
         properties: ["openDirectory"]
-    }, function (dirPath) {
+    }, function(dirPath) {
         if (!dirPath) return;
-        callback(dirPath)
+        callback(dirPath);
     });
 };

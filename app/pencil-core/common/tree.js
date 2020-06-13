@@ -1,12 +1,12 @@
 function handleEdit(event) {
     return;
-    var tree = Dom.findUpward(event.originalTarget, function (node) {
-            return node.namespaceURI == PencilNamespaces.xul && node.localName == "tree";
-        });
+    var tree = Dom.findUpward(event.originalTarget, function(node) {
+        return node.namespaceURI == PencilNamespaces.xul && node.localName == "tree";
+    });
 
-    var treechildren = Dom.findUpward(event.originalTarget, function (node) {
-            return node.namespaceURI == PencilNamespaces.xul && node.localName == "treechildren";
-        });
+    var treechildren = Dom.findUpward(event.originalTarget, function(node) {
+        return node.namespaceURI == PencilNamespaces.xul && node.localName == "treechildren";
+    });
 
     var box = tree.treeBoxObject;
     var row = new Object();
@@ -35,5 +35,5 @@ function handleEdit(event) {
     editor.setAttribute("width", w.value );
     editor.setAttribute("height", h.value + 2 * d);
 
-    //alert([x.value, y.value, w.value, h.value]);
+    // alert([x.value, y.value, w.value, h.value]);
 }

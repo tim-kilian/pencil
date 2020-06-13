@@ -6,11 +6,10 @@ RichTextXferHelper.MIME_TYPE = "text/html";
 RichTextXferHelper.SHAPE_DEF_ID = "Evolus.Common:RichTextBox";
 RichTextXferHelper.SHAPE_CONTENT_PROP_NAME = "textContent";
 
-RichTextXferHelper.prototype.toString = function () {
+RichTextXferHelper.prototype.toString = function() {
     return "RichTextXferHelper: " + RichTextXferHelper.MIME_TYPE;
 };
-RichTextXferHelper.prototype.handleData = function (html) {
-
+RichTextXferHelper.prototype.handleData = function(html) {
     try {
         var xhtml = Dom.toXhtml(html);
 
@@ -36,11 +35,10 @@ PlainTextXferHelper.MIME_TYPE = "text/plain";
 PlainTextXferHelper.SHAPE_DEF_ID = "Evolus.Common:PlainTextV2";
 PlainTextXferHelper.SHAPE_CONTENT_PROP_NAME = "label";
 
-PlainTextXferHelper.prototype.toString = function () {
+PlainTextXferHelper.prototype.toString = function() {
     return "PlainTextXferHelper: " + PlainTextXferHelper.MIME_TYPE;
 };
-PlainTextXferHelper.prototype.handleData = function (text) {
-
+PlainTextXferHelper.prototype.handleData = function(text) {
     try {
         var textPaneDef = CollectionManager.shapeDefinition.locateDefinition(PlainTextXferHelper.SHAPE_DEF_ID);
         if (!textPaneDef) return;

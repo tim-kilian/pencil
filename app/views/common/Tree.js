@@ -64,13 +64,13 @@ var Tree = function() {
         var tree = treeContainer._tree;
         if (chevron) {
             var itemNode = Dom.findParentWithClass(chevron, "Item");
-            //console.log("EXPANDING: itemNode", itemNode);
+            // console.log("EXPANDING: itemNode", itemNode);
             var isExpanded = Dom.hasClass(itemNode, "Expanded");
-            //console.log("EXPANDING: isExpanded", isExpanded);
+            // console.log("EXPANDING: isExpanded", isExpanded);
 
             if (!isExpanded) {
                 var item = itemNode._item;
-                //console.log("EXPANDING: itemNode", itemNode);
+                // console.log("EXPANDING: itemNode", itemNode);
                 if (!itemNode.childLoaded) {
                     tree.loadChildren(item, getChildrenContainerFromItemNode(itemNode));
                     itemNode.childLoaded = true;
@@ -93,14 +93,13 @@ var Tree = function() {
         if (!treeContainer) return;
 
         var tree = treeContainer._tree;
-        if ((target.checked && tree.options.propagateCheckActionDownwards)
-                || (!target.checked && tree.options.propagateUncheckActionDownwards)) {
+        if ((target.checked && tree.options.propagateCheckActionDownwards) ||
+                (!target.checked && tree.options.propagateUncheckActionDownwards)) {
             var itemNode = target.parentNode.parentNode;
             setItemsCheckedRecursivelyFromNodes(getChildrenContainerFromItemNode(itemNode).childNodes, target.checked);
         }
 
         Dom.emitEvent("blur", treeContainer, {});
-
     }
 
     function setItemsCheckedRecursivelyFromNodes(nodes, checked) {
@@ -139,7 +138,7 @@ var Tree = function() {
     }
     __extend(BaseTemplatedWidget, Tree);
 
-    Tree.prototype.setup = function (source, renderer, options) {
+    Tree.prototype.setup = function(source, renderer, options) {
         this.source = source;
         this.renderer = renderer;
         this.options = options || {};
@@ -172,7 +171,7 @@ var Tree = function() {
                 thiz.walk(function(item, node) {
                     thiz.ensureNodeExpanded(node);
                     return true;
-                }, null, function () {
+                }, null, function() {
                     var rootNodes = thiz.rootChildrenContainer.childNodes;
                     var hasChild = false;
                     for ( var i = 0; i < rootNodes.length; i++) {
@@ -200,7 +199,7 @@ var Tree = function() {
         var selectedItem = this.getSelectedItem();
 
         this.container.innerHTML = "";
-        this.init(function () {
+        this.init(function() {
             this.setSelectedItem(selectedItem);
             this.setCheckedItems(checkedItems);
             if (__callback) __callback();
@@ -272,8 +271,9 @@ var Tree = function() {
     };
 
     function appendArray(source, dest) {
-        for ( var i = 0; i < source.length; i++)
+        for ( var i = 0; i < source.length; i++) {
             dest.push(source[i]);
+        }
     }
     Tree.prototype.walk = function(visitor, tryRemaining, doneCallback) {
         var queue = [];
@@ -390,7 +390,6 @@ var Tree = function() {
         }
 
         return checkedItems;
-
     };
     Tree.prototype.getCheckedItemsSync = function() {
         return this.getCheckedItemsFromNodes(this.rootChildrenContainer.childNodes);
@@ -429,40 +428,40 @@ var Tree = function() {
         var holder = {};
 
         var itemNode = Dom.newDOMElement({
-            _name: "div",
+            "_name": "div",
             "class": itemClass,
-            _children: [ {
-                _name: "hbox",
+            "_children": [{
+                "_name": "hbox",
                 "class": "Title CollapsedTitle",
-                _id: "titleElement",
-                _children: [ {
-                    _name: "span",
+                "_id": "titleElement",
+                "_children": [{
+                    "_name": "span",
                     "class": "Chevron",
-                    _children: [ {
-                        _name: "span",
+                    "_children": [{
+                        "_name": "span",
                         "class": "Down",
-                        _text: "remove_circle_outline"
+                        "_text": "remove_circle_outline"
                     }, {
-                        _name: "span",
+                        "_name": "span",
                         "class": "Right",
-                        _text: "add_circle_outline"
-                    } ]
+                        "_text": "add_circle_outline"
+                    }]
                 }, {
-                    _name: "input",
+                    "_name": "input",
                     "class": "Checkbox",
-                    type: this.options.exclusive ? "radio" : "checkbox",
-                    name: this.uniqueName,
-                    id: id,
+                    "type": this.options.exclusive ? "radio" : "checkbox",
+                    "name": this.uniqueName,
+                    "id": id
                 }, {
-                    _name: "div",
+                    "_name": "div",
                     "class": className,
-                    _html: "<label for=\"" + id + "\">" + this.renderer(item) + badgeValue + "</label>",
-                } ]
+                    "_html": "<label for=\"" + id + "\">" + this.renderer(item) + badgeValue + "</label>"
+                }]
             }, {
-                _name: "div",
+                "_name": "div",
                 "class": "Children CollapsedChildren",
-                _id: "childContainerElement"
-            } ]
+                "_id": "childContainerElement"
+            }]
         }, document, holder);
 
         itemNode._titleElement = holder.titleElement;
@@ -497,15 +496,15 @@ var Tree = function() {
         return this;
     };
 
-    Tree.prototype.findParentItem = function (contextNode) {
+    Tree.prototype.findParentItem = function(contextNode) {
         var thiz = this;
-        var node = Dom.findUpward(contextNode, function (n) {
+        var node = Dom.findUpward(contextNode, function(n) {
             return n._item || n == thiz.container;
         });
 
         if (!node || !node._item) return null;
 
-        node = Dom.findUpward(node.parentNode, function (n) {
+        node = Dom.findUpward(node.parentNode, function(n) {
             return n._item || n == thiz.container;
         });
 
@@ -521,7 +520,6 @@ var Tree = function() {
             });
 
             if (itemObject && itemObject._item && this.options.same(itemObject._item, selectedItem)) {
-
                 var itemText = itemObject.getElementsByClassName("ItemText")[0];
                 if (itemText) {
                     Dom.addClass(itemText, "Selected");
@@ -535,7 +533,7 @@ var Tree = function() {
         this.emitChangeEvent();
     };
 
-    Tree.prototype.emitChangeEvent = function () {
+    Tree.prototype.emitChangeEvent = function() {
         Dom.emitEvent("p:SelectionChanged", this.container, {});
     };
 

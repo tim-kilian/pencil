@@ -1,4 +1,4 @@
-module.exports = function () {
+module.exports = function() {
     var defaultFamily = "PencilUI";
     var defaultWeight = 400;
     var defaultStyle = "normal";
@@ -6,7 +6,7 @@ module.exports = function () {
 
 
     function getDesktopFontConfig(callback) {
-        FontLoader.loadSystemFonts(function () {
+        FontLoader.loadSystemFonts(function() {
             callback({
                 family: defaultFamily,
                 weight: defaultWeight,
@@ -19,5 +19,5 @@ module.exports = function () {
 
     return {
         getDesktopFontConfig: getDesktopFontConfig
-    }
+    };
 }();

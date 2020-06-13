@@ -10,27 +10,27 @@ function WizardDialog() {
     }
 }
 __extend(Dialog, WizardDialog);
-WizardDialog.prototype.setup = function (options) {
+WizardDialog.prototype.setup = function(options) {
     if (this.setupUI) this.setupUI(options);
     this.invalidateWizardPane();
 };
-WizardDialog.prototype.invalidateWizardPane = function () {
+WizardDialog.prototype.invalidateWizardPane = function() {
     this.activeWizardPane(this.wizardPanes[0]);
     this.nextable = false;
-    if(this.wizardPanes.length > 1) {
+    if (this.wizardPanes.length > 1) {
         this.nextable = true;
     }
     this.invalidateElements();
     var thiz = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz.ensureSizing();
     }, 100);
 };
-WizardDialog.prototype.addWizardPane = function (node) {
+WizardDialog.prototype.addWizardPane = function(node) {
     Dom.addClass(node, "WizardPane");
     this.wizardPanes.push(node);
 };
-WizardDialog.prototype.activeWizardPane = function (pane) {
+WizardDialog.prototype.activeWizardPane = function(pane) {
     this.activePane = pane;
     for (var i = 0; i < this.wizardPanes.length; i ++) {
         var p = this.wizardPanes[i];
@@ -42,8 +42,8 @@ WizardDialog.prototype.activeWizardPane = function (pane) {
     }
     Dom.emitEvent("e:WizardPaneChange", this.node());
 };
-WizardDialog.prototype.onBack = function () {
-    if(!this.invalidateSelection()) return;
+WizardDialog.prototype.onBack = function() {
+    if (!this.invalidateSelection()) return;
     var index = this.wizardPanes.indexOf(this.activePane);
     index --;
     index = Math.max(index, 0);
@@ -53,8 +53,8 @@ WizardDialog.prototype.onBack = function () {
     this.invalidateElements();
     this.onSelectionChanged(this.activePane);
 };
-WizardDialog.prototype.onNext = function () {
-    if(!this.invalidateSelection()) return;
+WizardDialog.prototype.onNext = function() {
+    if (!this.invalidateSelection()) return;
     var index = this.wizardPanes.indexOf(this.activePane);
     index ++;
     index = Math.min(index, this.wizardPanes.length - 1);
@@ -67,47 +67,47 @@ WizardDialog.prototype.onNext = function () {
     this.invalidateElements();
     this.onSelectionChanged(this.activePane);
 };
-WizardDialog.prototype.onFinish = function () {
+WizardDialog.prototype.onFinish = function() {
 };
-WizardDialog.prototype.invalidateSelection = function () {
+WizardDialog.prototype.invalidateSelection = function() {
     return true;
 };
 
-WizardDialog.prototype.invalidateFinish = function () {
+WizardDialog.prototype.invalidateFinish = function() {
     return true;
 };
-WizardDialog.prototype.onSelectionChanged = function (activePane) {
+WizardDialog.prototype.onSelectionChanged = function(activePane) {
 };
-WizardDialog.prototype.getDialogActions = function () {
+WizardDialog.prototype.getDialogActions = function() {
     var thiz = this;
     return [
         Dialog.ACTION_CANCEL,
-        {   type: "accept",
+        {type: "accept",
             title: this.nextable ? "Next" : "Finish",
-            run: function () {
+            run: function() {
                 if (this.nextable) {
                     this.onNext();
                     return false;
                 }
-                if(!this.invalidateFinish()) {
+                if (!this.invalidateFinish()) {
                     return false;
                 }
                 this.onFinish();
                 return true;
             }.bind(this)
         },
-        {   type: "extra1", title: "Back", order: 5,
-            run: function () {
+        {type: "extra1", title: "Back", order: 5,
+            run: function() {
                 this.onBack();
                 return false;
             }.bind(this),
-            isApplicable: function () {
+            isApplicable: function() {
                 return this.wizardPanes && this.activePane != this.wizardPanes[0];
             }.bind(this)
         }
-    ]
+    ];
 };
-WizardDialog.prototype.ensureSizing = function () {
+WizardDialog.prototype.ensureSizing = function() {
     var w = Dom.getOffsetWidth(this.node()) - 2;
     var h = 0;
 

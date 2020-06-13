@@ -5,19 +5,19 @@ function SampleSharedColorEditor() {
 }
 __extend(BaseTemplatedWidget, SampleSharedColorEditor);
 
-SampleSharedColorEditor.prototype.setup = function () {
+SampleSharedColorEditor.prototype.setup = function() {
     var thiz = this;
-    this.colorInput.addEventListener("keyup", function (event) {
+    this.colorInput.addEventListener("keyup", function(event) {
         console.log("change event");
         var color = Color.fromString(thiz.colorInput.value);
         thiz.targetObject.setProperty("fillColor", color);
     }, false);
 };
-SampleSharedColorEditor.prototype.attach = function (targetObject) {
+SampleSharedColorEditor.prototype.attach = function(targetObject) {
     this.targetObject = targetObject;
     var fillColor = this.targetObject.getProperty("fillColor");
     this.colorInput.value = fillColor.toRGBString();
 };
-SampleSharedColorEditor.prototype.detach = function () {
+SampleSharedColorEditor.prototype.detach = function() {
     this.targetObject = null;
 };

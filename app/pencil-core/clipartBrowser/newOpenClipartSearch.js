@@ -276,18 +276,18 @@ function OpenClipartSearch2() {
 }
 OpenClipartSearch2.prototype = new SearchEngine();
 
-OpenClipartSearch2.prototype.merge = function (o, n) {
+OpenClipartSearch2.prototype.merge = function(o, n) {
     for (var i in n) {
         o[i] = n[i];
-    };
+    }
     return o;
 };
-OpenClipartSearch2.prototype.buildSearchUri = function (query, options) {
+OpenClipartSearch2.prototype.buildSearchUri = function(query, options) {
     var url = this.baseUri + "?query=" + query;
     var param = "";
     for (var i in options) {
         param += "&" + i + "=" + options[i];
-    };
+    }
 
     return url + param;
 };
@@ -321,13 +321,13 @@ OpenClipartSearch2.prototype.searchImpl = function(query, options, callback) {
         }
     }, this.req);
 };
-OpenClipartSearch2.prototype.parseSearchResult  = function (response) {
+OpenClipartSearch2.prototype.parseSearchResult = function(response) {
     var r = {result: [], resultCount: 0};
     if (!response) return r;
     try {
         var dom = Dom.parseDocument(response);
 
-        Dom.workOn("//*/item", dom, function (itemNode) {
+        Dom.workOn("//*/item", dom, function(itemNode) {
             var item = {
                 name: Dom.getSingleValue("./title/text()", itemNode),
                 des: Dom.getSingleValue("./description/text()", itemNode),
@@ -355,10 +355,10 @@ function OpenClipartHandler() {
 }
 
 OpenClipartHandler.prototype.startDocument = function() {
-}
+};
 
 OpenClipartHandler.prototype.endDocument = function() {
-}
+};
 
 OpenClipartHandler.prototype.startElement = function(name, attribs) {
     if (!name || name === "") return;
@@ -388,7 +388,7 @@ OpenClipartHandler.prototype.startElement = function(name, attribs) {
             this.currentState = OpenClipartHandler.STATE_THUMBNAIL;
         }
     }
-}
+};
 OpenClipartHandler.prototype.endElement = function(name) {
     if (!name || name === "") return;
     if (name === "item") {
@@ -418,10 +418,10 @@ OpenClipartHandler.prototype.endElement = function(name) {
             this.currentState = OpenClipartHandler.STATE_ITEM;
         }
     }
-}
+};
 OpenClipartHandler.prototype.characters = function(data) {
     this.currentText = data;
-}
+};
 
 OpenClipartHandler.STATE_CHANNEL = 0;
 OpenClipartHandler.STATE_ITEM = 2;

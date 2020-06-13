@@ -2,7 +2,7 @@ function AbstractEditor() {
     this.node = null;
     this.settings = {};
 }
-AbstractEditor.prototype.attach = function (node) {
+AbstractEditor.prototype.attach = function(node) {
     this.node = node;
     this.onNodeAttached();
 };
@@ -15,7 +15,7 @@ function GUIPushButtonEditor() {
 }
 GUIPushButtonEditor.prototype = AbstractEditor;
 
-GUIPushButtonEditor.prototype.onNodeAttached = function () {
-    
+GUIPushButtonEditor.prototype.onNodeAttached = function() {
+
 };
 

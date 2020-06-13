@@ -3,7 +3,7 @@ function OnMenuEditor() {
 }
 
 OnMenuEditor.globalSetupDone = false;
-OnMenuEditor.globalSetup = function () {
+OnMenuEditor.globalSetup = function() {
     if (OnMenuEditor.globalSetupDone) return;
     OnMenuEditor.globalSetupDone = true;
 
@@ -11,8 +11,10 @@ OnMenuEditor.globalSetup = function () {
         key: "invokeSecondaryContentEditCommand",
         label: "invokeSecondaryContentEditCommand",
         shortcut: "Shift+F2",
-        isAvailable: function () { return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.handleOtherContentEditAction },
-        run: function () {
+        isAvailable: function() {
+            return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.handleOtherContentEditAction;
+        },
+        run: function() {
             var editActions = Pencil.activeCanvas.currentController.getContentEditActions();
             if (editActions.length < 2) return;
             Pencil.activeCanvas.currentController.handleOtherContentEditAction(editActions[1]);
@@ -20,20 +22,19 @@ OnMenuEditor.globalSetup = function () {
     });
 };
 
-OnMenuEditor.prototype.install = function (canvas) {
+OnMenuEditor.prototype.install = function(canvas) {
     this.canvas = canvas;
     this.canvas.contextMenuEditor = this;
-
 };
-OnMenuEditor.prototype.attach = function (targetObject) {
+OnMenuEditor.prototype.attach = function(targetObject) {
     this.targetObject = targetObject;
 };
-OnMenuEditor.prototype.invalidate = function () {
+OnMenuEditor.prototype.invalidate = function() {
 };
-OnMenuEditor.prototype.dettach = function () {
+OnMenuEditor.prototype.dettach = function() {
     this.targetObject = null;
 };
-OnMenuEditor.prototype.generateMenuItems = function () {
+OnMenuEditor.prototype.generateMenuItems = function() {
     if (!this.targetObject) return [];
     var definedGroups = this.targetObject.getPropertyGroups();
     var items = [];
@@ -78,7 +79,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                     label: property.displayName,
                     checked: checked,
                     property: property.name,
-                    handleAction: function (checked) {
+                    handleAction: function(checked) {
                         var bool = Bool.fromString("" + checked);
                         thiz.targetObject.setProperty(this.property, bool);
                     }
@@ -90,7 +91,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                     type: "SubMenu",
                     label: property.displayName,
                     subItems: []
-                }
+                };
                 var value = thiz.targetObject.getProperty(property.name);
                 var enumValues = Enum.getValues(property);
                 for (var i in enumValues) {
@@ -102,7 +103,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                         type: "Selection",
                         checked: checked,
                         property: property.name,
-                        handleAction: function (checked) {
+                        handleAction: function(checked) {
                             if (!checked) return;
                             thiz.targetObject.setProperty(this.property, new Enum(this.value));
                             var editors = Pencil.controller.applicationPane.sharedPropertyEditor.propertyEditor;
@@ -121,15 +122,15 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                     type: "Normal",
                     imageData: imgeData,
                     property: property.name,
-                    isValid: function () {
+                    isValid: function() {
                         return imgeData && imgeData.isBitmap();
                     },
-                    handleAction: function () {
+                    handleAction: function() {
                         var propName = this.property;
                         var dialog = new ExternalImageEditorDialog();
                         dialog.open({
                             imageData: this.imageData,
-                            onDone: function (newImageData, options) {
+                            onDone: function(newImageData, options) {
                                 thiz.targetObject.setProperty(propName, newImageData);
                                 if (options && options.updateBox) {
                                     var dim = new Dimension(newImageData.w, newImageData.h);
@@ -138,7 +139,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                             }
                         });
                     }
-                }
+                };
                 items.push(imageEditItem);
                 importantItems.push(imageEditItem);
 
@@ -158,21 +159,21 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                     type: "Normal",
                     imageData: imgeData,
                     property: property.name,
-                    handleAction: function () {
+                    handleAction: function() {
                         var propName = this.property;
                         var dialog = new NPatchSpecEditorDialog();
                         dialog.open({
                             imageData: this.imageData,
-                            onDone: function (newImageData) {
+                            onDone: function(newImageData) {
                                 thiz.targetObject.setProperty(propName, newImageData);
                             }
                         });
                     }
-                }
+                };
 
                 if (previousImageDataMenu) {
-                    previousImageDataMenu.label = "Configure N-Patch (" + previousImageDataMenu.property + ")..."
-                    imageNPathSpecEditItem.label = "Configure N-Patch (" + property.name + ")..."
+                    previousImageDataMenu.label = "Configure N-Patch (" + previousImageDataMenu.property + ")...";
+                    imageNPathSpecEditItem.label = "Configure N-Patch (" + property.name + ")...";
                 }
 
                 previousImageDataMenu = imageNPathSpecEditItem;
@@ -200,7 +201,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
         items.push(otherPropItem);
     }
 
-    //actions
+    // actions
     var actionItem = null;
     var editActions = this.targetObject.getContentEditActions ? this.targetObject.getContentEditActions() : [];
     var primaryActionId = null;
@@ -225,7 +226,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                         label: "Action",
                         type: "SubMenu",
                         subItems: []
-                    }
+                    };
                 }
 
                 var shortcut = null;
@@ -237,7 +238,7 @@ OnMenuEditor.prototype.generateMenuItems = function () {
                     type: "Normal",
                     actionId: action.id,
                     shortcut: shortcut,
-                    handleAction: function (){
+                    handleAction: function() {
                         thiz.targetObject.performAction(this.actionId);
                         thiz.canvas.invalidateEditors();
                     }
@@ -251,31 +252,31 @@ OnMenuEditor.prototype.generateMenuItems = function () {
     }
 
 
-    //Linking
+    // Linking
     var linkItem = null;
-    if(Pencil.controller.doc && Pencil.controller.doc.pages.length > 1 && this.targetObject.getMetadata && this.targetObject.setMetadata) {
+    if (Pencil.controller.doc && Pencil.controller.doc.pages.length > 1 && this.targetObject.getMetadata && this.targetObject.setMetadata) {
         linkItem = {
             label: "Link To",
             type: "SubMenu",
             subItems: []
-        }
+        };
         var targetPageId = this.targetObject.getMetadata("RelatedPage");
         var linkSubItem = [];
-        for(var i = 0; i < Pencil.controller.doc.pages.length; i++) {
+        for (var i = 0; i < Pencil.controller.doc.pages.length; i++) {
             var page = Pencil.controller.doc.pages[i];
             var item = {
                 label: page.name,
                 type: "Selection",
                 pageId: page.id,
-                isChecked:  function () {
+                isChecked: function() {
                     if (this.pageId == targetPageId) return true;
                     return false;
                 },
-                isEnabled: function () {
+                isEnabled: function() {
                     if (this.pageId == Pencil.controller.activePage.id) return false;
                     return true;
                 },
-                handleAction: function () {
+                handleAction: function() {
                     console.log("link to " + this.pageId);
                     thiz.targetObject.setMetadata("RelatedPage", this.pageId ? this.pageId : "");
                 }
@@ -288,14 +289,13 @@ OnMenuEditor.prototype.generateMenuItems = function () {
             isChecked: function() {
                 return targetPageId ? false : true;
             },
-            handleAction: function () {
+            handleAction: function() {
                 thiz.targetObject.setMetadata("RelatedPage", "");
             }
-        })
+        });
         items.push(linkItem);
     }
     return items;
-
 };
 
 Pencil.registerEditor(OnMenuEditor);

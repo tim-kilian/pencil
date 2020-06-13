@@ -26,11 +26,11 @@ function CollectionSettingEditor(collection) {
     this.groups = strippedGroups;
 }
 
-CollectionSettingEditor.prototype.getPropertyValue = function (name) {
+CollectionSettingEditor.prototype.getPropertyValue = function(name) {
     return this.collection.properties[name].value;
 };
 
-CollectionSettingEditor.prototype.setPropertyValue = function (name, value) {
+CollectionSettingEditor.prototype.setPropertyValue = function(name, value) {
     var prop = this.collection.properties[name];
     if (!prop) return;
 
@@ -39,22 +39,22 @@ CollectionSettingEditor.prototype.setPropertyValue = function (name, value) {
 
     var literal = value.toString();
 
-    var name = ShapeDefCollectionParser.getCollectionPropertyConfigName (this.collection.id, name)
+    var name = ShapeDefCollectionParser.getCollectionPropertyConfigName(this.collection.id, name);
     Config.set(name, literal);
 
     prop.value = Type.fromString(value.toString());
 };
 
-CollectionSettingEditor.prototype.getTargetObjectName = function () {
+CollectionSettingEditor.prototype.getTargetObjectName = function() {
     return this.collection.displayName;
 };
-CollectionSettingEditor.prototype.usingQuickMode = function () {
+CollectionSettingEditor.prototype.usingQuickMode = function() {
     return true;
 };
 
-CollectionSettingEditor.prototype.open = function () {
+CollectionSettingEditor.prototype.open = function() {
     this.propertyWindow = window.openDialog("chrome://pencil/content/propertyDialog.xul", "propertyEditor" + Util.getInstanceToken(), "chrome,dialog,alwaysRaised,dependent", this);
 };
-CollectionSettingEditor.prototype.onDialogShown = function () {
+CollectionSettingEditor.prototype.onDialogShown = function() {
     this.propertyWindow.setup();
 };

@@ -1,9 +1,9 @@
 "use strict";
 
 const {app, protocol, shell, BrowserWindow} = require("electron");
-const pkg      = require("./package.json");
-const fs       = require("fs");
-const path     = require("path");
+const pkg = require("./package.json");
+const fs = require("fs");
+const path = require("path");
 
 app.commandLine.appendSwitch("allow-file-access-from-files");
 app.commandLine.appendSwitch("allow-file-access");
@@ -21,12 +21,12 @@ if (process.platform.trim().toLowerCase() == "linux" && app.disableHardwareAccel
     }
 }
 
-global.sharedObject = { appArguments: process.argv };
+global.sharedObject = {appArguments: process.argv};
 
 var handleRedirect = (e, url) => {
     e.preventDefault();
     shell.openExternal(url);
-}
+};
 
 var mainWindow = null;
 function createWindow() {
@@ -34,12 +34,12 @@ function createWindow() {
         title: pkg.name,
         autoHideMenuBar: true,
         webPreferences: {
-          webSecurity: false,
-          allowRunningInsecureContent: true,
-          allowDisplayingInsecureContent: true,
-          defaultEncoding: "UTF-8",
-          nodeIntegration: true
-        },
+            webSecurity: false,
+            allowRunningInsecureContent: true,
+            allowDisplayingInsecureContent: true,
+            defaultEncoding: "UTF-8",
+            nodeIntegration: true
+        }
     };
 
     var iconFile = process.platform == "win32" ? "app.ico" : "css/images/logo-shadow.png";
@@ -69,15 +69,15 @@ function createWindow() {
     mainWindow.loadURL(mainUrl);
     mainWindow.show();
 
-    //mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.on("closed", function() {
         mainWindow = null;
         app.exit(0);
     });
 
-    if (process.platform == 'darwin') {
-        var {MacOSToolbar} = require('./views/toolbars/MacOSToolbar');
+    if (process.platform == "darwin") {
+        var {MacOSToolbar} = require("./views/toolbars/MacOSToolbar");
         MacOSToolbar.createMacOSToolbar();
     }
 
@@ -100,19 +100,18 @@ app.on("window-all-closed", function() {
     }
 });
 
-app.on('ready', function() {
+app.on("ready", function() {
     protocol.registerBufferProtocol("ref", function(request, callback) {
         var path = request.url.substr(6);
 
-        fs.readFile(path, function (err, data) {
+        fs.readFile(path, function(err, data) {
             if (err) {
                 callback({mimeType: "text/html", data: new Buffer("Not found")});
             } else {
                 callback({mimeType: "image/jpeg", data: new Buffer(data)});
             }
         });
-
-    }, function (error, scheme) {
+    }, function(error, scheme) {
         if (error) {
             console.log("ERROR REGISTERING", error);
         }
@@ -141,10 +140,10 @@ app.on("activate", function() {
     }
 });
 
-app.on("will-quit", function () {
-  require("electron").globalShortcut.unregisterAll()
+app.on("will-quit", function() {
+    require("electron").globalShortcut.unregisterAll();
 });
 
-process.on('uncaughtException', function (error) {
+process.on("uncaughtException", function(error) {
     console.error(error);
 });

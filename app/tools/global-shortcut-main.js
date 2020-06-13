@@ -1,12 +1,12 @@
 // @background, @electron-specific
 
-module.exports = function () {
-    const ipcMain = require('electron').ipcMain;
-    const electron = require('electron');
+module.exports = function() {
+    const ipcMain = require("electron").ipcMain;
+    const electron = require("electron");
     const app = electron.app;
 
     function init() {
-        ipcMain.on("global-shortcut-register", function (event, data) {
+        ipcMain.on("global-shortcut-register", function(event, data) {
             // electron.globalShortcut.register(data.shortcut, () => {
             //     console.log("Shortcut: " + data.shortcut + " triggered");
             //     app.mainWindow.webContents.send("global-shortcut", {
@@ -23,5 +23,5 @@ module.exports = function () {
         init();
     }
 
-    return { start: start };
+    return {start: start};
 }();

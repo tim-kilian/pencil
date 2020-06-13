@@ -2,7 +2,7 @@ function FlavourSet(flavours) {
     this.flavours = flavours || [];
 }
 
-FlavourSet.prototype.appendFlavour = function (f) {
+FlavourSet.prototype.appendFlavour = function(f) {
     this.flavours.push(f);
 };
 
@@ -19,13 +19,13 @@ var nsDragAndDrop = {
         this.dragData = {};
     },
 
-    dragOver: function (event, observer) {
+    dragOver: function(event, observer) {
     },
 
-    dragEnter: function (event, observer) {
+    dragEnter: function(event, observer) {
         if (!event.dataTransfer) return false;
 
-        //gives the observer the ability to actively tell that it accepts the drag, bybass type-based checking below
+        // gives the observer the ability to actively tell that it accepts the drag, bybass type-based checking below
         if (observer.acceptsDataTransfer && observer.acceptsDataTransfer(event.dataTransfer)) return true;
         if (!observer.getSupportedFlavours) return false;
 
@@ -43,17 +43,17 @@ var nsDragAndDrop = {
         return false;
     },
 
-    dragExit: function (event, observer) {
+    dragExit: function(event, observer) {
         if (observer.onDragExit) observer.onDragExit(event);
     },
 
-    dragOver: function (event, observer) {
+    dragOver: function(event, observer) {
         if (observer.onDragOver) observer.onDragOver(event);
         event.preventDefault();
         event.dataTransfer.dropEffect = "copy";
     },
 
-    drop: function (event, observer) {
+    drop: function(event, observer) {
         if (!observer.onDrop) return;
 
         if (observer.getSupportedFlavours) {
@@ -63,7 +63,7 @@ var nsDragAndDrop = {
                 var data = event.dataTransfer.getData(f);
                 var data = nsDragAndDrop.getData(f);
                 if (data) {
-                    observer.onDrop(event, { data: data });
+                    observer.onDrop(event, {data: data});
                     event.stopPropagation();
                     return;
                 }

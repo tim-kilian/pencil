@@ -13,24 +13,24 @@ Point.fromString = function(literal) {
     return point;
 };
 
-Point.prototype.toString = function () {
+Point.prototype.toString = function() {
     return this.x + "," + this.y;
 };
-Point.prototype.applyExpressionX = function (value) {
+Point.prototype.applyExpressionX = function(value) {
     this.x = value;
 };
-Point.prototype.applyExpressionY = function (value) {
+Point.prototype.applyExpressionY = function(value) {
     this.y = value;
 };
-Point.prototype.translate = function (dx, dy) {
-	return new Point(this.x + dx, this.y + dy);
+Point.prototype.translate = function(dx, dy) {
+    return new Point(this.x + dx, this.y + dy);
 };
 
 pencilSandbox.Point = {
-    newPoint: function (x, y) {
+    newPoint: function(x, y) {
         return new Point(x, y);
     }
 };
 for (var p in Point) {
     pencilSandbox.Point[p] = Point[p];
-};
+}

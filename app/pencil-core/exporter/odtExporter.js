@@ -7,24 +7,24 @@ ODTExporter.RASTERIZED_SUBDIR = "Pictures";
 
 ODTExporter.prototype = new BaseRasterizedExporter();
 
-ODTExporter.prototype.getRasterizedPageDestination = function (baseDir) {
-    this.tmpDir = tmp.dirSync({ keep: false, unsafeCleanup: true });
+ODTExporter.prototype.getRasterizedPageDestination = function(baseDir) {
+    this.tmpDir = tmp.dirSync({keep: false, unsafeCleanup: true});
     return path.join(this.tmpDir.name, ODTExporter.RASTERIZED_SUBDIR);
 };
-ODTExporter.prototype.supportTemplating = function () {
+ODTExporter.prototype.supportTemplating = function() {
     return true;
 };
-ODTExporter.prototype.getTemplates = function () {
+ODTExporter.prototype.getTemplates = function() {
     return ExportTemplateManager.getTemplatesForType("ODT");
 };
-ODTExporter.prototype.getWarnings = function () {
+ODTExporter.prototype.getWarnings = function() {
     var templates = this.getTemplates();
     if (templates && templates.length > 0) return null;
 
     return Util.getMessage("no.template.has.been.installed.for.exporting");
 };
 
-ODTExporter.prototype.transform = function (template, fileBaseName, sourceDOM, targetDir) {
+ODTExporter.prototype.transform = function(template, fileBaseName, sourceDOM, targetDir) {
     var styleSheetFile = path.join(template.dir, fileBaseName + ".xslt");
 
     if (!fsExistSync(styleSheetFile)) return;
@@ -41,19 +41,19 @@ ODTExporter.prototype.transform = function (template, fileBaseName, sourceDOM, t
     Dom.serializeNodeToFile(result, xmlFile);
 };
 
-ODTExporter.prototype.export = function (doc, options, destFile, xmlFile, callback) {
+ODTExporter.prototype.export = function(doc, options, destFile, xmlFile, callback) {
     var templateId = options.templateId;
     if (!templateId) return;
 
     var template = ExportTemplateManager.getTemplateById(templateId);
 
-    //copying support files to a temp dir
+    // copying support files to a temp dir
     if (!this.tmpDir) {
-        this.tmpDir = tmp.dirSync({ keep: false, unsafeCleanup: true });
+        this.tmpDir = tmp.dirSync({keep: false, unsafeCleanup: true});
     }
 
     var items = fs.readdirSync(template.dir);
-    items.forEach(function (item) {
+    items.forEach(function(item) {
         if (item.match(/\.xslt$/) || item == "Template.xml") return;
 
         var file = path.join(template.dir, item);
@@ -69,10 +69,10 @@ ODTExporter.prototype.export = function (doc, options, destFile, xmlFile, callba
         }
     }.bind(this));
 
-    //transform the xml to HTML
+    // transform the xml to HTML
     var sourceDOM = Dom.parseFile(xmlFile);
 
-    //changing rasterized path to relative
+    // changing rasterized path to relative
     this.fixAbsoluteRasterizedPaths(sourceDOM, this.tmpDir.name);
 
     this.transform(template, "content", sourceDOM, this.tmpDir.name);
@@ -80,16 +80,16 @@ ODTExporter.prototype.export = function (doc, options, destFile, xmlFile, callba
     this.transform(template, "settings", sourceDOM, this.tmpDir.name);
     this.transform(template, "styles", sourceDOM, this.tmpDir.name);
 
-    Util.compress(this.tmpDir.name, destFile, function () {
+    Util.compress(this.tmpDir.name, destFile, function() {
         this.tmpDir.removeCallback();
         this.tmpDir = null;
         callback();
     }.bind(this));
 };
-ODTExporter.prototype.getOutputType = function () {
+ODTExporter.prototype.getOutputType = function() {
     return BaseExporter.OUTPUT_TYPE_FILE;
 };
-ODTExporter.prototype.getOutputFileExtensions = function () {
+ODTExporter.prototype.getOutputFileExtensions = function() {
     return [
         {
             title: Util.getMessage("filepicker.openoffice.org.document.odt"),

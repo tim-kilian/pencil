@@ -13,21 +13,21 @@
     this.propertyGroups = [];
     this.properties = {};
 }
-/* public void */ ShapeDefCollection.prototype.addDefinition = function (shapeDef) {
+/* public void */ ShapeDefCollection.prototype.addDefinition = function(shapeDef) {
     this.shapeDefs.push(shapeDef);
     this.shapeDefMap[shapeDef.id] = shapeDef;
 };
-/* public void */ ShapeDefCollection.prototype.addShortcut = function (shortcut) {
+/* public void */ ShapeDefCollection.prototype.addShortcut = function(shortcut) {
     this.shapeDefs.push(shortcut);
     this.shortcutMap[this.id + ":" + shortcut.displayName] = shortcut;
 };
-/* public ShapeDef */ ShapeDefCollection.prototype.getShapeDefById = function (id) {
+/* public ShapeDef */ ShapeDefCollection.prototype.getShapeDefById = function(id) {
     return this.shapeDefMap[id];
 };
-/* public ShapeDef */ ShapeDefCollection.prototype.getShortcutByDisplayName = function (name) {
+/* public ShapeDef */ ShapeDefCollection.prototype.getShortcutByDisplayName = function(name) {
     return this.shortcutMap[name];
 };
-/* public override String */ ShapeDefCollection.prototype.toString = function () {
+/* public override String */ ShapeDefCollection.prototype.toString = function() {
     return "[ShapeDefCollection: " + this.id + "]";
 };
 

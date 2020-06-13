@@ -12,10 +12,14 @@ function EditPrivateShapeDialog() {
             this.shapeIcon.disabled = false;
             this.browse.disabled = false;
         }
-    }, this.changeIconCheck)
+    }, this.changeIconCheck);
 
-    this.bind("change",function () {this.modified = true;}, this.shapeName);
-    this.bind("change",function () {this.modified = true;}, this.shapeIcon);
+    this.bind("change", function() {
+        this.modified = true;
+    }, this.shapeName);
+    this.bind("change", function() {
+        this.modified = true;
+    }, this.shapeIcon);
     var thiz = this;
     this.browse.addEventListener("click", function(event) {
         thiz.browseIconFile();
@@ -23,7 +27,7 @@ function EditPrivateShapeDialog() {
 }
 __extend(Dialog, EditPrivateShapeDialog);
 
-EditPrivateShapeDialog.prototype.setup = function (options) {
+EditPrivateShapeDialog.prototype.setup = function(options) {
     if (options && options.shape) {
         this.shape = options.shape;
     }
@@ -31,7 +35,7 @@ EditPrivateShapeDialog.prototype.setup = function (options) {
         this.onDone = options.onDone;
     }
     this.shapeName.value = this.shape.displayName;
-}
+};
 
 EditPrivateShapeDialog.prototype.browseIconFile = function() {
     var thiz = this;
@@ -39,25 +43,24 @@ EditPrivateShapeDialog.prototype.browseIconFile = function() {
         title: "Open Icon File",
         defaultPath: os.homedir(),
         filters: [
-            { name: "Icon File", extensions: ["icon", "png"] }
+            {name: "Icon File", extensions: ["icon", "png"]}
         ]
-    }, function (filenames) {
+    }, function(filenames) {
         if (!filenames || filenames.length <= 0) return;
         thiz.modified = true;
         thiz.shapeIcon.value = filenames;
     });
-}
+};
 
-EditPrivateShapeDialog.prototype.invalidate = function () {
-    if (this.shapeName.value == "" || this.changeIconCheck.checked && this.shapeIcon.value == "")
-    {
-        Dialog.alert("Empty text box","Please enter all require text box",null);
+EditPrivateShapeDialog.prototype.invalidate = function() {
+    if (this.shapeName.value == "" || this.changeIconCheck.checked && this.shapeIcon.value == "") {
+        Dialog.alert("Empty text box", "Please enter all require text box", null);
         return false;
     }
     return true;
-}
+};
 
-EditPrivateShapeDialog.prototype.onFinish = function () {
+EditPrivateShapeDialog.prototype.onFinish = function() {
     var thiz = this;
     thiz.shape.displayName = thiz.shapeName.value;
     if (thiz.changeIconCheck.checked) {
@@ -66,17 +69,17 @@ EditPrivateShapeDialog.prototype.onFinish = function () {
         thiz.shape.iconData = image.toDataURL();
     }
     // console.log(thiz.shape);
-    if(thiz.onDone) thiz.onDone(thiz.shape);
-}
+    if (thiz.onDone) thiz.onDone(thiz.shape);
+};
 
-EditPrivateShapeDialog.prototype.getDialogActions = function () {
+EditPrivateShapeDialog.prototype.getDialogActions = function() {
     var thiz = this;
     return [
         {
             type: "accept", title: "Save",
             isCloseHandler: true,
-            run: function () {
-                if(!thiz.invalidate()) return false;
+            run: function() {
+                if (!thiz.invalidate()) return false;
                 thiz.onFinish();
                 return true;
             }
@@ -84,20 +87,20 @@ EditPrivateShapeDialog.prototype.getDialogActions = function () {
         {
             type: "cancel", title: "Cancel",
             isCloseHandler: true,
-            run: function () {
+            run: function() {
                 if (this.modified) {
                     Dialog.confirm(
                         "Do you want to save your changes before closing?", null,
-                        "Save", function () {
-                            if(!thiz.invalidate()) return false;
+                        "Save", function() {
+                            if (!thiz.invalidate()) return false;
                             thiz.onFinish();
                             return true;
                         },
                         "Cancel"
-                    )
+                    );
                 }
                 return true;
             }
         }
-    ]
+    ];
 };

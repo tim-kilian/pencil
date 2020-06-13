@@ -1,8 +1,8 @@
 
-function PrivateShapeDefParser () {
+function PrivateShapeDefParser() {
 }
 
-PrivateShapeDefParser.prototype.parseNode = function (dom) {
+PrivateShapeDefParser.prototype.parseNode = function(dom) {
     var collection = new PrivateCollection();
 
     collection.id = dom.getAttribute("p:Id");
@@ -12,7 +12,7 @@ PrivateShapeDefParser.prototype.parseNode = function (dom) {
     collection.infoUrl = dom.getAttribute("p:InfoUrl");
     collection.map = {};
 
-    Dom.workOn("./p:Groups/p:Group", dom, function (node) {
+    Dom.workOn("./p:Groups/p:Group", dom, function(node) {
         var id = node.getAttribute("p:Id");
         var name = node.getAttribute("p:Name");
         var icon = node.getAttribute("p:Icon");

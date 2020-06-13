@@ -7,26 +7,26 @@ function PrintingExporter(pdfOutput) {
 PrintingExporter.HTML_FILE = "index.html";
 PrintingExporter.prototype = new BaseExporter();
 
-PrintingExporter.prototype.requireRasterizedData = function (options) {
+PrintingExporter.prototype.requireRasterizedData = function(options) {
     var templateId = options.templateId;
     if (!templateId) return false;
 
     var template = ExportTemplateManager.getTemplateById(templateId);
     if (!template) return false;
 
-    return (options && options.options && options.options.format == 'rasterized');
+    return (options && options.options && options.options.format == "rasterized");
 };
-PrintingExporter.prototype.getRasterizedPageDestination = function (baseDir) {
+PrintingExporter.prototype.getRasterizedPageDestination = function(baseDir) {
     this.tempDir = Local.createTempDir("printing");
     return this.tempDir.name;
 };
-PrintingExporter.prototype.supportTemplating = function () {
+PrintingExporter.prototype.supportTemplating = function() {
     return true;
 };
-PrintingExporter.prototype.getTemplates = function () {
+PrintingExporter.prototype.getTemplates = function() {
     return ExportTemplateManager.getTemplatesForType("Print");
 };
-PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile, callback) {
+PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, callback) {
     if (!this.tempDir) this.tempDir = Local.createTempDir("printing");
     var destDir = this.tempDir;
 
@@ -35,9 +35,9 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
 
     var template = ExportTemplateManager.getTemplateById(templateId);
 
-    //copying support files
+    // copying support files
     var items = fs.readdirSync(template.dir);
-    items.forEach(function (item) {
+    items.forEach(function(item) {
         if (item == "Template.xml" || item == template.styleSheet) return;
 
         var file = path.join(template.dir, item);
@@ -54,11 +54,11 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
     });
 
 
-    //transform the xml to HTML
+    // transform the xml to HTML
     var sourceDOM = Dom.parseFile(xmlFile);
 
-    //changing rasterized path to relative
-    //this.fixAbsoluteRasterizedPaths(sourceDOM, destDir);
+    // changing rasterized path to relative
+    // this.fixAbsoluteRasterizedPaths(sourceDOM, destDir);
     var xsltDOM = Dom.parseFile(template.styleSheetFile);
 
     var xsltProcessor = new XSLTProcessor();
@@ -73,12 +73,12 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
 
     var result = xsltProcessor.transformToDocument(sourceDOM);
 
-    //this result contains the HTML DOM of the file to print.
-    //in case of using vector only data, we need to embed the font data into the stlye of this HTML DOM
+    // this result contains the HTML DOM of the file to print.
+    // in case of using vector only data, we need to embed the font data into the stlye of this HTML DOM
 
     var css = "svg { line-height: 1.428; }";
 
-    var exportJob = function () {
+    var exportJob = function() {
         var head = Dom.getSingle("/html:html/html:head", result);
         var style = result.createElement("style");
         style.setAttribute("type", "text/css");
@@ -98,7 +98,7 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
             }
         }
 
-        //print via ipc
+        // print via ipc
         var id = Util.newUUID();
         var data = {
             fileURL: ImageData.filePathToURL(htmlFile),
@@ -113,7 +113,7 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
             }
         }
 
-        ipcRenderer.once(id, function (event, data) {
+        ipcRenderer.once(id, function(event, data) {
             if (!data.success) {
                 Dialog.error("Error: " + data.message);
             }
@@ -133,22 +133,21 @@ PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile,
     console.log(result.documentElement);
 
     if (fontFaces && fontFaces.length > 0) {
-        sharedUtil.buildEmbeddedFontFaceCSS(fontFaces, function (fontFaceCSS) {
+        sharedUtil.buildEmbeddedFontFaceCSS(fontFaces, function(fontFaceCSS) {
             css += "\n" + fontFaceCSS;
             exportJob();
         });
     } else {
         exportJob();
     }
-
 };
-PrintingExporter.prototype.getWarnings = function () {
+PrintingExporter.prototype.getWarnings = function() {
     return null;
 };
-PrintingExporter.prototype.getOutputType = function () {
+PrintingExporter.prototype.getOutputType = function() {
     return this.pdfOutput ? BaseExporter.OUTPUT_TYPE_FILE : BaseExporter.OUTPUT_TYPE_NONE;
 };
-PrintingExporter.prototype.getOutputFileExtensions = function () {
+PrintingExporter.prototype.getOutputFileExtensions = function() {
     return [
         {
             title: "Portable Document Format (*.pdf)",

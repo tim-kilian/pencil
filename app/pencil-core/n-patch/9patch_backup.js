@@ -2,9 +2,9 @@ function Walker() {
     this.segments = [];
     this.currentSegment = null;
     this.i = -1;
-};
+}
 
-Walker.prototype.step = function (alpha) {
+Walker.prototype.step = function(alpha) {
     this.i ++;
     if (!this.currentSegment || this.currentSegment.alpha != alpha) {
         this.currentSegment = {
@@ -26,7 +26,7 @@ function Point(x, y) {
     this.y = y;
 }
 
-NinePatch.start = function (imageUrl) {
+NinePatch.start = function(imageUrl) {
 /*
     var container = document.getElementById("imageContainer");
     container.innerHTML = "";
@@ -41,7 +41,7 @@ NinePatch.start = function (imageUrl) {
     NinePatch.createPatches(image);
 };
 
-function handleImageLoad () {
+function handleImageLoad() {
     var image = getSourceImageContainer().firstChild;
     var path = document.getElementById("path");
     var html = "<strong>Path:</strong><br/>";
@@ -49,9 +49,9 @@ function handleImageLoad () {
     html += "<br/><strong>Size: </strong>" + (image.width - 2) + " x " + (image.height - 2);
     path.innerHTML = html;
     NinePatch.createPatches(image);
-};
+}
 
-NinePatch.createPatches = function (image) {
+NinePatch.createPatches = function(image) {
     var w = image.width;
     var h = image.height;
 
@@ -67,7 +67,7 @@ NinePatch.createPatches = function (image) {
     context.drawImage(image, 0, 0, w, h);
     var imageData = context.getImageData(0, 0, w, h);
 
-    //parsing n-patch markers
+    // parsing n-patch markers
     var hWalker = new Walker();
     for (var i = 1; i < w - 1; i ++) {
         hWalker.step(getPixel(imageData, i, 0).a);
@@ -153,7 +153,6 @@ NinePatch.createPatches = function (image) {
     NinePatch.data.lastScaleY = lastScaleY;
 
 
-
     /*
     createPatch(image, new Point(s1.x, 0), new Point(s2.x, s1.y));
     createPatch(image, new Point(s2.x, 0), new Point(w, s1.y));
@@ -236,7 +235,7 @@ function browse() {
     getSourceImageContainer().appendChild(image);
 
     var ios = Components.classes["@mozilla.org/network/io-service;1"].
-          getService(Components.interfaces.nsIIOService);
+        getService(Components.interfaces.nsIIOService);
     var url = ios.newFileURI(fp.file);
     image.onload = handleImageLoad;
     image.src = url.spec + "?time=" + new Date().getTime();

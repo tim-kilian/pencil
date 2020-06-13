@@ -9,4 +9,4 @@ function SearchEngine() {
 
 SearchEngine.prototype.search = function(query, options, callback) {
     return this.searchImpl(query, options, callback);
-}
+};

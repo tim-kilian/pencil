@@ -1,7 +1,7 @@
 function FontLoader() {
     this.userRepo = new FontRepository(Config.getDataFilePath("fonts"), FontRepository.TYPE_USER);
     this.documentRepo = null;
-    
+
     // //TODO: remove this test
     // var face = new FontFace(null, "url(file:///home/dgthanhan/.fonts/Signika-Bold.ttf) format('truetype')");
     // var addPromise = document.fonts.add(face);
@@ -12,31 +12,31 @@ function FontLoader() {
     //     face.load();
     // });
 }
-FontLoader.loadSystemFonts = function (callback) {
+FontLoader.loadSystemFonts = function(callback) {
     FontLoader.systemRepo = new FontRepository(getStaticFilePath("fonts/core"), FontRepository.TYPE_SYSTEM);
     FontLoader.systemRepo.load();
     var systemFaces = FontLoader.systemRepo.faces;
-    FontLoaderUtil.loadFontFaces(systemFaces, function () {
+    FontLoaderUtil.loadFontFaces(systemFaces, function() {
         if (callback) callback();
         var data = {
             id: Util.newUUID(),
             faces: systemFaces,
             setName: "systemFaces"
-        }
-        ipcRenderer.once(data.id, function (event, data) {
+        };
+        ipcRenderer.once(data.id, function(event, data) {
         });
 
         ipcRenderer.send("font-loading-request", data);
     });
 };
-FontLoader.prototype.setDocumentRepoDir = function (dirPath) {
+FontLoader.prototype.setDocumentRepoDir = function(dirPath) {
     if (dirPath) {
         this.documentRepo = new FontRepository(dirPath, FontRepository.TYPE_DOCUMENT);
     } else {
         this.documentRepo = null;
     }
 };
-FontLoader.prototype.loadFonts = function (callback) {
+FontLoader.prototype.loadFonts = function(callback) {
     this.userRepo.load();
     if (this.documentRepo) this.documentRepo.load();
 
@@ -59,53 +59,52 @@ FontLoader.prototype.loadFonts = function (callback) {
     this.allFaces = allFaces;
 
     // console.log("All faces to load", allFaces);
-    FontLoaderUtil.loadFontFaces(allFaces, function () {
+    FontLoaderUtil.loadFontFaces(allFaces, function() {
         var data = {
             id: Util.newUUID(),
             faces: [].concat(FontLoader.systemRepo.faces).concat(allFaces),
             setName: "allFaces"
-        }
-        ipcRenderer.once(data.id, function (event, data) {
+        };
+        ipcRenderer.once(data.id, function(event, data) {
             Dom.emitEvent("p:UserFontLoaded", document.documentElement, {});
             if (callback) callback();
         });
 
         ipcRenderer.send("font-loading-request", data);
-
     });
 };
-FontLoader.prototype.isFontExisting = function (fontName) {
+FontLoader.prototype.isFontExisting = function(fontName) {
     return this.userRepo.getFont(fontName);
 };
-FontLoader.prototype.installNewFont = function (data) {
+FontLoader.prototype.installNewFont = function(data) {
     this.userRepo.addFont(data);
     this.loadFonts();
 };
-FontLoader.prototype.removeFont = function (font, callback) {
-    Dialog.confirm("Are you sure you want to uninstall '" + font.name + "'?", null, "Uninstall", function () {
+FontLoader.prototype.removeFont = function(font, callback) {
+    Dialog.confirm("Are you sure you want to uninstall '" + font.name + "'?", null, "Uninstall", function() {
         ApplicationPane._instance.busy();
         this.userRepo.removeFont(font);
-        this.loadFonts(function () {
+        this.loadFonts(function() {
             if (callback) callback();
             ApplicationPane._instance.unbusy();
         });
     }.bind(this), "Cancel");
 };
-FontLoader.prototype.setAutoEmbed = function (font, autoEmbed, callback) {
+FontLoader.prototype.setAutoEmbed = function(font, autoEmbed, callback) {
     ApplicationPane._instance.busy();
     this.userRepo.setAutoEmbed(font, autoEmbed);
-    this.loadFonts(function () {
+    this.loadFonts(function() {
         if (callback) callback();
         ApplicationPane._instance.unbusy();
     });
 };
-FontLoader.prototype.getAllInstalledFonts = function () {
+FontLoader.prototype.getAllInstalledFonts = function() {
     this.userRepo.load();
     if (this.documentRepo) this.documentRepo.load();
 
     var fonts = [];
     var fontNames = [];
-    
+
     if (FontLoader.systemRepo.fonts.length > 0) {
         for (var font of FontLoader.systemRepo.fonts) {
             var font = JSON.parse(JSON.stringify(font));
@@ -137,17 +136,17 @@ FontLoader.prototype.getAllInstalledFonts = function () {
 
     return fonts;
 };
-FontLoader.prototype.getUserFonts = function () {
+FontLoader.prototype.getUserFonts = function() {
     return this.userRepo.fonts;
-}
-FontLoader.prototype.embedToDocumentRepo = function (faces) {
+};
+FontLoader.prototype.embedToDocumentRepo = function(faces) {
     if (!this.documentRepo) {
         var documentRepoDir = path.join(Pencil.controller.tempDir.name, "fonts");
         this.documentRepo = new FontRepository(documentRepoDir, FontRepository.TYPE_DOCUMENT);
     }
 
     var shouldSave = false;
-    faces.forEach(function (f) {
+    faces.forEach(function(f) {
         var font = this.userRepo.getFont(f);
         var userFont = this.documentRepo.getFont(f);
         if (userFont) {
@@ -174,7 +173,7 @@ FontLoader.prototype.embedToDocumentRepo = function (faces) {
     if (shouldSave) this.documentRepo.save();
 };
 Object.defineProperty(FontLoader, "instance", {
-    get: function () {
+    get: function() {
         if (!FontLoader._instance) {
             FontLoader._instance = new FontLoader();
         }
@@ -195,12 +194,12 @@ FontRepository.TYPE_SYSTEM = "system";
 FontRepository.TYPE_USER = "user";
 FontRepository.TYPE_DOCUMENT = "document";
 
-FontRepository.prototype.getFont = function (fontName) {
-    for(var i in this.fonts) {
+FontRepository.prototype.getFont = function(fontName) {
+    for (var i in this.fonts) {
         if (this.fonts[i].name == fontName) return this.fonts[i];
     }
 };
-FontRepository.prototype.load = function () {
+FontRepository.prototype.load = function() {
     var registryFilePath = path.join(this.dirPath, "registry.xml");
     this.faces = [];
     this.fonts = [];
@@ -213,7 +212,7 @@ FontRepository.prototype.load = function () {
         var dom = Dom.parseFile(registryFilePath);
 
         var thiz = this;
-        Dom.workOn("/p:FontRegistry/p:Font", dom, function (node) {
+        Dom.workOn("/p:FontRegistry/p:Font", dom, function(node) {
             var fontName = node.getAttribute("name");
             var location = node.getAttribute("location");
             var source = node.getAttribute("source") || "";
@@ -226,7 +225,7 @@ FontRepository.prototype.load = function () {
                 variants: []
             };
             thiz.fonts.push(font);
-            Dom.workOn("./p:FontStyle", node, function (styleNode) {
+            Dom.workOn("./p:FontStyle", node, function(styleNode) {
                 var weight = styleNode.getAttribute("weight");
                 var style = styleNode.getAttribute("style");
                 var href = styleNode.getAttribute("href");
@@ -260,7 +259,7 @@ FontRepository.SUPPORTED_WEIGHTS = [
     {id: "sbold", weight: "600", displayName: "Semi Bold", shortName: "SB"},
     {id: "bold", weight: "bold", displayName: "Bold", shortName: "B"},
     {id: "xbold", weight: "800", displayName: "Extra Bold", shortName: "XB"},
-    {id: "black", weight: "900", displayName: "Black", shortName: "BL"},
+    {id: "black", weight: "900", displayName: "Black", shortName: "BL"}
 ];
 
 FontRepository.SUPPORTED_VARIANTS = {};
@@ -280,14 +279,14 @@ for (var weight of FontRepository.SUPPORTED_WEIGHTS) {
 
     FontRepository.WEIGHT_MAP[weight.weight] = weight;
 }
-//@DEPRECATED, this is kept for backward compat only
+// @DEPRECATED, this is kept for backward compat only
 FontRepository.SUPPORTED_VARIANTS["italic"] = {
     weight: "normal",
     style: "italic",
     displayName: "Regular Italic"
 };
 
-FontRepository.findVariantName = function (weight, style) {
+FontRepository.findVariantName = function(weight, style) {
     for (var variantName in FontRepository.SUPPORTED_VARIANTS) {
         var spec = FontRepository.SUPPORTED_VARIANTS[variantName];
         if (spec.weight == weight && spec.style == style) return variantName;
@@ -296,7 +295,7 @@ FontRepository.findVariantName = function (weight, style) {
     return null;
 };
 
-FontRepository.prototype.addFont = function (data) {
+FontRepository.prototype.addFont = function(data) {
     if (!this.loaded) this.load();
     var font = {
         name: data.fontName,
@@ -326,7 +325,7 @@ FontRepository.prototype.addFont = function (data) {
     this.save();
     this.loaded = false;
 };
-FontRepository.prototype.removeFont = function (font) {
+FontRepository.prototype.removeFont = function(font) {
     if (!this.loaded) this.load();
 
     var font = this.getFont(font.name);
@@ -350,7 +349,7 @@ FontRepository.prototype.removeFont = function (font) {
     this.save();
     this.loaded = false;
 };
-FontRepository.prototype.setAutoEmbed = function (font, autoEmbed) {
+FontRepository.prototype.setAutoEmbed = function(font, autoEmbed) {
     if (!this.loaded) this.load();
 
     font = this.getFont(font.name);
@@ -361,7 +360,7 @@ FontRepository.prototype.setAutoEmbed = function (font, autoEmbed) {
     this.loaded = false;
 };
 
-FontRepository.prototype.save = function () {
+FontRepository.prototype.save = function() {
     if (!fsExistSync(this.dirPath)) {
         fs.mkdirSync(this.dirPath);
     }
@@ -370,9 +369,9 @@ FontRepository.prototype.save = function () {
 
     var registryFilePath = path.join(this.dirPath, "registry.xml");
     try {
-        var dom = Dom.parser.parseFromString('<FontRegistry xmlns="' + PencilNamespaces.p + '"></FontRegistry>', 'text/xml');
+        var dom = Dom.parser.parseFromString("<FontRegistry xmlns=\"" + PencilNamespaces.p + "\"></FontRegistry>", "text/xml");
 
-        this.fonts.forEach(function (font) {
+        this.fonts.forEach(function(font) {
             var fontNode = dom.createElementNS(PencilNamespaces.p, "Font");
             dom.documentElement.appendChild(fontNode);
 
@@ -400,7 +399,7 @@ FontRepository.prototype.save = function () {
             fontNode.setAttribute("source", font.source || "");
             fontNode.setAttribute("auto-embed", font.autoEmbed);
 
-            font.variants.forEach(function (variant) {
+            font.variants.forEach(function(variant) {
                 var fontStyleNode = dom.createElementNS(PencilNamespaces.p, "FontStyle");
                 fontNode.appendChild(fontStyleNode);
 
@@ -419,7 +418,6 @@ FontRepository.prototype.save = function () {
         });
 
         Dom.serializeNodeToFile(dom, registryFilePath);
-
     } catch (e) {
         console.error(e);
     }

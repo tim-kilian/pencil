@@ -1,5 +1,4 @@
 function OpenClipartSearch() {
-
     this.title = "OpenClipart.org";
     this.name = "OpenClipart.org";
     this.uri = "https://openclipart.org/";
@@ -14,14 +13,14 @@ function OpenClipartSearch() {
 }
 OpenClipartSearch.prototype = new SearchEngine();
 
-OpenClipartSearch.prototype.merge = function (o, n) {
+OpenClipartSearch.prototype.merge = function(o, n) {
     for (var i in n) {
         o[i] = n[i];
-    };
+    }
     return o;
 };
 
-OpenClipartSearch.prototype.buildSearchUri = function (query, options) {
+OpenClipartSearch.prototype.buildSearchUri = function(query, options) {
     var url = this.baseUri + "?query=" + query;
 
     if (options.offset != null && options.limit != null) {
@@ -31,7 +30,7 @@ OpenClipartSearch.prototype.buildSearchUri = function (query, options) {
     var param = "";
     for (var i in options) {
         param += "&" + i + "=" + options[i];
-    };
+    }
 
     return url + param;
 };
@@ -77,7 +76,9 @@ OpenClipartSearch.prototype.parseSearchResult = function(response) {
         response = JSON.parse(response);
     } catch (ex) {}
 
-    if (!response || response.msg != "success") { return result; }
+    if (!response || response.msg != "success") {
+        return result;
+    }
 
     result.resultCount = response.info.results;
     result.pages = response.info.pages;
@@ -87,7 +88,7 @@ OpenClipartSearch.prototype.parseSearchResult = function(response) {
             name: e.title,
             description: e.description,
             src: e.svg.url,
-            type: 'SVG',
+            type: "SVG",
             size: e.svg_filesize,
             thumb: e.svg.png_thumb,
             pubDate: e.created,
@@ -100,4 +101,4 @@ OpenClipartSearch.prototype.parseSearchResult = function(response) {
     return result;
 };
 
-//SearchManager.registerSearchEngine(OpenClipartSearch, false);
+// SearchManager.registerSearchEngine(OpenClipartSearch, false);

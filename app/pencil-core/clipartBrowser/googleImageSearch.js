@@ -9,7 +9,7 @@ function GoogleImageSearch() {
 
     this.getData = function(aData, a) {
         debug("google image search");
-    }
+    };
 }
 
 GoogleImageSearch.prototype = new SearchEngine();

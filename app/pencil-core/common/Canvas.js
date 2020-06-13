@@ -29,8 +29,8 @@ function Canvas(element, options, containerScrollPane) {
             // this.lockPointerFunction();
             this.autoScrollTimout = window.setInterval(func, 50);
         }
-    }
-    this.stopAutoScrollFunction = function () {
+    };
+    this.stopAutoScrollFunction = function() {
         if (this.autoScrollTimout) {
             // if (thiz.lockPointerFunction != null) {
             //     document.exitPointerLock();
@@ -39,27 +39,25 @@ function Canvas(element, options, containerScrollPane) {
             clearInterval(this.autoScrollTimout);
             this.autoScrollTimout = null;
         }
-    }
+    };
     this.focusableBox = this.element.parentNode;
 
-    this.addEventListener("mousedown", function (event) {
-        var inDrawing = Dom.findUpward(event.originalTarget, function (node) {
-
+    this.addEventListener("mousedown", function(event) {
+        var inDrawing = Dom.findUpward(event.originalTarget, function(node) {
             return (node == thiz.svg);
         });
         if (!inDrawing) {
             thiz.clearSelection();
             thiz.selectNone();
         }
-
     }, false);
 
-    this.addEventListener("mouseup", function (event) {
+    this.addEventListener("mouseup", function(event) {
         if (thiz.duplicateMode) {
             thiz.mouseUp = true;
             thiz.duplicateMode = null;
-            if (this.controllerHeld && this.currentController
-                    && this.currentController.markAsMoving) thiz.finishMoving(event);
+            if (this.controllerHeld && this.currentController &&
+                    this.currentController.markAsMoving) thiz.finishMoving(event);
         }
     }, false);
 
@@ -84,9 +82,9 @@ function Canvas(element, options, containerScrollPane) {
 
     // FIXME: this will not be hard-coded
     this.width = this.hasAttribute("width") ? parseInt(this
-            .getAttribute("width"), 10) : this.element.offsetWidth;
+        .getAttribute("width"), 10) : this.element.offsetWidth;
     this.height = this.hasAttribute("height") ? parseInt(this
-            .getAttribute("height"), 10) : this.element.offsetHeight;
+        .getAttribute("height"), 10) : this.element.offsetHeight;
     this.element.appendChild(this.svg);
 
     this.topGroup = document.createElementNS(PencilNamespaces.svg, "svg:g");
@@ -128,7 +126,7 @@ function Canvas(element, options, containerScrollPane) {
 
     // background image
     this.backgroundImage = document.createElementNS(PencilNamespaces.svg,
-            "svg:image");
+        "svg:image");
     this.backgroundImage.setAttribute("x", "0");
     this.backgroundImage.setAttribute("y", "0");
     this.bgLayer.appendChild(this.backgroundImage);
@@ -151,24 +149,24 @@ function Canvas(element, options, containerScrollPane) {
     // create the control layer
     this.controlLayer = document.createElementNS(PencilNamespaces.svg, "svg:g");
     this.controlLayer.setAttributeNS(PencilNamespaces.p, "p:type",
-            "ControlLayer");
+        "ControlLayer");
 
     this.topGroup.appendChild(this.controlLayer);
 
     this.selectionContainer = document.createElementNS(PencilNamespaces.svg,
-            "svg:g");
+        "svg:g");
     this.selectionContainer.setAttribute("id", "selectionContainer");
     this.installControlSVGElement(this.selectionContainer);
 
     this.rangeBoundRect = document.createElementNS(PencilNamespaces.svg,
-            "svg:rect");
+        "svg:rect");
     this.installControlSVGElement(this.rangeBoundRect);
     Svg.setX(this.rangeBoundRect, 0.5);
     Svg.setY(this.rangeBoundRect, 0.5);
     Svg.setWidth(this.rangeBoundRect, 100);
     Svg.setHeight(this.rangeBoundRect, 100);
     this.rangeBoundRect.setAttributeNS(PencilNamespaces.p, "p:type",
-            "RangeBound");
+        "RangeBound");
 
     this.snappingHelper = new SnappingHelper(this);
 
@@ -177,21 +175,21 @@ function Canvas(element, options, containerScrollPane) {
     this.onScreenEditors = [];
 
     // register event handler
-    this.svg.addEventListener("click", function (event) {
+    this.svg.addEventListener("click", function(event) {
         thiz.handleClick(event);
     }, false);
-    (containerScrollPane || this.svg).addEventListener("mousedown", function (event) {
+    (containerScrollPane || this.svg).addEventListener("mousedown", function(event) {
         thiz.movementDisabled = Pencil.controller.movementDisabled || event.ctrlKey;
         // document.commandDispatcher.advanceFocus();
         thiz.focus();
         thiz.handleMouseDown(event);
     }, false);
 
-    this.element.addEventListener("mousewheel", function (event) {
+    this.element.addEventListener("mousewheel", function(event) {
         thiz.focus();
         thiz.handleMouseWheel(event);
     }, false);
-    this.svg.ownerDocument.addEventListener("mouseup", function (event) {
+    this.svg.ownerDocument.addEventListener("mouseup", function(event) {
         if (thiz.autoScrollTimout) {
             thiz.stopAutoScrollFunction();
         }
@@ -201,7 +199,7 @@ function Canvas(element, options, containerScrollPane) {
         }
         thiz.handleMouseUp(event);
     }, false);
-    this.svg.ownerDocument.addEventListener("mousemove", function (event) {
+    this.svg.ownerDocument.addEventListener("mousemove", function(event) {
         if (thiz.autoScrollTimout) {
             thiz.stopAutoScrollFunction();
         }
@@ -216,11 +214,11 @@ function Canvas(element, options, containerScrollPane) {
         thiz.handleMouseMove(event);
     }, false);
 
-    this.svg.addEventListener("mousemove", function (event) {
+    this.svg.addEventListener("mousemove", function(event) {
         thiz.lastMouse = {x: event.offsetX / thiz.zoom, y: event.offsetY / thiz.zoom};
-    }.bind(this), false);
+    }, false);
 
-    this.focusableBox.addEventListener("keydown", function (event) {
+    this.focusableBox.addEventListener("keydown", function(event) {
         thiz.handleKeyPress(event);
     }, false);
 
@@ -260,7 +258,7 @@ function Canvas(element, options, containerScrollPane) {
     //     }
     // }, false);
 
-    this.svg.ownerDocument.addEventListener("keydown", function (event) {
+    this.svg.ownerDocument.addEventListener("keydown", function(event) {
         if (event.keyCode == DOM_VK_SPACE && thiz.spaceHeld == false) {
             thiz.spaceHeld = true;
             thiz._lastPX = thiz._currentPX;
@@ -270,23 +268,22 @@ function Canvas(element, options, containerScrollPane) {
             Dom.addClass(thiz, "PanDown");
         }
     }, false);
-    this.svg.ownerDocument.addEventListener("keyup", function (event) {
+    this.svg.ownerDocument.addEventListener("keyup", function(event) {
         if (event.keyCode == DOM_VK_SPACE && thiz.spaceHeld == true) {
             thiz.spaceHeld = false;
             Dom.removeClass(thiz, "PanDown");
         }
-
     }, false);
 
-    this.propertyMenuItem.addEventListener("command", function (event) {
+    this.propertyMenuItem.addEventListener("command", function(event) {
         // thiz.handlePropertyMenuItemCommand(event);
     }, false);
 
-    this.element.addEventListener("contextmenu", function (event) {
+    this.element.addEventListener("contextmenu", function(event) {
         thiz.handleContextMenuShow(event);
     }, false);
 
-    this.svg.addEventListener("dblclick", function (event) {
+    this.svg.addEventListener("dblclick", function(event) {
         stencilDebug("pCanvas, dblclick");
         thiz.handleDblclick(event);
     }, true);
@@ -331,18 +328,18 @@ function Canvas(element, options, containerScrollPane) {
     this.element.appendChild(this.dragOverlay);
     Dom.addClass(this.dragOverlay, "DragOverlay");
 
-    this.focusableBox.addEventListener("focus", function (event) {
+    this.focusableBox.addEventListener("focus", function(event) {
         Canvas.activeCanvas = thiz;
         Dom.cancelEvent(event);
     }, true);
 
     this.setupEventHandlers();
-    window.globalEventBus.listen("config-change", function (data) {
+    window.globalEventBus.listen("config-change", function(data) {
         if (["grid.enabled", "edit.gridSize", "edit.gridStyle"].indexOf(data.name) >= 0) {
             CanvasImpl.setupGrid.apply(this);
         }
     }.bind(this));
-    window.globalEventBus.listen("doc-options-change", function (data) {
+    window.globalEventBus.listen("doc-options-change", function(data) {
         CanvasImpl.drawMargin.apply(this);
         this.snappingHelper.rebuildSnappingGuide();
     }.bind(this));
@@ -353,7 +350,7 @@ function Canvas(element, options, containerScrollPane) {
     this.resizeInfoLabel = this.element.ownerDocument.createElement("span");
     this.resizer.appendChild(this.resizeInfoLabel);
 
-    this.resizer.addEventListener("mousedown", function (event) {
+    this.resizer.addEventListener("mousedown", function(event) {
         event.preventDefault();
         if (this.element.hasAttribute("resizing")) {
             this.resizing = true;
@@ -374,22 +371,22 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 };
 
 Object.defineProperty(Canvas.prototype, "ownerDocument", {
-    get: function () {
+    get: function() {
         return this.element.ownerDocument;
     }
 });
 
-Canvas.prototype.createElementByName = function (name) {
+Canvas.prototype.createElementByName = function(name) {
     return this.element.ownerDocument.createElement("span");
 };
-Canvas.prototype.__delegate = function () {
+Canvas.prototype.__delegate = function() {
     for (var i = 0; i < arguments.length; i ++) {
         this.__delegateOne(arguments[i]);
     }
 };
-Canvas.prototype.__delegateOne = function (name) {
+Canvas.prototype.__delegateOne = function(name) {
     var thiz = this;
-    this[name] = function () {
+    this[name] = function() {
         var f = thiz.element[name];
         var args = [];
         for (var i = 0; i < arguments.length; i ++) {
@@ -399,17 +396,26 @@ Canvas.prototype.__delegateOne = function (name) {
     };
 };
 
-Canvas.prototype.setupEventHandlers = function () {
+Canvas.prototype.setupEventHandlers = function() {
     var thiz = this;
-    Dom.registerEvent(this.element, "dragenter", function (event) { thiz.__dragenter(event); }, false);
-    Dom.registerEvent(this.dragOverlay, "dragleave", function (event) { thiz.__dragleave(event); }, false);
-    Dom.registerEvent(this.element, "dragend", function (event) { thiz.__dragend(event); }, false);
-    Dom.registerEvent(this.dragOverlay, "dragover", function (event) { thiz.__dragover(event); }, false);
-    Dom.registerEvent(this.dragOverlay, "drop", function (event) { thiz.__drop(event); }, false);
+    Dom.registerEvent(this.element, "dragenter", function(event) {
+        thiz.__dragenter(event);
+    }, false);
+    Dom.registerEvent(this.dragOverlay, "dragleave", function(event) {
+        thiz.__dragleave(event);
+    }, false);
+    Dom.registerEvent(this.element, "dragend", function(event) {
+        thiz.__dragend(event);
+    }, false);
+    Dom.registerEvent(this.dragOverlay, "dragover", function(event) {
+        thiz.__dragover(event);
+    }, false);
+    Dom.registerEvent(this.dragOverlay, "drop", function(event) {
+        thiz.__drop(event);
+    }, false);
 };
 
-Canvas.prototype.getEventLocation = function (event, withoutZoom) {
-
+Canvas.prototype.getEventLocation = function(event, withoutZoom) {
     var rect = this.svg.parentNode.getBoundingClientRect();
     var x = Math.round(event.clientX - rect.left);
     var y = Math.round(event.clientY - rect.top);
@@ -420,57 +426,47 @@ Canvas.prototype.getEventLocation = function (event, withoutZoom) {
     }
 
     return {
-        x : x,
-        y : y
+        x: x,
+        y: y
     };
-
 };
-Canvas.prototype.addToSelection = function (target) {
-
+Canvas.prototype.addToSelection = function(target) {
     var rect = document.createElementNS(PencilNamespaces.svg, "svg:rect");
     this.selectionContainer.appendChild(rect);
     rect._target = target;
 
     this._invalidateOneSelection(rect);
-
 };
-Canvas.prototype._invalidateOneSelection = function (rect) {
-
+Canvas.prototype._invalidateOneSelection = function(rect) {
     var bbox = rect._target.getBoundingRect();
     Svg.setX(rect, Math.round(bbox.x));
     Svg.setY(rect, Math.round(bbox.y));
     Svg.setWidth(rect, Math.round(bbox.width));
     Svg.setHeight(rect, Math.round(bbox.height));
-
 };
-Canvas.prototype._sayTargetChanged = function () {
-
+Canvas.prototype._sayTargetChanged = function() {
     Dom.emitEvent("p:TargetChanged", this.element, {
-        canvas : this
+        canvas: this
     });
-
 };
-Canvas.prototype.getSelectedTargets = function () {
-
+Canvas.prototype.getSelectedTargets = function() {
     var targets = [];
     for (var i = 0; i < this.selectionContainer.childNodes.length; i++) {
         var rect = this.selectionContainer.childNodes[i];
-        if (rect._target)
+        if (rect._target) {
             targets.push(rect._target);
+        }
     }
 
     return targets;
-
 };
-Canvas.prototype.clearSelection = function () {
+Canvas.prototype.clearSelection = function() {
     while (this.selectionContainer.hasChildNodes()) {
         var child = this.selectionContainer.firstChild;
         this.selectionContainer.removeChild(child);
     }
-
 };
-Canvas.prototype.selectSibling = function (next) {
-
+Canvas.prototype.selectSibling = function(next) {
     var targets = this.getSelectedTargets();
     var node = null;
 
@@ -492,27 +488,26 @@ Canvas.prototype.selectSibling = function (next) {
                 sibling = this.drawingLayer.lastChild;
             }
         }
-
     } else {
         sibling = this.drawingLayer.firstChild;
     }
 
-    if (!sibling)
+    if (!sibling) {
         return;
+    }
 
     this.selectShape(sibling);
-
 };
-Canvas.prototype.invalidateAll = function (callback) {
+Canvas.prototype.invalidateAll = function(callback) {
     if (this.element.clientWidth <= 0) {
-        setTimeout(function () {
+        setTimeout(function() {
             this.invalidateAll(callback);
         }.bind(this), 10);
         return;
     }
 
     try {
-        Dom.workOn(".//svg:g[@p:type='Shape']", this.drawingLayer, function (node) {
+        Dom.workOn(".//svg:g[@p:type='Shape']", this.drawingLayer, function(node) {
             try {
                 var controller = this.createControllerFor(node);
                 if (controller && controller.validateAll) controller.validateAll();
@@ -524,13 +519,13 @@ Canvas.prototype.invalidateAll = function (callback) {
         if (callback) callback();
     }
 };
-Canvas.prototype.selectAll = function () {
-
+Canvas.prototype.selectAll = function() {
     this.clearSelection();
     var thiz = this;
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
-        if (thiz.isShapeLocked(node))
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+        if (thiz.isShapeLocked(node)) {
             return;
+        }
         try {
             var controller = thiz.createControllerFor(node);
             thiz.addToSelection(controller);
@@ -554,10 +549,8 @@ Canvas.prototype.selectAll = function () {
 
     this._attachEditors(this.currentController);
     this._sayTargetChanged();
-
 };
-Canvas.prototype.removeFromSelection = function (target) {
-
+Canvas.prototype.removeFromSelection = function(target) {
     var foundRect = null;
     for (var i = 0; i < this.selectionContainer.childNodes.length; i++) {
         var rect = this.selectionContainer.childNodes[i];
@@ -566,45 +559,39 @@ Canvas.prototype.removeFromSelection = function (target) {
             break;
         }
     }
-    if (foundRect)
+    if (foundRect) {
         this.selectionContainer.removeChild(foundRect);
-
+    }
 };
-Canvas.prototype.insertObject = function (obj) {
-
+Canvas.prototype.insertObject = function(obj) {
     this.drawingLayer.appendChild(obj);
-
 };
-Canvas.prototype.installControlSVGElement = function (obj) {
-
+Canvas.prototype.installControlSVGElement = function(obj) {
     this.controlLayer.appendChild(obj);
-
 };
-Canvas.prototype.zoomTo = function (factor) {
-
+Canvas.prototype.zoomTo = function(factor) {
     this.zoom = factor;
-    this.drawingLayer.setAttribute("transform", "scale("
-            + [ this.zoom, this.zoom ] + ")");
+    this.drawingLayer.setAttribute("transform", "scale(" +
+            [this.zoom, this.zoom] + ")");
     this.svg.setAttribute("width", Math.ceil(this.width * this.zoom));
     this.svg.setAttribute("height", Math.ceil(this.height * this.zoom));
-    this.backgroundImage.setAttribute("transform", "scale("
-            + [ this.zoom, this.zoom ] + ")");
+    this.backgroundImage.setAttribute("transform", "scale(" +
+            [this.zoom, this.zoom] + ")");
     CanvasImpl.setupGrid.apply(this);
 
     this.invalidateEditors();
 
     Dom.emitEvent("p:SizeChanged", this.element, {
-        canvas : this
+        canvas: this
     });
     Dom.emitEvent("p:ZoomChanged", this.element, {
-        canvas : this
+        canvas: this
     });
-
 };
-Canvas.prototype.getZoomedGeo = function (target) {
-
-    if (!target)
+Canvas.prototype.getZoomedGeo = function(target) {
+    if (!target) {
         return null;
+    }
     var geo = target.getGeometry();
     geo = geo.clone(this.svg);
     geo.ctm.e *= this.zoom;
@@ -618,62 +605,49 @@ Canvas.prototype.getZoomedGeo = function (target) {
     }
 
     return geo;
-
 };
-Canvas.prototype.getSize = function () {
-
+Canvas.prototype.getSize = function() {
     return {
-        width : parseInt(this.svg.getAttribute("width"), 10),
-        height : parseInt(this.svg.getAttribute("height"), 10),
+        width: parseInt(this.svg.getAttribute("width"), 10),
+        height: parseInt(this.svg.getAttribute("height"), 10)
     };
-
 };
-Canvas.prototype.getZoomedRect = function (rect) {
-
+Canvas.prototype.getZoomedRect = function(rect) {
     rect.x *= this.zoom;
     rect.y *= this.zoom;
     rect.width *= this.zoom;
     rect.height *= this.zoom;
 
     return rect;
-
 };
-Canvas.prototype.setZoomedGeo = function (target, geo, setter) {
-
+Canvas.prototype.setZoomedGeo = function(target, geo, setter) {
     geo = geo.clone(this.svg);
     geo.ctm.e /= this.zoom;
     geo.ctm.f /= this.zoom;
     geo.dim.w /= this.zoom;
     geo.dim.h /= this.zoom;
 
-    this.run(function () {
+    this.run(function() {
         target.setGeometry(geo);
     }, this, Util.getMessage("action.canvas.zoom"));
 
     Dom.emitEvent("p:ShapeGeometryModified", this.element, {
-        setter : setter ? setter : null
+        setter: setter ? setter : null
     });
-
 };
-Canvas.prototype.redraw = function () {
-
+Canvas.prototype.redraw = function() {
     this.drawingLayer.ownerSVGElement.forceRedraw();
-
 };
-Canvas.prototype.getType = function (svg) {
-
+Canvas.prototype.getType = function(svg) {
     return svg.getAttributeNS(PencilNamespaces.p, "def");
-
 };
-Canvas.prototype.insertShape = function (shapeDef, bound, overridingValueMap) {
-
+Canvas.prototype.insertShape = function(shapeDef, bound, overridingValueMap) {
     this.run(this.insertShapeImpl_, this, Util.getMessage(
-            "action.create.shape", shapeDef.displayName), [ shapeDef,
-            bound ? bound : null,
-            overridingValueMap ? overridingValueMap : null ]);
-
+        "action.create.shape", shapeDef.displayName), [shapeDef,
+        bound ? bound : null,
+        overridingValueMap ? overridingValueMap : null]);
 };
-Canvas.prototype.invalidateShapeContent = function (shape, shapeDef) {
+Canvas.prototype.invalidateShapeContent = function(shape, shapeDef) {
     var count = shape.childNodes.length;
     for (var i = count - 1; i >= 0; i --) {
         var child = shape.childNodes[i];
@@ -682,15 +656,16 @@ Canvas.prototype.invalidateShapeContent = function (shape, shapeDef) {
     }
     for (var i = 0; i < shapeDef.contentNode.childNodes.length; i++) {
         shape.appendChild(this.ownerDocument.importNode(
-                shapeDef.contentNode.childNodes[i], true));
+            shapeDef.contentNode.childNodes[i], true));
     }
 
     // generate the ids
-    Dom.workOn(".//*[@p:name]", shape, function (node) {
+    Dom.workOn(".//*[@p:name]", shape, function(node) {
         var name = node.getAttributeNS(PencilNamespaces.p, "name");
         var oldId = node.getAttribute("id");
-        if (oldId)
+        if (oldId) {
             return;
+        }
 
         var uuid = Util.newUUID();
         node.setAttribute("id", uuid);
@@ -701,9 +676,8 @@ Canvas.prototype.invalidateShapeContent = function (shape, shapeDef) {
 
     Dom.renewId(shape);
 };
-Canvas.prototype.insertShapeImpl_ = function (shapeDef, bound,
-        overridingValueMap) {
-
+Canvas.prototype.insertShapeImpl_ = function(shapeDef, bound,
+    overridingValueMap) {
     // instantiate the shape using the shapedef
     var shape = this.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
     shape.setAttributeNS(PencilNamespaces.p, "p:type", "Shape");
@@ -712,11 +686,11 @@ Canvas.prototype.insertShapeImpl_ = function (shapeDef, bound,
 
     if (overridingValueMap && overridingValueMap._shortcut) {
         shape.setAttributeNS(PencilNamespaces.p, "p:sc",
-                overridingValueMap._shortcut.displayName);
+            overridingValueMap._shortcut.displayName);
     }
 
     shape.appendChild(this.ownerDocument.createElementNS(PencilNamespaces.p,
-            "p:metadata"));
+        "p:metadata"));
 
     this.invalidateShapeContent(shape, shapeDef);
 
@@ -731,16 +705,14 @@ Canvas.prototype.insertShapeImpl_ = function (shapeDef, bound,
     if (bound) {
         var bbox = controller.getBoundingRect();
         controller.moveBy((bound.x - Math.round(bbox.width / (2 * this.zoom))),
-                (bound.y - Math.round(bbox.height / (2 * this.zoom))), true);
+            (bound.y - Math.round(bbox.height / (2 * this.zoom))), true);
         controller.normalizePositionToGrid();
     }
     this.selectShape(shape);
     this.snappingHelper.updateSnappingGuide(this.currentController);
     DockingManager.enableDocking(this.currentController);
-
 };
-Canvas.prototype.selectShape = function (shape) {
-
+Canvas.prototype.selectShape = function(shape) {
     if (this.isShapeLocked(shape)) return;
     var controller = this.createControllerFor(shape);
 
@@ -759,14 +731,13 @@ Canvas.prototype.selectShape = function (shape) {
     this._attachEditors(controller);
 
     this._sayTargetChanged();
-
 };
-Canvas.prototype.selectMultiple = function (shapes) {
-
+Canvas.prototype.selectMultiple = function(shapes) {
     this.clearSelection();
     for (i in shapes) {
-        if (this.isShapeLocked(shapes[i]))
+        if (this.isShapeLocked(shapes[i])) {
             continue;
+        }
         this.addToSelection(this.createControllerFor(shapes[i]));
     }
     this.setAttributeNS(PencilNamespaces.p, "p:selection", shapes.length);
@@ -788,10 +759,8 @@ Canvas.prototype.selectMultiple = function (shapes) {
     this._attachEditors(controller);
 
     this._sayTargetChanged();
-
 };
-Canvas.prototype.selectNone = function () {
-
+Canvas.prototype.selectNone = function() {
     this.clearSelection();
     this._detachEditors();
     this.currentController = null;
@@ -801,10 +770,8 @@ Canvas.prototype.selectNone = function () {
 
     this.focus();
     this._sayTargetChanged();
-
 };
-Canvas.prototype.createControllerFor = function (top) {
-
+Canvas.prototype.createControllerFor = function(top) {
     var type = top.getAttributeNS(PencilNamespaces.p, "type");
     if (type == "Shape") {
         try {
@@ -815,40 +782,42 @@ Canvas.prototype.createControllerFor = function (top) {
         return new Group(this, top);
     }
     return new Null(this, top);
-
 };
-Canvas.prototype._detachEditors = function () {
-    for ( var editor in this.onScreenEditors)
+Canvas.prototype._detachEditors = function() {
+    for ( var editor in this.onScreenEditors) {
         this.onScreenEditors[editor].dettach();
-    if (this.propertyPageEditor && this.propertyPageEditor.dettach)
+    }
+    if (this.propertyPageEditor && this.propertyPageEditor.dettach) {
         this.propertyPageEditor.dettach();
-    if (this.contextMenuEditor && this.contextMenuEditor.dettach)
+    }
+    if (this.contextMenuEditor && this.contextMenuEditor.dettach) {
         this.contextMenuEditor.dettach();
-
+    }
 };
-Canvas.prototype.passivateEditors = function () {
-
-    for (editor in this.onScreenEditors)
+Canvas.prototype.passivateEditors = function() {
+    for (editor in this.onScreenEditors) {
         this.onScreenEditors[editor].passivated = true;
-    if (this.propertyPageEditor)
+    }
+    if (this.propertyPageEditor) {
         this.propertyPageEditor.passivated = true;
-    if (this.contextMenuEditor)
+    }
+    if (this.contextMenuEditor) {
         this.contextMenuEditor.passivated = true;
-
+    }
 };
-Canvas.prototype._attachEditors = function (controller) {
-    for (editor in this.onScreenEditors)
+Canvas.prototype._attachEditors = function(controller) {
+    for (editor in this.onScreenEditors) {
         this.onScreenEditors[editor].attach(controller);
-    if (this.propertyPageEditor && this.propertyPageEditor.attach)
+    }
+    if (this.propertyPageEditor && this.propertyPageEditor.attach) {
         this.propertyPageEditor.attach(controller);
+    }
     // if (this.contextMenuEditor && this.contextMenuEditor.attach)
     //     this.contextMenuEditor.attach(controller);
-
 };
-Canvas.prototype.finishMoving = function (event) {
-
-    if (this.controllerHeld && this.currentController
-            && this.currentController.markAsMoving) {
+Canvas.prototype.finishMoving = function(event) {
+    if (this.controllerHeld && this.currentController &&
+            this.currentController.markAsMoving) {
         this.currentController.markAsMoving(false);
         this.currentController.clearPositionSnapshot();
         this.invalidateEditors();
@@ -857,14 +826,14 @@ Canvas.prototype.finishMoving = function (event) {
         this.snappingHelper.clearSnappingGuide();
 
         Dom.emitEvent("p:ShapeGeometryModified", this.element, {
-            setter : null
+            setter: null
         });
 
         if (this.hasMoved) {
             // just to save state
-            this.run(function () {
+            this.run(function() {
             }, this, Util.getMessage("action.shape.finish.moving",
-                    this.currentController.getName()));
+                this.currentController.getName()));
         }
     }
 
@@ -873,10 +842,10 @@ Canvas.prototype.finishMoving = function (event) {
 
     if (Config.get("quick.editting", false) == true) {
         Dom.emitEvent("p:ShapeInserted", this.currentController.svg, {
-            controller : this.currentController,
-            origTarget : event.originalTarget,
-            clientX : event.clientX,
-            clientY : event.clientY
+            controller: this.currentController,
+            origTarget: event.originalTarget,
+            clientX: event.clientX,
+            clientY: event.clientY
         });
     }
 };
@@ -900,14 +869,14 @@ Canvas.prototype.handleMouseWheel = function(event) {
         this._scrollPane.scrollLeft = drawingX * this.zoom + padding - dx;
         this._scrollPane.scrollTop = drawingY * this.zoom + padding - dy;
     }
-}
+};
 
 Canvas.prototype.handleScrollPane = function(event) {
     if (!this._scrollPane) return;
     var thiz = this;
     var scrollBarSize = 15;
     var scrollValue = 20;
-    var loc = { x: event.clientX, y: event.clientY };
+    var loc = {x: event.clientX, y: event.clientY};
     var pane = thiz._scrollPane.getBoundingClientRect();
     var fun = null;
     var dx = scrollValue / thiz.zoom;
@@ -921,9 +890,9 @@ Canvas.prototype.handleScrollPane = function(event) {
             }
             thiz._scrollPane.scrollLeft += scrollValue;
             if (thiz.currentController != null) thiz.currentController.moveBy(dx, 0, false, true);
-        }
+        };
     }
-    if (loc.x < pane.left  && loc.x > pane.left - scrollBarSize) {
+    if (loc.x < pane.left && loc.x > pane.left - scrollBarSize) {
         fun = function() {
             if (thiz._scrollPane.scrollLeft <= 0) {
                 thiz.stopAutoScrollFunction();
@@ -931,9 +900,9 @@ Canvas.prototype.handleScrollPane = function(event) {
             }
             thiz._scrollPane.scrollLeft -= scrollValue;
             if (thiz.currentController != null) thiz.currentController.moveBy(-dx, 0, false, true);
-        }
+        };
     }
-    if (loc.y < pane.top  && loc.y > pane.top - scrollBarSize) {
+    if (loc.y < pane.top && loc.y > pane.top - scrollBarSize) {
         fun = function() {
             if (thiz._scrollPane.scrollTop <= 0) {
                 thiz.stopAutoScrollFunction();
@@ -941,7 +910,7 @@ Canvas.prototype.handleScrollPane = function(event) {
             }
             thiz._scrollPane.scrollTop -= scrollValue;
             if (thiz.currentController != null) thiz.currentController.moveBy(0, -dy, false, true);
-        }
+        };
     }
     if (loc.y > pane.bottom - scrollBarSize && loc.y < pane.bottom) {
         fun = function() {
@@ -952,14 +921,14 @@ Canvas.prototype.handleScrollPane = function(event) {
             }
             thiz._scrollPane.scrollTop += scrollValue;
             if (thiz.currentController != null) thiz.currentController.moveBy(0, dy, false, true);
-        }
+        };
     }
     if (fun != null) {
         thiz.startAutoScrollFunction(fun);
     }
-}
+};
 
-Canvas.prototype.handleMouseUp = function (event) {
+Canvas.prototype.handleMouseUp = function(event) {
     if (this.resizing) {
         this.commitResize(event);
         this.isSelectingRange = false;
@@ -967,21 +936,22 @@ Canvas.prototype.handleMouseUp = function (event) {
     }
 
     if (this.reClick && !this.hasMoved) {
-        for (editor in this.onScreenEditors)
+        for (editor in this.onScreenEditors) {
             this.onScreenEditors[editor].nextTool();
+        }
     }
-    if (this.controllerHeld && this.currentController
-            && this.currentController.markAsMoving) {
+    if (this.controllerHeld && this.currentController &&
+            this.currentController.markAsMoving) {
         this.currentController.markAsMoving(false);
         this.currentController.clearPositionSnapshot();
         this.invalidateEditors();
 
         if (this.hasMoved) {
             Dom.emitEvent("p:ShapeGeometryModified", this.element, {
-                setter : null
+                setter: null
             });
         }
-        
+
         Connector.prepareInvalidation(this);
 
         if (this.currentController.invalidateOutboundConnections) {
@@ -990,12 +960,12 @@ Canvas.prototype.handleMouseUp = function (event) {
         if (this.currentController.invalidateInboundConnections) {
             this.currentController.invalidateInboundConnections();
         }
-        
+
         Connector.finishInvalidation();
     }
     if (this.controllerHeld && this.hasMoved) {
         // just to save state
-        this.run(function () {
+        this.run(function() {
         }, this, Util.getMessage("action.move.shape"));
     }
 
@@ -1005,7 +975,7 @@ Canvas.prototype.handleMouseUp = function (event) {
     this.hasMoved = true;
 
     this.controllerHeld = false;
-    
+
     if (this.isSelectingRange) {
         this.setRangeBoundVisibility(false);
         this.isSelectingRange = false;
@@ -1014,9 +984,10 @@ Canvas.prototype.handleMouseUp = function (event) {
             this.clearSelection();
         }
         var thiz = this;
-        Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
-            if (thiz.isShapeLocked(node))
+        Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+            if (thiz.isShapeLocked(node)) {
                 return;
+            }
             var controller = thiz.createControllerFor(node);
             var bbox = controller.getBoundingRect();
 
@@ -1070,7 +1041,7 @@ Canvas.prototype.handleMouseUp = function (event) {
             if (this.currentController.constructor == TargetSet) {
                 for ( var t in this.currentController.targets) {
                     this.snappingHelper
-                            .updateSnappingGuide(this.currentController.targets[t]);
+                        .updateSnappingGuide(this.currentController.targets[t]);
                 }
             } else {
                 this.snappingHelper.updateSnappingGuide(this.currentController);
@@ -1084,22 +1055,22 @@ Canvas.prototype.handleMouseUp = function (event) {
         //             && node.localName == "pcanvas";
         // });
 
-        var canvasElement = Dom.findTop(event.originalTarget, function (node) {
+        var canvasElement = Dom.findTop(event.originalTarget, function(node) {
             return node.getAttribute && node.getAttribute("pencil-canvas") == "true";
-                });
+        });
 
         if (canvasElement && canvasElement == this.element && this.currentController) {
-            if (this.isFormatPainterAvailable()
-                    && Pencil._painterSourceTarget.svg != this.currentController.svg) {
+            if (this.isFormatPainterAvailable() &&
+                    Pencil._painterSourceTarget.svg != this.currentController.svg) {
                 var currentTargetProperties = this.currentController
-                        .getProperties();
+                    .getProperties();
                 for (var i = 0; i < this.painterPropertyMap.length; i++) {
                     var name = this.painterPropertyMap[i];
                     var p1 = Pencil._painterSourceProperties[name];
                     var p2 = currentTargetProperties[name];
                     if (p1 && p2) {
                         this.currentController.setProperty(name,
-                                Pencil._painterSourceProperties[name]);
+                            Pencil._painterSourceProperties[name]);
                         this.invalidateEditors();
                         this._sayTargetChanged();
                     }
@@ -1111,52 +1082,49 @@ Canvas.prototype.handleMouseUp = function (event) {
     } catch (e) {
         Console.dumpError(e);
     }
-
 };
-Canvas.prototype.handleClick = function (event) {
-
+Canvas.prototype.handleClick = function(event) {
     // is it from an html:a?
     var a = Dom
-            .findUpward(
-                    event.originalTarget,
-                    function (node) {
-                        return (node && node.nodeType == 1
-                                && node.localName.toLowerCase() == "a" && node.namespaceURI == PencilNamespaces.html);
-                    });
+        .findUpward(
+            event.originalTarget,
+            function(node) {
+                return (node && node.nodeType == 1 &&
+                                node.localName.toLowerCase() == "a" && node.namespaceURI == PencilNamespaces.html);
+            });
 
-    if (!a)
+    if (!a) {
         return;
+    }
 
     // is this html:a inside an svg:foreignObject?
     var foreignObject = Dom
-            .findUpward(
-                    a,
-                    function (node) {
-                        return (node && node.nodeType == 1
-                                && node.localName == "foreignObject" && node.namespaceURI == PencilNamespaces.svg);
-                    });
+        .findUpward(
+            a,
+            function(node) {
+                return (node && node.nodeType == 1 &&
+                                node.localName == "foreignObject" && node.namespaceURI == PencilNamespaces.svg);
+            });
 
     // ok, it is then prevent it
     if (foreignObject) {
         event.preventDefault();
         event.cancelBubble = true;
     }
-
 };
-Canvas.prototype.commitResize = function (event) {
+Canvas.prototype.commitResize = function(event) {
     this.resizing = false;
     if (this.resizeInfo && this.resizeInfo.lastSize) {
-        Pencil.controller.setActiveCanvasSize(this.resizeInfo.lastSize.w, this.resizeInfo.lastSize.h)
+        Pencil.controller.setActiveCanvasSize(this.resizeInfo.lastSize.w, this.resizeInfo.lastSize.h);
     }
     this.resizeInfo = null;
     this.element.removeAttribute("resizing");
 };
-Canvas.prototype.handleResizeMouseMove = function (event) {
+Canvas.prototype.handleResizeMouseMove = function(event) {
     if (this.resizing) {
-
         var dw = Math.round((event.clientX - this.resizeInfo.ox) / this.zoom);
         var dh = Math.round((event.clientY - this.resizeInfo.oy) / this.zoom);
-        
+
         if (event.shiftKey) dw = 0;
 
         var newW = this.resizeInfo.ow + dw;
@@ -1191,10 +1159,10 @@ Canvas.prototype.handleResizeMouseMove = function (event) {
     };
 
     var thiz = this;
-    if (event.clientX >= bound.x && event.clientX <= bound.x + bound.width
-        && event.clientY >= bound.y && event.clientY <= bound.y + bound.width) {
+    if (event.clientX >= bound.x && event.clientX <= bound.x + bound.width &&
+        event.clientY >= bound.y && event.clientY <= bound.y + bound.width) {
         if (!this.showResizerTimeout) {
-            this.showResizerTimeout = window.setTimeout(function () {
+            this.showResizerTimeout = window.setTimeout(function() {
                 thiz.showResizerTimeout = null;
                 thiz.element.setAttribute("resizing", "true");
                 thiz.resizeInfoLabel.innerHTML = thiz.width + " x " + thiz.height;
@@ -1207,12 +1175,12 @@ Canvas.prototype.handleResizeMouseMove = function (event) {
     }
     return false;
 };
-Canvas.prototype.handleMouseMove = function (event, fake) {
+Canvas.prototype.handleMouseMove = function(event, fake) {
     if (!fake && this.handleResizeMouseMove(event)) return;
 
     try {
         if (this.duplicateMode && !this.mouseUp) {
-            if(this.duplicateFunc) {
+            if (this.duplicateFunc) {
                 this.duplicateFunc();
             }
         }
@@ -1221,10 +1189,10 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
         this._currentPY = event.clientY / this.zoom;
 
         if (this.spaceHeld) {
-            var spanx = this._lastScrollX
-                    + (this._lastPX - Math.round(this._currentPX)) * this.zoom;
-            var spany = this._lastScrollY
-                    + (this._lastPY - Math.round(this._currentPY)) * this.zoom;
+            var spanx = this._lastScrollX +
+                    (this._lastPX - Math.round(this._currentPX)) * this.zoom;
+            var spany = this._lastScrollY +
+                    (this._lastPY - Math.round(this._currentPY)) * this.zoom;
 
             this.parentNode.scrollTop = spany;
             this.parentNode.scrollLeft = spanx;
@@ -1232,10 +1200,10 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
             return;
         }
 
-        if (event.originalTarget
-                && event.originalTarget.nodeName
-                && "menu,menuitem,menuseparator,toolbar"
-                        .indexOf(event.originalTarget.nodeName) == -1) {
+        if (event.originalTarget &&
+                event.originalTarget.nodeName &&
+                "menu,menuitem,menuseparator,toolbar"
+                    .indexOf(event.originalTarget.nodeName) == -1) {
             var rect = this.svg.parentNode.getBoundingClientRect();
             var boxObject = {
                 x: rect.left,
@@ -1246,15 +1214,16 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
             var px = this._currentPX - boxObject.x;
             var py = this._currentPY - boxObject.y;
             // shadow 5
-            if (px >= 0 && px <= boxObject.width - 5 && py >= 0
-                    && py <= boxObject.height - 5) {
+            if (px >= 0 && px <= boxObject.width - 5 && py >= 0 &&
+                    py <= boxObject.height - 5) {
                 // setTimeout(function () { Util.setPointerPosition(px, py); },
                 // 100);
             }
         }
 
-        if (this._button != 0)
+        if (this._button != 0) {
             return;
+        }
 
         if (this.controllerHeld && this.currentController) {
             if (!fake) {
@@ -1264,21 +1233,22 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
                 if (this.movementDisabled) return;
             }
 
-            //avoid accidental move when user is trying to select the object
+            // avoid accidental move when user is trying to select the object
             var msFromClick = event.timeStamp - this._mouseDownAt;
             if (msFromClick < 100) {
                 return;
             }
 
-            if (this.currentController.markAsMoving)
+            if (this.currentController.markAsMoving) {
                 this.currentController.markAsMoving(true);
+            }
             var newX = Math.round(event.clientX / this.zoom);
             var newY = Math.round(event.clientY / this.zoom);
 
             var dx = newX - this.oX;
             var dy = newY - this.oY;
-            
-            //direction ratios
+
+            // direction ratios
             var hdr = event.ctrlKey && Math.abs(dx) < Math.abs(dy) ? 0 : 1;
             var vdr = event.ctrlKey && Math.abs(dx) >= Math.abs(dy) ? 0 : 1;
 
@@ -1300,16 +1270,16 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
             var gridSize = Pencil.getGridSize();
             var snap = null;
             if (Config.get("object.snapping.enabled", true) == true) {
-                snap = this.snappingHelper.findSnapping(accX
-                        && !this.snappingHelper.snappedX, accY
-                        && !this.snappingHelper.snappedY, null, null,
-                        event.shiftKey);
+                snap = this.snappingHelper.findSnapping(accX &&
+                        !this.snappingHelper.snappedX, accY &&
+                        !this.snappingHelper.snappedY, null, null,
+                event.shiftKey);
             }
             if (Config.get("edit.snap.grid", false) == true) {
-                var snapGrid = this.snappingHelper.findSnapping(accX
-                        && !this.snappingHelper.snappedX, accY
-                        && !this.snappingHelper.snappedY, null, gridSize.w / 2,
-                        event.shiftKey, true);
+                var snapGrid = this.snappingHelper.findSnapping(accX &&
+                        !this.snappingHelper.snappedX, accY &&
+                        !this.snappingHelper.snappedY, null, gridSize.w / 2,
+                event.shiftKey, true);
                 if (snap && snapGrid) {
                     if (snap.dx == 0) {
                         snap.dx = snapGrid.dx;
@@ -1324,11 +1294,11 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
             }
             // debug("snap: " + [snap.dx, snap.dy, this.snappedX,
             // this.snappedY]);
-            if (!event.shiftKey
-                    && snap
-                    && ((snap.dx != 0 && !this.snappingHelper.snappedX && accX)
-                            || (snap.dy != 0 && !this.snappingHelper.snappedY && accY)
-                        )) {
+            if (!event.shiftKey &&
+                    snap &&
+                    ((snap.dx != 0 && !this.snappingHelper.snappedX && accX) ||
+                            (snap.dy != 0 && !this.snappingHelper.snappedY && accY)
+                    )) {
                 if (snap.dx != 0 && !this.snappingHelper.snappedX) {
                     this.snappingHelper.snappedX = true;
                     this.snappingHelper.snapX = newX;
@@ -1343,30 +1313,30 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
                 }
                 this.currentController.moveBy(snap.dx * hdr, snap.dy * vdr);
             } else {
-                var unsnapX = event.shiftKey
-                        || (this.snappingHelper.snapX != 0 && (Math
-                                .abs(this.snappingHelper.snapX - newX) > this.snappingHelper.unsnapX));
-                var unsnapY = event.shiftKey
-                        || (this.snappingHelper.snapY != 0 && (Math
-                                .abs(this.snappingHelper.snapY - newY) > this.snappingHelper.unsnapY));
+                var unsnapX = event.shiftKey ||
+                        (this.snappingHelper.snapX != 0 && (Math
+                            .abs(this.snappingHelper.snapX - newX) > this.snappingHelper.unsnapX));
+                var unsnapY = event.shiftKey ||
+                        (this.snappingHelper.snapY != 0 && (Math
+                            .abs(this.snappingHelper.snapY - newY) > this.snappingHelper.unsnapY));
                 // debug("unsnap: " + [unsnapX, unsnapY]);
 
-                if (!this.snappingHelper.snappedX
-                        && !this.snappingHelper.snappedY) {
+                if (!this.snappingHelper.snappedX &&
+                        !this.snappingHelper.snappedY) {
                     this.currentController.moveFromSnapshot(dx * hdr, dy * vdr);
                 } else {
                     if (unsnapX || !this.snappingHelper.snappedX) {
                         this.currentController
-                                .moveFromSnapshot(
-                                        dx * hdr,
-                                        this.snappingHelper.snappedY ? this.currentController._pSnapshot.lastDY * vdr
-                                                : dy * vdr);
+                            .moveFromSnapshot(
+                                dx * hdr,
+                                this.snappingHelper.snappedY ? this.currentController._pSnapshot.lastDY * vdr :
+                                    dy * vdr);
                     }
                     if (unsnapY || !this.snappingHelper.snappedY) {
                         this.currentController
-                                .moveFromSnapshot(
-                                        this.snappingHelper.snappedX ? this.currentController._pSnapshot.lastDX * hdr
-                                                : dx * hdr, dy * vdr);
+                            .moveFromSnapshot(
+                                this.snappingHelper.snappedX ? this.currentController._pSnapshot.lastDX * hdr :
+                                    dx * hdr, dy * vdr);
                         this.snappingHelper.snapY = 0;
                         this.snappingHelper.snappedY = false;
                     }
@@ -1374,7 +1344,7 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
                         this.snappingHelper.snapX = 0;
                         this.snappingHelper.snappedX = false;
                     }
-                    
+
                     if (unsnapX) {
                         this.snappingHelper.clearSnappingGuideX();
                     }
@@ -1400,10 +1370,10 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
             var h = y2 - y1;
 
             this.currentRange = {
-                x : x1,
-                y : y1,
-                width : w,
-                height : h
+                x: x1,
+                y: y1,
+                width: w,
+                height: h
             };
             this.setRangeBoundStart(x1, y1);
             this.setRangeBoundSize(w, h);
@@ -1412,27 +1382,20 @@ Canvas.prototype.handleMouseMove = function (event, fake) {
     } catch (ex) {
         error(ex);
     }
-
 };
-Canvas.prototype.setRangeBoundStart = function (x, y) {
-
+Canvas.prototype.setRangeBoundStart = function(x, y) {
     Svg.setX(this.rangeBoundRect, x + 0.5);
     Svg.setY(this.rangeBoundRect, y + 0.5);
-
 };
-Canvas.prototype.setRangeBoundSize = function (w, h) {
-
+Canvas.prototype.setRangeBoundSize = function(w, h) {
     Svg.setWidth(this.rangeBoundRect, w);
     Svg.setHeight(this.rangeBoundRect, h);
-
 };
-Canvas.prototype.setRangeBoundVisibility = function (visible) {
-
+Canvas.prototype.setRangeBoundVisibility = function(visible) {
     this.rangeBoundRect.setAttributeNS(PencilNamespaces.p, "p:on",
-            visible ? "true" : "false");
-
+        visible ? "true" : "false");
 };
-Canvas.prototype.handleKeyPress = function (event) {
+Canvas.prototype.handleKeyPress = function(event) {
     if (this != Pencil.activeCanvas) return;
 
     for (editor in this.onScreenEditors) {
@@ -1443,24 +1406,29 @@ Canvas.prototype.handleKeyPress = function (event) {
             }
         }
     }
-    if (event.keyCode == DOM_VK_UP || event.keyCode == DOM_VK_DOWN
-            || event.keyCode == DOM_VK_LEFT
-            || event.keyCode == DOM_VK_RIGHT) {
+    if (event.keyCode == DOM_VK_UP || event.keyCode == DOM_VK_DOWN ||
+            event.keyCode == DOM_VK_LEFT ||
+            event.keyCode == DOM_VK_RIGHT) {
         event.preventDefault();
-        if (!this.currentController)
+        if (!this.currentController) {
             return;
+        }
 
         var dx = 0;
         var dy = 0;
 
-        if (event.keyCode == DOM_VK_UP)
+        if (event.keyCode == DOM_VK_UP) {
             dy = -1;
-        if (event.keyCode == DOM_VK_DOWN)
+        }
+        if (event.keyCode == DOM_VK_DOWN) {
             dy = 1;
-        if (event.keyCode == DOM_VK_LEFT)
+        }
+        if (event.keyCode == DOM_VK_LEFT) {
             dx = -1;
-        if (event.keyCode == DOM_VK_RIGHT)
+        }
+        if (event.keyCode == DOM_VK_RIGHT) {
             dx = 1;
+        }
 
         var gridSize = Pencil.getGridSize();
         if (event.shiftKey) {
@@ -1471,10 +1439,10 @@ Canvas.prototype.handleKeyPress = function (event) {
             dy *= gridSize.h;
         }
 
-        this.run(function () {
+        this.run(function() {
             // this.currentController.moveBy(dx, dy);
             this.currentController.moveBy(dx, dy, false, true);
-            
+
             Connector.prepareInvalidation(this);
             if (this.currentController.invalidateOutboundConnections) {
                 this.currentController.invalidateOutboundConnections();
@@ -1483,13 +1451,12 @@ Canvas.prototype.handleKeyPress = function (event) {
                 this.currentController.invalidateInboundConnections();
             }
             Connector.finishInvalidation();
-
         }, this, Util.getMessage("action.move.shape"));
 
         if (this.currentController.constructor == TargetSet) {
             for ( var t in this.currentController.targets) {
                 this.snappingHelper
-                        .updateSnappingGuide(this.currentController.targets[t]);
+                    .updateSnappingGuide(this.currentController.targets[t]);
             }
         } else {
             this.snappingHelper.updateSnappingGuide(this.currentController);
@@ -1498,15 +1465,14 @@ Canvas.prototype.handleKeyPress = function (event) {
         this.invalidateEditors();
         event.preventDefault();
         Dom.emitEvent("p:ShapeGeometryModified", this.element, {
-            setter : null
+            setter: null
         });
-
     } else if (event.keyCode == DOM_VK_DELETE) {
         if (this.currentController) {
-            this.run(function () {
+            this.run(function() {
                 this.currentController.deleteTarget();
             }, this, Util.getMessage("action.delete.shape",
-                    this.currentController.getName()));
+                this.currentController.getName()));
             this.currentController = null;
             this._detachEditors();
             this.clearSelection();
@@ -1516,7 +1482,7 @@ Canvas.prototype.handleKeyPress = function (event) {
     } else if (event.keyCode == DOM_VK_F2) {
         if (this.currentController && !event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
             Dom.emitEvent("p:TextEditingRequested", this.element, {
-                controller : this.currentController
+                controller: this.currentController
             });
         }
     } else if (event.keyCode == DOM_VK_TAB) {
@@ -1545,19 +1511,16 @@ Canvas.prototype.handleKeyPress = function (event) {
     //         this.mouseUp = false;
     //     }
     // }
-
 };
-Canvas.prototype.updateContextMenu = function (currentAction, prevAction) {
-
+Canvas.prototype.updateContextMenu = function(currentAction, prevAction) {
     this.undoContextMenu.setAttribute("label", Util
-            .getMessage("menu.undo.label")
-            + currentAction);
+        .getMessage("menu.undo.label") +
+            currentAction);
     this.redoContextMenu.setAttribute("label", Util
-            .getMessage("menu.redo.label")
-            + prevAction);
-
+        .getMessage("menu.redo.label") +
+            prevAction);
 };
-Canvas.prototype.handleContextMenuShow = function (event) {
+Canvas.prototype.handleContextMenuShow = function(event) {
     if (this.currentController) {
         // attach now
         if (this.contextMenuEditor) {
@@ -1565,18 +1528,17 @@ Canvas.prototype.handleContextMenuShow = function (event) {
         }
 
         this.lockingStatus = {
-            controller : this.currentController
+            controller: this.currentController
         };
-
     } else {
-        var top = Dom.findTop(event.originalTarget, function (node) {
-            return node.hasAttributeNS
-                    && node.hasAttributeNS(PencilNamespaces.p, "type");
-                });
+        var top = Dom.findTop(event.originalTarget, function(node) {
+            return node.hasAttributeNS &&
+                    node.hasAttributeNS(PencilNamespaces.p, "type");
+        });
         this.currentController = top;
         if (top && this.isShapeLocked(top)) {
             this.lockingStatus = {
-                node : top
+                node: top
             };
         }
 
@@ -1695,33 +1657,33 @@ Canvas.prototype.handleContextMenuShow = function (event) {
 
 */
 
-Canvas.prototype.buildAttachMenuItem = function () {
-
+Canvas.prototype.buildAttachMenuItem = function() {
     if (this.attachToMenu) {
         this.popup.removeChild(this.attachToMenu);
         this.attachToMenu = null;
     }
-    if (!this.currentController)
+    if (!this.currentController) {
         return;
-    if (this.currentController.supportAttach
-            && this.currentController.supportAttach()) {
+    }
+    if (this.currentController.supportAttach &&
+            this.currentController.supportAttach()) {
         var thiz = this;
         var container = this.currentController.getAttachContainer();
         this.attachToMenu = document.createElementNS(PencilNamespaces.xul,
-                "menu");
+            "menu");
         this.attachToMenu.setAttribute("label", Util
-                .getMessage("canvas.merge.label"));
+            .getMessage("canvas.merge.label"));
         var attachSlots = this.currentController.getAttachSlots();
         if (attachSlots.length == 1) {
             this.attachToMenu = document.createElementNS(PencilNamespaces.xul,
-                    "menuitem");
+                "menuitem");
         }
         var menu = this.popup.insertBefore(this.attachToMenu, document
-                .getAnonymousElementByAttribute(this, "aid",
-                        "addToMyCollections"));
+            .getAnonymousElementByAttribute(this, "aid",
+                "addToMyCollections"));
         if (attachSlots.length > 1) {
             menu.appendChild(document.createElementNS(PencilNamespaces.xul,
-                    "menupopup"));
+                "menupopup"));
         }
         for (var i = 0; i < attachSlots.length; i++) {
             var displayName = attachSlots[i].displayName;
@@ -1731,45 +1693,45 @@ Canvas.prototype.buildAttachMenuItem = function () {
             }
             if (attachSlots.length == 1) {
                 this.attachToMenu.setAttribute("label", Util.getMessage(
-                        "canvas.merge.label.1", displayName));
+                    "canvas.merge.label.1", displayName));
                 this.attachToMenu._container = container;
                 this.attachToMenu._attachSlot = attachSlots[0];
             } else {
                 var item = document.createElementNS(PencilNamespaces.xul,
-                        "menuitem");
+                    "menuitem");
                 menu.firstChild.appendChild(item);
                 item.setAttribute("label", displayName);
                 item._container = container;
                 item._attachSlot = attachSlots[i];
             }
         }
-        this.attachToMenu.addEventListener("command", function (event) {
+        this.attachToMenu.addEventListener("command", function(event) {
             try {
                 var containerNode = Dom.findUpward(event.originalTarget,
-                        function (node) {
-                            return node._container;
-                        });
+                    function(node) {
+                        return node._container;
+                    });
                 var attachSlotNode = Dom.findUpward(event.originalTarget,
-                        function (node) {
-                            return node._attachSlot;
-                        });
-                if (containerNode && containerNode._container && attachSlotNode
-                        && attachSlotNode._attachSlot
-                        && containerNode._container._target) {
+                    function(node) {
+                        return node._attachSlot;
+                    });
+                if (containerNode && containerNode._container && attachSlotNode &&
+                        attachSlotNode._attachSlot &&
+                        containerNode._container._target) {
                     var target = containerNode._container._target;
                     var defId = target.def.id;
                     var name = target.getName ? target.getName() : "";
                     var metaNode = Dom.getSingle("./p:metadata", target.svg);
                     var ctm = target.svg
-                            .getTransformToElement(thiz.drawingLayer);
+                        .getTransformToElement(thiz.drawingLayer);
                     var cctm = containerNode._container.svg
-                            .getTransformToElement(thiz.drawingLayer);
+                        .getTransformToElement(thiz.drawingLayer);
                     // var uuid = Util.newUUID();
                     // target.svg.setAttribute("id", uuid);
                     var uuid = target.svg.getAttribute("id");
                     containerNode._container.setProperty(
-                            attachSlotNode._attachSlot.name, new Attachment(
-                                    defId, uuid, name, metaNode, ctm, cctm));
+                        attachSlotNode._attachSlot.name, new Attachment(
+                            defId, uuid, name, metaNode, ctm, cctm));
                     thiz.selectShape(containerNode._container.svg);
                 }
             } catch (e) {
@@ -1777,34 +1739,33 @@ Canvas.prototype.buildAttachMenuItem = function () {
             }
         }, false);
     }
-
 };
-Canvas.prototype.buildDetachMenuItem = function () {
-
+Canvas.prototype.buildDetachMenuItem = function() {
     if (this.detachFromMenu) {
         this.popup.removeChild(this.detachFromMenu);
         this.detachFromMenu = null;
     }
-    if (!this.currentController)
+    if (!this.currentController) {
         return;
+    }
     if (this.currentController.canDetach && this.currentController.canDetach()) {
         var thiz = this;
         var container = this.currentController;
         this.detachFromMenu = document.createElementNS(PencilNamespaces.xul,
-                "menu");
+            "menu");
         this.detachFromMenu.setAttribute("label", Util
-                .getMessage("canvas.split.label"));
+            .getMessage("canvas.split.label"));
         var attachedSlots = this.currentController.getAttachedSlots();
         if (attachedSlots.length == 1) {
             this.detachFromMenu = document.createElementNS(
-                    PencilNamespaces.xul, "menuitem");
+                PencilNamespaces.xul, "menuitem");
         }
         var menu = this.popup.insertBefore(this.detachFromMenu, document
-                .getAnonymousElementByAttribute(this, "aid",
-                        "addToMyCollections"));
+            .getAnonymousElementByAttribute(this, "aid",
+                "addToMyCollections"));
         if (attachedSlots.length > 1) {
             menu.appendChild(document.createElementNS(PencilNamespaces.xul,
-                    "menupopup"));
+                "menupopup"));
         }
         for (var i = 0; i < attachedSlots.length; i++) {
             var displayName = attachedSlots[i].displayName;
@@ -1814,12 +1775,12 @@ Canvas.prototype.buildDetachMenuItem = function () {
             }
             if (attachedSlots.length == 1) {
                 this.detachFromMenu.setAttribute("label", Util.getMessage(
-                        "canvas.split.label.1", displayName));
+                    "canvas.split.label.1", displayName));
                 this.detachFromMenu._container = container;
                 this.detachFromMenu._detachSlot = attachedSlots[0];
             } else {
                 var item = document.createElementNS(PencilNamespaces.xul,
-                        "menuitem");
+                    "menuitem");
                 menu.firstChild.appendChild(item);
                 item.setAttribute("label", displayName);
                 item._container = container;
@@ -1827,102 +1788,99 @@ Canvas.prototype.buildDetachMenuItem = function () {
             }
         }
         this.detachFromMenu
-                .addEventListener(
-                        "command",
-                        function (event) {
-                            try {
-                                var containerNode = Dom.findUpward(
-                                        event.originalTarget, function (node) {
-                                            return node._container;
-                                        });
-                                var detachSlotNode = Dom.findUpward(
-                                        event.originalTarget, function (node) {
-                                            return node._detachSlot;
-                                        });
-                                if (containerNode && containerNode._container
-                                        && detachSlotNode
-                                        && detachSlotNode._detachSlot) {
-                                    var attachment = containerNode._container
-                                            .getProperty(detachSlotNode._detachSlot.name);
-                                    if (attachment && attachment.defId) {
-                                        var shapeDef = CollectionManager.shapeDefinition
-                                                .locateDefinition(attachment.defId);
-                                        if (shapeDef) {
-                                            thiz.insertShapeImpl_(shapeDef,
-                                                    containerNode._container
-                                                            .getBounding());
-                                            var controller = thiz.currentController;
-                                            if (controller) {
-                                                Svg.ensureCTM(controller.svg,
-                                                        attachment.ctm);
-                                                var metaNode = Dom
-                                                        .parseToNode(attachment.metaData);
-                                                if (metaNode) {
-                                                    Dom
-                                                            .workOn(
-                                                                    "./p:property",
-                                                                    metaNode,
-                                                                    function (
-                                                                            node) {
-                                                                        var name = node
-                                                                                .getAttribute("name");
-                                                                        var value = Dom
-                                                                                .getText(node);
-                                                                        controller
-                                                                                .setProperty(
-                                                                                        name,
-                                                                                        value);
-                                                                    });
-                                                }
-                                                // var g =
-                                                // document.getElementById(attachment.targetId);
-                                                var octm = attachment.cctm;
-                                                var cctm = containerNode._container.svg
-                                                        .getTransformToElement(thiz.drawingLayer);
-                                                // var matrix =
-                                                // containerNode._container.svg.createSVGTransform().matrix;;
-                                                // matrix =
-                                                // matrix.multiply(octm);
-                                                // var ctm =
-                                                // g.getTransformToElement(thiz.drawingLayer);
-                                                // Svg.ensureCTM(controller.svg,
-                                                // ctm);
-                                                controller.moveBy(cctm.e
-                                                        - octm.e, cctm.f
-                                                        - octm.f);
-                                            }
-                                        }
+            .addEventListener(
+                "command",
+                function(event) {
+                    try {
+                        var containerNode = Dom.findUpward(
+                            event.originalTarget, function(node) {
+                                return node._container;
+                            });
+                        var detachSlotNode = Dom.findUpward(
+                            event.originalTarget, function(node) {
+                                return node._detachSlot;
+                            });
+                        if (containerNode && containerNode._container &&
+                                        detachSlotNode &&
+                                        detachSlotNode._detachSlot) {
+                            var attachment = containerNode._container
+                                .getProperty(detachSlotNode._detachSlot.name);
+                            if (attachment && attachment.defId) {
+                                var shapeDef = CollectionManager.shapeDefinition
+                                    .locateDefinition(attachment.defId);
+                                if (shapeDef) {
+                                    thiz.insertShapeImpl_(shapeDef,
                                         containerNode._container
-                                                .setProperty(
-                                                        detachSlotNode._detachSlot.name,
-                                                        new Attachment(null,
-                                                                null, null));
-                                        thiz
-                                                .selectShape(containerNode._container.svg);
-                                        thiz.invalidateEditors();
+                                            .getBounding());
+                                    var controller = thiz.currentController;
+                                    if (controller) {
+                                        Svg.ensureCTM(controller.svg,
+                                            attachment.ctm);
+                                        var metaNode = Dom
+                                            .parseToNode(attachment.metaData);
+                                        if (metaNode) {
+                                            Dom
+                                                .workOn(
+                                                    "./p:property",
+                                                    metaNode,
+                                                    function(
+                                                        node) {
+                                                        var name = node
+                                                            .getAttribute("name");
+                                                        var value = Dom
+                                                            .getText(node);
+                                                        controller
+                                                            .setProperty(
+                                                                name,
+                                                                value);
+                                                    });
+                                        }
+                                        // var g =
+                                        // document.getElementById(attachment.targetId);
+                                        var octm = attachment.cctm;
+                                        var cctm = containerNode._container.svg
+                                            .getTransformToElement(thiz.drawingLayer);
+                                        // var matrix =
+                                        // containerNode._container.svg.createSVGTransform().matrix;;
+                                        // matrix =
+                                        // matrix.multiply(octm);
+                                        // var ctm =
+                                        // g.getTransformToElement(thiz.drawingLayer);
+                                        // Svg.ensureCTM(controller.svg,
+                                        // ctm);
+                                        controller.moveBy(cctm.e -
+                                                        octm.e, cctm.f -
+                                                        octm.f);
                                     }
                                 }
-                            } catch (e) {
-                                Console.dumpError(e);
+                                containerNode._container
+                                    .setProperty(
+                                        detachSlotNode._detachSlot.name,
+                                        new Attachment(null,
+                                            null, null));
+                                thiz
+                                    .selectShape(containerNode._container.svg);
+                                thiz.invalidateEditors();
                             }
-                        }, false);
+                        }
+                    } catch (e) {
+                        Console.dumpError(e);
+                    }
+                }, false);
     }
-
 };
-Canvas.prototype.insertEditorContextMenuItem = function (menuItem) {
-
+Canvas.prototype.insertEditorContextMenuItem = function(menuItem) {
     var parent = this.popupSeparator.parentNode;
     menuItem._isEditor = true;
 
     parent.insertBefore(menuItem, this.popupSeparator);
-
 };
-Canvas.prototype.invalidateEditors = function (source) {
-
+Canvas.prototype.invalidateEditors = function(source) {
     for (editor in this.onScreenEditors) {
         var e = this.onScreenEditors[editor];
-        if (!source || source != e)
+        if (!source || source != e) {
             e.invalidate();
+        }
     }
 
     // Pencil.invalidateSharedEditor();
@@ -1931,61 +1889,53 @@ Canvas.prototype.invalidateEditors = function (source) {
         var rect = this.selectionContainer.childNodes[i];
         this._invalidateOneSelection(rect);
     }
-
 };
-Canvas.prototype._showPropertyDialog = function () {
-
+Canvas.prototype._showPropertyDialog = function() {
     if (this.propertyPageEditor && this.currentController) {
         this.propertyPageEditor.showAndAttach(this.currentController);
     }
-
 };
-Canvas.prototype.handlePropertyMenuItemCommand = function (event) {
-
+Canvas.prototype.handlePropertyMenuItemCommand = function(event) {
     this._showPropertyDialog();
-
 };
-Canvas.prototype.handleDblclick = function (event) {
-
+Canvas.prototype.handleDblclick = function(event) {
     stencilDebug("handleDblclick, start finding top");
 
     // find the top, get the def
     var thiz = this;
-    var top = Dom.findTop(event.originalTarget, function (node) {
-        return node.hasAttributeNS
-                && node.hasAttributeNS(PencilNamespaces.p, "type")
-                && node.getAttributeNS(PencilNamespaces.p, "type") == "Shape"
-                && !thiz.isShapeLocked(node);
+    var top = Dom.findTop(event.originalTarget, function(node) {
+        return node.hasAttributeNS &&
+                node.hasAttributeNS(PencilNamespaces.p, "type") &&
+                node.getAttributeNS(PencilNamespaces.p, "type") == "Shape" &&
+                !thiz.isShapeLocked(node);
     });
 
     stencilDebug("handleDblclick, top = " + top);
 
-    if (!top)
+    if (!top) {
         return;
+    }
 
     var target = this.createControllerFor(top);
 
     stencilDebug("emitting event p:ShapeDoubleClicked");
     Dom.emitEvent("p:ShapeDoubleClicked", top, {
-        controller : target,
-        origTarget : event.originalTarget,
-        clientX : event.clientX,
-        clientY : event.clientY
+        controller: target,
+        origTarget: event.originalTarget,
+        clientX: event.clientX,
+        clientY: event.clientY
     });
-
 };
-Canvas.prototype.focus = function () {
-
+Canvas.prototype.focus = function() {
     // document.getElementById("richTextEditorToolbar").focus();
     // document.commandDispatcher.rewindFocus();
     // document.commandDispatcher.advanceFocus();
     this.focusableBox.focus();
-
 };
-Canvas.prototype.doCopy = function () {
-
-    if (!this.currentController)
+Canvas.prototype.doCopy = function() {
+    if (!this.currentController) {
         return;
+    }
 
     var transferableData = this.currentController.createTransferableData();
 
@@ -1998,22 +1948,22 @@ Canvas.prototype.doCopy = function () {
 
     // serialize to string
     var textualData = new XMLSerializer()
-            .serializeToString(transferableData.dataNode);
+        .serializeToString(transferableData.dataNode);
 
     clipboard.writeText(textualData);
 };
 Canvas.domParser = new DOMParser();
-Canvas.prototype.doPaste = function (withAlternative) {
+Canvas.prototype.doPaste = function(withAlternative) {
     this.useAlternativePasting = withAlternative ? true : false;
     var formats = clipboard.availableFormats();
     if (!formats) return;
 
     var contents = [];
 
-    //the following implementation is electron-specific
+    // the following implementation is electron-specific
     if (formats.indexOf(PlainTextXferHelper.MIME_TYPE) >= 0) {
-        //in some cases, XML-based clipboard contents are transfered using plain text
-        //we need to try parsing it first instead of directly assuming that the content is just plain text
+        // in some cases, XML-based clipboard contents are transfered using plain text
+        // we need to try parsing it first instead of directly assuming that the content is just plain text
 
         var text = clipboard.readText();
         if (text) {
@@ -2055,7 +2005,6 @@ Canvas.prototype.doPaste = function (withAlternative) {
                     try {
                         var fstat = fsExistSync(text);
                         if (fstat && fstat.isFile()) {
-
                             if (fileType.toLowerCase() == ".png") {
                                 var image = nativeImage.createFromPath(text);
                                 if (image) {
@@ -2084,7 +2033,6 @@ Canvas.prototype.doPaste = function (withAlternative) {
                                 parsedFile = true;
                             }
                         }
-
                     } catch (e) {
                         Console.dumpError(e);
                     }
@@ -2115,7 +2063,7 @@ Canvas.prototype.doPaste = function (withAlternative) {
         if (image) {
             var id = Pencil.controller.nativeImageToRefSync(image);
             var size = image.getSize();
-            
+
             contents.push({
                 type: PNGImageXferHelper.MIME_TYPE,
                 data: new ImageData(size.width, size.height, ImageData.idToRefString(id))
@@ -2123,7 +2071,7 @@ Canvas.prototype.doPaste = function (withAlternative) {
         }
     }
 
-    //initial impl: use first win approach
+    // initial impl: use first win approach
     for (var j = 0; j < contents.length; j ++) {
         var content = contents[j];
         var handled = false;
@@ -2144,10 +2092,9 @@ Canvas.prototype.doPaste = function (withAlternative) {
 
         if (handled) break;
     }
-
 };
 
-Canvas.prototype.handleMouseDown = function (event) {
+Canvas.prototype.handleMouseDown = function(event) {
     this._mouseDownAt = event.timeStamp;
     event.preventDefault();
 
@@ -2166,18 +2113,18 @@ Canvas.prototype.handleMouseDown = function (event) {
     this._button = event.button;
 
     var thiz = this;
-    var isInControlLayer = Dom.findUpward(event.originalTarget, function (node) {
+    var isInControlLayer = Dom.findUpward(event.originalTarget, function(node) {
         return (node == thiz.controlLayer);
     });
     if (isInControlLayer) return;
 
-    var top = Dom.findTop(event.originalTarget, function (node) {
-        return node.hasAttributeNS
-                && node.hasAttributeNS(PencilNamespaces.p, "type");
+    var top = Dom.findTop(event.originalTarget, function(node) {
+        return node.hasAttributeNS &&
+                node.hasAttributeNS(PencilNamespaces.p, "type");
     });
-    
+
     if (top && this.isShapeLocked(top)) top = null;
-        
+
     if (!top) {
         this.lastTop = null;
         // this.clearSelection();
@@ -2191,12 +2138,12 @@ Canvas.prototype.handleMouseDown = function (event) {
         this.setRangeBoundVisibility(true);
         this.setRangeBoundSize(0, 0);
         this.currentRange = {
-            w : this.lastMousePos.x,
-            y : this.lastMousePos.y,
-            width : 0,
-            height : 0
+            w: this.lastMousePos.x,
+            y: this.lastMousePos.y,
+            width: 0,
+            height: 0
         };
-        
+
         this._sayTargetChanged();
         this.endFormatPainter();
 
@@ -2224,7 +2171,7 @@ Canvas.prototype.handleMouseDown = function (event) {
         this.mouseUp = false;
 
         var thiz = this;
-        this.duplicateFunc = function () {
+        this.duplicateFunc = function() {
             var target =thiz.currentController.createTransferableData();
             var contents = [];
 
@@ -2237,7 +2184,7 @@ Canvas.prototype.handleMouseDown = function (event) {
 
             // serialize to string
             var textualData = new XMLSerializer()
-                    .serializeToString(target.dataNode);
+                .serializeToString(target.dataNode);
 
             var dom = Canvas.domParser.parseFromString(textualData, "text/xml");
             dom.copySamePlace = true;
@@ -2249,12 +2196,11 @@ Canvas.prototype.handleMouseDown = function (event) {
                         type: (typeAttribute == "Shape" || typeAttribute == "Group") ? ShapeXferHelper.MIME_TYPE : TargetSetXferHelper.MIME_TYPE,
                         data: dom
                     });
-
                 } else if (node.localName == "svg") {
                     contents.push({
                         type: SVGXferHelper.MIME_TYPE,
                         data: dom
-                    })
+                    });
                 }
             }
 
@@ -2292,7 +2238,7 @@ Canvas.prototype.handleMouseDown = function (event) {
             tick("after setPositionSnapshot");
 
             thiz.duplicateFunc = null;
-        }
+        };
     } else if (this.isEventWithControl(event)) {
         if (foundTarget) {
             this.removeFromSelection(foundTarget);
@@ -2334,15 +2280,17 @@ Canvas.prototype.handleMouseDown = function (event) {
             this.currentController.setPositionSnapshot();
             tick("after setPositionSnapshot");
 
-            if (event.button == 0)
+            if (event.button == 0) {
                 this.setAttributeNS(PencilNamespaces.p, "p:holding", "true");
+            }
 
             if (top != this.lastTop || event.ctrlKey || event.button != 0) {
                 this.reClick = false;
                 this._attachEditors(controller);
             } else {
-                if (event.detail != 2)
+                if (event.detail != 2) {
                     this.reClick = true;
+                }
             }
 
             this.hasMoved = false;
@@ -2353,23 +2301,20 @@ Canvas.prototype.handleMouseDown = function (event) {
             Console.dumpError(e);
         }
     }
-
 };
 
-Canvas.prototype.isEventWithControl = function (event) {
+Canvas.prototype.isEventWithControl = function(event) {
     return (event.ctrlKey && !IS_MAC) || (event.metaKey && IS_MAC);
 };
-Canvas.prototype.doGroup = function () {
-
+Canvas.prototype.doGroup = function() {
     this.run(this.doGroupImpl_, this, Util.getMessage("action.group.shapes"));
-
 };
 
-Canvas.prototype.doGroupImpl_ = function () {
-
+Canvas.prototype.doGroupImpl_ = function() {
     var targets = this.getSelectedTargets();
-    if (targets.length <= 1)
+    if (targets.length <= 1) {
         return;
+    }
 
     // create an svg:g to box all the selected target
     var g = this.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
@@ -2377,7 +2322,7 @@ Canvas.prototype.doGroupImpl_ = function () {
 
     var nodes = [];
     var rect = null;
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
         for (t in targets) {
             if (targets[t].isFor(node)) {
                 nodes.push(node);
@@ -2399,7 +2344,7 @@ Canvas.prototype.doGroupImpl_ = function () {
         targets[t].moveBy(0 - rect.x, 0 - rect.y, true);
     }
 
-    g.setAttribute("transform", "translate(" + [ rect.x, rect.y ] + ")");
+    g.setAttribute("transform", "translate(" + [rect.x, rect.y] + ")");
 
     this.selectShape(g);
 
@@ -2408,25 +2353,23 @@ Canvas.prototype.doGroupImpl_ = function () {
     this.snappingHelper.updateSnappingGuide(this.currentController);
     for ( var t in this.currentController.targets) {
         this.snappingHelper.updateSnappingGuide(
-                this.currentController.targets[t], true);
+            this.currentController.targets[t], true);
     }
+};
+Canvas.prototype.ensureControllerInView = function() {
 
 };
-Canvas.prototype.ensureControllerInView = function () {
-
-};
-Canvas.prototype.doUnGroup = function () {
-
+Canvas.prototype.doUnGroup = function() {
     this.run(this.doUnGroupImpl_, this, Util
-            .getMessage("action.ungroup.shapes"));
-
+        .getMessage("action.ungroup.shapes"));
 };
-Canvas.prototype.doUnGroupImpl_ = function () {
-
-    if (!this.currentController)
+Canvas.prototype.doUnGroupImpl_ = function() {
+    if (!this.currentController) {
         return;
-    if (this.currentController.constructor != Group)
+    }
+    if (this.currentController.constructor != Group) {
         return;
+    }
 
     // remove group
     this.snappingHelper.updateSnappingGuide(this.currentController, true);
@@ -2438,26 +2381,22 @@ Canvas.prototype.doUnGroupImpl_ = function () {
     if (this.currentController.constructor == TargetSet) {
         for ( var t in this.currentController.targets) {
             this.snappingHelper
-                    .updateSnappingGuide(this.currentController.targets[t]);
+                .updateSnappingGuide(this.currentController.targets[t]);
         }
     } else {
         this.snappingHelper.updateSnappingGuide(this.currentController);
     }
-
 };
-Canvas.prototype.isShapeLocked = function (shape) {
-
+Canvas.prototype.isShapeLocked = function(shape) {
     return shape.getAttributeNS(PencilNamespaces.p, "locked") == "true";
-
 };
-Canvas.prototype.toggleLocking = function () {
-
+Canvas.prototype.toggleLocking = function() {
     this.run(this.toggleLockingImpl_, this, Util.getMessage("action.lock.shape"));
-
 };
-Canvas.prototype.toggleLockingImpl_ = function () {
-    if (!this.lockingStatus)
+Canvas.prototype.toggleLockingImpl_ = function() {
+    if (!this.lockingStatus) {
         return;
+    }
     if (this.lockingStatus.controller && this.lockingStatus.controller.lock) {
         this.lockingStatus.controller.lock();
         this.selectNone();
@@ -2465,40 +2404,30 @@ Canvas.prototype.toggleLockingImpl_ = function () {
         this.lockingStatus.node.removeAttributeNS(PencilNamespaces.p, "locked");
         this.selectShape(this.lockingStatus.node);
     }
-
 };
-Canvas.prototype.deleteSelected = function () {
-
+Canvas.prototype.deleteSelected = function() {
     this.run(this.deleteSelectedImpl_, this, Util
-            .getMessage("action.delete.shape"));
-
+        .getMessage("action.delete.shape"));
 };
-Canvas.prototype.deleteSelectedImpl_ = function () {
-
+Canvas.prototype.deleteSelectedImpl_ = function() {
     // this.snappingHelper.updateSnappingGuide(this.currentController, true);
     this.currentController.deleteTarget();
     this.currentController = null;
     this._detachEditors();
     this.clearSelection();
     this._sayTargetChanged();
-
 };
-Canvas.prototype._sayContentModified = function () {
-
+Canvas.prototype._sayContentModified = function() {
     Dom.emitEvent("p:ContentModified", this.element);
-
 };
-Canvas.prototype._saveMemento = function (actionName) {
-
+Canvas.prototype._saveMemento = function(actionName) {
     this.careTaker.save(actionName);
-
 };
-Canvas.prototype.getMemento = function (actionName) {
+Canvas.prototype.getMemento = function(actionName) {
     return new CanvasMemento(this.drawingLayer.cloneNode(true), {width: this.width, height: this.height}, actionName);
 };
 
-Canvas.prototype.setMemento = function (memento) {
-
+Canvas.prototype.setMemento = function(memento) {
     this.selectNone();
     Dom.empty(this.drawingLayer);
 
@@ -2506,7 +2435,7 @@ Canvas.prototype.setMemento = function (memento) {
     var fragment = this.drawingLayer.ownerDocument.createDocumentFragment();
     for (var i = 0; i < memento.node.childNodes.length; i++) {
         fragment.appendChild(this.drawingLayer.ownerDocument.importNode(
-                memento.node.childNodes[i], true));
+            memento.node.childNodes[i], true));
     }
     this.drawingLayer.appendChild(fragment);
 
@@ -2521,9 +2450,8 @@ Canvas.prototype.setMemento = function (memento) {
     }
 
     this._sayContentModified();
-
 };
-Canvas.prototype.run = function (job, targetObject, actionName, args) {
+Canvas.prototype.run = function(job, targetObject, actionName, args) {
     try {
         // console.log();
         job.apply(targetObject, args);
@@ -2533,12 +2461,11 @@ Canvas.prototype.run = function (job, targetObject, actionName, args) {
         this._saveMemento(actionName);
         if (Pencil.controller && !Pencil.controller.activePageLoading) this._sayContentModified();
     }
-
 };
-Canvas.prototype.getCanvasState = function () {
+Canvas.prototype.getCanvasState = function() {
     var state = {
-        zoom: this.zoom,
-    }
+        zoom: this.zoom
+    };
 
     if (this._scrollPane) {
         state.scrollTop = this._scrollPane.scrollTop;
@@ -2547,11 +2474,11 @@ Canvas.prototype.getCanvasState = function () {
 
     return state;
 };
-Canvas.prototype.setCanvasState = function (state) {
+Canvas.prototype.setCanvasState = function(state) {
     if (state) {
         this.zoomTo(state.zoom);
         if (this._scrollPane) {
-            window.setTimeout(function () {
+            window.setTimeout(function() {
                 this._scrollPane.scrollTop = state.scrollTop;
                 this._scrollPane.scrollLeft = state.scrollLeft;
             }.bind(this), 10);
@@ -2559,28 +2486,26 @@ Canvas.prototype.setCanvasState = function (state) {
     } else {
         this.zoomTo(1);
         if (this._scrollPane) {
-            window.setTimeout(function () {
+            window.setTimeout(function() {
                 this._scrollPane.scrollTop = 0;
                 this._scrollPane.scrollLeft = 0;
             }.bind(this), 10);
         }
     }
 };
-Canvas.prototype.setBackgroundColor = function (color) {
-    if(color) {
+Canvas.prototype.setBackgroundColor = function(color) {
+    if (color) {
         this.element.style.backgroundColor = color.toRGBAString();
     } else {
         this.element.style.backgroundColor = "";
     }
-
-
 };
 
-Canvas.prototype.setSize = function (width, height) {
+Canvas.prototype.setSize = function(width, height) {
     this.run(this.setSizeImpl_, this, Util.getMessage(
-            "action.canvas.resize"), [width, height]);
+        "action.canvas.resize"), [width, height]);
 };
-Canvas.prototype.setSizeImpl_ = function (width, height) {
+Canvas.prototype.setSizeImpl_ = function(width, height) {
     var thiz = this;
 
     // this.run()
@@ -2590,7 +2515,7 @@ Canvas.prototype.setSizeImpl_ = function (width, height) {
     this.svg.setAttribute("width", 10);
     this.svg.setAttribute("height", 10);
 
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz.svg.setAttribute("width", Math.ceil(thiz.width * thiz.zoom));
         thiz.svg.setAttribute("height", Math.ceil(thiz.height * thiz.zoom));
 
@@ -2598,17 +2523,16 @@ Canvas.prototype.setSizeImpl_ = function (width, height) {
     }, 50);
 
     Dom.emitEvent("p:SizeChanged", this.element, {
-        canvas : this
+        canvas: this
     });
 
     this.snappingHelper.rebuildSnappingGuide();
 };
 
-Canvas.prototype.setBackgroundImageData = function (image, dimBackground) {
-
+Canvas.prototype.setBackgroundImageData = function(image, dimBackground) {
     if (!image) {
         this.backgroundImage.setAttributeNS(PencilNamespaces.xlink,
-                "xlink:href", "");
+            "xlink:href", "");
         this.backgroundImage.style.display = "none";
         this.hasBackgroundImage = false;
         this.removeAttributeNS(PencilNamespaces.p, "with-background");
@@ -2616,7 +2540,7 @@ Canvas.prototype.setBackgroundImageData = function (image, dimBackground) {
     }
 
     this.backgroundImage.setAttributeNS(PencilNamespaces.xlink, "xlink:href",
-            image.url);
+        image.url);
     this.backgroundImage.setAttribute("width", image.width);
     this.backgroundImage.setAttribute("height", image.height);
     this.backgroundImage.style.display = "";
@@ -2626,29 +2550,26 @@ Canvas.prototype.setBackgroundImageData = function (image, dimBackground) {
         this.removeAttributeNS(PencilNamespaces.p, "with-background-dimmer");
     } else {
         this.setAttributeNS(PencilNamespaces.p, "p:with-background-dimmer",
-                "true");
+            "true");
     }
-
 };
-Canvas.prototype.setDimBackground = function (dimBackground) {
-
+Canvas.prototype.setDimBackground = function(dimBackground) {
     if (!dimBackground) {
         this.removeAttributeNS(PencilNamespaces.p, "with-background-dimmer");
     } else {
         this.setAttributeNS(PencilNamespaces.p, "p:with-background-dimmer",
-                "true");
+            "true");
     }
-
 };
-Canvas.prototype.sizeToContent = function (hPadding, vPadding) {
+Canvas.prototype.sizeToContent = function(hPadding, vPadding) {
     var newSize = null;
     var thiz = this;
-    this.run(function () {
-        newSize = thiz.sizeToContent__ (hPadding, vPadding);
+    this.run(function() {
+        newSize = thiz.sizeToContent__(hPadding, vPadding);
     }, this, Util.getMessage("action.canvas.resize"));
     return newSize;
 };
-Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
+Canvas.prototype.sizeToContent__ = function(hPadding, vPadding) {
     var pageMargin = Pencil.controller.getDocumentPageMargin() || 0;
 
     hPadding += pageMargin;
@@ -2662,17 +2583,17 @@ Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
         console.log(name, "left: ", rect.left, "top: ", rect.top, "width: ", rect.width, "height: ", rect.height);
     }
     out("this.svg", this.svg.getBoundingClientRect());
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
         try {
             var controller = thiz.createControllerFor(node);
             if (controller.def && controller.def.meta.excludeSizeCalculation) return;
             var bbox = controller.getBoundingRect();
-            //HACK: inspect the strokeWidth attribute to fix half stroke bbox issue
+            // HACK: inspect the strokeWidth attribute to fix half stroke bbox issue
             var box = {
-                x1 : bbox.x,
-                y1 : bbox.y,
-                x2 : bbox.x + bbox.width,
-                y2 : bbox.y + bbox.height
+                x1: bbox.x,
+                y1: bbox.y,
+                x2: bbox.x + bbox.width,
+                y2: bbox.y + bbox.height
             };
 
             if (controller.getGeometry) {
@@ -2689,21 +2610,21 @@ Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
                 maxBox = box;
             } else {
                 maxBox = {
-                    x1 : Math.min(maxBox.x1, box.x1),
-                    y1 : Math.min(maxBox.y1, box.y1),
-                    x2 : Math.max(maxBox.x2, box.x2),
-                    y2 : Math.max(maxBox.y2, box.y2)
+                    x1: Math.min(maxBox.x1, box.x1),
+                    y1: Math.min(maxBox.y1, box.y1),
+                    x2: Math.max(maxBox.x2, box.x2),
+                    y2: Math.max(maxBox.y2, box.y2)
                 };
             }
         } catch (e) {
             Util.error(Util.getMessage("error.title"), e, Util
-                    .getMessage("button.cancel.close"));
+                .getMessage("button.cancel.close"));
         }
     });
     if (maxBox == null) {
         Util.info(Util.getMessage("error.title"), Util
-                .getMessage("the.current.document.is.empty.sizing.is.failed"),
-                Util.getMessage("button.cancel.close"));
+            .getMessage("the.current.document.is.empty.sizing.is.failed"),
+        Util.getMessage("button.cancel.close"));
         return;
     }
     maxBox.x1 = Math.floor(maxBox.x1);
@@ -2718,7 +2639,7 @@ Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
     var dx = 0 - maxBox.x1 + hPadding;
     var dy = 0 - maxBox.y1 + vPadding;
 
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
         try {
             var controller = thiz.createControllerFor(node);
             var bbox = controller.getBoundingRect();
@@ -2733,19 +2654,19 @@ Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
     this.selectNone();
 
     return {
-        width : width,
-        height : height
+        width: width,
+        height: height
     };
 };
-Canvas.prototype.addSelectedToMyCollection = function () {
+Canvas.prototype.addSelectedToMyCollection = function() {
     if (!this.currentController) return;
 
     var data = {
-        collections : PrivateCollectionManager.privateShapeDef.collections,
-        valueHolder : {}
+        collections: PrivateCollectionManager.privateShapeDef.collections,
+        valueHolder: {}
     };
 
-    var run = function (data) {
+    var run = function(data) {
         try {
             var target = Pencil.getCurrentTarget();
             // generating text/xml+svg
@@ -2754,17 +2675,18 @@ Canvas.prototype.addSelectedToMyCollection = function () {
             var fakeDom = Controller.parser.parseFromString("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
             fakeDom.documentElement.appendChild(svg);
 
-            Pencil.controller.prepareForEmbedding(fakeDom, function () {
+            Pencil.controller.prepareForEmbedding(fakeDom, function() {
                 fakeDom.documentElement.removeChild(svg);
                 var valueHolder = data.valueHolder;
-                if (!valueHolder.shapeName)
+                if (!valueHolder.shapeName) {
                     return;
+                }
 
                 var shapeDef = new PrivateShapeDef();
                 shapeDef.displayName = valueHolder.shapeName;
                 shapeDef.content = svg;
-                shapeDef.id = shapeDef.displayName.replace(/\s+/g, "_").toLowerCase()
-                        + "_" + (new Date()).getTime();
+                shapeDef.id = shapeDef.displayName.replace(/\s+/g, "_").toLowerCase() +
+                        "_" + (new Date()).getTime();
 
                 var collection = valueHolder.collection;
                 var isNewCollection = (collection == null || collection == -1);
@@ -2775,8 +2697,8 @@ Canvas.prototype.addSelectedToMyCollection = function () {
                     collection.displayName = valueHolder.collectionName;
                     collection.description = valueHolder.collectionDescription;
                     collection.id = collection.displayName.replace(/\s+/g, "_")
-                            .toLowerCase()
-                            + "_" + (new Date()).getTime();
+                        .toLowerCase() +
+                            "_" + (new Date()).getTime();
 
                     collection.shapeDefs.push(shapeDef);
                 }
@@ -2784,14 +2706,14 @@ Canvas.prototype.addSelectedToMyCollection = function () {
                 Config.set("PrivateCollection.lastSelectCollection.id", collection.id);
                 debug("generating icon... :", valueHolder.autoGenerateIcon);
                 if (valueHolder.autoGenerateIcon) {
-                    Util.generateIcon(target, 64, 64, 2, null, function (icondata) {
+                    Util.generateIcon(target, 64, 64, 2, null, function(icondata) {
                         debug("\t done generating icon.");
                         shapeDef.iconData = icondata;
                         if (isNewCollection) {
                             PrivateCollectionManager.addShapeCollection(collection);
                         } else {
                             PrivateCollectionManager.addShapeToCollection(collection,
-                                    shapeDef);
+                                shapeDef);
                         }
                         return;
                     });
@@ -2804,12 +2726,10 @@ Canvas.prototype.addSelectedToMyCollection = function () {
                         PrivateCollectionManager.addShapeCollection(collection);
                     } else {
                         PrivateCollectionManager.addShapeToCollection(collection,
-                                shapeDef);
+                            shapeDef);
                     }
-
                 }
             });
-
         } catch (e) {
             Console.dumpError(e);
         }
@@ -2818,21 +2738,18 @@ Canvas.prototype.addSelectedToMyCollection = function () {
     var myCollectionDialog = new PrivateCollectionDialog();
     myCollectionDialog.open({
         valueHolder: data.valueHolder,
-        onDone: function (data) {
+        onDone: function(data) {
             data.valueHolder = data;
             run(data);
         }
     });
 };
-Canvas.prototype.insertPrivateShape = function (shapeDef, bound) {
-
+Canvas.prototype.insertPrivateShape = function(shapeDef, bound) {
     this.run(this.insertPrivateShapeImpl_, this, Util.getMessage(
-            "action.create.shape", shapeDef.displayName), [ shapeDef,
-            bound ? bound : null ]);
-
+        "action.create.shape", shapeDef.displayName), [shapeDef,
+        bound ? bound : null]);
 };
-Canvas.prototype.insertPrivateShapeImpl_ = function (shapeDef, bound) {
-
+Canvas.prototype.insertPrivateShapeImpl_ = function(shapeDef, bound) {
     // debug("inserting private shape: " + shapeDef.displayName + ", id: " +
     // shapeDef.id);
     var g = this.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
@@ -2847,11 +2764,12 @@ Canvas.prototype.insertPrivateShapeImpl_ = function (shapeDef, bound) {
     shape = this.ownerDocument.importNode(shape, true);
 
     // generate the ids
-    Dom.workOn(".//*[@p:name]", shape, function (node) {
+    Dom.workOn(".//*[@p:name]", shape, function(node) {
         var name = node.getAttributeNS(PencilNamespaces.p, "name");
         var oldId = node.getAttribute("id");
-        if (oldId)
+        if (oldId) {
             return;
+        }
 
         var uuid = Util.newUUID();
         node.setAttribute("id", uuid);
@@ -2867,16 +2785,16 @@ Canvas.prototype.insertPrivateShapeImpl_ = function (shapeDef, bound) {
 
     this.drawingLayer.appendChild(shape);
 
-    Pencil.controller.invalidateContentNode(shape, function () {
+    Pencil.controller.invalidateContentNode(shape, function() {
         this.selectShape(shape);
         if (this.currentController.validateAll) this.currentController.validateAll();
         if (bound) {
             var bbox = this.currentController.getBounding();
-            //note: the returned bbox is NOT zoomed
+            // note: the returned bbox is NOT zoomed
             this.currentController.moveBy(
-                    Math.round(bound.x - bbox.x - bbox.width / 2),
-                    Math.round(bound.y - bbox.y - bbox.height / 2),
-                    true);
+                Math.round(bound.x - bbox.x - bbox.width / 2),
+                Math.round(bound.y - bbox.y - bbox.height / 2),
+                true);
         }
         shape.style.visibility = "visible";
         this.removeAttributeNS(PencilNamespaces.p, "holding");
@@ -2888,32 +2806,26 @@ Canvas.prototype.insertPrivateShapeImpl_ = function (shapeDef, bound) {
         this.invalidateEditors();
     }.bind(this));
 };
-Canvas.prototype.endFormatPainter = function () {
+Canvas.prototype.endFormatPainter = function() {
     Pencil._painterSourceTarget = null;
     Pencil._painterSourceProperties = null;
     Pencil.setPainterCommandChecked(false);
     return true;
-
 };
-Canvas.prototype.isFormatPainterAvailable = function () {
-
+Canvas.prototype.isFormatPainterAvailable = function() {
     return Pencil._painterSourceTarget && Pencil._painterSourceProperties;
-
 };
-Canvas.prototype.getPainterPropertyMap = function () {
-
+Canvas.prototype.getPainterPropertyMap = function() {
     var ppm = Config.get("painterPropertyMap");
     if (ppm == null || ppm == "") {
-        ppm = "fillColor,foreColor,textColor,strokeColor,borderColor,"
-                + "strokeStyle,textAlign,textFont,shadowStyle,shadowColor,"
-                + "withBlur,withShadow,textPadding,startFillColor,endFillColor"
+        ppm = "fillColor,foreColor,textColor,strokeColor,borderColor," +
+                "strokeStyle,textAlign,textFont,shadowStyle,shadowColor," +
+                "withBlur,withShadow,textPadding,startFillColor,endFillColor";
         Config.set("painterPropertyMap", ppm);
     }
     return ppm.split(",");
-
 };
-Canvas.prototype.startFakeMove = function (event) {
-
+Canvas.prototype.startFakeMove = function(event) {
     this._button = 0;
     this.currentController = this.getSelectedTargets()[0];
     this.controllerHeld = true;
@@ -2924,7 +2836,7 @@ Canvas.prototype.startFakeMove = function (event) {
 
     this.currentController.setPositionSnapshot();
 
-//    OnScreenTextEditor._hide();
+    //    OnScreenTextEditor._hide();
 
     this.setAttributeNS(PencilNamespaces.p, "p:holding", "true");
     this.reClick = false;
@@ -2932,10 +2844,8 @@ Canvas.prototype.startFakeMove = function (event) {
     this.hasMoved = false;
     this.lastTop = top;
     this._sayTargetChanged();
-
 };
-Canvas.prototype.checkDnDEventTimestamp = function (event) {
-
+Canvas.prototype.checkDnDEventTimestamp = function(event) {
     var now = new Date().getTime();
     if (!this.lastDragEnterExitEventTS) {
         this.lastDragEnterExitEventTS = now;
@@ -2948,11 +2858,9 @@ Canvas.prototype.checkDnDEventTimestamp = function (event) {
     this.lastDragEnterExitEventTS = now;
 
     return delta > 500;
-
-
 };
 
-Canvas.prototype.__dragenter = function (event) {
+Canvas.prototype.__dragenter = function(event) {
     if (event.target == this.dragOverlay) return;
     if (this.element.getAttribute("is-dragover") == "true") return;
     this.element.setAttribute("is-dragover", "true");
@@ -2977,10 +2885,11 @@ Canvas.prototype.__dragenter = function (event) {
         }
     }
 };
-Canvas.prototype.__dragleave = function (event) {
+Canvas.prototype.__dragleave = function(event) {
     // this.element.removeAttribute("p:selection");
-    if (!this.currentDragObserver)
+    if (!this.currentDragObserver) {
         return;
+    }
     try {
         nsDragAndDrop.dragExit(event, this.currentDragObserver);
     } catch (e) {
@@ -2989,14 +2898,14 @@ Canvas.prototype.__dragleave = function (event) {
     this.element.removeAttribute("is-dragover");
     this.element.removeAttribute("p:holding");
 };
-Canvas.prototype.__dragend = function (event) {
+Canvas.prototype.__dragend = function(event) {
     this.element.removeAttribute("is-dragover");
     // debug("drag end...");
-
 };
-Canvas.prototype.__dragover = function (event) {
-    if (!this.currentDragObserver)
+Canvas.prototype.__dragover = function(event) {
+    if (!this.currentDragObserver) {
         return;
+    }
 
     try {
         nsDragAndDrop.dragOver(event, this.currentDragObserver);
@@ -3022,9 +2931,8 @@ Canvas.prototype.__dragover = function (event) {
      * event.clientY; }
      *  }
      */
-
 };
-Canvas.prototype.__drop = function (event) {
+Canvas.prototype.__drop = function(event) {
     var thiz =this;
     var data = event.dataTransfer.getData("collectionId");
     var data = nsDragAndDrop.getData("collectionId");

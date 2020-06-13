@@ -3,16 +3,16 @@ function StrokeEditor() {
 }
 __extend(PropertyEditor, StrokeEditor);
 
-StrokeEditor.prototype.setup = function () {
-    //setting up dasharray
-    var STYLES = [  [Util.getMessage("stroke.style.solid"), ""],
-                    [Util.getMessage("stroke.style.dotted"), "1,3"],
-                    [Util.getMessage("stroke.style.condensed.dotted"), "1,1"],
-                    [Util.getMessage("stroke.style.dashed"), "5,5"],
-                    [Util.getMessage("stroke.style.condensed.dashed"), "3,3"],
-                    [Util.getMessage("stroke.style.dashed.dotted"), "8,4,1,4"],
-                    [Util.getMessage("stroke.style.condensed.dashed.dotted"), "4,2,1,2"]
-                ];
+StrokeEditor.prototype.setup = function() {
+    // setting up dasharray
+    var STYLES = [[Util.getMessage("stroke.style.solid"), ""],
+        [Util.getMessage("stroke.style.dotted"), "1,3"],
+        [Util.getMessage("stroke.style.condensed.dotted"), "1,1"],
+        [Util.getMessage("stroke.style.dashed"), "5,5"],
+        [Util.getMessage("stroke.style.condensed.dashed"), "3,3"],
+        [Util.getMessage("stroke.style.dashed.dotted"), "8,4,1,4"],
+        [Util.getMessage("stroke.style.condensed.dashed.dotted"), "4,2,1,2"]
+    ];
     var strokeItems = [];
     for (var i in STYLES) {
         var label = STYLES[i][0];
@@ -21,19 +21,19 @@ StrokeEditor.prototype.setup = function () {
         var item = {
             label: label,
             value: value
-        }
+        };
 
         strokeItems.push(item);
     }
 
     this.items = strokeItems;
     var thiz = this;
-    this.styleCombo.renderer = function (style) {
+    this.styleCombo.renderer = function(style) {
         var svg = Dom.newDOMElement({
-            _name: "div",
+            "_name": "div",
             "class": "StrokeStyleComboItem",
-            style: "width: 100px; height: 1em; position: relative;",
-            _children: [
+            "style": "width: 100px; height: 1em; position: relative;",
+            "_children": [
                 {
                     _name: "svg",
                     _uri: PencilNamespaces.svg,
@@ -55,22 +55,21 @@ StrokeEditor.prototype.setup = function () {
         });
         return svg;
     };
-    this.styleCombo.decorator = function (node, style) {
+    this.styleCombo.decorator = function(node, style) {
     };
 
     this.styleCombo.setItems(strokeItems);
     var thiz = this;
-    this.styleCombo.addEventListener("p:ItemSelected", function (event) {
+    this.styleCombo.addEventListener("p:ItemSelected", function(event) {
         thiz.fireChangeEvent();
     }, false);
-    this.strokeWidth.addEventListener("input", function (event) {
+    this.strokeWidth.addEventListener("input", function(event) {
         if (thiz.strokeWidth.value == "") thiz.strokeWidth.value = 1;
         thiz.fireChangeEvent();
     }, false);
-
 };
 
-StrokeEditor.prototype.setValue  = function (stroke) {
+StrokeEditor.prototype.setValue = function(stroke) {
     this.strokeWidth.value = stroke.w;
     var item = null;
     for (var i = 0; i < this.items.length; i++) {
@@ -82,13 +81,13 @@ StrokeEditor.prototype.setValue  = function (stroke) {
     this.styleCombo.selectItem(item);
 };
 
-StrokeEditor.prototype.getValue = function () {
+StrokeEditor.prototype.getValue = function() {
     var stroke = new StrokeStyle();
     stroke.w = this.strokeWidth.value;
     stroke.array = this.styleCombo.getSelectedItem().value;
     return stroke;
 };
-StrokeEditor.prototype.setDisabled = function (disabled) {
+StrokeEditor.prototype.setDisabled = function(disabled) {
     if (disabled == true) {
         this.strokeWidth.setAttribute("disabled", "true");
         this.styleCombo.setDisabled(true);

@@ -1,23 +1,21 @@
 function OnMenuEditor() {
 }
 OnMenuEditor.typeEditorMap = [];
-OnMenuEditor.registerTypeEditor = function (type, editorClass) {
+OnMenuEditor.registerTypeEditor = function(type, editorClass) {
     OnMenuEditor.typeEditorMap[type.name] = editorClass;
 };
-OnMenuEditor.getTypeEditor = function (type) {
+OnMenuEditor.getTypeEditor = function(type) {
     var editorClass = OnMenuEditor.typeEditorMap[type.name];
     if (!editorClass) return null;
     return editorClass;
 };
 
 
-
-
-OnMenuEditor.prototype.install = function (canvas) {
+OnMenuEditor.prototype.install = function(canvas) {
     this.canvas = canvas;
     this.canvas.contextMenuEditor = this;
 };
-OnMenuEditor.prototype.attach = function (targetObject) {
+OnMenuEditor.prototype.attach = function(targetObject) {
     this.targetObject = targetObject;
 
     var definedGroups = this.targetObject.getPropertyGroups();
@@ -39,7 +37,7 @@ OnMenuEditor.prototype.attach = function (targetObject) {
     var thiz = this;
     var doc = this.canvas.ownerDocument;
 
-    //actions
+    // actions
     if (targetObject.def && targetObject.performAction) {
         var menu = doc.createElementNS(PencilNamespaces.xul, "menu");
         menu.setAttribute("label", Util.getMessage("menu.actions.label"));
@@ -63,7 +61,7 @@ OnMenuEditor.prototype.attach = function (targetObject) {
         if (hasAction) {
             this.canvas.insertEditorContextMenuItem(menu);
 
-            menu.addEventListener("command", function (event) {
+            menu.addEventListener("command", function(event) {
                 if (event.originalTarget._actionId) {
                     targetObject.performAction(event.originalTarget._actionId);
                     thiz.canvas.invalidateEditors();
@@ -72,11 +70,11 @@ OnMenuEditor.prototype.attach = function (targetObject) {
         }
     }
 
-    //linking
-    //TODO: Refactor to p:Href="page://<pageId>"
+    // linking
+    // TODO: Refactor to p:Href="page://<pageId>"
     //      to allow further extending (link to other resource types)
-    if (Pencil.controller.hasDoc() && Pencil.controller.doc.pages.length > 1
-             && targetObject.setMetadata && targetObject.getMetadata) {
+    if (Pencil.controller.hasDoc() && Pencil.controller.doc.pages.length > 1 &&
+             targetObject.setMetadata && targetObject.getMetadata) {
         var menu = doc.createElementNS(PencilNamespaces.xul, "menu");
         menu.setAttribute("label", Util.getMessage("menu.link.to.label"));
 
@@ -96,8 +94,8 @@ OnMenuEditor.prototype.attach = function (targetObject) {
             item._pageId = page.properties.id;
 
             if (page.properties.id == currentPage.properties.id) {
-                    item.setAttribute("disabled", true);
-                }
+                item.setAttribute("disabled", true);
+            }
 
             if (page.properties.id == targetPageId) {
                 item.setAttribute("checked", true);
@@ -118,23 +116,22 @@ OnMenuEditor.prototype.attach = function (targetObject) {
 
         popup.appendChild(item);
 
-        popup.addEventListener("command", function (event) {
-                var menuitem = Dom.findUpward(event.originalTarget, function (node) {
-                        return node.localName == "menuitem";
-                    });
-                if (!menuitem) return;
+        popup.addEventListener("command", function(event) {
+            var menuitem = Dom.findUpward(event.originalTarget, function(node) {
+                return node.localName == "menuitem";
+            });
+            if (!menuitem) return;
 
-                thiz.targetObject.setMetadata("RelatedPage", menuitem._pageId ? menuitem._pageId : "");
-            }, false);
+            thiz.targetObject.setMetadata("RelatedPage", menuitem._pageId ? menuitem._pageId : "");
+        }, false);
 
         this.canvas.insertEditorContextMenuItem(doc.createElementNS(PencilNamespaces.xul, "menuseparator"));
         this.canvas.insertEditorContextMenuItem(menu);
     }
-
 };
-OnMenuEditor.prototype.invalidate = function () {
+OnMenuEditor.prototype.invalidate = function() {
 };
-OnMenuEditor.prototype.dettach = function () {
+OnMenuEditor.prototype.dettach = function() {
 };
 
 

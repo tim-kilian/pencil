@@ -1,4 +1,4 @@
-function PrivateCollectionDialog () {
+function PrivateCollectionDialog() {
     WizardDialog.call(this);
     this.title = "Private Collection Wizard";
     this.subTitle = "This wizard help you through the process of creating a private collection";
@@ -7,53 +7,52 @@ function PrivateCollectionDialog () {
     var thiz = this;
     this.bind("click", function(event) {
         var top = Dom.findUpwardForNodeWithData(event.target, "collection");
-        if(thiz.activeCollectionNode) {
+        if (thiz.activeCollectionNode) {
             thiz.activeCollectionNode.removeAttribute("active");
         }
         top.setAttribute("active", "true");
         this.activeCollectionNode = top;
-        if(top.collection.id) {
+        if (top.collection.id) {
             this.valueHolder.collection = top.collection;
         } else {
             this.valueHolder.collection = null;
         }
-     }, this.collectionList)
+    }, this.collectionList);
 
-     this.bind("dblclick", function(event) {
-         var top = Dom.findUpwardForNodeWithData(event.target, "collection");
-         if(thiz.activeCollectionNode) {
-             thiz.activeCollectionNode.removeAttribute("active");
-         }
-         top.setAttribute("active", "true");
-         this.activeCollectionNode = top;
-         if(top.collection.id) {
-             this.valueHolder.collection = top.collection;
-         } else {
-             this.valueHolder.collection = null;
-         }
-         this.onNext();
+    this.bind("dblclick", function(event) {
+        var top = Dom.findUpwardForNodeWithData(event.target, "collection");
+        if (thiz.activeCollectionNode) {
+            thiz.activeCollectionNode.removeAttribute("active");
+        }
+        top.setAttribute("active", "true");
+        this.activeCollectionNode = top;
+        if (top.collection.id) {
+            this.valueHolder.collection = top.collection;
+        } else {
+            this.valueHolder.collection = null;
+        }
+        this.onNext();
+    }, this.collectionList);
 
-      }, this.collectionList)
+    this.bind("change", function() {
+        var value = this.generateIconCheck.checked;
+        if (value) {
+            this.shapeIcon.disabled = "true";
+            this.browse.disabled = "true";
+        } else {
+            this.shapeIcon.disabled = false;
+            this.browse.disabled = false;
+        }
+    }, this.generateIconCheck);
 
-     this.bind("change", function() {
-         var value = this.generateIconCheck.checked;
-         if (value) {
-             this.shapeIcon.disabled = "true";
-             this.browse.disabled = "true";
-         } else {
-             this.shapeIcon.disabled = false;
-             this.browse.disabled = false;
-         }
-     }, this.generateIconCheck)
-
-     this.browse.addEventListener("click", function(event) {
-         thiz.browseIconFile();
-     }, false);
+    this.browse.addEventListener("click", function(event) {
+        thiz.browseIconFile();
+    }, false);
 }
 __extend(WizardDialog, PrivateCollectionDialog);
 
-PrivateCollectionDialog.prototype.setupUI = function (options) {
-    if(options) {
+PrivateCollectionDialog.prototype.setupUI = function(options) {
+    if (options) {
         if (options.onDone) {
             this.onDone = options.onDone;
         }
@@ -96,24 +95,22 @@ PrivateCollectionDialog.prototype.setupUI = function (options) {
         item.collection = collection;
         item.collectionId = collection.id;
         thiz.collectionList.appendChild(item);
-    }
+    };
     for (i in collectionItems) {
-       addItem(collectionItems[i]);
+        addItem(collectionItems[i]);
     }
-}
+};
 
-PrivateCollectionDialog.prototype.invalidateFinish = function () {
+PrivateCollectionDialog.prototype.invalidateFinish = function() {
     if (!this.generateIconCheck.checked && this.shapeIcon.value == "" || this.shapeName.value == "" ||
-    !this.activeCollectionNode.collection.id && this.collectionName.value == "")
-    {
-        Dialog.alert("Empty text box","Please enter all require text box",null);
+    !this.activeCollectionNode.collection.id && this.collectionName.value == "") {
+        Dialog.alert("Empty text box", "Please enter all require text box", null);
         return false;
     }
     return true;
-}
-PrivateCollectionDialog.prototype.onFinish = function () {
-
-    //add Shape
+};
+PrivateCollectionDialog.prototype.onFinish = function() {
+    // add Shape
     this.valueHolder.shapeName = this.shapeName.value;
     if (this.generateIconCheck.checked) {
         this.valueHolder.autoGenerateIcon = true;
@@ -121,21 +118,21 @@ PrivateCollectionDialog.prototype.onFinish = function () {
         this.valueHolder.shapeIcon = this.shapeIcon.value;
         this.valueHolder.autoGenerateIcon = false;
     }
-    //add new collection
-    if(!this.valueHolder.collection) {
+    // add new collection
+    if (!this.valueHolder.collection) {
         this.valueHolder.collectionName = this.collectionName.value;
         this.valueHolder.collectionDescription = this.collectionDescription.value;
     }
 
-    if(this.onDone) {
+    if (this.onDone) {
         this.onDone(this.valueHolder);
     }
-}
+};
 
-PrivateCollectionDialog.prototype.invalidateSelection = function () {
+PrivateCollectionDialog.prototype.invalidateSelection = function() {
     var thiz = this;
-    if(this.activePane == this.collectionsListPane) {
-        if(!thiz.activeCollectionNode) {
+    if (this.activePane == this.collectionsListPane) {
+        if (!thiz.activeCollectionNode) {
             Dialog.error("Error ", " Please select item in list", null);
             return false;
         }
@@ -143,13 +140,13 @@ PrivateCollectionDialog.prototype.invalidateSelection = function () {
     return true;
 };
 
-PrivateCollectionDialog.prototype.onSelectionChanged = function (activePane) {
+PrivateCollectionDialog.prototype.onSelectionChanged = function(activePane) {
     var thiz = this;
-    if(activePane == this.collectionsDefinePane) {
+    if (activePane == this.collectionsDefinePane) {
         thiz.stepTitle.innerHTML = "Completing the create private collection wizard";
         thiz.stepInfo.innerHTML = "Please enter collection or shape information";
 
-        if(thiz.activeCollectionNode.collectionId) {
+        if (thiz.activeCollectionNode.collectionId) {
             thiz.collectionDefinition.style.display = "none";
             thiz.mycollection = thiz.activeCollectionNode.collections;
             thiz.shapeName.focus();
@@ -157,13 +154,11 @@ PrivateCollectionDialog.prototype.onSelectionChanged = function (activePane) {
             thiz.collectionDefinition.style.display = "block";
             thiz.collectionName.focus();
         }
-
     } else if (activePane == this.collectionsListPane) {
         thiz.stepTitle.innerHTML = "Wellcome to create collection wizard";
         thiz.stepInfo.innerHTML = "Select an existing private collection or create new private collection";
-
     }
-}
+};
 
 PrivateCollectionDialog.prototype.browseIconFile = function() {
     var thiz = this;
@@ -171,11 +166,11 @@ PrivateCollectionDialog.prototype.browseIconFile = function() {
         title: "Open Icon File",
         defaultPath: os.homedir(),
         filters: [
-            { name: "Icon File", extensions: ["icon", "png"] }
+            {name: "Icon File", extensions: ["icon", "png"]}
         ]
-    }, function (filenames) {
+    }, function(filenames) {
         if (!filenames || filenames.length <= 0) return;
         thiz.shapeIcon.value = filenames;
         thiz.shape.iconPath = filenames;
     });
-}
+};

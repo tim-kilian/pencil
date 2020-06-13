@@ -1,17 +1,17 @@
 var F = {};
 pencilSandbox.F = F;
 
-Pencil.findObjectByName = function (ref, name) {
-    var shape = Dom.findTop(ref, function (node) {
-                    return node.getAttributeNS && node.getAttributeNS(PencilNamespaces.p, "type") == "Shape";
-                });
+Pencil.findObjectByName = function(ref, name) {
+    var shape = Dom.findTop(ref, function(node) {
+        return node.getAttributeNS && node.getAttributeNS(PencilNamespaces.p, "type") == "Shape";
+    });
 
     var target = Dom.getSingle(".//*[@p:name='" + name + "']", shape);
 
     return target;
 };
-Pencil.findObjectById = function (ref, id) {
-    var shape = Dom.findTop(ref, function (node) {
+Pencil.findObjectById = function(ref, id) {
+    var shape = Dom.findTop(ref, function(node) {
         return node.getAttributeNS && node.getAttributeNS(PencilNamespaces.p, "type") == "Shape";
     });
 
@@ -19,7 +19,7 @@ Pencil.findObjectById = function (ref, id) {
 
     return target;
 };
-F.richTextSize = function (name) {
+F.richTextSize = function(name) {
     var target = Pencil.findObjectByName(this._target, name);
     if (!target) return new Dimension(0, 0);
 
@@ -30,8 +30,8 @@ F.richTextSize = function (name) {
     var dim = new Dimension(tm.width, tm.height);
 
     return dim;
-}
-F.textSize = function (name) {
+};
+F.textSize = function(name) {
     var target = Pencil.findObjectByName(this._target, name);
     if (!target) return new Dimension(0, 0);
 
@@ -42,16 +42,16 @@ F.textSize = function (name) {
 
 F.findObjectByName = Pencil.findObjectByName;
 
-F.getObjectBoundingBox = function (name) {
+F.getObjectBoundingBox = function(name) {
     var target = Pencil.findObjectByName(this._target, name);
-    if (!target) return new {x:0, y: 0, w: 0, h: 0};
+    if (!target) return new {x: 0, y: 0, w: 0, h: 0};
 
     var bbox = target.getBBox();
     return {x: bbox.x, y: bbox.y, w: bbox.width, h: bbox.height};
 };
 
 
-F.elementSize = function (name) {
+F.elementSize = function(name) {
     var target = Pencil.findObjectByName(this._target, name);
     if (!target || target.namespaceURI != PencilNamespaces.html) return new Dimension(0, 0);
 
@@ -59,11 +59,11 @@ F.elementSize = function (name) {
     return dim;
 };
 
-F.getRelativeLocation = function (handle, box) {
+F.getRelativeLocation = function(handle, box) {
     if (box.w == 0) return "top";
 
-    var y1 = (box.h * handle.x) / box.w;    //y value at the y = h*x/w line
-    var y2 = box.h - (box.h * handle.x / box.w); //y value the y = h - h*x/w line
+    var y1 = (box.h * handle.x) / box.w; // y value at the y = h*x/w line
+    var y2 = box.h - (box.h * handle.x / box.w); // y value the y = h - h*x/w line
 
     if (handle.y < y1) {
         return handle.y < y2 ? "top" : "right";
@@ -77,7 +77,7 @@ F.rotate = function(a, o, rad) {
         y: (a.x - o.x) * Math.sin(rad) - (a.y - o.y) * Math.cos(rad) + o.y
     };
 };
-F.newDOMElement = function (spec) {
+F.newDOMElement = function(spec) {
     var e = spec._uri ? this._target.ownerDocument.createElementNS(spec._uri, spec._name) : this._target.ownerDocument.createElement(spec._name);
 
     for (name in spec) {
@@ -94,7 +94,7 @@ F.newDOMElement = function (spec) {
 
     return e;
 };
-F.newDOMFragment = function (specs) {
+F.newDOMFragment = function(specs) {
     var f = this._target.ownerDocument.createDocumentFragment();
 
     for (var i in specs) {
@@ -126,7 +126,6 @@ F.lineLength = function(a, b) {
     return Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 };
 F.pieConstraintFunction = function(a, b, box) {
-
     var r = Math.atan((box.h / 2 - a.y) / (box.w / 2 - a.x));
 
     var rx = box.w / 2;
@@ -165,16 +164,18 @@ F.reflect = function(x, o) {
 F.debug = function(o) {
     alert(o);
 };
-F.stripAccessKey = function (label) {
-    return label.replace(/_([^_])/, function (zero, one) { return one; })
-                .replace(/__/g, "_");
+F.stripAccessKey = function(label) {
+    return label.replace(/_([^_])/, function(zero, one) {
+        return one;
+    })
+        .replace(/__/g, "_");
 };
-F.getAccessKey = function (label) {
+F.getAccessKey = function(label) {
     if (label.match(/_([^_])/)) return RegExp.$1;
 
     return "";
 };
-F.parseTextArray = function (text) {
+F.parseTextArray = function(text) {
     var lines = text.split(/[\r\n]+/);
     var a = [];
     for (var i = 0; i < lines.length; i++) {
@@ -183,7 +184,7 @@ F.parseTextArray = function (text) {
 
     return a;
 };
-F.buildTextWrapDomContent = function (textElement, text, width, align) {
+F.buildTextWrapDomContent = function(textElement, text, width, align) {
     var lines = text.split("\n");
     var tspans = [];
     var lastHeight = 0;
@@ -194,7 +195,7 @@ F.buildTextWrapDomContent = function (textElement, text, width, align) {
             lastHeight += lastLineHeight;
             continue;
         }
-        var words = line.split(' ');
+        var words = line.split(" ");
         var i = 0;
         var s = "";
         var lastBBoxWidth = 0;
@@ -213,7 +214,7 @@ F.buildTextWrapDomContent = function (textElement, text, width, align) {
                 continue;
             }
 
-            //now add the tspan
+            // now add the tspan
 
             var index = s.lastIndexOf(" ");
             var line = "";
@@ -237,7 +238,6 @@ F.buildTextWrapDomContent = function (textElement, text, width, align) {
 
             lastHeight += box.height;
             lastLineHeight = box.height;
-
         }
         if (s.length > 0) {
             Dom.empty(textElement);
@@ -253,7 +253,6 @@ F.buildTextWrapDomContent = function (textElement, text, width, align) {
             });
             lastHeight += box.height;
         }
-
     }
     var frag = Dom.newDOMFragment(tspans, textElement.ownerDocument);
 

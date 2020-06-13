@@ -4,13 +4,13 @@ function SharedFontEditor() {
 }
 SharedFontEditor.PROPERTY_NAME = "textFont";
 
-SharedFontEditor.prototype.setup = function () {
-    //grab control references
+SharedFontEditor.prototype.setup = function() {
+    // grab control references
     this.fontList = document.getElementById("fontlist");
     this.pixelFontSize = document.getElementById("fontsize");
     this.boldButton = document.getElementById("edBoldButton");
     this.italicButton = document.getElementById("edItalicButton");
-    /*this.underlineButton = document.getElementById("edUnderlineButton");
+    /* this.underlineButton = document.getElementById("edUnderlineButton");
     this.strikeButton = document.getElementById("edStrikeButton");*/
 
     var thiz = this;
@@ -45,16 +45,16 @@ SharedFontEditor.prototype.setup = function () {
         thiz._applyValue();
     }, false);
 };
-SharedFontEditor.prototype._applyValue = function () {
+SharedFontEditor.prototype._applyValue = function() {
     var thiz = this;
     Pencil.activeCanvas.run(function() {
         this.setProperty(SharedFontEditor.PROPERTY_NAME, thiz.font);
-    }, this.target, Util.getMessage("action.apply.properties.value"))
+    }, this.target, Util.getMessage("action.apply.properties.value"));
 };
-SharedFontEditor.prototype.attach = function (target) {
+SharedFontEditor.prototype.attach = function(target) {
     this.target = target;
     this.font = target.getProperty(SharedFontEditor.PROPERTY_NAME, "any");
-    if (!this.font)  {
+    if (!this.font) {
         this.detach();
         return;
     }
@@ -63,10 +63,10 @@ SharedFontEditor.prototype.attach = function (target) {
     this.pixelFontSize.disabled = false;
     this.boldButton.disabled = false;
     this.italicButton.disabled = false;
-    /*this.underlineButton.disabled = false;
+    /* this.underlineButton.disabled = false;
     this.strikeButton.disabled = false;*/
 
-    //set the value
+    // set the value
     if (Local.isFontExisting(this.font.family)) {
         this.fontList.value = this.font.family;
     } else {
@@ -86,26 +86,26 @@ SharedFontEditor.prototype.attach = function (target) {
 
     this.boldButton.checked = (this.font.weight == "bold");
     this.italicButton.checked = (this.font.style == "italic");
-    /*this.underlineButton.checked = (this.font.decor == "underline");
+    /* this.underlineButton.checked = (this.font.decor == "underline");
     this.strikeButton.checked = (this.font.decor == "strikethrough");*/
 };
-SharedFontEditor.prototype.detach = function () {
+SharedFontEditor.prototype.detach = function() {
     this.fontList.disabled = true;
     this.pixelFontSize.disabled = true;
     this.boldButton.disabled = true;
     this.italicButton.disabled = true;
-    /*this.underlineButton.disabled = true;
+    /* this.underlineButton.disabled = true;
     this.strikeButton.disabled = true;*/
 
     this.target = null;
     this.font = null;
 };
-SharedFontEditor.prototype.invalidate = function () {
+SharedFontEditor.prototype.invalidate = function() {
     if (!this.target) {
         this.detach();
     } else {
         this.attach(this.target);
     }
-}
+};
 
 Pencil.registerSharedEditor(new SharedFontEditor());

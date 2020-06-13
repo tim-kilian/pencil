@@ -7,7 +7,7 @@ function ShapeTestCanvasPane() {
     this.bind("click", this.quitTesting, this.quitButton);
 
     var thiz = this;
-    var f = function () {
+    var f = function() {
         thiz.invalidateSizing();
     };
 
@@ -16,7 +16,7 @@ function ShapeTestCanvasPane() {
 
 __extend(BaseTemplatedWidget, ShapeTestCanvasPane);
 
-ShapeTestCanvasPane.prototype.init = function (collection, shapeDefId) {
+ShapeTestCanvasPane.prototype.init = function(collection, shapeDefId) {
     Dom.empty(this.canvasContainer);
     this.node().style.display = "flex";
 
@@ -47,7 +47,7 @@ ShapeTestCanvasPane.prototype.init = function (collection, shapeDefId) {
     this.active = true;
 };
 
-ShapeTestCanvasPane.prototype.invalidateSizing = function () {
+ShapeTestCanvasPane.prototype.invalidateSizing = function() {
     if (!this.active) return;
     var w = this.canvasContainer.offsetWidth;
     var h = this.canvasContainer.offsetHeight;
@@ -62,7 +62,7 @@ ShapeTestCanvasPane.prototype.invalidateSizing = function () {
     this.lastH = h;
 };
 
-ShapeTestCanvasPane.prototype.startTesting = function (page) {
+ShapeTestCanvasPane.prototype.startTesting = function(page) {
     this.lastActiveCanvas = ApplicationPane._instance.activeCanvas;
     this.targetPage = page;
     this.builder = new StencilCollectionBuilder(ApplicationPane._instance.controller);
@@ -70,12 +70,12 @@ ShapeTestCanvasPane.prototype.startTesting = function (page) {
     Dom.setInnerText(this.title, page.name);
 
     var thiz = this;
-    this.builder.buildShapeTest(this.targetPage.id, function () {
+    this.builder.buildShapeTest(this.targetPage.id, function() {
         thiz.collection = CollectionManager.loadAdHocCollection(thiz.builder.tempOutputDir.name);
         thiz.init();
     });
 };
-ShapeTestCanvasPane.prototype.quitTesting = function (target) {
+ShapeTestCanvasPane.prototype.quitTesting = function(target) {
     if (this.builder) this.builder.cleanupShapeTest();
 
     Dom.empty(this.canvasContainer);

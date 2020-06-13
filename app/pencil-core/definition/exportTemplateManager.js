@@ -1,4 +1,4 @@
-var ExportTemplateManager = {}
+var ExportTemplateManager = {};
 ExportTemplateManager.templates = {};
 ExportTemplateManager.templateMap = {};
 
@@ -9,21 +9,21 @@ ExportTemplateManager.SUPPORTED_TYPES_NAMES = {
     "ODT": Util.getMessage("templates.for.exporting.to.text.documents")
 };
 
-ExportTemplateManager.addTemplate = function (template, type) {
+ExportTemplateManager.addTemplate = function(template, type) {
     if (!ExportTemplateManager.templates[type]) {
         ExportTemplateManager.templates[type] = [];
     }
     ExportTemplateManager.templates[type].push(template);
     ExportTemplateManager.templateMap[template.id] = template;
 };
-ExportTemplateManager.getTemplatesForType = function (type) {
+ExportTemplateManager.getTemplatesForType = function(type) {
     return ExportTemplateManager.templates[type];
 };
-ExportTemplateManager.getTemplateById = function (templateId) {
+ExportTemplateManager.getTemplateById = function(templateId) {
     return ExportTemplateManager.templateMap[templateId];
 };
 
-ExportTemplateManager.loadTemplatesIn = function (templateDir) {
+ExportTemplateManager.loadTemplatesIn = function(templateDir) {
     try {
         for (var i in ExportTemplateManager.SUPPORTED_TYPES) {
             var type = ExportTemplateManager.SUPPORTED_TYPES[i];
@@ -35,9 +35,8 @@ ExportTemplateManager.loadTemplatesIn = function (templateDir) {
     }
 };
 
-ExportTemplateManager.loadUserDefinedTemplates = function () {
+ExportTemplateManager.loadUserDefinedTemplates = function() {
     try {
-
         var templateDir = ExportTemplateManager.getUserTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
     } catch (e) {
@@ -45,10 +44,10 @@ ExportTemplateManager.loadUserDefinedTemplates = function () {
     }
 };
 
-ExportTemplateManager.getUserTemplateDirectory = function () {
+ExportTemplateManager.getUserTemplateDirectory = function() {
     return Config.getDataFilePath("exportTemplates");
 };
-ExportTemplateManager.loadSystemWideDefinedTemplates = function () {
+ExportTemplateManager.loadSystemWideDefinedTemplates = function() {
     try {
         var templateDir = ExportTemplateManager.getSystemWideTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
@@ -56,9 +55,9 @@ ExportTemplateManager.loadSystemWideDefinedTemplates = function () {
         Console.dumpError(e);
     }
 };
-ExportTemplateManager.getSystemWideTemplateDirectory = function () {
+ExportTemplateManager.getSystemWideTemplateDirectory = function() {
     var properties = Components.classes["@mozilla.org/file/directory_service;1"]
-                     .getService(Components.interfaces.nsIProperties);
+        .getService(Components.interfaces.nsIProperties);
 
     var templateDir = properties.get("ProfD", Components.interfaces.nsIFile);
 
@@ -66,7 +65,7 @@ ExportTemplateManager.getSystemWideTemplateDirectory = function () {
 
     return templateDir;
 };
-ExportTemplateManager.loadDefaultTemplates = function () {
+ExportTemplateManager.loadDefaultTemplates = function() {
     try {
         var templateDir = ExportTemplateManager.getDefaultTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
@@ -74,11 +73,11 @@ ExportTemplateManager.loadDefaultTemplates = function () {
         Console.dumpError(e);
     }
 };
-ExportTemplateManager.getDefaultTemplateDirectory = function () {
+ExportTemplateManager.getDefaultTemplateDirectory = function() {
     return getStaticFilePath("pencil-core/templates");
 };
-ExportTemplateManager._loadUserDefinedTemplatesIn = function (templateDir, type) {
-    //loading all templates
+ExportTemplateManager._loadUserDefinedTemplatesIn = function(templateDir, type) {
+    // loading all templates
     try {
         var stat = fs.statSync(templateDir);
         if (!stat.isDirectory()) return;
@@ -94,9 +93,9 @@ ExportTemplateManager._loadUserDefinedTemplatesIn = function (templateDir, type)
             }
 
             ExportTemplateManager.addTemplate(template, type);
-        })
+        });
     } catch (e) {
-        //console.error(e);
+        // console.error(e);
     }
 };
 
@@ -109,7 +108,7 @@ ExportTemplateManager.loadTemplates = function() {
         ExportTemplateManager.templates[type] = [];
     }
     ExportTemplateManager.loadUserDefinedTemplates();
-    for (var j = 0 ; j < ExportTemplateManager.SUPPORTED_TYPES.length; j++) {
+    for (var j = 0; j < ExportTemplateManager.SUPPORTED_TYPES.length; j++) {
         var type = ExportTemplateManager.SUPPORTED_TYPES[j];
         var templates = ExportTemplateManager.templates[type];
         for (var i = 0; i < templates.length; i++) {
@@ -118,7 +117,7 @@ ExportTemplateManager.loadTemplates = function() {
     }
     ExportTemplateManager.loadDefaultTemplates();
 };
-ExportTemplateManager.installNewTemplate = function (type, callback) {
+ExportTemplateManager.installNewTemplate = function(type, callback) {
     // var nsIFilePicker = Components.interfaces.nsIFilePicker;
     // var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     // fp.init(window, Util.getMessage("filepicker.open.document"), nsIFilePicker.modeOpen);
@@ -132,15 +131,15 @@ ExportTemplateManager.installNewTemplate = function (type, callback) {
         title: "Open template document",
         defaultPath: Config.get("template.install.recentlyDirPath", null) || os.homedir(),
         filters: [
-            { name: "Template files", extensions: ["epxt", "zip"] }
+            {name: "Template files", extensions: ["epxt", "zip"]}
         ]
-    }, function (filenames) {
+    }, function(filenames) {
         if (!filenames || filenames.length <= 0) return;
         Config.set("template.install.recentlyDirPath", path.dirname(filenames[0]));
         ExportTemplateManager.installTemplateFromFile(filenames, type, callback);
     });
-}
-ExportTemplateManager.installTemplateFromFile = function (file, type , callback) {
+};
+ExportTemplateManager.installTemplateFromFile = function(file, type, callback) {
     console.log("begin install template, from file : " + file);
     var readStream = fs.createReadStream(file.toString());
     var targetDir = ExportTemplateManager.getUserTemplateDirectory().toString();
@@ -149,31 +148,31 @@ ExportTemplateManager.installTemplateFromFile = function (file, type , callback)
     var fileName = readStream.path.substring(index + 1);
     targetDir = targetDir.concat("/" + fileName.replace(/\.[^\.]+$/, "") + "_" + Math.ceil(Math.random() * 1000) + "_" + (new Date().getTime()));
     readStream
-    .pipe(unzip.Extract({path: targetDir}))
-    .on("entry", function (entry) {
-        var stat = fs.statSync(targetDir);
-        if(!stat || !stat.isDirectory()) {
-            fs.mkdirSync(targetDir);
-        }
-    })
-    .on("close", function() {
-        try {
-            var template = ExportTemplate.parse(targetDir);
-
-            if (!template) throw Util.getMessage("template.cannot.be.parsed");
-
-            console.log("new Template: ", template.name);
-            if (ExportTemplateManager.templateMap[template.id]) throw Util.getMessage("template.has.been.installed", template.name);
-            Util.info(Util.getMessage("template.has.been.installed.successfully", template.name));
-            ExportTemplateManager.loadTemplates();
-            if (callback) {
-                callback();
+        .pipe(unzip.Extract({path: targetDir}))
+        .on("entry", function(entry) {
+            var stat = fs.statSync(targetDir);
+            if (!stat || !stat.isDirectory()) {
+                fs.mkdirSync(targetDir);
             }
-        } catch (e) {
-            Util.error(Util.getMessage("error.installing.template"), e.message, Util.getMessage("button.close.label"));
-            deleteFileOrFolder(targetDir);
-        }
-    });
+        })
+        .on("close", function() {
+            try {
+                var template = ExportTemplate.parse(targetDir);
+
+                if (!template) throw Util.getMessage("template.cannot.be.parsed");
+
+                console.log("new Template: ", template.name);
+                if (ExportTemplateManager.templateMap[template.id]) throw Util.getMessage("template.has.been.installed", template.name);
+                Util.info(Util.getMessage("template.has.been.installed.successfully", template.name));
+                ExportTemplateManager.loadTemplates();
+                if (callback) {
+                    callback();
+                }
+            } catch (e) {
+                Util.error(Util.getMessage("error.installing.template"), e.message, Util.getMessage("button.close.label"));
+                deleteFileOrFolder(targetDir);
+            }
+        });
 
     // var zipReader = Components.classes["@mozilla.org/libjar/zip-reader;1"]
     //                .createInstance(Components.interfaces.nsIZipReader);
@@ -248,20 +247,19 @@ ExportTemplateManager.installTemplateFromFile = function (file, type , callback)
     //     extractedDir.remove(true);
     // }
 };
-ExportTemplateManager.uninstallTemplate = function (template) {
+ExportTemplateManager.uninstallTemplate = function(template) {
     try {
         debug("About to remove: " + template.dir);
         // template.dir.remove(true);
-        if(!template.userDefine || template.userDefine == false) {
-            Dialog.alert("Uninstall invalid template ! ","Can't uninstall default template");
+        if (!template.userDefine || template.userDefine == false) {
+            Dialog.alert("Uninstall invalid template ! ", "Can't uninstall default template");
             return;
         }
         deleteFileOrFolder(template.dir);
-
     } catch (e) {
         Util.error(Util.getMessage("failed.to.uninstall.the.template"), e.message, Util.getMessage("button.close.label"));
         Console.dumpError(e);
     }
 
     ExportTemplateManager.loadTemplates();
-}
+};

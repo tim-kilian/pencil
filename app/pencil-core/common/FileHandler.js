@@ -1,4 +1,4 @@
-function FileHandler(controller){
+function FileHandler(controller) {
     this.controller = controller;
 }
 
@@ -7,7 +7,7 @@ FileHandler.ERROR_FILE_LOADING_FAILED = "ERROR_FILE_LOADING_FAILED";
 FileHandler.ERROR_FILE_SAVING_FAILED = "ERROR_FILE_SAVING_FAILED";
 
 
-FileHandler.prototype.parseDocument = function (filePath, callback) {
+FileHandler.prototype.parseDocument = function(filePath, callback) {
     var targetDir = Pencil.documentHandler.tempDir.name;
     var oldPencilDocument = Pencil.documentHandler.preDocument;
     var thiz = this;
@@ -19,12 +19,12 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
         }
 
         var dom = Controller.parser.parseFromString(fs.readFileSync(contentFile, "utf8"), "text/xml");
-        Dom.workOn("./p:Properties/p:Property", dom.documentElement, function (propNode) {
+        Dom.workOn("./p:Properties/p:Property", dom.documentElement, function(propNode) {
             var value = propNode.textContent;
             if (value == "undefined" || value == "null") return;
             thiz.controller.doc.properties[propNode.getAttribute("name")] = value;
         });
-        Dom.workOn("./p:Pages/p:Page", dom.documentElement, function (pageNode) {
+        Dom.workOn("./p:Pages/p:Page", dom.documentElement, function(pageNode) {
             if (!pageNode) return;
             var pageFileName = pageNode.getAttribute("href");
             if (pageFileName == null) return;
@@ -38,13 +38,13 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
             thiz.controller.doc.pages.push(page);
         });
 
-        thiz.controller.doc.pages.forEach(function (page) {
+        thiz.controller.doc.pages.forEach(function(page) {
             var pageFile = page.tempFilePath;
             var dom = Controller.parser.parseFromString(fs.readFileSync(pageFile, "utf8"), "text/xml");
-            Dom.workOn("./p:Properties/p:Property", dom.documentElement, function (propNode) {
+            Dom.workOn("./p:Properties/p:Property", dom.documentElement, function(propNode) {
                 var propName = propNode.getAttribute("name");
                 var value = propNode.textContent;
-                if(propName == "note") {
+                if (propName == "note") {
                     value = RichText.fromString(value);
                 }
                 if (value == "undefined" || value == "null") return;
@@ -64,9 +64,9 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
             if (Config.get("page.show.last_page_zoom") == "undefined") Config.set("page.show.last_page_zoom", true);
             var showLastPageZoom = Config.get("page.show.last_page_zoom");
             if (showLastPageZoom) {
-                 page.scrollTop = page.scrollTop ? parseInt(page.scrollTop, 10) : 0;
-                 page.scrollLeft = page.scrollLeft ? parseInt(page.scrollLeft, 10) : 0;
-                 page.zoom = page.zoom ? page.zoom : 1;
+                page.scrollTop = page.scrollTop ? parseInt(page.scrollTop, 10) : 0;
+                page.scrollLeft = page.scrollLeft ? parseInt(page.scrollLeft, 10) : 0;
+                page.zoom = page.zoom ? page.zoom : 1;
             } else {
                 page.scrollTop = 0;
                 page.scrollLeft = 0;
@@ -84,14 +84,14 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
             page.canvas = null;
         }, thiz);
 
-        thiz.controller.doc.pages.forEach(function (page) {
+        thiz.controller.doc.pages.forEach(function(page) {
             if (page.backgroundPageId) {
                 page.backgroundPage = this.controller.findPageById(page.backgroundPageId);
                 thiz.controller.invalidateBitmapFilePath(page);
             }
             if (page.parentPageId) {
                 var parentPage = this.controller.findPageById(page.parentPageId);
-                if (parentPage){
+                if (parentPage) {
                     page.parentPage = parentPage;
                     parentPage.children.push(page);
                 } else {
@@ -107,7 +107,7 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
         thiz.controller.modified = false;
         thiz.controller.addRecentFile(filePath, thiz.controller.getCurrentDocumentThumbnail());
         FontLoader.instance.setDocumentRepoDir(path.join(targetDir, "fonts"));
-        FontLoader.instance.loadFonts(function () {
+        FontLoader.instance.loadFonts(function() {
             thiz.controller.sayControllerStatusChanged();
             var activePage = null;
             if (thiz.controller.doc.properties.activeId) {
@@ -129,32 +129,32 @@ FileHandler.prototype.parseDocument = function (filePath, callback) {
         console.log(e);
         Dialog.alert("Unexpected error while accessing file: " + path.basename(filePath), null, function() {
             (oldPencilDocument != null) ? Pencil.documentHandler.loadDocument(oldPencilDocument) : function() {
-                Pencil.controller.confirmAndclose(function () {
+                Pencil.controller.confirmAndclose(function() {
                     Pencil.documentHandler.resetDocument();
                     ApplicationPane._instance.showStartupPane();
                 });
             };
         });
     }
-}
+};
 
-FileHandler.prototype.parseDocumentThumbnail = function (filePath, callback) {
+FileHandler.prototype.parseDocumentThumbnail = function(filePath, callback) {
     var extractPath = null;
     var found = false;
     fs.createReadStream(filePath)
         .pipe(unzip.Parse())
-        .on("entry", function (entry) {
+        .on("entry", function(entry) {
             var fileName = entry.path;
             var type = entry.type; // 'Directory' or 'File'
             var size = entry.size;
             if (fileName === "content.xml") {
                 var xmlFile = tmp.fileSync({postfix: ".xml", keep: false});
                 entry.pipe(fs.createWriteStream(xmlFile.name))
-                    .on("close", function () {
+                    .on("close", function() {
                         var dom = Controller.parser.parseFromString(fs.readFileSync(xmlFile.name, "utf8"), "text/xml");
                         xmlFile.removeCallback();
 
-                        Dom.workOn("./p:Pages/p:Page", dom.documentElement, function (pageNode) {
+                        Dom.workOn("./p:Pages/p:Page", dom.documentElement, function(pageNode) {
                             var pageFileName = pageNode.getAttribute("href");
                             if (!extractPath) {
                                 extractPath = "thumbnails/" + pageFileName.replace(/^page_/, "").replace(/\.xml$/, "") + ".png";
@@ -164,25 +164,25 @@ FileHandler.prototype.parseDocumentThumbnail = function (filePath, callback) {
             } else if (fileName && fileName == extractPath) {
                 var pngFile = tmp.fileSync({postfix: ".png", keep: false});
                 entry.pipe(fs.createWriteStream(pngFile.name))
-                    .on("close", function () {
+                    .on("close", function() {
                         callback(null, pngFile.name);
                     });
             } else {
                 entry.autodrain();
             }
         })
-        .on("end", function () {
+        .on("end", function() {
             if (!found) callback("PARSE ERROR", null);
         });
 };
 
-FileHandler.prototype.parsePageFromNode = function (pageNode, callback) {
+FileHandler.prototype.parsePageFromNode = function(pageNode, callback) {
     var thiz = this;
     var page = new Page(this.controller.doc);
-    Dom.workOn("./p:Properties/p:Property", pageNode, function (propNode) {
+    Dom.workOn("./p:Properties/p:Property", pageNode, function(propNode) {
         var name = propNode.getAttribute("name");
         var value = propNode.textContent;
-        if(name == "note") {
+        if (name == "note") {
             value = RichText.fromString(value);
         }
         if (!Page.PROPERTY_MAP[name]) return;
@@ -214,7 +214,7 @@ FileHandler.prototype.parsePageFromNode = function (pageNode, callback) {
     var contentNode = Dom.getSingle("./p:Content", pageNode);
     if (contentNode) {
         var node = document.importNode(contentNode.cloneNode(true), true);
-        this.controller.invalidateContentNode(node, function () {
+        this.controller.invalidateContentNode(node, function() {
             page._contentNode = node;
             invalidateAndSerializePage(page);
             callback();

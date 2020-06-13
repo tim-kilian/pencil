@@ -1,11 +1,11 @@
 function DocumentExportManager() {
 }
 DocumentExportManager.parser = new DOMParser();
-DocumentExportManager.prototype.printDocument = function (doc) {
+DocumentExportManager.prototype.printDocument = function(doc) {
     this.exportDocument(doc, "PrintingExporter");
-}
-DocumentExportManager.prototype.exportDocument = function (doc, forcedExporterId) {
-    new ExportDialog().callback(function (params) {
+};
+DocumentExportManager.prototype.exportDocument = function(doc, forcedExporterId) {
+    new ExportDialog().callback(function(params) {
         this.lastParamsDoc = doc;
         this.lastParams = params;
         this.exportDocumentWithParams(doc, forcedExporterId, params);
@@ -14,7 +14,7 @@ DocumentExportManager.prototype.exportDocument = function (doc, forcedExporterId
         lastParams: doc == this.lastParamsDoc ? this.lastParams : null
     });
 };
-DocumentExportManager.prototype.exportDocumentWithParams = function (doc, forcedExporterId, params) {
+DocumentExportManager.prototype.exportDocumentWithParams = function(doc, forcedExporterId, params) {
     if (!params) return;
 
     try {
@@ -23,7 +23,7 @@ DocumentExportManager.prototype.exportDocumentWithParams = function (doc, forced
         console.error(e);
     }
 };
-DocumentExportManager.prototype.generateFriendlyId = function (page, usedFriendlyIds) {
+DocumentExportManager.prototype.generateFriendlyId = function(page, usedFriendlyIds) {
     var baseName = page.name.replace(/[^a-z0-9 ]+/gi, "").replace(/[ ]+/g, "_").toLowerCase();
     var name = baseName;
     var seed = 1;
@@ -35,11 +35,11 @@ DocumentExportManager.prototype.generateFriendlyId = function (page, usedFriendl
     usedFriendlyIds.push(name);
     return name;
 };
-DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, forcedExporterId, params) {
+DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, forcedExporterId, params) {
     var exporter = Pencil.getDocumentExporterById(params.exporterId);
     if (!exporter) return;
 
-    //Select target dir
+    // Select target dir
     var pageIndex = -1;
 
     if (params.targetPath) {
@@ -64,14 +64,14 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
         }
     }
 
-    //populating friendly-id. WARN: side-effect!
+    // populating friendly-id. WARN: side-effect!
     var usedFriendlyIds = [];
     var pageMap = {};
     for (var i = 0; i < doc.pages.length; i ++) {
         var p = doc.pages[i];
         var fid = this.generateFriendlyId(p, usedFriendlyIds);
         p.fid = fid;
-        
+
         pageMap[p.id] = p;
     }
 
@@ -83,28 +83,28 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
     params.options.bitmapScale = Rasterizer.getExportScale(params.options.bitmapScale);
 
     var pageExtraInfos = {};
-    
+
     var linkRequiredPageIds = [];
-    
+
     function addLinkRequiredPage(pageId) {
         var page = pageMap[pageId];
         if (!page) return;
-        
+
         if (linkRequiredPageIds.indexOf(pageId) < 0) linkRequiredPageIds.push(pageId);
         if (page && page.backgroundPageId && page.copyBackgroundLinks) {
             addLinkRequiredPage(page.backgroundPageId);
         }
     }
-    
-    pages.forEach(function (p) {
+
+    pages.forEach(function(p) {
         addLinkRequiredPage(p.id);
     });
-    
-    var processMissingBackgroundLinks = function (callback, listener) {
-        var missingLinkRequiredPageIds = linkRequiredPageIds.filter(function (id) {
+
+    var processMissingBackgroundLinks = function(callback, listener) {
+        var missingLinkRequiredPageIds = linkRequiredPageIds.filter(function(id) {
             return !pageExtraInfos[id];
         });
-        
+
         var backgroundIndex = -1;
         (function next() {
             backgroundIndex ++;
@@ -112,15 +112,15 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
                 callback();
                 return;
             }
-            
+
             var page = pageMap[missingLinkRequiredPageIds[backgroundIndex]];
-            
+
             if (listener) {
                 var task = Util.getMessage("exporting.page.no.prefix", page.name);
                 listener.onProgressUpdated(task, backgroundIndex + 1, missingLinkRequiredPageIds.length);
             }
-            
-            Pencil.rasterizer.rasterizePageToUrl(page, function (data) {
+
+            Pencil.rasterizer.rasterizePageToUrl(page, function(data) {
                 pageExtraInfos[page.id] = {
                     objectsWithLinking: data.objectsWithLinking
                 };
@@ -128,27 +128,27 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
             }, params.bitmapScale, "parseLinks", {linksOnly: true});
         })();
     };
-    
+
     if (requireRasterizedData) {
-        starter = function (listener) {
-            var rasterizeNext = function () {
+        starter = function(listener) {
+            var rasterizeNext = function() {
                 try {
                     pageIndex ++;
                     if (pageIndex >= pages.length) {
-                        processMissingBackgroundLinks(function () {
+                        processMissingBackgroundLinks(function() {
                             listener.onProgressUpdated("Generating PDF...", pages.length, pages.length);
-                            thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function () {
+                            thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function() {
                                 listener.onTaskDone();
-                                NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function () {
+                                NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function() {
                                     shell.openItem(destFile);
                                 });
                             });
-                        })
+                        });
                         return;
                     }
                     var page = pages[pageIndex];
 
-                    //signal progress
+                    // signal progress
                     var task = Util.getMessage("exporting.page.no.prefix", page.name);
                     listener.onProgressUpdated(task, pageIndex + 1, pages.length);
 
@@ -163,7 +163,7 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
                     };
                     pageExtraInfos[page.id] = pageExtraInfo;
 
-                    Pencil.rasterizer.rasterizePageToFile(page, pagePath, function (data) {
+                    Pencil.rasterizer.rasterizePageToFile(page, pagePath, function(data) {
                         pageExtraInfo.objectsWithLinking = data.objectsWithLinking;
                         window.setTimeout(rasterizeNext, 100);
                     }, params.bitmapScale, "parseLinks");
@@ -176,21 +176,21 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
             rasterizeNext();
         };
     } else {
-        starter = function (listener) {
+        starter = function(listener) {
             try {
-                processMissingBackgroundLinks(function () {
+                processMissingBackgroundLinks(function() {
                     listener.onProgressUpdated("Generating PDF...", pages.length, pages.length);
-                    thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function () {
+                    thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function() {
                         listener.onTaskDone();
                         if (destFile) {
-                            NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function () {
+                            NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function() {
                                 shell.openItem(destFile);
                             });
                         } else {
                             NotificationPopup.show("Document has been exported.");
                         }
                     });
-                }, listener)
+                }, listener);
             } catch (ex) {
                 listener.onTaskDone();
                 Util.error(Util.getMessage("error.title"), ex.message, Util.getMessage("button.cancel.close"));
@@ -205,10 +205,10 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, f
     //
     // starter(fakeListener);
 
-    //take a shower, doit together!!!
+    // take a shower, doit together!!!
     Util.beginProgressJob(Util.getMessage("export.documents"), starter);
 };
-DocumentExportManager.prototype._getPageLinks = function (page, pageExtraInfos, includeBackground) {
+DocumentExportManager.prototype._getPageLinks = function(page, pageExtraInfos, includeBackground) {
     var bgLinks = [];
 
     if (page.backgroundPage && page.copyBackgroundLinks) {
@@ -221,15 +221,13 @@ DocumentExportManager.prototype._getPageLinks = function (page, pageExtraInfos, 
     var extra = null;
 
     if (pageExtraInfos[page.id]) {
-
         extra = pageExtraInfos[page.id];
-
     } else {
         // the current page is not processed for linking
         // this may because it is not included in exporting
         // so, do this manually here
 
-        //TODO: fix this
+        // TODO: fix this
 
         // page._view.canvas.zoomTo(1);
         //
@@ -260,22 +258,22 @@ DocumentExportManager.prototype._getPageLinks = function (page, pageExtraInfos, 
         if (targetPage) validLinks.push(links[j]);
     }
 
-    //debug("Returning links for page: " + page.properties.fid + ", total: " + validLinks.length);
+    // debug("Returning links for page: " + page.properties.fid + ", total: " + validLinks.length);
 
     return validLinks;
 };
-DocumentExportManager._cleanupParseError = function (node) {
-    Dom.workOn("//html:parsererror", node, function (errorNode) {
+DocumentExportManager._cleanupParseError = function(node) {
+    Dom.workOn("//html:parsererror", node, function(errorNode) {
         var b = errorNode.parentNode;
         b.parentNode.removeChild(b);
     });
 };
-DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pageExtraInfos, destFile, exportSelection, callback) {
+DocumentExportManager.prototype._exportDocumentToXML = function(doc, pages, pageExtraInfos, destFile, exportSelection, callback) {
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     var dom = Dom.parseDocument("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
 
-    //properties
+    // properties
     var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "Properties");
     dom.documentElement.appendChild(propertyContainerNode);
 
@@ -285,7 +283,7 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
         docProperties[name] = doc.properties[name];
     }
 
-    //enriching with additional properties
+    // enriching with additional properties
     var d = new Date();
     docProperties["exportTime"] = d;
     docProperties["exportTimeShort"] = "" + d.getFullYear() + (d.getMonth() + 1) + d.getDate();
@@ -302,7 +300,7 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
         propertyNode.appendChild(dom.createTextNode(docProperties[name].toString()));
     }
 
-    //pages
+    // pages
     var pageContainerNode = dom.createElementNS(PencilNamespaces.p, "Pages");
     dom.documentElement.appendChild(pageContainerNode);
 
@@ -346,8 +344,8 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
         propertyNode.setAttribute("name", "backgroundColorRGBA");
         propertyNode.appendChild(dom.createTextNode(backgroundColor));
 
-        //ugly walkarround for Gecko d-o-e bug (https://bugzilla.mozilla.org/show_bug.cgi?id=98168)
-        //we have to reparse the provided notes as XHTML and append it directly to the dom
+        // ugly walkarround for Gecko d-o-e bug (https://bugzilla.mozilla.org/show_bug.cgi?id=98168)
+        // we have to reparse the provided notes as XHTML and append it directly to the dom
         if (page.note) {
             var xhtml = "<div xmlns=\"http://www.w3.org/1999/xhtml\">" + page.note + "</div>";
             var node = Dom.parseToNode(xhtml, dom);
@@ -369,12 +367,12 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
         pageNode.appendChild(linkingContainerNode);
 
         var linkings = this._getPageLinks(page, pageExtraInfos,
-                            !exportSelection || !exportSelection.options || exportSelection.options.copyBGLinks);
+            !exportSelection || !exportSelection.options || exportSelection.options.copyBGLinks);
         console.log("linkings for " + page.name, linkings);
         for (var j = 0; j < linkings.length; j ++) {
             var linking = linkings[j];
 
-            //debug("Validating: " + page.properties.name + " to: " + linking.pageId);
+            // debug("Validating: " + page.properties.name + " to: " + linking.pageId);
 
             var targetPage = Pencil.controller.findPageById(linking.pageId);
             if (!targetPage) {
@@ -394,10 +392,10 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
 
             linkingContainerNode.appendChild(linkNode);
 
-            //debug("Created link from: " + page.properties.name + " to: " + targetPage.properties.name);
+            // debug("Created link from: " + page.properties.name + " to: " + targetPage.properties.name);
         }
     }
-    
+
     DocumentExportManager._cleanupParseError(dom);
 
     var xmlFile = tmp.fileSync({postfix: ".xml", keep: false});
@@ -406,7 +404,7 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     try {
-        exporter.export(this.doc, exportSelection, destFile, xmlFile.name, function () {
+        exporter.export(this.doc, exportSelection, destFile, xmlFile.name, function() {
             xmlFile.removeCallback();
             callback();
         });
@@ -416,9 +414,9 @@ DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pag
     }
 };
 
-DocumentExportManager.prototype._populateLinkTargetsInNote = function (htmlNode) {
+DocumentExportManager.prototype._populateLinkTargetsInNote = function(htmlNode) {
     var thiz = this;
-    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function (link) {
+    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function(link) {
         var id = link.getAttribute("page-id");
         if (!id) {
             id = link.getAttribute("href").substring(4);
@@ -431,7 +429,7 @@ DocumentExportManager.prototype._populateLinkTargetsInNote = function (htmlNode)
         link.setAttribute("page-fid", page.fid);
     });
 
-    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function (link) {
+    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function(link) {
         var fid = link.getAttribute("page-fid");
         if (!fid) {
             fid = link.getAttribute("href").substring(5);
@@ -443,7 +441,7 @@ DocumentExportManager.prototype._populateLinkTargetsInNote = function (htmlNode)
         link.setAttribute("page-id", page.id);
     });
 
-    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function (link) {
+    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function(link) {
         var name = link.getAttribute("page-name");
         if (!name) {
             name = link.getAttribute("href").substring(6);

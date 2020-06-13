@@ -2,9 +2,9 @@ function CanvasMemento(node, metadata, action) {
     this.action = action;
     this.node = node;
     this.metadata = {};
-    for (var name in metadata)  this.metadata[name] = metadata[name];
+    for (var name in metadata) this.metadata[name] = metadata[name];
 }
-CanvasMemento.prototype.serializeAsNode = function (doc) {
+CanvasMemento.prototype.serializeAsNode = function(doc) {
     var node = doc.createElementNS(PencilNamespaces.p, "Memento");
     if (this.action) node.setAttribute("action", this.action);
     if (this.node) node.appendChild(doc.importNode(this.node, true));
@@ -16,7 +16,7 @@ CanvasMemento.prototype.serializeAsNode = function (doc) {
     return node;
 };
 
-CanvasMemento.deserializeFromNode = function (node) {
+CanvasMemento.deserializeFromNode = function(node) {
     var attributes = node.attributes;
     var metadata = {};
     for (var i = 0; i < attributes.length; i++) {

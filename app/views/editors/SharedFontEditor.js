@@ -7,7 +7,7 @@ function SharedFontEditor() {
 __extend(BaseTemplatedWidget, SharedFontEditor);
 SharedFontEditor.PROPERTY_NAME = "textFont";
 
-SharedFontEditor.prototype.setup = function () {
+SharedFontEditor.prototype.setup = function() {
     this.fontCombo.setDisabled(true);
     this.pixelFontSize.disabled = true;
     this.boldButton.disabled = true;
@@ -39,7 +39,7 @@ SharedFontEditor.prototype.setup = function () {
     this.pixelFontSize.addEventListener("keyup", function(event) {
         if (event.keyCode == 13 || event.keyCode == 10) {
             if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing || thiz.pixelFontSize.value == "") return;
-            thiz.pixelFontSize.value = Math.max(5,  parseInt(thiz.pixelFontSize.value, 10));
+            thiz.pixelFontSize.value = Math.max(5, parseInt(thiz.pixelFontSize.value, 10));
             thiz.font.size = thiz.pixelFontSize.value + "px";
             thiz._applyValue();
         }
@@ -63,11 +63,10 @@ SharedFontEditor.prototype.setup = function () {
         thiz._applyValue();
     }, false);
 
-    this.bind("p:ItemSelected", function () {
+    this.bind("p:ItemSelected", function() {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.font.weight = thiz.weightCombo.getSelectedItem();
         thiz._applyValue();
-
     }, this.weightCombo);
 
 
@@ -85,7 +84,7 @@ SharedFontEditor.prototype.setup = function () {
         thiz._applyValue();
     }, false);
 
-    this.formatPainterButton.addEventListener("click", function (event) {
+    this.formatPainterButton.addEventListener("click", function(event) {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         if (thiz.formatPainterButton.setAttribute) {
             thiz.formatPainterButton.setAttribute("checked", "true");
@@ -94,14 +93,14 @@ SharedFontEditor.prototype.setup = function () {
     }, false);
 
     this.weightCombo.useHtml = true;
-    this.weightCombo.renderer = function (weight, buttonDisplay) {
+    this.weightCombo.renderer = function(weight, buttonDisplay) {
         var w = FontRepository.WEIGHT_MAP[weight];
         return "<span style=\"font-family: " + (this.fontCombo.getSelectedItem().family || "").replace(/"/g, "'") + "; font-weight: " + weight + ";\">" + (buttonDisplay ? w.shortName : w.displayName) + "</span>";
     }.bind(this);
 
     Pencil.formatPainterButton = this.formatPainterButton;
 };
-SharedFontEditor.prototype.invalidateWeightCombo = function () {
+SharedFontEditor.prototype.invalidateWeightCombo = function() {
     var font = this.fontCombo.getSelectedItem();
     this.weightCombo.node().style.fontFamily = font.family;
     this.weightCombo.setItems(font.weights);
@@ -111,10 +110,10 @@ SharedFontEditor.prototype.invalidateWeightCombo = function () {
     this.useToggle = !font.weights || (font.weights.length <= 2 && (font.weights.indexOf("normal") >= 0 || font.weights.indexOf("bold") >= 0));
     this.node().setAttribute("use-toggle", this.useToggle);
 };
-SharedFontEditor.prototype.reloadFontItems = function () {
+SharedFontEditor.prototype.reloadFontItems = function() {
     FontEditor._loadFontItems(this.fontCombo);
 };
-SharedFontEditor.prototype.beginFormatPainter = function () {
+SharedFontEditor.prototype.beginFormatPainter = function() {
     var activeCanvas = Pencil.activeCanvas;
 
     if (activeCanvas.isFormatPainterAvailable()) {
@@ -123,8 +122,8 @@ SharedFontEditor.prototype.beginFormatPainter = function () {
     if (!activeCanvas.currentController) return;
     try {
         var target = activeCanvas.currentController;
-        if (target
-                && (target.constructor == Shape || target.constructor == Group)) {
+        if (target &&
+                (target.constructor == Shape || target.constructor == Group)) {
             Pencil._painterSourceTarget = target;
             Pencil._painterSourceProperties = target.getProperties();
 
@@ -133,20 +132,21 @@ SharedFontEditor.prototype.beginFormatPainter = function () {
     } catch (e) {
         Console.dumpError(e);
     }
-
 };
 
-SharedFontEditor.prototype.isDisabled = function () {
+SharedFontEditor.prototype.isDisabled = function() {
     return this.disabledEditor;
 };
-SharedFontEditor.prototype._applyValue = function () {
+SharedFontEditor.prototype._applyValue = function() {
     var thiz = this;
     Pencil.activeCanvas.run(function() {
         this.setProperty(SharedFontEditor.PROPERTY_NAME, thiz.font);
-    }, this.target, Util.getMessage("action.apply.properties.value"))
+    }, this.target, Util.getMessage("action.apply.properties.value"));
 };
-SharedFontEditor.prototype.attach = function (target) {
-    if (target && target.getAttributeNS && target.getAttributeNS(PencilNamespaces.p, "locked") == "true") { return; }
+SharedFontEditor.prototype.attach = function(target) {
+    if (target && target.getAttributeNS && target.getAttributeNS(PencilNamespaces.p, "locked") == "true") {
+        return;
+    }
 
     this.target = target;
     this.font = target.getProperty(SharedFontEditor.PROPERTY_NAME, "any");
@@ -197,7 +197,7 @@ SharedFontEditor.prototype.attach = function (target) {
     var formatPainter = Pencil.activeCanvas && target && (target.constructor == Group || target.constructor == Shape);
     this.formatPainterButton.disabled = !formatPainter;
 };
-SharedFontEditor.prototype.detach = function () {
+SharedFontEditor.prototype.detach = function() {
     this.fontCombo.setDisabled(true);
     this.weightCombo.setDisabled(true);
     this.pixelFontSize.disabled = true;
@@ -209,10 +209,10 @@ SharedFontEditor.prototype.detach = function () {
     this.target = null;
     this.font = null;
 };
-SharedFontEditor.prototype.invalidate = function () {
+SharedFontEditor.prototype.invalidate = function() {
     if (!this.target) {
         this.detach();
     } else {
         this.attach(this.target);
     }
-}
+};

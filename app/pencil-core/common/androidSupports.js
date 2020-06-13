@@ -1,10 +1,10 @@
 var AndroidSupports = {};
 
-AndroidSupports.insertScreenCapture = function () {
+AndroidSupports.insertScreenCapture = function() {
     Util.beginProgressJob("Taking screenshot", AndroidSupports.screenCaptureStarter);
 };
-AndroidSupports.screenCaptureStarter = function (listener) {
-    //alert("inserting screen capture...");
+AndroidSupports.screenCaptureStarter = function(listener) {
+    // alert("inserting screen capture...");
 
     var SEP = "/";
 
@@ -21,7 +21,7 @@ AndroidSupports.screenCaptureStarter = function (listener) {
 
     for (var i = 0; i < additionalSDKJars.length; i ++) {
         var jar = additionalSDKJars[i];
-        classpath += ":" + sdkPath + SEP + "tools" + SEP + "lib" + SEP + jar
+        classpath += ":" + sdkPath + SEP + "tools" + SEP + "lib" + SEP + jar;
     }
 
     var mainClass = "vn.evolus.ddmsutil.Main";
@@ -36,22 +36,22 @@ AndroidSupports.screenCaptureStarter = function (listener) {
     ];
 
     var app = Components.classes["@mozilla.org/file/local;1"]
-                         .createInstance(Components.interfaces.nsILocalFile);
+        .createInstance(Components.interfaces.nsILocalFile);
     app.initWithPath(java);
 
     var process = Components.classes["@mozilla.org/process/util;1"]
-                        .createInstance(Components.interfaces.nsIProcess);
+        .createInstance(Components.interfaces.nsIProcess);
     process.init(app);
 
     process.runAsync(args, args.length);
 
     var count = 0;
-    var tracker = function () {
+    var tracker = function() {
         if (process.isRunning) {
             window.setTimeout(tracker, 200);
             listener.onProgressUpdated("Please wait", count ++, 20);
         } else {
-            var handler = function (imageData) {
+            var handler = function(imageData) {
                 var def = CollectionManager.shapeDefinition.locateDefinition(PNGImageXferHelper.SHAPE_DEF_ID);
 
                 var w = imageData.w;
@@ -76,7 +76,7 @@ AndroidSupports.screenCaptureStarter = function (listener) {
             };
 
             var imageFile = Components.classes["@mozilla.org/file/local;1"]
-                         .createInstance(Components.interfaces.nsILocalFile);
+                .createInstance(Components.interfaces.nsILocalFile);
             imageFile.initWithPath(output);
 
             var url = Util.ios.newFileURI(imageFile).spec + "?" + (new Date().getTime());
@@ -88,7 +88,7 @@ AndroidSupports.screenCaptureStarter = function (listener) {
     window.setTimeout(tracker, 1000);
 };
 
-AndroidSupports.submit = function () {
+AndroidSupports.submit = function() {
 
 };
 

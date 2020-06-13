@@ -7,25 +7,25 @@ function OOConversionExporter(name, id, mime, extTitle, ext) {
 }
 
 OOConversionExporter.converters = {};
-OOConversionExporter.getConverter = function () {
+OOConversionExporter.getConverter = function() {
     var key = Config.get("export.oo.converter", "uno");
     return OOConversionExporter.converters[key];
 };
 
 
 OOConversionExporter.converters["uno"] = {
-    getFormatFromMime: function (mime) {
+    getFormatFromMime: function(mime) {
         var map = {
             "application/pdf": "pdf",
-            "application/msword": "doc",
+            "application/msword": "doc"
         };
 
         return map[mime];
     },
-    convert: function (src, dest, mime, callback) {
+    convert: function(src, dest, mime, callback) {
         debug("converting using UNOCONV");
         var processService = Components.classes["@mozilla.org/process/util;1"]
-                                .getService(Components.interfaces.nsIProcess);
+            .getService(Components.interfaces.nsIProcess);
 
         var path = Config.get("export.oo.converter.uno.path", "/bin/sh");
         var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -42,7 +42,7 @@ OOConversionExporter.converters["uno"] = {
                 "--stdout",
                 "'" + src.path + "'",
                 ">",
-                "'" + dest.path + "'",
+                "'" + dest.path + "'"
             ].join(" ")
         ];
 
@@ -53,16 +53,16 @@ OOConversionExporter.converters["uno"] = {
 };
 
 OOConversionExporter.converters["jod"] = {
-    convert: function (src, dest, mime, callback) {
+    convert: function(src, dest, mime, callback) {
         debug("converting using JOD");
         var url = Config.get("export.oo.converter.jod.url", "http://ks300916.kimsufi.com:8080/jodconverter/service");
 
         var listener = {
-            onMessage: function (message) {
+            onMessage: function(message) {
             },
-            onProgress: function (percent) {
+            onProgress: function(percent) {
             },
-            onDone: function () {
+            onDone: function() {
                 callback();
             }
         };
@@ -81,21 +81,20 @@ OOConversionExporter.converters["jod"] = {
 
 OOConversionExporter.prototype = new ODTExporter();
 OOConversionExporter.prototype.super$export = OOConversionExporter.prototype.export;
-OOConversionExporter.prototype.export = function (doc, options, destFile, xmlFile, callback) {
+OOConversionExporter.prototype.export = function(doc, options, destFile, xmlFile, callback) {
     var tmpODTFile = Local.newTempFile("penciloo", "odt");
 
     var thiz = this;
-    this.super$export(doc, options, tmpODTFile, xmlFile, function () {
-
+    this.super$export(doc, options, tmpODTFile, xmlFile, function() {
         var converter = OOConversionExporter.getConverter();
-        converter.convert(tmpODTFile, destFile, thiz.mime, function () {
+        converter.convert(tmpODTFile, destFile, thiz.mime, function() {
             tmpODTFile.remove(true);
             callback();
         });
     });
 };
 
-OOConversionExporter.prototype.getOutputFileExtensions = function () {
+OOConversionExporter.prototype.getOutputFileExtensions = function() {
     return [
         {
             title: this.extTitle,
@@ -104,5 +103,5 @@ OOConversionExporter.prototype.getOutputFileExtensions = function () {
     ];
 };
 
-//Pencil.registerDocumentExporter(new OOConversionExporter(Util.getMessage("pdf.document"), "PDFExporter", "application/pdf", Util.getMessage("filepicker.adobe.pdf.files.pdf"), "*.pdf"));
-//Pencil.registerDocumentExporter(new OOConversionExporter(Util.getMessage("microsoft.word.document.doc.file"), "DOCExporter", "application/msword", Util.getMessage("filepicker.microsoft.word.97.xp.doc"), "*.doc"));
+// Pencil.registerDocumentExporter(new OOConversionExporter(Util.getMessage("pdf.document"), "PDFExporter", "application/pdf", Util.getMessage("filepicker.adobe.pdf.files.pdf"), "*.pdf"));
+// Pencil.registerDocumentExporter(new OOConversionExporter(Util.getMessage("microsoft.word.document.doc.file"), "DOCExporter", "application/msword", Util.getMessage("filepicker.microsoft.word.97.xp.doc"), "*.doc"));

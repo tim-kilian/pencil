@@ -11,14 +11,13 @@ function init() {
         this.tasks = [];
     }
 
-    QueueHandler.prototype.submit = function (task) {
+    QueueHandler.prototype.submit = function(task) {
         this.tasks.push(task);
 
         if (this.tasks.length == 1) this.start();
-    }
+    };
 
-    QueueHandler.prototype.start = function (task) {
-
+    QueueHandler.prototype.start = function(task) {
         var next = function() {
             if (this.tasks.length <= 0) return;
             var task = this.tasks.pop();
@@ -26,7 +25,7 @@ function init() {
         }.bind(this);
 
         next();
-    }
+    };
 
     function getList(xpath, node) {
         var doc = node.ownerDocument ? node.ownerDocument : node;
@@ -93,7 +92,7 @@ function init() {
             var mime = "image/jpeg";
             if (ext == ".png") mine = "image/png";
 
-            fs.readFile(sourcePath, function (error, bitmap) {
+            fs.readFile(sourcePath, function(error, bitmap) {
                 var url = "data:" + mime + ";base64," + new Buffer(bitmap).toString("base64");
 
                 image.setAttributeNS(xlink, "href", url);
@@ -104,7 +103,7 @@ function init() {
         }
 
         function postProcess() {
-            //parse for linking location on this page
+            // parse for linking location on this page
             console.log("processLinks", processLinks);
             if (processLinks) {
                 document.body.appendChild(svgNode.documentElement);
@@ -114,8 +113,8 @@ function init() {
                 for (var i = 0; i < objects.length; i ++) {
                     var g = objects[i];
 
-                    var dx = 0; //rect.left;
-                    var dy = 0; //rect.top;
+                    var dx = 0; // rect.left;
+                    var dy = 0; // rect.top;
 
                     var owner = g.ownerSVGElement;
 
@@ -141,7 +140,6 @@ function init() {
                     objectsWithLinking.push(linkingInfo);
                 }
             }
-
         }
 
         function onConversionDone() {
@@ -162,13 +160,13 @@ function init() {
             var img = document.createElement("img");
             document.body.appendChild(img);
 
-            img.onload = function () {
+            img.onload = function() {
                 ctx.save();
                 ctx.scale(s, s);
                 ctx.drawImage(img, 0, 0);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                setTimeout(function () {
+                setTimeout(function() {
                     postProcess();
                     callback(canvas.toDataURL(), objectsWithLinking);
                     ctx.restore();
@@ -187,17 +185,17 @@ function init() {
 
     function createRenderTask(event, data) {
         return function(__callback) {
-            //parse the SVG back into DOM
+            // parse the SVG back into DOM
             var xml = data.svg;
             var css = "svg { line-height: 1.428; }";
             if (combinedCSS) css += "\n" + combinedCSS;
 
-            xml = xml.replace(/^(<svg[^>\/]+>)/i, function (all, one) {
+            xml = xml.replace(/^(<svg[^>\/]+>)/i, function(all, one) {
                 return one + "<style type=\"text/css\">\n" + css + "</style>";
             });
 
             var svgNode = parser.parseFromString(xml, "text/xml");
-            rasterize(svgNode, data.width, data.height, data.scale, data.processLinks, function (dataURL, objectsWithLinking) {
+            rasterize(svgNode, data.width, data.height, data.scale, data.processLinks, function(dataURL, objectsWithLinking) {
                 console.log("RASTER: Returning render result for " + data.id);
                 ipcRenderer.send("canvas-render-response", {url: dataURL, id: data.id, objectsWithLinking: objectsWithLinking});
                 __callback();
@@ -206,15 +204,15 @@ function init() {
     }
 
 
-    ipcRenderer.on("canvas-render-request", function (event, data) {
+    ipcRenderer.on("canvas-render-request", function(event, data) {
         queueHandler.submit(createRenderTask(event, data));
     });
 
 
-    ipcRenderer.on("font-loading-request", function (event, data) {
-        //creating combinedCSS
+    ipcRenderer.on("font-loading-request", function(event, data) {
+        // creating combinedCSS
         combinedCSS = "";
-        sharedUtil.buildEmbeddedFontFaceCSS(data.faces, function (css) {
+        sharedUtil.buildEmbeddedFontFaceCSS(data.faces, function(css) {
             combinedCSS = css;
             ipcRenderer.send("font-loading-response", data);
         });

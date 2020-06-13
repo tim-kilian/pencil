@@ -3,7 +3,7 @@ function Controller(canvasPool, applicationPane) {
     this.applicationPane = applicationPane;
     this.activePageLoading = false;
     var thiz = this;
-    this.canvasPool.canvasContentModifiedListener = function (canvas) {
+    this.canvasPool.canvasContentModifiedListener = function(canvas) {
         thiz.handleCanvasModified(canvas);
     };
 
@@ -17,17 +17,17 @@ Controller.SUB_THUMBNAILS = "thumbnails";
 Controller.SUB_REFERENCE = "refs";
 Controller.THUMBNAIL_SIZE = 256;
 
-Controller.prototype.makeSubDir = function (sub) {
+Controller.prototype.makeSubDir = function(sub) {
     const fs = require("fs");
     var fullPath = path.join(Pencil.documentHandler.tempDir.name, sub);
     try {
         fs.mkdirSync(fullPath);
-    } catch(e) {
-        if ( e.code != 'EEXIST' ) throw e;
+    } catch (e) {
+        if ( e.code != "EEXIST" ) throw e;
     }
     return fullPath;
 };
-Controller.prototype.getDocumentName = function () {
+Controller.prototype.getDocumentName = function() {
     return this.documentPath ? path.basename(this.documentPath).replace(/\.[a-z]+$/, "") : "* Unsaved document";
 };
 // Controller.prototype.newDocument = function () {
@@ -52,8 +52,8 @@ Controller.prototype.getDocumentName = function () {
 //     }
 //     create();
 // };
-Controller.prototype.confirmAndclose = function (onClose) {
-    var handler = function () {
+Controller.prototype.confirmAndclose = function(onClose) {
+    var handler = function() {
         if (Pencil.documentHandler.tempDir) Pencil.documentHandler.tempDir.removeCallback();
         Pencil.documentHandler.tempDir = null;
         this.doc = null;
@@ -61,7 +61,7 @@ Controller.prototype.confirmAndclose = function (onClose) {
 
         this.sayControllerStatusChanged();
         ShapeTestCanvasPane._instance.quitTesting();
-        
+
         if (StencilCollectionBuilder.activeCollectionInfo) {
             StencilCollectionBuilder.cleanup();
             CollectionManager.reloadActiveBuilderCollection();
@@ -75,7 +75,7 @@ Controller.prototype.confirmAndclose = function (onClose) {
     } else {
         Pencil.documentHandler.confirmAndSaveDocument(handler);
     }
-}
+};
 // Controller.prototype.resetDocument = function () {
 //     if (Pencil.documentHandler.tempDir) Pencil.documentHandler.tempDir.removeCallback();
 //     Pencil.documentHandler.tempDir = tmp.dirSync({ keep: false, unsafeCleanup: true });
@@ -91,30 +91,30 @@ Controller.prototype.confirmAndclose = function (onClose) {
 //     this.applicationPane.pageListView.currentParentPage = null;
 //     FontLoader.instance.setDocumentRepoDir(path.join(Pencil.documentHandler.tempDir.name, "fonts"));
 // };
-Controller.prototype.findPageById = function (id) {
+Controller.prototype.findPageById = function(id) {
     for (var i in this.doc.pages) {
         if (this.doc.pages[i].id == id) return this.doc.pages[i];
     }
 
     return null;
 };
-Controller.prototype.findPageByFid = function (fid) {
+Controller.prototype.findPageByFid = function(fid) {
     for (var i in this.doc.pages) {
         if (this.doc.pages[i].fid == fid) return this.doc.pages[i];
     }
 
     return null;
 };
-Controller.prototype.findPageByName = function (name) {
+Controller.prototype.findPageByName = function(name) {
     for (var i in this.doc.pages) {
         if (this.doc.pages[i].name == name) return this.doc.pages[i];
     }
 
     return null;
 };
-Controller.prototype.newPage = function (options) {
+Controller.prototype.newPage = function(options) {
     if (!options) options = {};
-    
+
     var name = options.name || "Untitled Page";
     var width = options.width || 100;
     var height = options.height || 100;
@@ -124,7 +124,7 @@ Controller.prototype.newPage = function (options) {
     var parentPageId = options.parentPageId || null;
     var activateAfterCreate = options.activateAfterCreate || false;
     var copyBackgroundLinks = options.copyBackgroundLinks || false;
-    
+
     var id = Util.newUUID();
     var pageFileName = "page_" + id + ".xml";
 
@@ -173,30 +173,30 @@ Controller.prototype.newPage = function (options) {
     return page;
 };
 
-Controller.prototype.duplicatePage = function (pageIn, onDone) {
+Controller.prototype.duplicatePage = function(pageIn, onDone) {
     var page = pageIn;
     var name = page.name + " (1)";
     var width = page.width;
     var height = page.height;
     var backgroundPageId;
     var copyBackgroundLinks = false;
-    if(page.backgroundPage) {
+    if (page.backgroundPage) {
         backgroundPageId = page.backgroundPage.id;
         copyBackgroundLinks = page.copyBackgroundLinks || false;
     }
     var backgroundColor;
     if (page.backgroundColor) {
-         backgroundColor = page.backgroundColor;
+        backgroundColor = page.backgroundColor;
     }
     var parentPageId = page.parentPage && page.parentPage.id;
     var note = page.note;
 
     var seed = 2;
     while (this.findPageByName(name)) {
-        name = page.name  + " (" + seed + ")";
+        name = page.name + " (" + seed + ")";
         seed ++;
-    };
-    
+    }
+
     var options = {
         name: name,
         width: width,
@@ -216,7 +216,7 @@ Controller.prototype.duplicatePage = function (pageIn, onDone) {
     this.retrievePageCanvas(newPage);
 
     // retrieve page
-    if(!page.canvas) {
+    if (!page.canvas) {
         this.retrievePageCanvas(page, newPage);
     }
 
@@ -237,10 +237,9 @@ Controller.prototype.duplicatePage = function (pageIn, onDone) {
     });
 
     this.sayDocumentChanged();
-
 };
 
-Controller.prototype.serializeDocument = function (onDone) {
+Controller.prototype.serializeDocument = function(onDone) {
     this.doc.properties.activeId = this.activePage.id;
     var dom = this.doc.toDom();
     var xml = Controller.serializer.serializeToString(dom);
@@ -255,7 +254,7 @@ Controller.prototype.serializeDocument = function (onDone) {
 
     function postProcess() {
         if (embeddableFontFaces.length > 0) {
-            //console.log("Fonts to embed:", embeddableFontFaces);
+            // console.log("Fonts to embed:", embeddableFontFaces);
             FontLoader.instance.embedToDocumentRepo(embeddableFontFaces);
         }
 
@@ -271,7 +270,7 @@ Controller.prototype.serializeDocument = function (onDone) {
         }
         var page = thiz.doc.pages[index];
 
-        //serialize the page only when the page is in memory
+        // serialize the page only when the page is in memory
         if (page.canvas) {
             thiz.serializePage(page, page.tempFilePath);
         }
@@ -280,19 +279,19 @@ Controller.prototype.serializeDocument = function (onDone) {
 
         var pageEmbeddableFontFaces = resourceReferences.fontFaces;
         if (pageEmbeddableFontFaces) {
-            pageEmbeddableFontFaces.forEach(function (face) {
+            pageEmbeddableFontFaces.forEach(function(face) {
                 if (embeddableFontFaces.indexOf(face) < 0) embeddableFontFaces.push(face);
             });
         }
         var pageRefResourceIds = resourceReferences.resourceIds;
         if (pageRefResourceIds) {
-            pageRefResourceIds.forEach(function (id) {
+            pageRefResourceIds.forEach(function(id) {
                 if (refResourceIds.indexOf(id) < 0) refResourceIds.push(id);
             });
         }
 
-        if (page.lastModified
-            && (!page.thumbCreated || page.lastModified.getTime() > page.thumbCreated.getTime())) {
+        if (page.lastModified &&
+            (!page.thumbCreated || page.lastModified.getTime() > page.thumbCreated.getTime())) {
             if (thiz.pendingThumbnailerMap[page.id]) {
                 var pending = thiz.pendingThumbnailerMap[page.id];
                 window.clearTimeout(pending);
@@ -302,11 +301,11 @@ Controller.prototype.serializeDocument = function (onDone) {
         } else {
             next();
         }
-    };
+    }
     next();
 };
 
-Controller.prototype.countResourceReferences = function (page) {
+Controller.prototype.countResourceReferences = function(page) {
     var result = {
         fontFaces: {},
         resources: {}
@@ -320,14 +319,14 @@ Controller.prototype.countResourceReferences = function (page) {
         contextNode = Dom.getSingle("/p:Page/p:Content", dom);
     }
 
-    Dom.workOn(".//svg:g[@p:type='Shape']", contextNode, function (node) {
+    Dom.workOn(".//svg:g[@p:type='Shape']", contextNode, function(node) {
         var defId = node.getAttributeNS(PencilNamespaces.p, "def");
         var def = CollectionManager.shapeDefinition.locateDefinition(defId);
 
-        Dom.workOn("./p:metadata/p:property", node, function (propNode) {
+        Dom.workOn("./p:metadata/p:property", node, function(propNode) {
             var name = propNode.getAttribute("name");
             var value = propNode.textContent;
-            
+
             if (value && value.match(/^[0-9\,\-]+ref:\/\//)) {
                 var imageData = ImageData.fromString(value);
                 if (!imageData || !imageData.data) {
@@ -344,10 +343,10 @@ Controller.prototype.countResourceReferences = function (page) {
                 var holders = result.resources[id] || [];
                 holders.push(node);
                 result.resources[id] = holders;
-                
+
                 return;
             }
-            
+
             if (def) {
                 var propDef = def.getProperty(name);
 
@@ -360,7 +359,7 @@ Controller.prototype.countResourceReferences = function (page) {
                         holders.push(node);
                     }
                     result.fontFaces[font.family] = holders;
-                    
+
                     return;
                 }
             }
@@ -369,16 +368,16 @@ Controller.prototype.countResourceReferences = function (page) {
 
     return result;
 };
-Controller.prototype.findResourceReferences = function (page) {
+Controller.prototype.findResourceReferences = function(page) {
     var refs = this.countResourceReferences(page);
-    
-    
+
+
     return {
         fontFaces: Object.keys(refs.fontFaces),
         resourceIds: Object.keys(refs.resources)
     };
 };
-Controller.prototype.getResourceReferences = function (resourceId, pages) {
+Controller.prototype.getResourceReferences = function(resourceId, pages) {
     if (!pages) pages = this.doc.pages;
     else if (!Array.isArray(pages)) pages = [pages];
 
@@ -400,7 +399,7 @@ Controller.prototype.getResourceReferences = function (resourceId, pages) {
             overall[k] = ri;
         }
         return overall;
-    };
+    }
     for (var i = 0; i < pages.length; i++) {
         var page = pages[i];
         var refs = this.countResourceReferences(page);
@@ -438,15 +437,15 @@ Controller.prototype.getResourceReferences = function (resourceId, pages) {
 //
 //     handler();
 // };
-Controller.prototype.invalidateContentNode = function (node, onDoneCallback) {
+Controller.prototype.invalidateContentNode = function(node, onDoneCallback) {
     var invalidateTasks = [];
     var invalidationIndex = -1;
 
 
     function createInvalidationTask(type, name, propertyNode) {
-        return function (__callback) {
+        return function(__callback) {
             var value = type.fromString(propertyNode.textContent);
-            type.invalidateValue(value, function (invalidatedValue, error) {
+            type.invalidateValue(value, function(invalidatedValue, error) {
                 if (invalidatedValue) {
                     Shape.storePropertyToNode(name, invalidatedValue, propertyNode);
                 }
@@ -462,51 +461,49 @@ Controller.prototype.invalidateContentNode = function (node, onDoneCallback) {
             return;
         }
         var task = invalidateTasks[invalidationIndex];
-        task(function () {
+        task(function() {
             runNextValidation(callback);
         });
     }
 
-    Dom.workOn("//svg:g[@p:type='Shape']", node, function (shapeNode) {
+    Dom.workOn("//svg:g[@p:type='Shape']", node, function(shapeNode) {
         var defId = shapeNode.getAttributeNS(PencilNamespaces.p, "def");
         var def = CollectionManager.shapeDefinition.locateDefinition(defId);
-        
+
         if (def) {
-            Dom.workOn("./p:metadata/p:property", shapeNode, function (propertyNode) {
+            Dom.workOn("./p:metadata/p:property", shapeNode, function(propertyNode) {
                 var name = propertyNode.getAttribute("name");
                 var propertyDef = def.propertyMap[name];
                 if (!propertyDef || !propertyDef.type.invalidateValue) return;
                 var type = propertyDef.type;
 
                 invalidateTasks.push(createInvalidationTask(type, name, propertyNode));
-
             });
         } else {
             // Adhoc invalidation for rasterized image reference from within missing shapes
             this.invalidateBrokenImageRefs(shapeNode);
         }
-        
     });
-    
-    
+
+
     runNextValidation(onDoneCallback);
 };
 
-Controller.prototype.invalidateBrokenImageRefs = function (contentNode) {
-    Dom.workOn(".//html:img", contentNode, function (imgNode) {
+Controller.prototype.invalidateBrokenImageRefs = function(contentNode) {
+    Dom.workOn(".//html:img", contentNode, function(imgNode) {
         var src = imgNode.getAttribute("src");
         if (!src) return;
         if (!src.match(/^file:\/\/([^\?]+)(\?.+)?$/)) return;
         var filePath = RegExp.$1;
         if (!filePath.match(/^.*\/refs\/([^\/]+)$/)) return;
         var refId = RegExp.$1;
-        
+
         var realFilePath = filePath;
         if (process.platform == "win32") {
             realFilePath = filePath.replace(/\//g, "\\");
             if (realFilePath.match(/^\\(.*)$/)) realFilePath = RegExp.$1;
         }
-        
+
         if (fs.existsSync(realFilePath)) return;
         var realFilePath = this.refIdToFilePath(refId);
         if (!fs.existsSync(realFilePath)) return;
@@ -516,17 +513,17 @@ Controller.prototype.invalidateBrokenImageRefs = function (contentNode) {
 };
 
 Controller.THUMB_CACHE_DIR = "thumbs";
-Controller.getThumbCacheDir = function () {
+Controller.getThumbCacheDir = function() {
     return Config.getDataFilePath(Controller.THUMB_CACHE_DIR);
 };
 
 try {
     fs.mkdirSync(Controller.getThumbCacheDir());
-} catch(e) {
-    if ( e.code != 'EEXIST' ) throw e;
+} catch (e) {
+    if ( e.code != "EEXIST" ) throw e;
 }
 
-Controller.prototype.getCurrentDocumentThumbnail = function () {
+Controller.prototype.getCurrentDocumentThumbnail = function() {
     if (!this.doc || !this.doc.pages) return null;
     var firstThumbnailPath = null;
 
@@ -549,7 +546,7 @@ Controller.prototype.getCurrentDocumentThumbnail = function () {
 
     return thumbPath;
 };
-Controller.prototype.addRecentFile = function (filePath, thumbPath) {
+Controller.prototype.addRecentFile = function(filePath, thumbPath) {
     // Recent documents (Windows & OS X)
     Pencil.app.addRecentDocument(filePath);
 
@@ -559,7 +556,7 @@ Controller.prototype.addRecentFile = function (filePath, thumbPath) {
     } else {
         for (var i = 0; i < files.length; i ++) {
             if (files[i] == filePath) {
-                //remove it
+                // remove it
                 files.splice(i, 1);
                 break;
             }
@@ -575,7 +572,7 @@ Controller.prototype.addRecentFile = function (filePath, thumbPath) {
 
     var newThumbs = {};
     var usedPaths = [];
-    files.forEach(function (file) {
+    files.forEach(function(file) {
         if (file == filePath) {
             newThumbs[file] = thumbPath;
         } else {
@@ -586,10 +583,10 @@ Controller.prototype.addRecentFile = function (filePath, thumbPath) {
         if (p) usedPaths.push(p);
     });
 
-    //cleanup unused thumb cache
+    // cleanup unused thumb cache
     var cacheDir = Controller.getThumbCacheDir();
     var names = fs.readdirSync(cacheDir);
-    names.forEach(function (name) {
+    names.forEach(function(name) {
         var p = path.join(cacheDir, name);
         if (usedPaths.indexOf(p) < 0) {
             try {
@@ -602,12 +599,12 @@ Controller.prototype.addRecentFile = function (filePath, thumbPath) {
     Config.set("recent-documents", files);
     Config.set("recent-documents-thumb-map", newThumbs);
 };
-Controller.prototype.removeRecentFile = function (filePath) {
+Controller.prototype.removeRecentFile = function(filePath) {
     var files = Config.get("recent-documents");
     if (files) {
         for (var i = 0; i < files.length; i ++) {
             if (files[i] == filePath) {
-                //remove it
+                // remove it
                 files.splice(i, 1);
                 break;
             }
@@ -621,7 +618,7 @@ Controller.prototype.removeRecentFile = function (filePath) {
     });
 };
 
-Controller.serializePageToDom = function (page, noContent) {
+Controller.serializePageToDom = function(page, noContent) {
     var dom = Controller.parser.parseFromString("<p:Page xmlns:p=\"" + PencilNamespaces.p + "\"></p:Page>", "text/xml");
     var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "p:Properties");
     dom.documentElement.appendChild(propertyContainerNode);
@@ -654,8 +651,8 @@ Controller.serializePageToDom = function (page, noContent) {
             }
         } else {
             var svg = document.createElementNS(PencilNamespaces.svg, "svg");
-            svg.setAttribute("width", "" + page.width  + "px");
-            svg.setAttribute("height", "" + page.height  + "px");
+            svg.setAttribute("width", "" + page.width + "px");
+            svg.setAttribute("height", "" + page.height + "px");
             try {
                 var dom2 = Controller.parser.parseFromString(fs.readFileSync(page.tempFilePath, "utf8"), "text/xml");
                 var content2 = Dom.getSingle("/p:Page/p:Content", dom2);
@@ -664,7 +661,6 @@ Controller.serializePageToDom = function (page, noContent) {
                     content2.removeChild(c);
                     svg.appendChild(c);
                 }
-
             } catch (e) {
 
             }
@@ -682,17 +678,17 @@ Controller.serializePageToDom = function (page, noContent) {
 
     return dom;
 };
-Controller.prototype.serializePage = function (page, outputPath) {
+Controller.prototype.serializePage = function(page, outputPath) {
     var dom = Controller.serializePageToDom(page);
 
     var xml = Controller.serializer.serializeToString(dom);
     fs.writeFileSync(outputPath, xml, "utf8");
 };
 
-Controller.prototype.getPageSVG = function (page) {
+Controller.prototype.getPageSVG = function(page) {
     var svg = document.createElementNS(PencilNamespaces.svg, "svg");
-    svg.setAttribute("width", "" + page.width  + "px");
-    svg.setAttribute("height", "" + page.height  + "px");
+    svg.setAttribute("width", "" + page.width + "px");
+    svg.setAttribute("height", "" + page.height + "px");
 
     if (page.canvas) {
         if (!page.invalidatedAfterLoad) {
@@ -720,7 +716,7 @@ Controller.prototype.getPageSVG = function (page) {
     }
     return svg;
 };
-Controller.prototype.swapOut = function (page) {
+Controller.prototype.swapOut = function(page) {
     if (!page.canvas) throw "Invalid page state. Unable to swap out un-attached page";
     this.serializePage(page, page.tempFilePath);
     page.careTakerTempFile = tmp.fileSync({postfix: ".xml", keep: false});
@@ -731,7 +727,7 @@ Controller.prototype.swapOut = function (page) {
     page.canvas = null;
     page.lastUsed = null;
 };
-Controller.prototype.swapIn = function (page, canvas) {
+Controller.prototype.swapIn = function(page, canvas) {
     if (page.canvas) throw "Invalid page state. Unable to swap in attached page.";
 
     var dom = Controller.parser.parseFromString(fs.readFileSync(page.tempFilePath, "utf8"), "text/xml");
@@ -761,23 +757,23 @@ Controller.prototype.swapIn = function (page, canvas) {
 
 
     if (!page.invalidatedAfterLoad) {
-        this.invalidatePageContent(page, function () {
+        this.invalidatePageContent(page, function() {
             canvas.careTaker.reset();
         });
         page.invalidatedAfterLoad = true;
     }
-} ;
+};
 
-Controller.prototype.updateCanvasState = function () {
+Controller.prototype.updateCanvasState = function() {
     if (this.activePage && this.activePage.canvas) {
         var canvasStateTemp = this.activePage.canvas.getCanvasState();
         this.activePage.scrollTop = canvasStateTemp.scrollTop;
         this.activePage.scrollLeft = canvasStateTemp.scrollLeft;
         this.activePage.zoom = canvasStateTemp.zoom;
     }
-}
+};
 
-Controller.prototype.activatePage = function (page) {
+Controller.prototype.activatePage = function(page) {
     if (page == null || this.activePage && page.id == this.activePage.id) return;
 
     this.activePageLoading = true;
@@ -797,12 +793,12 @@ Controller.prototype.activatePage = function (page) {
     this.activePageLoading = false;
     // this.sayDocumentChanged();
 };
-Controller.prototype.ensurePageCanvasBackground = function (page) {
+Controller.prototype.ensurePageCanvasBackground = function(page) {
     if (!page.canvas) return;
 
     if (page.backgroundPage) {
         var backgroundPage = page.backgroundPage;
-        Pencil.rasterizer.getPageBitmapFile(backgroundPage, function (filePath) {
+        Pencil.rasterizer.getPageBitmapFile(backgroundPage, function(filePath) {
             page.canvas.setBackgroundImageData({
                 url: ImageData.filePathToURL(filePath),
                 width: backgroundPage.width,
@@ -818,13 +814,13 @@ Controller.prototype.ensurePageCanvasBackground = function (page) {
         page.canvas.setBackgroundImageData(null, false);
     }
 };
-Controller.prototype.invalidatePageContent = function (page, callback) {
+Controller.prototype.invalidatePageContent = function(page, callback) {
     if (!page || !page.canvas) {
         if (callback) callback();
         return;
     }
 
-    page.canvas.invalidateAll(function () {
+    page.canvas.invalidateAll(function() {
         var children = [];
         while (page.canvas.drawingLayer.hasChildNodes()) {
             var c = page.canvas.drawingLayer.firstChild;
@@ -841,10 +837,10 @@ Controller.prototype.invalidatePageContent = function (page, callback) {
 
         if (callback) callback();
     });
-    
+
     this.invalidateBrokenImageRefs(page.canvas.drawingLayer);
 };
-Controller.prototype.retrievePageCanvas = function (page, newPage) {
+Controller.prototype.retrievePageCanvas = function(page, newPage) {
     if (!page.canvas) {
         if (!this.canvasPool.available()) {
             var lruPage = null;
@@ -865,19 +861,19 @@ Controller.prototype.retrievePageCanvas = function (page, newPage) {
         this.swapIn(page, canvas);
     }
 };
-Controller.prototype.deletePage = function (page) {
+Controller.prototype.deletePage = function(page) {
     if (page.canvas) this.canvasPool.return(page.canvas);
 
-    //Delete page from parent
+    // Delete page from parent
     var parentPage = page.parentPage;
     if (parentPage) {
         var index = parentPage.children.indexOf(page);
         parentPage.children.splice(index, 1);
     }
 
-    //Delete page from children
+    // Delete page from children
     if (page.children) {
-        for( var i in page.children) {
+        for ( var i in page.children) {
             if (parentPage) {
                 page.children[i].parentPage = parentPage;
                 page.children[i].parentPageId = parentPage.id;
@@ -889,7 +885,7 @@ Controller.prototype.deletePage = function (page) {
         }
     }
 
-    //Delete page from List pages
+    // Delete page from List pages
     var i = this.doc.pages.indexOf(page);
     this.doc.pages.splice(i, 1);
 
@@ -906,7 +902,7 @@ Controller.prototype.deletePage = function (page) {
     if (refPages.length > 0) {
         var thiz = this;
         function updateBackgroundPage(pages, backgroundPage) {
-            pages.forEach(function (page) {
+            pages.forEach(function(page) {
                 if (backgroundPage) {
                     page.backgroundPage = backgroundPage;
                     page.backgroundPageId = backgroundPage.id;
@@ -930,12 +926,12 @@ Controller.prototype.deletePage = function (page) {
         if (page.backgroundPage) {
             var bgPage = page.backgroundPage;
             Dialog.confirm(
-                "This page is the background page of some pages. And the background page of this page is " + bgPage.name
-                + ". Do you want to change background of the pages is " + bgPage.name + "?", null,
-                "Change background page to " + bgPage.name, function () {
+                "This page is the background page of some pages. And the background page of this page is " + bgPage.name +
+                ". Do you want to change background of the pages is " + bgPage.name + "?", null,
+                "Change background page to " + bgPage.name, function() {
                     updateBackgroundPage(refPages, bgPage);
                 },
-                "Set no background page", function () {
+                "Set no background page", function() {
                     updateBackgroundPage(refPages);
                 }
             );
@@ -960,30 +956,30 @@ Controller.prototype.deletePage = function (page) {
                 }
             }
         }
-    };
+    }
 };
-Controller.prototype.sayDocumentChanged = function () {
+Controller.prototype.sayDocumentChanged = function() {
     this.modified = true;
     Dom.emitEvent("p:DocumentChanged", this.applicationPane.node(), {
-        controller : this
+        controller: this
     });
 };
-Controller.prototype.sayControllerStatusChanged = function () {
+Controller.prototype.sayControllerStatusChanged = function() {
     Dom.emitEvent("p:ControllerStatusChanged", this.applicationPane.node(), {
-        controller : this
+        controller: this
     });
 };
-Controller.prototype.sayDocumentSaved = function () {
+Controller.prototype.sayDocumentSaved = function() {
     this.modified = false;
 };
 
-Controller.prototype.checkLeftRight = function (page, dir) {
+Controller.prototype.checkLeftRight = function(page, dir) {
     var pages = [];
     var parentPage = page.parentPage;
     if (parentPage) {
         pages = parentPage.children;
     } else {
-        for(var i = 0; i < this.doc.pages.length; i++) {
+        for (var i = 0; i < this.doc.pages.length; i++) {
             if (this.doc.pages[i].parentPage == parentPage) {
                 pages.push(this.doc.pages[i]);
             }
@@ -996,15 +992,15 @@ Controller.prototype.checkLeftRight = function (page, dir) {
         if (index == pages.length - 1) return false;
     }
     return true;
-}
+};
 
-Controller.prototype.movePage = function (page, dir) {
+Controller.prototype.movePage = function(page, dir) {
     var pages = [];
     var parentPage = page.parentPage;
     if (parentPage) {
         pages = parentPage.children;
     } else {
-        for(var i = 0; i < this.doc.pages.length; i++) {
+        for (var i = 0; i < this.doc.pages.length; i++) {
             if (this.doc.pages[i].parentPage == parentPage) {
                 pages.push(this.doc.pages[i]);
             }
@@ -1044,15 +1040,15 @@ Controller.prototype.movePage = function (page, dir) {
     }
     this.sayDocumentChanged();
     return true;
-}
-Controller.prototype.sizeToContent = function (passedPage, askForPadding) {
+};
+Controller.prototype.sizeToContent = function(passedPage, askForPadding) {
     var page = passedPage ? passedPage : this.activePage;
     var canvas = page.canvas;
     if (!canvas) return;
 
     var thiz = this;
-    var padding  = 0;
-    var handler = function () {
+    var padding = 0;
+    var handler = function() {
         var canvas = page.canvas;
         if (!canvas) return;
         var newSize = canvas.sizeToContent(padding, padding);
@@ -1063,7 +1059,7 @@ Controller.prototype.sizeToContent = function (passedPage, askForPadding) {
             thiz.sayDocumentChanged();
             thiz.invalidateBitmapFilePath(page);
         }
-    }.bind(this);
+    };
 
     if (askForPadding) {
         var paddingDialog = new PromptDialog();
@@ -1071,7 +1067,7 @@ Controller.prototype.sizeToContent = function (passedPage, askForPadding) {
             title: "Fit content with padding",
             message: "Please enter the padding",
             defaultValue: 0,
-            callback: function (paddingString) {
+            callback: function(paddingString) {
                 if (!paddingString) return;
                 padding = parseInt(paddingString, 10);
                 if (!padding) padding = 0;
@@ -1082,9 +1078,9 @@ Controller.prototype.sizeToContent = function (passedPage, askForPadding) {
     }
 
     handler();
-} ;
+};
 
-Controller.prototype.sizeToBestFit = function (passedPage) {
+Controller.prototype.sizeToBestFit = function(passedPage) {
     var page = passedPage ? passedPage : this.activePage;
     var canvas = page.canvas;
     if (!canvas) return;
@@ -1101,7 +1097,7 @@ Controller.prototype.sizeToBestFit = function (passedPage) {
         this.sayDocumentChanged();
     }
 };
-Controller.prototype.setActiveCanvasSize = function (width, height) {
+Controller.prototype.setActiveCanvasSize = function(width, height) {
     var canvas = this.activePage.canvas;
     if (!canvas) return;
     var newSize = this.applicationPane.getBestFitSizeObject();
@@ -1112,23 +1108,23 @@ Controller.prototype.setActiveCanvasSize = function (width, height) {
     this.invalidateBitmapFilePath(this.activePage);
     this.sayDocumentChanged();
 };
-Controller.prototype.getBestFitSize = function () {
+Controller.prototype.getBestFitSize = function() {
     return this.applicationPane.getBestFitSize();
 };
 
-Controller.prototype.handleCanvasModified = function (canvas) {
+Controller.prototype.handleCanvasModified = function(canvas) {
     if (!canvas || !canvas.page) return;
     this.modified = true;
     canvas.page.lastModified = new Date();
     this.invalidateBitmapFilePath(canvas.page);
 };
-Controller.prototype.updatePageThumbnail = function (page, done) {
+Controller.prototype.updatePageThumbnail = function(page, done) {
     var thumbPath = path.join(this.makeSubDir(Controller.SUB_THUMBNAILS), page.id + ".png");
     var scale = Controller.THUMBNAIL_SIZE / page.width;
     if (page.height > page.width) scale = Controller.THUMBNAIL_SIZE / page.height;
 
     var thiz = this;
-    this.applicationPane.rasterizer.postBitmapGeneratingTask(page, scale, thumbPath, function (p) {
+    this.applicationPane.rasterizer.postBitmapGeneratingTask(page, scale, thumbPath, function(p) {
         page.thumbPath = p;
         page.thumbCreated = new Date();
         Dom.emitEvent("p:PageInfoChanged", thiz.applicationPane, {page: page});
@@ -1136,12 +1132,12 @@ Controller.prototype.updatePageThumbnail = function (page, done) {
     });
 };
 
-Controller.prototype.rasterizeCurrentPage = function (targetPage) {
+Controller.prototype.rasterizeCurrentPage = function(targetPage) {
     var page = targetPage ? targetPage : (this.activePage ? this.activePage : null);
     if (!page) {
         return;
     }
-    
+
     var options = {};
     if (this.activePage && this.activePage.backgroundColor) {
         options.backgroundColor = this.activePage.backgroundColor.toRGBString();
@@ -1156,13 +1152,13 @@ Controller.prototype.rasterizeCurrentPage = function (targetPage) {
         title: "Export page as PNG",
         defaultPath: path.join(this.documentPath && path.dirname(this.documentPath) || os.homedir(), (page.name + ".png")),
         filters: [
-            { name: "PNG Image (*.png)", extensions: ["png"] }
+            {name: "PNG Image (*.png)", extensions: ["png"]}
         ]
-    }, function (filePath) {
+    }, function(filePath) {
         if (!filePath) return;
-        this.applicationPane.rasterizer.rasterizePageToFile(page, filePath, function (p, error) {
+        this.applicationPane.rasterizer.rasterizePageToFile(page, filePath, function(p, error) {
             if (!error) {
-                NotificationPopup.show("Page exprted as '" + path.basename(filePath) + "'.", "View", function () {
+                NotificationPopup.show("Page exprted as '" + path.basename(filePath) + "'.", "View", function() {
                     shell.openItem(filePath);
                 });
             }
@@ -1170,12 +1166,12 @@ Controller.prototype.rasterizeCurrentPage = function (targetPage) {
     }.bind(this));
 };
 
-Controller.prototype.copyPageBitmap = function (targetPage) {
+Controller.prototype.copyPageBitmap = function(targetPage) {
     var page = targetPage ? targetPage : (this.activePage ? this.activePage : null);
     if (!page) {
         return;
     }
-    
+
     var options = {};
     if (this.activePage && this.activePage.backgroundColor) {
         options.backgroundColor = this.activePage.backgroundColor.toRGBString();
@@ -1199,10 +1195,10 @@ Controller.prototype.copyPageBitmap = function (targetPage) {
 
     var thiz = this;
 
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         var tmp = require("tmp");
         var filePath = tmp.tmpNameSync();
-        thiz.applicationPane.rasterizer.rasterizePageToFile(page, filePath, function (p, error) {
+        thiz.applicationPane.rasterizer.rasterizePageToFile(page, filePath, function(p, error) {
             if (!error) {
                 clipboard.writeImage(filePath);
                 fs.unlinkSync(filePath);
@@ -1212,10 +1208,10 @@ Controller.prototype.copyPageBitmap = function (targetPage) {
     }, 100);
 };
 
-Controller.prototype.rasterizeSelection = function (options) {
+Controller.prototype.rasterizeSelection = function(options) {
     var target = Pencil.activeCanvas.currentController;
     if (!target || !target.getGeometry) return;
-    
+
     if (!options) options = {};
     if (this.activePage && this.activePage.backgroundColor) {
         options.backgroundColor = this.activePage.backgroundColor.toRGBString();
@@ -1225,12 +1221,12 @@ Controller.prototype.rasterizeSelection = function (options) {
             options.backgroundColor = color;
         }
     }
-    
+
     if (options && options.target == "clipboard") {
         var tmp = require("tmp");
         var filePath = tmp.tmpNameSync();
-        
-        this.applicationPane.rasterizer.rasterizeSelectionToFile(target, filePath, function (p, error) {
+
+        this.applicationPane.rasterizer.rasterizeSelectionToFile(target, filePath, function(p, error) {
             if (!error) {
                 clipboard.writeImage(filePath);
                 fs.unlinkSync(filePath);
@@ -1242,23 +1238,22 @@ Controller.prototype.rasterizeSelection = function (options) {
             title: "Export selection as PNG",
             defaultPath: path.join(this.documentPath && path.dirname(this.documentPath) || os.homedir(), ""),
             filters: [
-                { name: "PNG Image (*.png)", extensions: ["png"] }
+                {name: "PNG Image (*.png)", extensions: ["png"]}
             ]
-        }, function (filePath) {
+        }, function(filePath) {
             if (!filePath) return;
-            this.applicationPane.rasterizer.rasterizeSelectionToFile(target, filePath, function (p, error) {
+            this.applicationPane.rasterizer.rasterizeSelectionToFile(target, filePath, function(p, error) {
                 if (!error) {
-                    NotificationPopup.show("Selection exprted as '" + path.basename(filePath) + "'.", "View", function () {
+                    NotificationPopup.show("Selection exprted as '" + path.basename(filePath) + "'.", "View", function() {
                         shell.openItem(filePath);
                     });
                 }
             }, undefined, options);
         }.bind(this));
     }
-
 };
 
-Controller.prototype.copyAsRef = function (sourcePath, callback) {
+Controller.prototype.copyAsRef = function(sourcePath, callback) {
     var originalSourcePath = sourcePath;
 
     if (this.pathToRefCache && this.pathToRefCache[originalSourcePath]) {
@@ -1278,21 +1273,21 @@ Controller.prototype.copyAsRef = function (sourcePath, callback) {
     this.pathToRefCache[originalSourcePath] = id;
 
     var rd = fs.createReadStream(sourcePath);
-    rd.on("error", function (error) {
+    rd.on("error", function(error) {
         callback(null, error);
     });
     var wr = fs.createWriteStream(filePath);
-    wr.on("error", function (error) {
+    wr.on("error", function(error) {
         callback(null, error);
     });
 
-    wr.on("close", function (ex) {
+    wr.on("close", function(ex) {
         callback(id);
     });
 
     rd.pipe(wr);
 };
-Controller.prototype.generateCollectionResourceRefId = function (collection, resourcePath) {
+Controller.prototype.generateCollectionResourceRefId = function(collection, resourcePath) {
     var id = "collection " + collection.id + "@" + collection.parsedAt + " " + resourcePath;
     var md5 = require("md5");
     id = md5(id) + path.extname(resourcePath);
@@ -1301,7 +1296,7 @@ Controller.prototype.generateCollectionResourceRefId = function (collection, res
 
     return id;
 };
-Controller.prototype.collectionResourceAsRefSync = function (collection, resourcePath) {
+Controller.prototype.collectionResourceAsRefSync = function(collection, resourcePath) {
     var parts = resourcePath.split("/");
     sourcePath = collection.installDirPath;
     for (var p of parts) {
@@ -1323,40 +1318,40 @@ Controller.prototype.collectionResourceAsRefSync = function (collection, resourc
 
     return id;
 };
-Controller.prototype.nativeImageToRefSync = function (nativeImage) {
+Controller.prototype.nativeImageToRefSync = function(nativeImage) {
     var id = Util.newUUID() + ".png";
     var filePath = path.join(this.makeSubDir(Controller.SUB_REFERENCE), id);
     fs.writeFileSync(filePath, nativeImage.toPNG());
 
     return id;
 };
-Controller.prototype.svgImageToRefSync = function (svg) {
+Controller.prototype.svgImageToRefSync = function(svg) {
     var id = Util.newUUID() + "_svg";
     var filePath = path.join(this.makeSubDir(Controller.SUB_REFERENCE), id);
     fs.writeFileSync(filePath, svg, "utf8");
 
     return id;
 };
-Controller.prototype.refIdToFilePath = function (id) {
+Controller.prototype.refIdToFilePath = function(id) {
     var fullPath = path.join(Pencil.documentHandler.tempDir.name, Controller.SUB_REFERENCE);
     fullPath = path.join(fullPath, id);
 
     return fullPath;
 };
 
-Controller.prototype.refIdToUrl = function (id) {
+Controller.prototype.refIdToUrl = function(id) {
     var filePath = this.refIdToFilePath(id);
     var stat = fs.statSync(filePath);
     return ImageData.filePathToURL(filePath) + "?token=" + stat.mtime.getTime();
 };
 
-Controller.prototype._findPageIndex = function (pages, id) {
+Controller.prototype._findPageIndex = function(pages, id) {
     for (var i = 0; i < pages.length; i ++) {
         if (pages[i].id == id) return i;
     }
     return -1;
 };
-Controller.prototype.movePageTo = function (pageId, targetPageId, left) {
+Controller.prototype.movePageTo = function(pageId, targetPageId, left) {
     if (pageId == targetPageId) return;
     var page = this.findPageById(pageId);
     if (!page) return;
@@ -1375,45 +1370,44 @@ Controller.prototype.movePageTo = function (pageId, targetPageId, left) {
 
     if (!left) targetIndex ++;
     list.splice(targetIndex, 0, page);
-    
-    //sort the whole tree
+
+    // sort the whole tree
     function assignIndexes(pages, level, parentPage) {
-        pages.forEach(function (page, index) {
+        pages.forEach(function(page, index) {
             if (!parentPage && page.parentPage) return;
-            page._tempIndex = (parentPage ? parentPage._tempIndex : 0) +  (index + 1) / level;
-            
+            page._tempIndex = (parentPage ? parentPage._tempIndex : 0) + (index + 1) / level;
+
             if (page.children) assignIndexes(page.children, level * 100, page);
         });
     }
 
     assignIndexes(this.doc.pages, 1, null);
 
-    this.doc.pages.sort(function (p1, p2) {
+    this.doc.pages.sort(function(p1, p2) {
         return p1._tempIndex - p2._tempIndex;
     });
-    
-    this.doc.pages.forEach(function (page) {
+
+    this.doc.pages.forEach(function(page) {
         delete page._tempIndex;
     });
 
     this.sayDocumentChanged();
 };
-Controller.prototype.scheduleUpdatePageThumbnail = function (page) {
+Controller.prototype.scheduleUpdatePageThumbnail = function(page) {
     if (!this.pendingThumbnailerMap) this.pendingThumbnailerMap = {};
     var pending = this.pendingThumbnailerMap[page.id];
     if (pending) {
         window.clearTimeout(pending);
     }
 
-    this.pendingThumbnailerMap[page.id] = window.setTimeout(function () {
-        this.updatePageThumbnail(page, function () {
+    this.pendingThumbnailerMap[page.id] = window.setTimeout(function() {
+        this.updatePageThumbnail(page, function() {
             this.pendingThumbnailerMap[page.id] = null;
         }.bind(this));
     }.bind(this), 2000);
-
 };
 
-Controller.prototype.invalidateBitmapFilePath = function (page, invalidatedIds) {
+Controller.prototype.invalidateBitmapFilePath = function(page, invalidatedIds) {
     if (!invalidatedIds) invalidatedIds = [];
     if (invalidatedIds.indexOf(page.id) >= 0) return;
 
@@ -1431,13 +1425,13 @@ Controller.prototype.invalidateBitmapFilePath = function (page, invalidatedIds) 
     this.scheduleUpdatePageThumbnail(page);
 
     invalidatedIds.push(page.id);
-    for (let p of this.doc.pages) {
+    for (const p of this.doc.pages) {
         if (p.backgroundPageId == page.id) this.invalidateBitmapFilePath(p, invalidatedIds);
     }
 };
-Controller.prototype.updatePageProperties = function (page, options) {
+Controller.prototype.updatePageProperties = function(page, options) {
     if (!options) options = {};
-    
+
     var name = options.name || "Untitled Page";
     var width = options.width || 100;
     var height = options.height || 100;
@@ -1445,7 +1439,7 @@ Controller.prototype.updatePageProperties = function (page, options) {
     var backgroundColor = options.backgroundColor || null;
     var parentPageId = options.parentPageId || null;
     var copyBackgroundLinks = options.copyBackgroundLinks || false;
-    
+
     page.name = name;
     page.backgroundColor = backgroundColor;
     page.backgroundPageId = backgroundPageId;
@@ -1499,30 +1493,30 @@ Controller.prototype.updatePageProperties = function (page, options) {
 
     Pencil.controller.sayDocumentChanged();
 };
-Controller.prototype.getRootPages = function () {
+Controller.prototype.getRootPages = function() {
     if (!this.doc) throw "No document available";
     var rootPages = [];
-    this.doc.pages.forEach(function (page) {
+    this.doc.pages.forEach(function(page) {
         if (!page.parentPage) rootPages.push(page);
     });
 
     return rootPages;
 };
-Controller.prototype.exportCurrentDocument = function () {
+Controller.prototype.exportCurrentDocument = function() {
     Pencil.documentExportManager.exportDocument(this.doc);
 };
-Controller.prototype.printCurrentDocument = function () {
+Controller.prototype.printCurrentDocument = function() {
     Pencil.documentExportManager.exportDocument(this.doc, "PrintingExporter");
 };
-Controller.prototype.prepareForEmbedding = function (node, onPreparingDoneCallback) {
+Controller.prototype.prepareForEmbedding = function(node, onPreparingDoneCallback) {
     var invalidateTasks = [];
     var invalidationIndex = -1;
 
 
     function createInvalidationTask(type, name, propertyNode) {
-        return function (__callback) {
+        return function(__callback) {
             var value = type.fromString(propertyNode.textContent);
-            type.prepareForEmbedding(value, function (invalidatedValue, error) {
+            type.prepareForEmbedding(value, function(invalidatedValue, error) {
                 if (invalidatedValue) {
                     Shape.storePropertyToNode(name, invalidatedValue, propertyNode);
                 }
@@ -1538,34 +1532,33 @@ Controller.prototype.prepareForEmbedding = function (node, onPreparingDoneCallba
             return;
         }
         var task = invalidateTasks[invalidationIndex];
-        task(function () {
+        task(function() {
             runNextValidation(callback);
         });
     }
 
-    Dom.workOn("//svg:g[@p:type='Shape']", node, function (shapeNode) {
+    Dom.workOn("//svg:g[@p:type='Shape']", node, function(shapeNode) {
         var defId = shapeNode.getAttributeNS(PencilNamespaces.p, "def");
         var def = CollectionManager.shapeDefinition.locateDefinition(defId);
         if (!def) return;
 
-        Dom.workOn("./p:metadata/p:property", shapeNode, function (propertyNode) {
+        Dom.workOn("./p:metadata/p:property", shapeNode, function(propertyNode) {
             var name = propertyNode.getAttribute("name");
             var propertyDef = def.propertyMap[name];
             if (!propertyDef || !propertyDef.type.prepareForEmbedding) return;
             var type = propertyDef.type;
 
             invalidateTasks.push(createInvalidationTask(type, name, propertyNode));
-
         });
     });
 
 
-    runNextValidation(function () {
+    runNextValidation(function() {
         if (onPreparingDoneCallback) onPreparingDoneCallback();
     });
 };
 
-Controller.prototype.exportAsLayout = function () {
+Controller.prototype.exportAsLayout = function() {
     var container = Pencil.activeCanvas.drawingLayer;
 
     var pw = parseFloat(this.activePage.width);
@@ -1579,49 +1572,49 @@ Controller.prototype.exportAsLayout = function () {
 
     var devCollection = CollectionManager.getDeveloperStencil();
 
-    Dom.workOn("//svg:g[@p:type='Shape']", container, function (g) {
-            var dx = 0; //rect.left;
-            var dy = 0; //rect.top;
+    Dom.workOn("//svg:g[@p:type='Shape']", container, function(g) {
+        var dx = 0; // rect.left;
+        var dy = 0; // rect.top;
 
-            var owner = g.ownerSVGElement;
+        var owner = g.ownerSVGElement;
 
-            if (owner.parentNode && owner.parentNode.getBoundingClientRect) {
-                var rect = owner.parentNode.getBoundingClientRect();
-                dx = rect.left;
-                dy = rect.top;
+        if (owner.parentNode && owner.parentNode.getBoundingClientRect) {
+            var rect = owner.parentNode.getBoundingClientRect();
+            dx = rect.left;
+            dy = rect.top;
+        }
+
+        debug("dx, dy: " + [dx, dy]);
+
+        rect = g.getBoundingClientRect();
+
+        var linkingInfo = {
+            node: g,
+            sc: g.getAttributeNS(PencilNamespaces.p, "sc"),
+            refId: g.getAttributeNS(PencilNamespaces.p, "def"),
+            geo: {
+                x: rect.left - dx,
+                y: rect.top - dy,
+                w: rect.width - 2,
+                h: rect.height - 2
             }
+        };
 
-            debug("dx, dy: " + [dx, dy]);
-
-            rect = g.getBoundingClientRect();
-
-            var linkingInfo = {
-                node: g,
-                sc: g.getAttributeNS(PencilNamespaces.p, "sc"),
-                refId: g.getAttributeNS(PencilNamespaces.p, "def"),
-                geo: {
-                    x: rect.left - dx,
-                    y: rect.top - dy,
-                    w: rect.width - 2,
-                    h: rect.height - 2
-                }
-            };
-
-            if (devCollection) {
-                if (linkingInfo.sc) {
-                    if (!devCollection.getShortcutByDisplayName(devCollection.id + ":" + linkingInfo.sc)) return;
-                } else if (linkingInfo.refId) {
-                    if (!devCollection.getShapeDefById(linkingInfo.refId)) return;
-                }
+        if (devCollection) {
+            if (linkingInfo.sc) {
+                if (!devCollection.getShortcutByDisplayName(devCollection.id + ":" + linkingInfo.sc)) return;
+            } else if (linkingInfo.refId) {
+                if (!devCollection.getShapeDefById(linkingInfo.refId)) return;
             }
-//            if (!linkingInfo.refId) return;
+        }
+        //            if (!linkingInfo.refId) return;
 
-            items.push(linkingInfo);
+        items.push(linkingInfo);
     });
 
     var current = 0;
     var thiz = this;
-    var done = function () {
+    var done = function() {
         var html = document.createElementNS(PencilNamespaces.html, "html");
 
         var body = document.createElementNS(PencilNamespaces.html, "body");
@@ -1683,19 +1676,19 @@ Controller.prototype.exportAsLayout = function () {
     dialog.showSaveDialog(remote.getCurrentWindow(), {
         title: "Export Layout",
         defaultPath: defaultPath,
-        filters: [{name: 'XHTML Layout', extensions: ["xhtml"]}]
-    }, function (filePath) {
+        filters: [{name: "XHTML Layout", extensions: ["xhtml"]}]
+    }, function(filePath) {
         if (filePath) {
             outputPath = filePath;
             outputImage = path.join(path.dirname(outputPath), IMAGE_FILE);
-            Pencil.rasterizer.rasterizePageToFile(thiz.activePage, outputImage, function (p, error) {
+            Pencil.rasterizer.rasterizePageToFile(thiz.activePage, outputImage, function(p, error) {
                 done();
             });
         }
     });
 };
 
-Controller.prototype.getDocumentPageMargin = function () {
+Controller.prototype.getDocumentPageMargin = function() {
     if (!StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection()) {
         return null;
     }
@@ -1707,14 +1700,14 @@ Controller.prototype.getDocumentPageMargin = function () {
     return options.pageMargin || Config.get(Config.DEV_PAGE_MARGIN_SIZE) || 40;
 };
 
-Controller.prototype.logShapeReparationRequest = function (shapeNode) {
+Controller.prototype.logShapeReparationRequest = function(shapeNode) {
     if (!this.repairingShapes) this.repairingShapes = [];
     this.repairingShapes.push(shape);
 };
 
 Config.CAPTURE_INSERT_BITMAP_AS_DEFID = Config.define("capture.insert_bitmap_shape_id", "Evolus.Common:Bitmap");
 
-Controller.prototype.handleGlobalScreencapture = function (mode) {
+Controller.prototype.handleGlobalScreencapture = function(mode) {
     var newDocumentCreated = false;
     if (!this.doc) {
         Pencil.documentHandler.newDocument();
@@ -1722,7 +1715,7 @@ Controller.prototype.handleGlobalScreencapture = function (mode) {
     }
 
 
-    ImageData.fromScreenshot(function (imageData, options, error) {
+    ImageData.fromScreenshot(function(imageData, options, error) {
         if (imageData) {
             electron.remote.getCurrentWindow().show();
             electron.remote.getCurrentWindow().focus();
@@ -1738,10 +1731,10 @@ Controller.prototype.handleGlobalScreencapture = function (mode) {
                     parentPageId: null,
                     activateAfterCreate: true
                 };
-                
+
                 this.newPage(options);
             } else {
-                this.setActiveCanvasSize(imageData.w, imageData.h)
+                this.setActiveCanvasSize(imageData.w, imageData.h);
             }
 
             var page = this.activePage;
@@ -1767,51 +1760,51 @@ Controller.prototype.handleGlobalScreencapture = function (mode) {
     } : undefined);
 };
 
-Controller.prototype.getDocumentColorPalette = function () {
+Controller.prototype.getDocumentColorPalette = function() {
     if (!this.doc) return null;
     var colors = this.doc.properties.colorPalette;
     if (!colors) return [];
-    return colors.split(",").map(function (c) {
+    return colors.split(",").map(function(c) {
         return Color.fromString(c);
     });
 };
-Controller.prototype.addColorIntoDocumentPalette = function (color) {
+Controller.prototype.addColorIntoDocumentPalette = function(color) {
     if (!this.doc) return;
     var colors = this.getDocumentColorPalette();
     if (typeof(color) == "string") color = Color.fromString(color);
-    
+
     var found = false;
-    colors.forEach(function (c) {
+    colors.forEach(function(c) {
         if (c.toString() == color.toString()) {
             found = true;
         }
     });
-    
+
     if (found) return;
-    
+
     colors.push(color);
-    
-    this.doc.properties.colorPalette = colors.map(function (c) {
+
+    this.doc.properties.colorPalette = colors.map(function(c) {
         return c.toString();
     }).join(",");
 };
 
-Controller.prototype.removeColorFromDocumentPalette = function (color) {
+Controller.prototype.removeColorFromDocumentPalette = function(color) {
     if (!this.doc) return;
     var colors = this.getDocumentColorPalette();
     if (typeof(color) == "string") color = Color.fromString(color);
-    
-    colors = colors.filter(function (c) {
+
+    colors = colors.filter(function(c) {
         return c.toString() != color.toString();
     });
-    
-    this.doc.properties.colorPalette = colors.map(function (c) {
+
+    this.doc.properties.colorPalette = colors.map(function(c) {
         return c.toString();
     }).join(",");
 };
 
 
-window.addEventListener("beforeunload", function (event) {
+window.addEventListener("beforeunload", function(event) {
     // Due to a change of Chrome 51, returning non-empty strings or true in beforeunload handler now prevents the page to unload
     if (Pencil.documentHandler && Pencil.documentHandler.isSaving) {
         console.log("Close during save prevented!");
@@ -1829,8 +1822,8 @@ window.addEventListener("beforeunload", function (event) {
     }
 
     if (Controller._instance.doc) {
-        setTimeout(function () {
-            Controller._instance.confirmAndclose(function () {
+        setTimeout(function() {
+            Controller._instance.confirmAndclose(function() {
                 Controller.ignoreNextClose = false;
                 var currentWindow = remote.getCurrentWindow();
                 currentWindow.close();
@@ -1841,7 +1834,7 @@ window.addEventListener("beforeunload", function (event) {
     }
 });
 Config.SHORTCUT_GLOBALSCREENCAPTURE_AREA = Config.define("shortcut.global.screencapture_area", "Super+F12");
-GlobalShortcutHelper.register("global-screencapture-area", Config.get(Config.SHORTCUT_GLOBALSCREENCAPTURE_AREA), function () {
+GlobalShortcutHelper.register("global-screencapture-area", Config.get(Config.SHORTCUT_GLOBALSCREENCAPTURE_AREA), function() {
     console.log("global-screencapture-area triggered");
     if (!Controller._instance) return;
 

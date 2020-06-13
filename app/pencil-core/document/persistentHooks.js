@@ -1,10 +1,10 @@
 var relativeHRefHook = {
     missedFilePaths: [],
     badImageDataFound: false,
-    onDomSerialization: function (dom) {
+    onDomSerialization: function(dom) {
         var thiz = this;
 
-        Dom.workOn("//@xlink:href", dom, function (href) {
+        Dom.workOn("//@xlink:href", dom, function(href) {
             var hrefValue = href.nodeValue;
             if (!hrefValue.match(/^file:\/\/.*$/)) return;
 
@@ -14,7 +14,7 @@ var relativeHRefHook = {
             }
         });
         var xpath = "//svg:g[@p:type='Shape' and @p:def='Evolus.Common:Bitmap']//p:property[@name='imageData']";
-        Dom.workOn(xpath, dom, function (property) {
+        Dom.workOn(xpath, dom, function(property) {
             var imageData = ImageData.fromString(property.textContent);
             if (!imageData.data.match(/^file:\/\/.*$/)) return;
 
@@ -26,10 +26,10 @@ var relativeHRefHook = {
             }
         });
     },
-    onPageLoad: function (page) {
+    onPageLoad: function(page) {
         var thiz = this;
 
-        Dom.workOn("//@xlink:href", page.contentNode, function (href) {
+        Dom.workOn("//@xlink:href", page.contentNode, function(href) {
             var hrefValue = href.nodeValue;
             if (hrefValue.match(/^[a-z]+:\/\/.*$/)) return;
 
@@ -39,7 +39,7 @@ var relativeHRefHook = {
             }
         });
         var xpath = "//svg:g[@p:type='Shape' and @p:def='Evolus.Common:Bitmap']//p:property[@name='imageData']";
-        Dom.workOn(xpath, page.contentNode, function (property) {
+        Dom.workOn(xpath, page.contentNode, function(property) {
             var imageData = ImageData.fromString(property.textContent);
             if (!imageData.data) {
                 thiz.badImageDataFound = true;
@@ -52,7 +52,7 @@ var relativeHRefHook = {
             property.appendChild(property.ownerDocument.createCDATASection(imageData.toString()));
         });
     },
-    uriToRelative: function (absoluteFileURI) {
+    uriToRelative: function(absoluteFileURI) {
         var file = XMLDocumentPersister.currentFile.parent;
         try {
             var hrefFile = fileHandler.getFileFromURLSpec(absoluteFileURI).QueryInterface(Components.interfaces.nsILocalFile);
@@ -61,7 +61,7 @@ var relativeHRefHook = {
             return null;
         }
     },
-    relativeToURI: function (relativeFileURI, logError) {
+    relativeToURI: function(relativeFileURI, logError) {
         var file = XMLDocumentPersister.currentFile.parent;
 
         var hrefFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -77,18 +77,18 @@ var relativeHRefHook = {
 
         return ImageData.ios.newFileURI(hrefFile).spec;
     },
-    onLoad: function (doc) {
+    onLoad: function(doc) {
         if (this.missedFilePaths.length > 0) {
-            //Util.warn(Util.getMessage("warning.title"), Util.getMessage("document.missing.external.resources", this.missedFilePaths.join("\n\t● ")), Util.getMessage("button.cancel.close"));
+            // Util.warn(Util.getMessage("warning.title"), Util.getMessage("document.missing.external.resources", this.missedFilePaths.join("\n\t● ")), Util.getMessage("button.cancel.close"));
             alert(Util.getMessage("document.missing.external.resources", this.missedFilePaths.join("\n\t● ")));
             this.missedFilePaths = [];
         }
         if (this.badImageDataFound) {
-            //Util.error(Util.getMessage("error.title"), Util.getMessage("error.bad.image.data.was.found.in.the.document"), Util.getMessage("button.cancel.close"));
+            // Util.error(Util.getMessage("error.title"), Util.getMessage("error.bad.image.data.was.found.in.the.document"), Util.getMessage("button.cancel.close"));
             alert(Util.getMessage("error.bad.image.data.was.found.in.the.document"));
             this.badImageDataFound = false;
         }
     }
-}
+};
 
 XMLDocumentPersister.hooks.push(relativeHRefHook);

@@ -4,11 +4,11 @@ function HandleEditor() {
 }
 HandleEditor.ANCHOR_SIZE = 6;
 HandleEditor.configDoc = Dom.loadSystemXml("pencil-core/editor/handleEditor.config.xml");
-HandleEditor.prototype.install = function (canvas) {
+HandleEditor.prototype.install = function(canvas) {
     this.canvas = canvas;
     this.canvas.onScreenEditors.push(this);
     this.svgElement = canvas.ownerDocument.importNode(Dom.getSingle("/p:Config/svg:g", HandleEditor.configDoc), true);
-    this.svgContainer = Dom.getSingle("./svg:g[@class='Inner']", this.svgElement)
+    this.svgContainer = Dom.getSingle("./svg:g[@class='Inner']", this.svgElement);
 
     this.svgElement.style.visibility = "hidden";
     canvas.installControlSVGElement(this.svgElement);
@@ -16,35 +16,34 @@ HandleEditor.prototype.install = function (canvas) {
     this.focusedHandleName = null;
 
 
-    //register event
+    // register event
     var thiz = this;
 
-    //registering event on the outmost item to have better UI interation
+    // registering event on the outmost item to have better UI interation
     var outmostItem = this.svgElement.ownerDocument.documentElement;
-    outmostItem.addEventListener("mousedown", function (ev) {
+    outmostItem.addEventListener("mousedown", function(ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousedown", arguments.callee, false);
             return;
         }
         thiz.handleMouseDown(ev);
     }, false);
-    outmostItem.addEventListener("mouseup", function (ev) {
+    outmostItem.addEventListener("mouseup", function(ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mouseup", arguments.callee, false);
             return;
         }
         thiz.handleMouseUp(ev);
     }, false);
-    outmostItem.addEventListener("mousemove", function (ev) {
+    outmostItem.addEventListener("mousemove", function(ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousemove", arguments.callee, false);
             return;
         }
         thiz.handleMouseMove(ev);
     }, false);
-
 };
-HandleEditor.prototype.attach = function (targetObject) {
+HandleEditor.prototype.attach = function(targetObject) {
     if (!targetObject) return;
     if (targetObject.constructor != Shape) {
         this.dettach();
@@ -59,40 +58,40 @@ HandleEditor.prototype.attach = function (targetObject) {
     this.svgElement.style.visibility = "visible";
     this.setupHandles();
 };
-HandleEditor.prototype.invalidate = function () {
+HandleEditor.prototype.invalidate = function() {
     if (!this.targetObject) return;
     var currentTarget = this.targetObject;
     this.dettach();
     this.attach(currentTarget);
 };
-HandleEditor.prototype.nextTool = function () {
-    //just ignore this, since this editor implements only one tool set
+HandleEditor.prototype.nextTool = function() {
+    // just ignore this, since this editor implements only one tool set
 };
 
-HandleEditor.prototype.dettach = function () {
+HandleEditor.prototype.dettach = function() {
     if (!this.targetObject) return;
 
-    //this.focusedHandleName = null;
+    // this.focusedHandleName = null;
 
     this.targetObject = null;
     this.svgElement.style.visibility = "hidden";
 };
 
-HandleEditor.prototype.setEditorGeometry = function (geo) {
-    //transformation
+HandleEditor.prototype.setEditorGeometry = function(geo) {
+    // transformation
     Svg.ensureCTM(this.svgElement, geo.ctm);
     this.geo = geo;
 };
-HandleEditor.prototype.findHandle = function (element) {
+HandleEditor.prototype.findHandle = function(element) {
     var thiz = this;
-    var handle = Dom.findUpward(element, function (node) {
+    var handle = Dom.findUpward(element, function(node) {
         return node._isHandle && (node._editor == thiz);
     });
 
     return handle;
 };
-HandleEditor.prototype.handleMouseDown = function (event) {
-	this.lastMatchedOutlet = null;
+HandleEditor.prototype.handleMouseDown = function(event) {
+    this.lastMatchedOutlet = null;
     this.currentHandle = this.findHandle(event.originalTarget);
 
     if (!event.fake) {
@@ -103,9 +102,8 @@ HandleEditor.prototype.handleMouseDown = function (event) {
     this.oX = event.clientX;
     this.oY = event.clientY;
 
-    //finding matching outlet
+    // finding matching outlet
     if (this.currentHandle) {
-
         var def = this.currentHandle._def;
         if (def.meta && def.meta.connectTo) {
             var classes = def.meta.connectTo;
@@ -117,10 +115,10 @@ HandleEditor.prototype.handleMouseDown = function (event) {
         debug("matching outlets: " + this.currentMatchingOutlets.length);
     }
 };
-HandleEditor.prototype.handleMouseUp = function (event) {
+HandleEditor.prototype.handleMouseUp = function(event) {
     try {
         if (this.currentHandle && this.targetObject) {
-            //commiting the change
+            // commiting the change
             this.currentHandle._x = this.currentHandle._newX;
             this.currentHandle._y = this.currentHandle._newY;
 
@@ -137,8 +135,8 @@ HandleEditor.prototype.handleMouseUp = function (event) {
 
                 this.targetObject.setProperty(this.currentHandle._def.name, h);
             } else {
-                if (this.currentHandle._def.meta
-                		&& this.currentHandle._def.meta.unconnectedValue) {
+                if (this.currentHandle._def.meta &&
+                		this.currentHandle._def.meta.unconnectedValue) {
                 	var value = this.targetObject.evalExpression(this.currentHandle._def.meta.unconnectedValue);
                     var h = new Handle(Math.round(value.x), Math.round(value.y));
                     this.targetObject.setProperty(this.currentHandle._def.name, h);
@@ -154,53 +152,53 @@ HandleEditor.prototype.handleMouseUp = function (event) {
         this.currentHandle = null;
     }
 };
-HandleEditor.prototype.handleKeyPressEvent = function (event) {
-	if (!this.focusedHandleName
-        || (event.keyCode != DOM_VK_UP
-        && event.keyCode != DOM_VK_DOWN
-        && event.keyCode != DOM_VK_LEFT
-        && event.keyCode != DOM_VK_RIGHT
-        && !event.ctrlKey)) return false;
+HandleEditor.prototype.handleKeyPressEvent = function(event) {
+    if (!this.focusedHandleName ||
+        (event.keyCode != DOM_VK_UP &&
+        event.keyCode != DOM_VK_DOWN &&
+        event.keyCode != DOM_VK_LEFT &&
+        event.keyCode != DOM_VK_RIGHT &&
+        !event.ctrlKey)) return false;
 
-	var thiz = this;
-	var focusedHandle = null;
-	Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function (handle) {
-		if (handle._def && handle._def.name == thiz.focusedHandleName) {
-			focusedHandle = handle;
-		}
-	});
+    var thiz = this;
+    var focusedHandle = null;
+    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function(handle) {
+        if (handle._def && handle._def.name == thiz.focusedHandleName) {
+            focusedHandle = handle;
+        }
+    });
 
-	if (!focusedHandle) return;
+    if (!focusedHandle) return;
 
-	var fakeEvent = {
-			preventDefault: function() {
-				event.preventDefault();
-			},
-			fake: true,
-			originalTarget: focusedHandle,
-			clientX: 0,
-			clientY: 0
-	};
+    var fakeEvent = {
+        preventDefault: function() {
+            event.preventDefault();
+        },
+        fake: true,
+        originalTarget: focusedHandle,
+        clientX: 0,
+        clientY: 0
+    };
     this.handleMouseDown(fakeEvent);
-	var gridSize = Pencil.getGridSize().w;
-	var d = event.ctrlKey ? gridSize : (event.shiftKey ? gridSize * 4 : 1);
-    switch(event.keyCode) {
-        case DOM_VK_UP:
-            fakeEvent.clientY -= d; break;
-        case DOM_VK_DOWN:
-            fakeEvent.clientY += d; break;
-        case DOM_VK_LEFT:
-            fakeEvent.clientX -= d; break;
-        case DOM_VK_RIGHT:
-            fakeEvent.clientX += d; break;
+    var gridSize = Pencil.getGridSize().w;
+    var d = event.ctrlKey ? gridSize : (event.shiftKey ? gridSize * 4 : 1);
+    switch (event.keyCode) {
+    case DOM_VK_UP:
+        fakeEvent.clientY -= d; break;
+    case DOM_VK_DOWN:
+        fakeEvent.clientY += d; break;
+    case DOM_VK_LEFT:
+        fakeEvent.clientX -= d; break;
+    case DOM_VK_RIGHT:
+        fakeEvent.clientX += d; break;
     }
 
-	this.handleMouseMove(fakeEvent);
-	this.handleMouseUp(fakeEvent);
+    this.handleMouseMove(fakeEvent);
+    this.handleMouseUp(fakeEvent);
 
-	return true;
+    return true;
 };
-HandleEditor.prototype.handleMouseMove = function (event) {
+HandleEditor.prototype.handleMouseMove = function(event) {
     if (!this.currentHandle) return;
     event.preventDefault();
 
@@ -210,8 +208,8 @@ HandleEditor.prototype.handleMouseMove = function (event) {
 
     this.handleMoveTo(event.clientX, event.clientY, event);
 };
-HandleEditor.prototype.handleMoveTo = function (x, y, event) {
-	var handle = this.currentHandle;
+HandleEditor.prototype.handleMoveTo = function(x, y, event) {
+    var handle = this.currentHandle;
 
     var uPoint1 = Svg.vectorInCTM(new Point(this.oX, this.oY), this.geo.ctm);
     var uPoint2 = Svg.vectorInCTM(new Point(x, y), this.geo.ctm);
@@ -247,12 +245,12 @@ HandleEditor.prototype.handleMoveTo = function (x, y, event) {
                 y: newY
             };
             var result = constraints.constraintFunction(a, b);
-            //debug("result: " + result.toSource());
+            // debug("result: " + result.toSource());
 
 
             newX = result.x;
             newY = result.y;
-            //debug("constraintFunction result: " + result.toSource());
+            // debug("constraintFunction result: " + result.toSource());
         }
     }
 
@@ -262,7 +260,7 @@ HandleEditor.prototype.handleMoveTo = function (x, y, event) {
     Svg.setX(handle, handle._newX);
     Svg.setY(handle, handle._newY);
 
-    //find matching outlets
+    // find matching outlets
     var x = handle._newX / this.canvas.zoom;
     var y = handle._newY / this.canvas.zoom;
 
@@ -282,19 +280,18 @@ HandleEditor.prototype.handleMoveTo = function (x, y, event) {
             found = true;
             break;
         }
-    };
+    }
 
     if (!found) {
     	handle.removeAttributeNS(PencilNamespaces.p, "connected");
         this.lastMatchedOutlet = null;
     }
-
 };
-HandleEditor.prototype.getPropertyConstraints = function (handle) {
+HandleEditor.prototype.getPropertyConstraints = function(handle) {
     if (!this.currentHandle) return {};
     return this.getPropertyConstraintsFromDef(this.currentHandle._def);
 };
-HandleEditor.prototype.getPropertyConstraintsFromDef = function (def) {
+HandleEditor.prototype.getPropertyConstraintsFromDef = function(def) {
     if (!def) return {};
 
     this.targetObject.prepareExpressionEvaluation();
@@ -313,17 +310,17 @@ HandleEditor.prototype.getPropertyConstraintsFromDef = function (def) {
     };
 };
 
-HandleEditor.prototype.invalidateFocusedHandle = function () {
-	var thiz = this;
-	Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function (handle) {
-		if (handle._def && handle._def.name == thiz.focusedHandleName) {
-			handle.setAttributeNS(PencilNamespaces.p, "p:focused", true);
-		} else {
-			handle.removeAttributeNS(PencilNamespaces.p, "focused");
-		}
-	});
+HandleEditor.prototype.invalidateFocusedHandle = function() {
+    var thiz = this;
+    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function(handle) {
+        if (handle._def && handle._def.name == thiz.focusedHandleName) {
+            handle.setAttributeNS(PencilNamespaces.p, "p:focused", true);
+        } else {
+            handle.removeAttributeNS(PencilNamespaces.p, "focused");
+        }
+    });
 };
-HandleEditor.prototype.createHandle = function (def, value) {
+HandleEditor.prototype.createHandle = function(def, value) {
     var p = value;
     if (!p) return;
 
@@ -359,8 +356,8 @@ HandleEditor.prototype.createHandle = function (def, value) {
         Console.dumpError(e, "stdout");
     }
 };
-HandleEditor.prototype.setupHandles = function () {
-    //remove all handles
+HandleEditor.prototype.setupHandles = function() {
+    // remove all handles
     while (this.svgElement.lastChild._isHandle) this.svgElement.removeChild(this.svgElement.lastChild);
 
     var properties = this.targetObject.getProperties();

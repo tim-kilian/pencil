@@ -3,16 +3,18 @@ function ZoomToolbar() {
 }
 __extend(ToolBar, ZoomToolbar);
 
-ZoomToolbar.prototype.registerCommands = function () {
+ZoomToolbar.prototype.registerCommands = function() {
     UICommandManager.register({
         key: "zoomInCommand",
         label: "Zoom in",
         icon: "zoom_in",
         shortcut: "Ctrl+EQUALS",
         watchEvents: "p:CanvasActived",
-        isValid: function () {return Pencil.activeCanvas},
+        isValid: function() {
+            return Pencil.activeCanvas;
+        },
         shortcutLabel: "Ctrl+=",
-        run: function () {
+        run: function() {
             Pencil.activeCanvas.zoomTo(Pencil.activeCanvas.zoom * 1.25);
         }
     });
@@ -23,8 +25,10 @@ ZoomToolbar.prototype.registerCommands = function () {
         label: "Zoom out",
         icon: "zoom_out",
         watchEvents: "p:CanvasActived",
-        isValid: function () {return Pencil.activeCanvas},
-        run: function () {
+        isValid: function() {
+            return Pencil.activeCanvas;
+        },
+        run: function() {
             Pencil.activeCanvas.zoomTo(Pencil.activeCanvas.zoom / 1.25);
         }
     });
@@ -34,8 +38,10 @@ ZoomToolbar.prototype.registerCommands = function () {
         label: "Actual size",
         icon: "fullscreen",
         watchEvents: "p:CanvasActived",
-        isValid: function () {return Pencil.activeCanvas},
-        run: function () {
+        isValid: function() {
+            return Pencil.activeCanvas;
+        },
+        run: function() {
             Pencil.activeCanvas.zoomTo(1);
         }
     });
@@ -43,7 +49,7 @@ ZoomToolbar.prototype.registerCommands = function () {
         key: "toggleScreenCommand",
         shortcut: IS_MAC ? "Ctrl+Cmd+F" : "F11", // use different key for MAC
         label: "Toggle fullscreen mode",
-        run: function () {
+        run: function() {
             ApplicationPane._instance.toggleFullscreen();
         }
     });
@@ -51,7 +57,7 @@ ZoomToolbar.prototype.registerCommands = function () {
         key: "toggleLeftPaneCommand",
         shortcut: "BACK_QUOTE",
         label: "Toggle left pane",
-        run: function () {
+        run: function() {
             ApplicationPane._instance.toggleLeftPane();
         }
     });

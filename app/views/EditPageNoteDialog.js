@@ -1,4 +1,4 @@
-function EditPageNoteDialog () {
+function EditPageNoteDialog() {
     Dialog.call(this);
     this.title = "Page Note";
     this.subTitle = "Edit extra note for the drawing page";
@@ -8,8 +8,8 @@ function EditPageNoteDialog () {
     // }, this.selectorContainer);
 
 
-    this.bind("click", function (event) {
-        var node = Dom.findUpward(event.target, function (n) {
+    this.bind("click", function(event) {
+        var node = Dom.findUpward(event.target, function(n) {
             return n.getAttribute && n.getAttribute("command");
         });
 
@@ -21,23 +21,22 @@ function EditPageNoteDialog () {
         }
     }, this.textFormatContainer);
 
-    this.bind("click", function (event) {
-        var node = Dom.findUpward(event.target, function (n) {
+    this.bind("click", function(event) {
+        var node = Dom.findUpward(event.target, function(n) {
             return n.getAttribute && n.getAttribute("command");
         });
 
         if (!node) return;
         node.setAttribute("checked", "true");
 
-        Dom.doOnAllChildren(thiz.malignContainer, function (child) {
+        Dom.doOnAllChildren(thiz.malignContainer, function(child) {
             if (child != node && child.removeAttribute) {
                 child.removeAttribute("checked");
             }
         });
-
     }, this.malignContainer);
 
-    this.runEditorCommand = function (command, arg) {
+    this.runEditorCommand = function(command, arg) {
         this.editor.focus();
         try {
             if (typeof(arg) != "undefined") {
@@ -53,24 +52,24 @@ function EditPageNoteDialog () {
 
     var thiz = this;
 
-    var changeColorListener = function (control, commandName) {
+    var changeColorListener = function(control, commandName) {
         var color = thiz.getColorByCommandValue(commandName);
         thiz.selector._commandName = commandName;
         thiz.selector._control = control;
         thiz.selector.setColor(color);
         thiz.selectorContainer.show(control, "left-inside", "bottom", 0, 5);
     };
-    this.mtextColorButton.addEventListener("click", function (event) {
+    this.mtextColorButton.addEventListener("click", function(event) {
         changeColorListener(thiz.mtextColorButton, "forecolor");
         event.cancelBubble = true;
     }, false);
 
-    this.mhilightColorButton.addEventListener("click", function (event) {
+    this.mhilightColorButton.addEventListener("click", function(event) {
         changeColorListener(thiz.mhilightColorButton, "hilitecolor");
         event.cancelBubble = true;
     }, false);
 
-    this.selector.addEventListener("ValueChange", function (event) {
+    this.selector.addEventListener("ValueChange", function(event) {
         var color = thiz.selector.getColor();
         var control = thiz.selector._control;
         var commandName = thiz.selector._commandName;
@@ -78,7 +77,7 @@ function EditPageNoteDialog () {
         thiz.updateButtonColor(control, color.toRGBAString());
     }, false);
 
-    var selectListener = function (event) {
+    var selectListener = function(event) {
         thiz.updateListByCommandValue("fontname", thiz.fontCombo);
         thiz.updateListByCommandValue("fontsize", thiz.fontSizeCombo);
 
@@ -101,14 +100,14 @@ function EditPageNoteDialog () {
 
     this.fontSizeCombo.setItems([1, 2, 3, 4, 5, 6, 7]);
 
-    this.bind("click", function (event) {
-        var node = Dom.findUpward(event.target, function (n) {
+    this.bind("click", function(event) {
+        var node = Dom.findUpward(event.target, function(n) {
             return n.getAttribute && n.getAttribute("command");
         });
         if (!node) return;
         var command = node.getAttribute("command");
         var arg = node.hasAttribute("arg") ? node.getAttribute("arg") : undefined;
-        if(command == "createlink") {
+        if (command == "createlink") {
             var sel = window.document.getSelection();
             if (sel.type != "Caret") {
                 var dialog = new PromptDialog();
@@ -117,23 +116,22 @@ function EditPageNoteDialog () {
                     title: "Url",
                     message: "please specify the url",
                     value: "http://www.evolus.vn",
-                    callback: function (urlOut) {
-                        url = urlOut ;
-                            if (url) {
-                                thiz.runEditorCommand('createlink', url);
-                            } else {
-                                thiz.runEditorCommand('unlink');
-                            }
+                    callback: function(urlOut) {
+                        url = urlOut;
+                        if (url) {
+                            thiz.runEditorCommand("createlink", url);
+                        } else {
+                            thiz.runEditorCommand("unlink");
                         }
+                    }
                 });
             }
         } else {
             thiz.runEditorCommand(command, arg);
         }
-
     }, this.popupContainer);
 
-    FontEditor._setupFontCombo(this.fontCombo, function () {
+    FontEditor._setupFontCombo(this.fontCombo, function() {
         thiz.editor.setAttribute("contenteditable", "true");
         if (thiz.currentRange) {
             window.getSelection().removeAllRanges();
@@ -143,8 +141,8 @@ function EditPageNoteDialog () {
         thiz.runEditorCommand("fontname", thiz.fontCombo.getSelectedItem().family);
     }, true);
 
-    this.fontCombo.bind("keydown", function (event) {
-        if(!thiz.currentRange) {
+    this.fontCombo.bind("keydown", function(event) {
+        if (!thiz.currentRange) {
             thiz.currentRange = window.getSelection().getRangeAt(0);
         }
         thiz.editor.removeAttribute("contenteditable");
@@ -188,30 +186,28 @@ function EditPageNoteDialog () {
         }
     ];
 
-    this.blockformat.renderer = function (block) {
+    this.blockformat.renderer = function(block) {
         if (!block.value) return block.displayName;
         return block.displayName;
-    }
+    };
     this.blockformat.setItems(blockDefault);
     this.blockformat.addEventListener("p:ItemSelected", function(event) {
         var value;
         try {
-             value = thiz.blockformat.getSelectedItem().value;
-        }
-        catch (e) {
+            value = thiz.blockformat.getSelectedItem().value;
+        } catch (e) {
             return;
         }
         thiz.runEditorCommand("formatBlock", value);
     }, false);
-
 }
 __extend(Dialog, EditPageNoteDialog);
 
-EditPageNoteDialog.prototype.onShown = function () {
+EditPageNoteDialog.prototype.onShown = function() {
     this.editor.focus();
-}
+};
 
-EditPageNoteDialog.prototype.setup = function (options) {
+EditPageNoteDialog.prototype.setup = function(options) {
     if (options) {
         if (options.onDone) {
             this.onDone = options.onDone;
@@ -219,16 +215,15 @@ EditPageNoteDialog.prototype.setup = function (options) {
         if (options.defaultPage) {
             this.page = options.defaultPage;
             var parentNode = this.popupContainer.parentNode;
-            if(this.page.note) {
-                this.defaultEditor =  this.page.note;
+            if (this.page.note) {
+                this.defaultEditor = this.page.note;
                 this.editor.innerHTML = this.defaultEditor.html;
             }
         }
     }
-
 };
 
-EditPageNoteDialog.prototype.updateListByCommandValue = function (commandName, control) {
+EditPageNoteDialog.prototype.updateListByCommandValue = function(commandName, control) {
     var value = null;
     try {
         value = window.document.queryCommandValue(commandName);
@@ -237,7 +232,7 @@ EditPageNoteDialog.prototype.updateListByCommandValue = function (commandName, c
     }
 
     if (value && control == this.fontCombo) {
-        value = value.replace(/[']/g,'');
+        value = value.replace(/[']/g, "");
         var item = {};
         item.family = value;
         control.selectItem(item);
@@ -246,7 +241,7 @@ EditPageNoteDialog.prototype.updateListByCommandValue = function (commandName, c
     control.selectItem(value);
 };
 
-EditPageNoteDialog.prototype.getColorByCommandValue = function (commandName) {
+EditPageNoteDialog.prototype.getColorByCommandValue = function(commandName) {
     var value = null;
     try {
         value = window.document.queryCommandValue(commandName);
@@ -257,7 +252,7 @@ EditPageNoteDialog.prototype.getColorByCommandValue = function (commandName) {
     return Color.fromString(value);
 };
 
-EditPageNoteDialog.prototype.updateColorButtonByCommandValue = function (commandName, control) {
+EditPageNoteDialog.prototype.updateColorButtonByCommandValue = function(commandName, control) {
     var value = this.getColorByCommandValue(commandName);
     if (control.localName == "button") {
         if (value == null) return;
@@ -265,7 +260,7 @@ EditPageNoteDialog.prototype.updateColorButtonByCommandValue = function (command
     }
 };
 
-EditPageNoteDialog.prototype.updateButtonColor = function (control, value) {
+EditPageNoteDialog.prototype.updateButtonColor = function(control, value) {
     if (control == this.mhilightColorButton) {
         this.colorDisplay.style.backgroundColor = value;
     } else if (control == this.mtextColorButton) {
@@ -273,7 +268,7 @@ EditPageNoteDialog.prototype.updateButtonColor = function (control, value) {
     }
 };
 
-EditPageNoteDialog.prototype.updateButtonByCommandState = function (commandName, control) {
+EditPageNoteDialog.prototype.updateButtonByCommandState = function(commandName, control) {
     var value = null;
     try {
         value = window.document.queryCommandState(commandName);
@@ -287,15 +282,15 @@ EditPageNoteDialog.prototype.updateButtonByCommandState = function (commandName,
     }
 };
 
-EditPageNoteDialog.prototype.getDialogActions = function () {
+EditPageNoteDialog.prototype.getDialogActions = function() {
     return [
         Dialog.ACTION_CANCEL,
-        {   type: "accept", title: "Apply",
-            run: function () {
+        {type: "accept", title: "Apply",
+            run: function() {
                 var newEditor = RichText.fromString(this.editor.innerHTML);
                 this.onDone(newEditor);
                 return true;
             }
         }
-    ]
+    ];
 };

@@ -2,10 +2,10 @@ function PencilDocument() {
     this.properties = {};
     this.pages = [];
 }
-PencilDocument.prototype.toDom = function () {
+PencilDocument.prototype.toDom = function() {
     var dom = Controller.parser.parseFromString("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
 
-    //properties
+    // properties
     var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "Properties");
     dom.documentElement.appendChild(propertyContainerNode);
 
@@ -17,7 +17,7 @@ PencilDocument.prototype.toDom = function () {
         propertyNode.appendChild(dom.createTextNode(this.properties[name].toString()));
     }
 
-    //pages
+    // pages
     var pageContainerNode = dom.createElementNS(PencilNamespaces.p, "Pages");
     dom.documentElement.appendChild(pageContainerNode);
 
@@ -31,24 +31,24 @@ PencilDocument.prototype.toDom = function () {
     return dom;
 };
 
-PencilDocument.prototype.addPage = function (page) {
+PencilDocument.prototype.addPage = function(page) {
     this.pages[this.pages.length] = page;
 };
-PencilDocument.prototype.getPageById = function (id) {
+PencilDocument.prototype.getPageById = function(id) {
     for (var i in this.pages) {
         if (this.pages[i].properties.id == id) return this.pages[i];
     }
 
     return null;
 };
-PencilDocument.prototype.getPageByFid = function (fid) {
+PencilDocument.prototype.getPageByFid = function(fid) {
     for (var i in this.pages) {
         if (this.pages[i].properties.fid == fid) return this.pages[i];
     }
 
     return null;
 };
-PencilDocument.prototype.getFirstPageByName = function (name) {
+PencilDocument.prototype.getFirstPageByName = function(name) {
     for (var i in this.pages) {
         if (this.pages[i].properties.name == name) return this.pages[i];
     }
@@ -84,7 +84,7 @@ Page.PROPERTY_MAP = {
     "copyBackgroundLinks": "copyBackgroundLinks"
 };
 
-Page.prototype.toXml = function () {
+Page.prototype.toXml = function() {
     var dom = Controller.parser.parseFromString("<p:Page xmlns:p=\"" + PencilNamespaces.p + "\"></p:Page>", "text/xml");
     var propertyContainerNode = dom.createElementNS(PencilNamespaces.p, "p:Properties");
     dom.documentElement.appendChild(propertyContainerNode);
@@ -114,11 +114,11 @@ Page.prototype.toXml = function () {
     return Controller.serializer.serializeToString(dom);
 };
 
-Page.prototype.equals = function (page) {
+Page.prototype.equals = function(page) {
     if (page == null) return false;
     return page.constructor == Page && page.id == this.id;
 };
-Page.prototype.getBackgroundPage = function () {
+Page.prototype.getBackgroundPage = function() {
     // var bgPageId = this.properties.background;
     // if (!bgPageId) return null;
     // return this.doc.getPageById(bgPageId);
@@ -128,7 +128,7 @@ Page.prototype.getBackgroundPage = function () {
     return null;
 };
 
-Page._validateBackgroundInternal = function (list, page) {
+Page._validateBackgroundInternal = function(list, page) {
     var newList = [];
     for (var i in list) {
         var p = list[i];
@@ -141,20 +141,22 @@ Page._validateBackgroundInternal = function (list, page) {
         Page._validateBackgroundInternal(newList, nextBg);
     }
 };
-Page.prototype.validateBackgroundSetting = function () {
+Page.prototype.validateBackgroundSetting = function() {
     var page = this.getBackgroundPage();
     if (!page) return;
 
     Page._validateBackgroundInternal([this], page);
 };
-Page.prototype.canSetBackgroundTo = function (page) {
+Page.prototype.canSetBackgroundTo = function(page) {
     try {
         Page._validateBackgroundInternal([this], page);
         return true;
-    } catch (e) { return false; }
+    } catch (e) {
+        return false;
+    }
 };
 
-Page.prototype.isBackgroundValid = function () {
+Page.prototype.isBackgroundValid = function() {
     var page = this.getBackgroundPage();
     if (!page) return (this.bgToken ? false : true);
     if (!page.isRasterizeDataCacheValid()) return false;
@@ -163,7 +165,7 @@ Page.prototype.isBackgroundValid = function () {
     return true;
 };
 
-Page.prototype.ensureBackground = function (callback) { // callback: function() {} called when done
+Page.prototype.ensureBackground = function(callback) { // callback: function() {} called when done
 //    alert("ensureBackground() for " + this.properties.name);
     if (Config.get("object.snapping.background") == null) {
         Config.set("object.snapping.background", true);
@@ -182,10 +184,10 @@ Page.prototype.ensureBackground = function (callback) { // callback: function() 
         return;
     }
     var thiz = this;
-    //alert("ensureBackground(), use bit map of " + page.properties.name  + " as bg for " + this.properties.name);
-    page.getRasterizeData(function (rasterizeData) {
+    // alert("ensureBackground(), use bit map of " + page.properties.name  + " as bg for " + this.properties.name);
+    page.getRasterizeData(function(rasterizeData) {
         thiz.bgToken = rasterizeData.token;
-        //alert([page.properties.name, rasterizeData.image.width, rasterizeData.image.height]);
+        // alert([page.properties.name, rasterizeData.image.width, rasterizeData.image.height]);
         try {
             thiz.canvas.setBackgroundImageData(rasterizeData.image, false);
         } catch (e) {
@@ -195,16 +197,16 @@ Page.prototype.ensureBackground = function (callback) { // callback: function() 
         if (callback) callback();
     });
 };
-Page.prototype.getRasterizeData = function (callback) {
+Page.prototype.getRasterizeData = function(callback) {
     if (this.isRasterizeDataCacheValid()) {
         callback(this.rasterizeDataCache);
 
         return;
     }
     var thiz = this;
-    this.ensureBackground(function () {
-        //alert("rasterizing page: " + thiz.properties.name);
-        Pencil.rasterizer.rasterizePageToUrl(thiz, function (imageData) {
+    this.ensureBackground(function() {
+        // alert("rasterizing page: " + thiz.properties.name);
+        Pencil.rasterizer.rasterizePageToUrl(thiz, function(imageData) {
             thiz.rasterizeDataCache = {
                 token: thiz._generateToken(),
                 image: imageData
@@ -213,13 +215,13 @@ Page.prototype.getRasterizeData = function (callback) {
         });
     });
 };
-Page.prototype.isRasterizeDataCacheValid = function () {
+Page.prototype.isRasterizeDataCacheValid = function() {
     return this.rasterizeDataCache && this.isBackgroundValid();
 };
-Page.prototype._generateToken = function () {
+Page.prototype._generateToken = function() {
     return this.id + "@" + (new Date().getTime()) + "_" + Math.round(Math.random() * 1000);
 };
-Page.prototype.generateFriendlyId = function (usedFriendlyIds) {
+Page.prototype.generateFriendlyId = function(usedFriendlyIds) {
     var baseName = this.name.replace(/[^a-z0-9 ]+/gi, "").replace(/[ ]+/g, "_").toLowerCase();
     var name = baseName;
     var seed = 1;

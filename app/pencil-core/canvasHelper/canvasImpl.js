@@ -1,6 +1,6 @@
 var CanvasImpl = {};
 
-CanvasImpl.setupGrid = function () {
+CanvasImpl.setupGrid = function() {
     CanvasImpl.drawMargin.call(this);
 
     if (this.gridContainer) {
@@ -27,24 +27,24 @@ CanvasImpl.setupGrid = function () {
                 line.setAttribute("x2", i);
                 line.setAttribute("y2", this.height * z);
                 if (gridStyle === "Dotted") {
-                   line.setAttribute("style", "stroke-dasharray: 1," + (grid.h - 1) * z + ";");
+                    line.setAttribute("style", "stroke-dasharray: 1," + (grid.h - 1) * z + ";");
                 }
                 this.gridContainer.appendChild(line);
             }
             if (gridStyle === "Solid") {
-               for (var i = 1; i < this.height * z; i += grid.h * z) {
-                  var line = document.createElementNS(PencilNamespaces.svg, "svg:line");
-                  line.setAttribute("x1", 0);
-                  line.setAttribute("y1", i);
-                  line.setAttribute("x2", this.width * z);
-                  line.setAttribute("y2", i);
-                  this.gridContainer.appendChild(line);
-               }
+                for (var i = 1; i < this.height * z; i += grid.h * z) {
+                    var line = document.createElementNS(PencilNamespaces.svg, "svg:line");
+                    line.setAttribute("x1", 0);
+                    line.setAttribute("y1", i);
+                    line.setAttribute("x2", this.width * z);
+                    line.setAttribute("y2", i);
+                    this.gridContainer.appendChild(line);
+                }
             }
         }
     }
 };
-CanvasImpl.drawMargin = function () {
+CanvasImpl.drawMargin = function() {
     var unzommedMargin = (Pencil.controller && !this.options.ignorePageMarging) ? Pencil.controller.getDocumentPageMargin() : 0;
     if (!unzommedMargin) {
         if (this.marginPath) this.marginPath.parentNode.removeChild(this.marginPath);

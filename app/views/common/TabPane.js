@@ -9,7 +9,7 @@ function TabPane() {
 
 __extend(BaseTemplatedWidget, TabPane);
 
-TabPane.prototype.setContentFragment = function (fragment) {
+TabPane.prototype.setContentFragment = function(fragment) {
     for (var i = 0; i < fragment.childNodes.length; i ++) {
         var node = fragment.childNodes[i];
         if (!node.nodeName || !node.getAttribute) continue;
@@ -17,9 +17,8 @@ TabPane.prototype.setContentFragment = function (fragment) {
         var title = node.getAttribute("tab-title");
         this.addTab(title, node);
     }
-
 };
-TabPane.prototype.addTab = function (title, contentNode) {
+TabPane.prototype.addTab = function(title, contentNode) {
     var header = document.createElement("div");
     Dom.addClass(header, "TabHeader");
     header.appendChild(document.createTextNode(title));
@@ -34,7 +33,7 @@ TabPane.prototype.addTab = function (title, contentNode) {
 
     if (!this.activeTabHeader) this.activateTab(header);
 };
-TabPane.prototype.activateTab = function (header) {
+TabPane.prototype.activateTab = function(header) {
     for (var i = 0; i < this.headers.length; i ++) {
         var h = this.headers[i];
         if (h == header) {
@@ -48,16 +47,16 @@ TabPane.prototype.activateTab = function (header) {
     }
     Dom.emitEvent("e:TabChange", this.node());
 };
-TabPane.prototype.handleHeaderClick = function (event) {
+TabPane.prototype.handleHeaderClick = function(event) {
     var header = Dom.findUpwardForNodeWithData(event.target, "_contentNode");
     if (!header) return;
     this.activateTab(header);
 };
-TabPane.prototype.getActiveTabPane = function () {
+TabPane.prototype.getActiveTabPane = function() {
     if (!this.activeTabHeader) return null;
     return this.activeTabHeader._contentNode;
 };
-TabPane.prototype.setActiveTabPane = function (pane) {
+TabPane.prototype.setActiveTabPane = function(pane) {
     for (var i = 0; i < this.headers.length; i ++) {
         var h = this.headers[i];
         if (h._contentNode == pane) {
@@ -66,7 +65,7 @@ TabPane.prototype.setActiveTabPane = function (pane) {
         }
     }
 };
-TabPane.prototype.ensureSizing = function () {
+TabPane.prototype.ensureSizing = function() {
     if (this.fillView) return;
     var w = Dom.getOffsetWidth(this.node()) - 2;
     var h = 0;
@@ -89,10 +88,10 @@ TabPane.prototype.ensureSizing = function () {
         Dom.addClass(contentNode, "Measured");
     }
 };
-TabPane.prototype.onAttached = function () {
+TabPane.prototype.onAttached = function() {
     this.ensureSizing();
     var thiz = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz.ensureSizing();
     }, 100);
 };

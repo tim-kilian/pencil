@@ -1,6 +1,6 @@
 function PageThumbnailView() {
     BaseTemplatedWidget.call(this);
-    this.bind("load", function (event) {
+    this.bind("load", function(event) {
         var W = this.pageThumbnailContainer.offsetWidth - 2;
         var H = this.pageThumbnailContainer.offsetHeight - 2;
         var w = this.pageThumbnail.naturalWidth;
@@ -22,7 +22,7 @@ function PageThumbnailView() {
 
     this.pageThumbnail.style.visibility = "hidden";
 
-    this.bind("click",function (event) {
+    this.bind("click", function(event) {
         if (this.childMenu && this.childMenu._visible) {
             this.childMenu.hide();
             this.childMenu._visible = false;
@@ -31,20 +31,20 @@ function PageThumbnailView() {
         if (!this.childMenu) {
             this.childMenu = new ChildPageListMenu(this.page);
         }
-        this.childMenu.showMenu(this.pageActionButton,"left-inside", "top", 0, 0, true);
+        this.childMenu.showMenu(this.pageActionButton, "left-inside", "top", 0, 0, true);
         this.childMenu._visible = true;
         event.stopPropagation();
     }, this.pageActionButton);
 }
 __extend(BaseTemplatedWidget, PageThumbnailView);
 
-PageThumbnailView.prototype.setPage = function (page, childMenu) {
+PageThumbnailView.prototype.setPage = function(page, childMenu) {
     if (!page) return;
     this.page = page;
     // this.childMenu = childMenu;
     this._updateUI();
 };
-PageThumbnailView.prototype._updateUI = function () {
+PageThumbnailView.prototype._updateUI = function() {
     this.pageThumbnail.style.visibility = "hidden";
     if (!this.page.children || this.page.children.length == 0) this.pageActionButton.style.visibility = "hidden";
     if (this.page.thumbPath) this.pageThumbnail.src = this.page.thumbPath + "?time=" + (new Date().getTime());
@@ -53,7 +53,7 @@ PageThumbnailView.prototype._updateUI = function () {
     this.node().setAttribute("title", this.page.name);
 };
 
-PageThumbnailView.prototype.selectPage = function (active) {
+PageThumbnailView.prototype.selectPage = function(active) {
     this.node().setAttribute("selected", active);
     this.pageThumbnailContainer.setAttribute("selected", active);
     this.pageTitle.setAttribute("selected", active);

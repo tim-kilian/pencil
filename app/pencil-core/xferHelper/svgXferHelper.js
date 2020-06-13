@@ -5,10 +5,10 @@ function SVGXferHelper(canvas) {
 }
 SVGXferHelper.MIME_TYPE = "image/svg+xml";
 
-SVGXferHelper.prototype.toString = function () {
+SVGXferHelper.prototype.toString = function() {
     return "SVGXferHelper: " + SVGXferHelper.MIME_TYPE;
 };
-SVGXferHelper.prototype.handleData = function (dom) {
+SVGXferHelper.prototype.handleData = function(dom) {
     FileDragObserver.handleSVGDOM(dom, this.canvas);
 };
 

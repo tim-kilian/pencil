@@ -1,8 +1,7 @@
 var RichTextDialog = {};
-RichTextDialog.handleLoad = function (event) {
-    
+RichTextDialog.handleLoad = function(event) {
     try {
-        //setup font list
+        // setup font list
         var fontPopup = document.getElementById("fontPopup");
         var localFonts = Local.getInstalledFonts();
         for (var i in localFonts) {
@@ -11,9 +10,9 @@ RichTextDialog.handleLoad = function (event) {
             item.setAttribute("value", localFonts[i]);
             fontPopup.appendChild(item);
         }
-        RichTextDialog.editor = document.getElementById("editor");        
+        RichTextDialog.editor = document.getElementById("editor");
         RichTextDialog.editor.contentDocument.designMode = "on";
-        
+
         RichTextDialog.textEditingInfo = window.arguments[0];
         RichTextDialog.returnValueHolder = window.arguments[1];
 
@@ -27,20 +26,20 @@ RichTextDialog.handleLoad = function (event) {
             body.style.fontStyle = font.style;
         }
         runEditorCommand("styleWithCSS", true);
-        RichTextDialog.editor.addEventListener("keypress", function (event) {
+        RichTextDialog.editor.addEventListener("keypress", function(event) {
             if (event.keyCode == event.DOM_VK_ESCAPE) {
                 if (RichTextDialog.doCancel()) window.close();
             }
         }, false);
         RichTextDialog.editor.focus();
-        runEditorCommand('selectall');
+        runEditorCommand("selectall");
     } catch (e) {
         alert(e);
     }
 };
 
 
-RichTextDialog.doCancel = function () {
+RichTextDialog.doCancel = function() {
     try {
         RichTextDialog.returnValueHolder.ok = false;
     } catch (e) {
@@ -48,22 +47,21 @@ RichTextDialog.doCancel = function () {
     }
     return true;
 };
-RichTextDialog.doApply = function () {
+RichTextDialog.doApply = function() {
     var html = Dom.serializeNode(RichTextDialog.editor.contentDocument.body);
-    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function (zero) {
+    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function(zero) {
         return zero.toLowerCase();
     });
     if (html.match(/^<body[^>]*>([^\0]*)<\/body>$/)) {
         html = RegExp.$1;
     }
-    
+
     RichTextDialog.returnValueHolder.ok = true;
     RichTextDialog.returnValueHolder.html = html;
     return true;
 };
 
 function runEditorCommand(command, arg) {
-    
     try {
         if (typeof(arg) != "undefined") RichTextDialog.editor.contentDocument.execCommand(command, false, arg);
         else RichTextDialog.editor.contentDocument.execCommand(command, false, null);
@@ -81,18 +79,18 @@ function runCommandByList(command, list) {
 }
 function queryValue(command) {
     alert(RichTextDialog.editor.contentDocument.queryCommandValue(command));
-};
+}
 function queryState(command) {
     alert(RichTextDialog.editor.contentDocument.queryCommandState(command));
-};
+}
 
 
 function doInsertLink() {
-    var url = window.prompt('Please specify the URL', 'http://www.evolus.vn');
+    var url = window.prompt("Please specify the URL", "http://www.evolus.vn");
     if (url) {
-        runEditorCommand('createlink', url);
+        runEditorCommand("createlink", url);
     } else {
-        runEditorCommand('unlink');
+        runEditorCommand("unlink");
     }
 }
 

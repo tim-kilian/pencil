@@ -2,14 +2,14 @@ function CanvasCareTaker(canvas) {
     this.canvas = canvas;
     this.reset();
 }
-if (!Config.get("view.undoLevel")){
+if (!Config.get("view.undoLevel")) {
     Config.set("view.undoLevel", 10);
 }
 CanvasCareTaker.LIMIT = Config.get("view.undoLevel");
 CanvasCareTaker.prototype.reset = function() {
     this.mementos = [this.canvas.getMemento()];
     this.index = 0;
-}
+};
 CanvasCareTaker.prototype.save = function(action) {
     var memento = this.canvas.getMemento(action);
 
@@ -23,14 +23,14 @@ CanvasCareTaker.prototype.save = function(action) {
         this.index -= n;
     }
 };
-CanvasCareTaker.prototype.canUndo = function () {
+CanvasCareTaker.prototype.canUndo = function() {
     return this.index > 0;
 };
-CanvasCareTaker.prototype.canRedo = function () {
+CanvasCareTaker.prototype.canRedo = function() {
     return this.index < this.mementos.length - 1;
 };
 
-CanvasCareTaker.prototype.undo = function () {
+CanvasCareTaker.prototype.undo = function() {
     if (!this.canUndo()) throw Util.getMessage("empty.undo.buffer");
 
     this.index --;
@@ -38,7 +38,7 @@ CanvasCareTaker.prototype.undo = function () {
     this.canvas.setMemento(memento);
     this.canvas.snappingHelper.rebuildSnappingGuide();
 };
-CanvasCareTaker.prototype.redo = function () {
+CanvasCareTaker.prototype.redo = function() {
     if (!this.canRedo()) throw Util.getMessage("empty.redo.buffer");
 
     this.index ++;
@@ -58,7 +58,7 @@ CanvasCareTaker.prototype.getPrevAction = function() {
     }
     return "";
 };
-CanvasCareTaker.prototype.saveState = function (filePath) {
+CanvasCareTaker.prototype.saveState = function(filePath) {
     var dom = Dom.parser.parseFromString("<p:CareTakerContent xmlns:p=\"" + PencilNamespaces.p + "\"></p:CareTakerContent>", "text/xml");
     dom.documentElement.setAttribute("index", this.index);
     for (var memento of this.mementos) {
@@ -67,11 +67,11 @@ CanvasCareTaker.prototype.saveState = function (filePath) {
 
     Dom.serializeNodeToFile(dom, filePath);
 };
-CanvasCareTaker.prototype.loadState = function (filePath) {
+CanvasCareTaker.prototype.loadState = function(filePath) {
     var dom = Controller.parser.parseFromString(fs.readFileSync(filePath, "utf8"), "text/xml");
     this.index = parseInt(dom.documentElement.getAttribute("index"), 10);
     this.mementos = [];
-    Dom.workOn("/p:CareTakerContent/*", dom, function (node) {
+    Dom.workOn("/p:CareTakerContent/*", dom, function(node) {
         if (!node || !node.getAttribute) return;
         var memento = CanvasMemento.deserializeFromNode(node);
         this.mementos.push(memento);

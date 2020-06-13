@@ -1,24 +1,24 @@
 /**
  * Utility functions for implementing the connector module
  */
- 
+
 var Connector = {};
 
 Connector.isWorking = false;
 
-Connector.prepareInvalidation = function (canvas) {
+Connector.prepareInvalidation = function(canvas) {
     Connector.caches = [];
     Connector.cacheMap = {};
     Connector.incomingMap = {};
-    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function (node) {
+    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function(node) {
         if (canvas.isShapeLocked(node)) return;
-        
+
         var defId = canvas.getType(node);
         var def = CollectionManager.shapeDefinition.locateDefinition(defId);
         if (!def) return;
-        
+
         var shape = canvas.createControllerFor(node);
-        
+
         var cache = {
             shape: shape,
             connectedHandles: []
@@ -28,7 +28,7 @@ Connector.prepareInvalidation = function (canvas) {
             for (var j = 0; j < def.propertyGroups[i].properties.length; j ++) {
                 var prop = def.propertyGroups[i].properties[j];
                 if (prop.type != Handle) continue;
-                
+
                 var handle = shape.getProperty(prop.name);
                 if (!handle.meta ||
                     !handle.meta.connectedShapeId ||
@@ -39,33 +39,32 @@ Connector.prepareInvalidation = function (canvas) {
                     incomings = [];
                     Connector.incomingMap[handle.meta.connectedShapeId] = incomings;
                 }
-                
+
                 incomings.push(node.id);
-                
+
                 cache.connectedHandles.push({
                     prop: prop,
                     handle: handle
                 });
             }
         }
-        
+
         Connector.caches.push(cache);
         Connector.cacheMap[node.id] = cache;
     });
-    
 };
-Connector.prepareInvalidationIfNeeded = function (canvas) {
+Connector.prepareInvalidationIfNeeded = function(canvas) {
     if (Connector.caches) return;
     Connector.prepareInvalidation(canvas);
 };
-Connector.finishInvalidation = function (canvas) {
+Connector.finishInvalidation = function(canvas) {
     Connector.caches = null;
     Connector.cacheMap = null;
     Connector.incomingMap = null;
 };
 
 
-Connector.invalidateInboundConnections = function (canvas, shape) {
+Connector.invalidateInboundConnections = function(canvas, shape) {
     if (Connector.isWorking) return;
     try {
         Connector.isWorking = true;
@@ -74,39 +73,39 @@ Connector.invalidateInboundConnections = function (canvas, shape) {
         Connector.isWorking = false;
     }
 };
-Connector.invalidateInboundConnectionsForShapeTarget = function (target) {
+Connector.invalidateInboundConnectionsForShapeTarget = function(target) {
     Connector.prepareInvalidationIfNeeded(target.canvas);
-    
+
     var incomings = Connector.incomingMap[target.svg.id];
     if (!incomings || incomings.length == 0) return;
 
-	if (!target.getConnectorOutlets) return;
-	
-	var canvas = target.canvas;
-	var shape = target.svg;
-    
+    if (!target.getConnectorOutlets) return;
+
+    var canvas = target.canvas;
+    var shape = target.svg;
+
     var outlets = target.getConnectorOutlets();
     if (outlets == null) return;
     var outletMap = {};
     for (var i = 0; i < outlets.length; i ++) {
         outletMap[outlets[i].id] = outlets[i];
     }
-    
+
     for (var id of incomings) {
         var cache = Connector.cacheMap[id];
         var source = cache.shape;
-        
+
         for (var i = 0; i < cache.connectedHandles.length; i ++) {
             var prop = cache.connectedHandles[i].prop;
             var handle = cache.connectedHandles[i].handle;
-            
+
             if (handle.meta.connectedShapeId != shape.id) continue;
             if (!outletMap[handle.meta.connectedOutletId]) continue;
 
             var outlet = outletMap[handle.meta.connectedOutletId];
 
             var m = shape.getTransformToElement(source.svg);
-            
+
             var via = Connector.calculateViaPoint(target, outlet, m);
 
             var p = Svg.pointInCTM(outlet.x, outlet.y, m);
@@ -126,15 +125,15 @@ Connector.invalidateInboundConnectionsForShapeTarget = function (target) {
         }
     }
 };
-Connector.invalidateInboundConnectionsImpl = function (canvas, shape) {
+Connector.invalidateInboundConnectionsImpl = function(canvas, shape) {
     var target = canvas.createControllerFor(shape);
-    
+
     if (target.invalidateInboundConnections) {
     	target.invalidateInboundConnections();
     }
 };
 
-Connector.calculateViaPoint = function (target, outlet, matrix) {
+Connector.calculateViaPoint = function(target, outlet, matrix) {
     var cx = 0;
     var cy = 0;
     if (target) {
@@ -147,14 +146,13 @@ Connector.calculateViaPoint = function (target, outlet, matrix) {
             cx = bounding.width / 2;
             cy = bounding.height / 2;
         }
-        
     } else {
         cx = outlet._cx;
         cy = outlet._cy;
     }
 
     var via = null;
-    
+
     if (outlet.noVia) return null;
 
     if (outlet.via) {
@@ -178,11 +176,11 @@ Connector.calculateViaPoint = function (target, outlet, matrix) {
             }
         }
     }
-    
+
     return via;
 };
 
-Connector.invalidateOutboundConnections = function (canvas, node) {
+Connector.invalidateOutboundConnections = function(canvas, node) {
     if (Connector.isWorking) return;
     try {
         Connector.isWorking = true;
@@ -191,13 +189,13 @@ Connector.invalidateOutboundConnections = function (canvas, node) {
         Connector.isWorking = false;
     }
 };
-Connector.invalidateOutboundConnectionsForShapeTarget = function (target) {
-	var canvas = target.canvas;
-	var node = target.svg;
-	
+Connector.invalidateOutboundConnectionsForShapeTarget = function(target) {
+    var canvas = target.canvas;
+    var node = target.svg;
+
     var def = target.def;
     if (!def) return;
-    
+
     var handleProps = [];
     for (var i = 0; i < def.propertyGroups.length; i ++) {
         for (var j = 0; j < def.propertyGroups[i].properties.length; j ++) {
@@ -219,7 +217,7 @@ Connector.invalidateOutboundConnectionsForShapeTarget = function (target) {
 
         var shape = Dom.getSingle(".//svg:g[@p:type='Shape'][@id='" + handle.meta.connectedShapeId + "']", canvas.drawingLayer);
         if (!shape) continue;
-        
+
         var target = canvas.createControllerFor(shape);
         var outlets = target.getConnectorOutlets();
         if (outlets == null) continue;
@@ -233,10 +231,10 @@ Connector.invalidateOutboundConnectionsForShapeTarget = function (target) {
         }
 
         if (!outlet) continue;
-        
+
         var m = shape.getTransformToElement(node);
         var via = Connector.calculateViaPoint(target, outlet, m);
-            
+
         var p = Svg.pointInCTM(outlet.x, outlet.y, m);
         handle.x = p.x;
         handle.y = p.y;
@@ -250,36 +248,36 @@ Connector.invalidateOutboundConnectionsForShapeTarget = function (target) {
         }
 
         source.setProperty(prop.name, handle);
-    }	
+    }
 };
-Connector.invalidateOutboundConnectionsImpl = function (canvas, node) {
+Connector.invalidateOutboundConnectionsImpl = function(canvas, node) {
     var target = canvas.createControllerFor(node);
-    
+
     if (target.invalidateOutboundConnections) {
     	target.invalidateOutboundConnections();
     }
 };
 
-Connector.areClassesMatched = function (classes1, classes2) {
-	return true;
+Connector.areClassesMatched = function(classes1, classes2) {
+    return true;
     for (var i = 0; i < classes1.length; i ++) {
         if (classes1[i] == "*" || classes2.indexOf(classes1[i]) >= 0) return true;
     }
 
     return false;
 };
-Connector.getMatchingOutlets = function (canvas, shape, classes) {
+Connector.getMatchingOutlets = function(canvas, shape, classes) {
     var matchingOutlets = [];
     var classes1 = classes.split(/[ ]*\,[ ]*/);
-    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function (node) {
+    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function(node) {
         if (node.id == shape.id) return;
-        
+
         var source = canvas.createControllerFor(node);
         var outlets = source.getConnectorOutlets();
         if (!outlets) return;
-        
+
         var m = node.getTransformToElement(shape);
-        
+
         for (var i = 0; i < outlets.length; i ++) {
             var outlet = outlets[i];
             var classes2 = outlet.classes.split(/[ ]*\,[ ]*/);
@@ -301,20 +299,20 @@ Connector.getMatchingOutlets = function (canvas, shape, classes) {
 };
 
 var ConnectorUtil = {};
-ConnectorUtil.generateStandarOutlets = function (shape, classes) {
+ConnectorUtil.generateStandarOutlets = function(shape, classes) {
     var box = shape.getProperty("box");
     if (box) {
         return [
-                new Outlet("top-left", classes ? classes : "Bounding", 0, 0),
-                new Outlet("top-center", classes ? classes : "Bounding", box.w / 2, 0),
-                new Outlet("top-right", classes ? classes : "Bounding", box.w, 0),
-                new Outlet("middle-left", classes ? classes : "Bounding", 0, box.h / 2),
-                new Outlet("middle-center", classes ? classes : "Bounding", box.w / 2, box.h / 2),
-                new Outlet("middle-right", classes ? classes : "Bounding", box.w, box.h / 2),
-                new Outlet("bottom-left", classes ? classes : "Bounding", 0, box.h),
-                new Outlet("bottom-center", classes ? classes : "Bounding", box.w / 2, box.h),
-                new Outlet("bottom-right", classes ? classes : "Bounding", box.w, box.h)
-            ];
+            new Outlet("top-left", classes ? classes : "Bounding", 0, 0),
+            new Outlet("top-center", classes ? classes : "Bounding", box.w / 2, 0),
+            new Outlet("top-right", classes ? classes : "Bounding", box.w, 0),
+            new Outlet("middle-left", classes ? classes : "Bounding", 0, box.h / 2),
+            new Outlet("middle-center", classes ? classes : "Bounding", box.w / 2, box.h / 2),
+            new Outlet("middle-right", classes ? classes : "Bounding", box.w, box.h / 2),
+            new Outlet("bottom-left", classes ? classes : "Bounding", 0, box.h),
+            new Outlet("bottom-center", classes ? classes : "Bounding", box.w / 2, box.h),
+            new Outlet("bottom-right", classes ? classes : "Bounding", box.w, box.h)
+        ];
     } else {
     	if (shape.svg) {
         	var box = shape.svg.getBBox();
@@ -333,7 +331,6 @@ ConnectorUtil.generateStandarOutlets = function (shape, classes) {
     		return [];
     	}
     }
-
 };
 
 function getSegmentsToHandle(startPoints, handle, VIA_LENGTH) {
@@ -360,7 +357,7 @@ function getSegmentsToHandle(startPoints, handle, VIA_LENGTH) {
         var l = Math.sqrt(dx * dx + dy * dy);
         var r = VIA_LENGTH / l;
         via = {x: end.x + dx * r, y: end.y + dy * r};
-        
+
         end = via;
     }
 
@@ -371,48 +368,48 @@ function getSegmentsToHandle(startPoints, handle, VIA_LENGTH) {
     }
 
     return points;
-};
+}
 function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
-					withStartArrow, withEndArrow, straight, detachedDelta) {
+    withStartArrow, withEndArrow, straight, detachedDelta) {
     if (!supportUnconnected && !handle.isConnected()) return [];
-    
+
     if (typeof(withStartArrow) == "undefined") withStartArrow = true;
     if (typeof(withEndArrow) == "undefined") withEndArrow = true;
-    
+
     const ANGLE = Math.PI / 4;
     const ARROW_WING_LENGTH = Math.max(w * 4, 6);
-    
+
     if (startPoints[0].x == handle.x &&
         startPoints[0].y == handle.y) return [];
 
     var points = getSegmentsToHandle(startPoints, handle, VIA_LENGTH);
     var len = points.length;
-    
+
     if (typeof(detachedDelta) == "number" && detachedDelta != 0) {
-    	//shift the two ends away
+    	// shift the two ends away
     	var maxDelta = 2 * VIA_LENGTH / 3;
     	if (detachedDelta > maxDelta) {
     		detachedDelta = maxDelta;
     	}
-    	
+
     	var l = geo_vectorLength(points[0], points[1]);
     	var f = (l - detachedDelta) / l;
     	var p1 = {
     		x: points[1].x + f * (points[0].x - points[1].x),
     		y: points[1].y + f * (points[0].y - points[1].y)
     	};
-    	
+
     	l = geo_vectorLength(points[len - 2], points[len - 1]);
     	f = (l - detachedDelta) / l;
     	var p2 = {
     		x: points[len - 2].x + f * (points[len - 1].x - points[len - 2].x),
     		y: points[len - 2].y + f * (points[len - 1].y - points[len - 2].y)
     	};
-    	
+
     	points[0] = p1;
     	points[len - 1] = p2;
     }
-    
+
     var spec = null;
     if (straight) {
         var spec = [M(points[0].x, points[0].y)];
@@ -424,12 +421,12 @@ function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
     } else {
     	spec = geo_buildQuickSmoothCurve(points, VIA_LENGTH);
     }
-    
+
     if (withStartArrow) {
         var a1 = geo_getRotatedPoint(
         		points[1],
         		points[0], ARROW_WING_LENGTH, ANGLE);
-                
+
         var a2 = geo_getRotatedPoint(
         	points[1],
         	points[0], ARROW_WING_LENGTH, 0 - ANGLE);
@@ -441,7 +438,7 @@ function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
         var a1 = geo_getRotatedPoint(
         		points[len - 2],
         		points[len - 1], ARROW_WING_LENGTH, ANGLE);
-                
+
         var a2 = geo_getRotatedPoint(
         		points[len - 2],
         		points[len - 1], ARROW_WING_LENGTH, 0 - ANGLE);
@@ -450,7 +447,7 @@ function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
     }
 
     return spec;
-};
+}
 
 Util.importSandboxFunctions(getSegmentsToHandle, arrowTo);
 
@@ -462,12 +459,12 @@ function Outlet(id, classes, x, y, direction) {
     this.direction = direction;
 }
 
-Outlet.prototype.toString = function () {
+Outlet.prototype.toString = function() {
     return this.id + "[" + this.classes + "]@" + [this.x, this.y];
 };
 
 pencilSandbox.Outlet = {
-    newOutlet: function (id, classes, x, y, direction) {
+    newOutlet: function(id, classes, x, y, direction) {
         return new Outlet(id, classes, x, y, direction);
     }
 };

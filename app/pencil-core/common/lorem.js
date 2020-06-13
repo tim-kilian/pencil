@@ -12,29 +12,29 @@ var loremLang = latin;
 var endings = "................................??!";
 
 /* randomly returns true with a certain chance (a percentage) */
-function chance(percentage){
+function chance(percentage) {
     return (Math.floor(Math.random() * 100) < percentage);
 }
 
 /* capitalizes a word */
-function capitalize(aString){
-    return aString.substring(0,1).toUpperCase() + aString.substring(1, aString.length);
+function capitalize(aString) {
+    return aString.substring(0, 1).toUpperCase() + aString.substring(1, aString.length);
 }
 
 /* returns a random lorem word */
-function getLoremWord(){
+function getLoremWord() {
     return loremLang[Math.floor(Math.random()*loremLang.length)];
 }
 
-function getLoremEnding(){
+function getLoremEnding() {
     var i = Math.floor(Math.random()*endings.length);
     return endings.substring(i, i+1);
 }
 
 /* inserts a number of lorem words. Does not append a space at the end. */
-function loremIpsum(numWords){
+function loremIpsum(numWords) {
     var s = "";
-    for(var i=0; i<numWords-1; i++){
+    for (var i=0; i<numWords-1; i++) {
         s += getLoremWord() + " ";
     }
     s += getLoremWord();
@@ -43,7 +43,7 @@ function loremIpsum(numWords){
 }
 
 /* inserts a sentence of random words. Appends a space at the end. */
-function loremIpsumSentence(numWords){
+function loremIpsumSentence(numWords) {
     var s = "";
     s += capitalize(getLoremWord()) + " ";
     s += loremIpsum(numWords-1);
@@ -54,11 +54,11 @@ function loremIpsumSentence(numWords){
 }
 
 /* inserts a sentence of random words, sometimes with extra punctuation. Appends a space at the end. */
-function loremIpsumSentence2(numWords){
+function loremIpsumSentence2(numWords) {
     var s = "";
     s += capitalize(getLoremWord()) + " ";
     var part1 = 0;
-    if(chance(50)){
+    if (chance(50)) {
         // insert a comma or other punctuation within the sentence
         part1 = Math.floor(Math.random() * numWords-2);
         s += loremIpsum(part1);
@@ -74,11 +74,11 @@ function loremIpsumSentence2(numWords){
 }
 
 /* inserts a paragraph of sentences of random words. */
-function loremIpsumParagraph(numWords){
+function loremIpsumParagraph(numWords) {
     var s = "";
     var words = numWords;
-    while(words > 0){
-        if(words > 10){
+    while (words > 0) {
+        if (words > 10) {
             w = Math.floor(Math.random() * 8) + 2;
             s += loremIpsumSentence2(w);
             words = words - w;

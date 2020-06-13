@@ -1,12 +1,12 @@
 var WebUtil = {
-    get : function(url, onComplete, rq) {
+    get: function(url, onComplete, rq) {
         try {
             var req = new XMLHttpRequest();
 
             req.onreadystatechange = function(aEvt) {
                 if (req.readyState == 4) {
-                    //debug("url: " + url);
-                    //debug(req.status);
+                    // debug("url: " + url);
+                    // debug(req.status);
                     if (req.status == 200) {
                         onComplete(req.responseText);
                     } else {
@@ -23,12 +23,12 @@ var WebUtil = {
         }
     },
 
-    getMetadata : function(url, onComplete, rq) {
+    getMetadata: function(url, onComplete, rq) {
         try {
             var req = new XMLHttpRequest();
             req.onreadystatechange = function(aEvt) {
                 if (req.readyState == 4) {
-                    var size = req.getResponseHeader('Content-Length');
+                    var size = req.getResponseHeader("Content-Length");
                     onComplete(size);
                 }
             };

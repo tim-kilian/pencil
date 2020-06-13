@@ -13,19 +13,19 @@ Dimension.fromString = function(literal) {
     return dim;
 };
 
-Dimension.prototype.toString = function () {
+Dimension.prototype.toString = function() {
     return this.w + "," + this.h;
 };
-Dimension.prototype.narrowed = function (delta, delta2) {
+Dimension.prototype.narrowed = function(delta, delta2) {
     var dim = new Dimension(this.w - delta, this.h - (typeof(delta2) == "undefined" ? delta : delta2));
     return dim;
 };
 
 pencilSandbox.Dimension = {
-    newDimension: function (w, h) {
+    newDimension: function(w, h) {
         return new Dimension(w, h);
     }
 };
 for (var p in Dimension) {
     pencilSandbox.Dimension[p] = Dimension[p];
-};
+}

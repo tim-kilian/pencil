@@ -1,4 +1,4 @@
-function CollectionManagementDialog (collectionPanel) {
+function CollectionManagementDialog(collectionPanel) {
     Dialog.call(this);
 
     this.collectionPanel = collectionPanel;
@@ -9,17 +9,17 @@ function CollectionManagementDialog (collectionPanel) {
 
     this.bind("click", this.handleItemClick, this.collectionContainer);
 
-    this.collectionContainer.addEventListener("click",function (event) {
+    this.collectionContainer.addEventListener("click", function(event) {
         var node = Dom.findUpwardForNodeWithData(event.target, "_collection");
         var check = node.getAttribute("selected");
-        if(check == "true") {
+        if (check == "true") {
             node.setAttribute("selected", "false");
         } else {
             node.setAttribute("selected", "true");
-        };
+        }
     }, false);
 
-    this.collectionContainer.addEventListener("mouseover",function (event) {
+    this.collectionContainer.addEventListener("mouseover", function(event) {
         var node = Dom.findUpwardForNodeWithData(event.target, "_collection");
         if (node) {
             if (this.activeNode) {
@@ -27,22 +27,22 @@ function CollectionManagementDialog (collectionPanel) {
                 this.activeNode = null;
             }
             this.activeNode = node;
-            node.setAttribute("active","true");
+            node.setAttribute("active", "true");
         }
     }, false);
 
     var thiz = this;
-    this.collectionContainer.addEventListener("dblclick",function (event) {
+    this.collectionContainer.addEventListener("dblclick", function(event) {
         var top = Dom.findUpwardForNodeWithData(event.target, "_collection");
-        var visible = CollectionManager.isCollectionVisible (top._collection);
+        var visible = CollectionManager.isCollectionVisible(top._collection);
         if (!visible) {
-            CollectionManager.setCollectionVisible (top._collection, true) ;
+            CollectionManager.setCollectionVisible(top._collection, true);
         }
         thiz.collectionPanel.reload(top._collection.id);
         thiz.close();
     }, false);
 
-    this.bind("dragstart", function (ev) {
+    this.bind("dragstart", function(ev) {
         nsDragAndDrop.dragStart(ev);
         var node = Dom.findUpwardForNodeWithData(event.target, "_collection");
         if (!node) return;
@@ -55,7 +55,7 @@ function CollectionManagementDialog (collectionPanel) {
         this.currentDraggedObject.setAttribute("dragged", "true");
     }, this.collectionContainer);
 
-    this.bind("dragover", function (ev) {
+    this.bind("dragover", function(ev) {
         // if (event.dataTransfer.getData("dragType") != "collection") return;
         if (nsDragAndDrop.getData("dragType") != "collection") return;
         if (this.hoverNode) {
@@ -67,10 +67,9 @@ function CollectionManagementDialog (collectionPanel) {
             node.setAttribute("hover", "true");
             this.hoverNode = node;
         }
-
     }, this.collectionContainer);
 
-    this.bind("drop", function (ev) {
+    this.bind("drop", function(ev) {
         // if (event.dataTransfer.getData("dragType") != "collection") return;
         if (nsDragAndDrop.getData("dragType") != "collection") return;
 
@@ -91,19 +90,18 @@ function CollectionManagementDialog (collectionPanel) {
         node.removeAttribute("hover");
     }, this.collectionContainer);
 
-    this.bind("dragend", function (event) {
+    this.bind("dragend", function(event) {
         if (this.currentDraggedObject) this.currentDraggedObject.removeAttribute("dragged");
         this.currentDraggedObject = null;
     }, this.collectionContainer);
-
 }
 __extend(Dialog, CollectionManagementDialog);
 
-CollectionManagementDialog.prototype.getCollectionIcon = function (collection) {
+CollectionManagementDialog.prototype.getCollectionIcon = function(collection) {
     return collection.icon || BaseCollectionPane.ICON_MAP[collection.id] || "border_all";
 };
 
-CollectionManagementDialog.prototype.handleItemClick = function (event) {
+CollectionManagementDialog.prototype.handleItemClick = function(event) {
     var control = Dom.findUpwardForNodeWithData(event.target, "_role");
     if (!control) return;
     var view = control._view;
@@ -119,7 +117,7 @@ CollectionManagementDialog.prototype.handleItemClick = function (event) {
         Dialog.confirm(
             "Are you sure you want to uninstall this collection?",
             "Uninstalling will remove this collection completely from Pencil. Shapes created from this collection will no longer be editable.",
-            "Yes, Uninstall", function () {
+            "Yes, Uninstall", function() {
                 CollectionManager.uninstallCollection(collection);
                 this.collectionPanel.reload();
                 view.parentNode.removeChild(view);
@@ -129,7 +127,7 @@ CollectionManagementDialog.prototype.handleItemClick = function (event) {
     }
 };
 
-CollectionManagementDialog.prototype.createCollectionView = function (collection) {
+CollectionManagementDialog.prototype.createCollectionView = function(collection) {
     var thiz = this;
     var icon = this.getCollectionIcon(collection);
     var id = "check_" + Util.newUUID();
@@ -137,23 +135,23 @@ CollectionManagementDialog.prototype.createCollectionView = function (collection
     var holder = {};
 
     var view = Dom.newDOMElement({
-        _name: "vbox",
+        "_name": "vbox",
         "class": "CollectionView",
-        _children: [
+        "_children": [
             {
                 _name: "hbox",
                 flex: 1,
                 _children: [
                     {
-                        _name: "i",
-                        _text: icon,
+                        "_name": "i",
+                        "_text": icon,
                         "class": "Icon"
                     },
                     {
-                        _name: "vbox",
-                        flex: 1,
+                        "_name": "vbox",
+                        "flex": 1,
                         "class": "Name",
-                        _children: [
+                        "_children": [
                             {
                                 _name: "strong",
                                 _text: collection.displayName
@@ -168,9 +166,9 @@ CollectionManagementDialog.prototype.createCollectionView = function (collection
                 ]
             },
             {
-                _name: "hbox",
+                "_name": "hbox",
                 "class": "Controls",
-                _children: [
+                "_children": [
                     {
                         _name: "input",
                         type: "checkbox",
@@ -178,9 +176,9 @@ CollectionManagementDialog.prototype.createCollectionView = function (collection
                         _id: "checkbox"
                     },
                     {
-                        _name: "label",
+                        "_name": "label",
                         "for": id,
-                        _text: "Visible"
+                        "_text": "Visible"
                     },
                     {
                         _name: "button",
@@ -220,24 +218,24 @@ CollectionManagementDialog.prototype.createCollectionView = function (collection
     view.setAttribute("draggable", "true");
 
     return view;
-}
+};
 
-CollectionManagementDialog.prototype.loadCollectionList = function () {
+CollectionManagementDialog.prototype.loadCollectionList = function() {
     Dom.empty(this.collectionContainer);
     var collections = CollectionManager.shapeDefinition.collections;
-    for( var i = 0; i < collections.length; i++) {
+    for ( var i = 0; i < collections.length; i++) {
         this.collectionContainer.appendChild(this.createCollectionView(collections[i]));
     }
-}
+};
 
-CollectionManagementDialog.prototype.getDialogActions = function () {
+CollectionManagementDialog.prototype.getDialogActions = function() {
     var thiz = this;
     return [
         Dialog.ACTION_CLOSE,
         {
             type: "extra1", title: "Install From File...",
-            run: function () {
-                CollectionManager.installNewCollection(function (err, collection) {
+            run: function() {
+                CollectionManager.installNewCollection(function(err, collection) {
                     if (!err && collection) {
                         thiz.collectionPanel.reload(collection.id);
                         NotificationPopup.show("Collection was installed successfully.");
@@ -249,10 +247,10 @@ CollectionManagementDialog.prototype.getDialogActions = function () {
         },
         {
             type: "extra1", title: "Install From Repository...",
-            run: function () {
+            run: function() {
                 new CollectionBrowserDialog(thiz.collectionPanel, thiz).open();
                 return false;
             }
         }
-    ]
+    ];
 };

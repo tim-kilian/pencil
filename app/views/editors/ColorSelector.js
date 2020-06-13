@@ -10,13 +10,13 @@ function ColorSelector() {
     this.reloadRecentlyUsedColors();
     this.initializeGridSelector();
 
-    //get the radius
+    // get the radius
     this.pinHeld = false;
 
     this.updatingColor = true;
 
     var thiz = this;
-    //register the event handler
+    // register the event handler
     // wheel selector event handler
     this.htmlCodeInput.addEventListener("change", function(event) {
         var val = thiz.htmlCodeInput.value;
@@ -28,54 +28,54 @@ function ColorSelector() {
         // Translate standard HTML color strings:
         if (uppercaseVal[0] != "#") {
             switch (val) {
-                case "GREEN":
-                    uppercaseVal = "#008000";
-                    break;
-                case "LIME":
-                    uppercaseVal = "#00FF00";
-                    break;
-                case "OLIVE":
-                    uppercaseVal = "#808000";
-                    break;
-                case "TEAL":
-                    uppercaseVal = "#008080";
-                    break;
-                case "YELLOW":
-                    uppercaseVal = "#FFFF00";
-                    break;
-                case "RED":
-                    uppercaseVal = "#FF0000";
-                    break;
-                case "MAROON":
-                    uppercaseVal = "#800000";
-                    break;
-                case "PURPLE":
-                    uppercaseVal = "#800080";
-                    break;
-                case "FUCHSIA":
-                    uppercaseVal = "#FF00FF";
-                    break;
-                case "NAVY":
-                    uppercaseVal = "#000080";
-                    break;
-                case "BLUE":
-                    uppercaseVal = "#0000FF";
-                    break;
-                case "AQUA":
-                    uppercaseVal = "#00FFFF";
-                    break;
-                case "WHITE":
-                    uppercaseVal = "#FFFFFF";
-                    break;
-                case "SILVER":
-                    uppercaseVal = "#CC0C0C0";
-                    break;
-                case "GRAY":
-                    uppercaseVal = "#808080";
-                    break;
-                default: // BLACK
-                    uppercaseVal = "#000000";
-                    break;
+            case "GREEN":
+                uppercaseVal = "#008000";
+                break;
+            case "LIME":
+                uppercaseVal = "#00FF00";
+                break;
+            case "OLIVE":
+                uppercaseVal = "#808000";
+                break;
+            case "TEAL":
+                uppercaseVal = "#008080";
+                break;
+            case "YELLOW":
+                uppercaseVal = "#FFFF00";
+                break;
+            case "RED":
+                uppercaseVal = "#FF0000";
+                break;
+            case "MAROON":
+                uppercaseVal = "#800000";
+                break;
+            case "PURPLE":
+                uppercaseVal = "#800080";
+                break;
+            case "FUCHSIA":
+                uppercaseVal = "#FF00FF";
+                break;
+            case "NAVY":
+                uppercaseVal = "#000080";
+                break;
+            case "BLUE":
+                uppercaseVal = "#0000FF";
+                break;
+            case "AQUA":
+                uppercaseVal = "#00FFFF";
+                break;
+            case "WHITE":
+                uppercaseVal = "#FFFFFF";
+                break;
+            case "SILVER":
+                uppercaseVal = "#CC0C0C0";
+                break;
+            case "GRAY":
+                uppercaseVal = "#808080";
+                break;
+            default: // BLACK
+                uppercaseVal = "#000000";
+                break;
             }
         } else if (uppercaseVal.length > 7) {
             uppercaseVal = uppercaseVal.substring(7);
@@ -173,8 +173,8 @@ function ColorSelector() {
         this.setColor(new Color());
     }
 
-    this.gridSelectorContainer.addEventListener("click", function (event) {
-        var colorCell = Dom.findUpward(event.target, function (n) {
+    this.gridSelectorContainer.addEventListener("click", function(event) {
+        var colorCell = Dom.findUpward(event.target, function(n) {
             return n.hasAttribute("color");
         });
         if (!colorCell) return;
@@ -184,7 +184,7 @@ function ColorSelector() {
     }, false);
 
     function colorListSelectHandler(event) {
-        var colorCell = Dom.findUpward(event.target, function (n) {
+        var colorCell = Dom.findUpward(event.target, function(n) {
             return n.hasAttribute("color");
         });
         if (!colorCell) return;
@@ -193,14 +193,14 @@ function ColorSelector() {
     }
     this.recentlyUsedColor.addEventListener("click", colorListSelectHandler, false);
     this.documentPaletteContainer.addEventListener("click", colorListSelectHandler, false);
-    
-    this.bind("contextmenu", function (event) {
+
+    this.bind("contextmenu", function(event) {
         var color = Dom.findUpwardForData(event.target, "_color");
         if (!color) return;
 
         ColorSelector._handlePaletteMenu(thiz, color, event);
     }, this.documentPaletteContainer);
-    
+
     this.bind("click", this.pickColor, this.pickerButton);
     this.bind("click", this.addToPalette, this.addToPaletteButton);
 }
@@ -211,44 +211,46 @@ ColorSelector.heldInstance = null;
 /*
     Register global event listener
  */
-document.addEventListener("mousemove", function (event) {
+document.addEventListener("mousemove", function(event) {
     if (!ColorSelector.heldInstance) return;
     ColorSelector.heldInstance._handleMouseMove(event);
 }, false);
 
-document.addEventListener("mouseup", function () {
+document.addEventListener("mouseup", function() {
     if (!ColorSelector.heldInstance) return;
     ColorSelector.heldInstance._handleMouseUp(event);
     ColorSelector.heldInstance = null;
 }, false);
 
 
-ColorSelector._handlePaletteMenu = function (thiz, color, event) {
+ColorSelector._handlePaletteMenu = function(thiz, color, event) {
     if (!ColorSelector._paletteMenu) {
         ColorSelector._paletteMenu = new Menu();
         ColorSelector._paletteMenu.register({
-            getLabel: function () { return "Remove" },
+            getLabel: function() {
+                return "Remove";
+            },
             icon: "delete",
-            run: function () {
+            run: function() {
                 Pencil.controller.removeColorFromDocumentPalette(ColorSelector._colorToRemove);
                 ColorSelector._instanceForMenu.loadDocumentColors();
             }
         });
     }
-    
+
     ColorSelector._colorToRemove = color;
     ColorSelector._instanceForMenu = thiz;
     ColorSelector._paletteMenu.showMenuAt(event.clientX, event.clientY);
 };
 
-ColorSelector.prototype.onInsertedIntoDocument = function () {
+ColorSelector.prototype.onInsertedIntoDocument = function() {
     var thiz = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz.radius = thiz.wheelImage.offsetWidth / 2;
         thiz.invalidateUI();
     }, 10);
 };
-ColorSelector.prototype._handleMouseMove = function (event) {
+ColorSelector.prototype._handleMouseMove = function(event) {
     event.preventDefault();
 
     var r = this.wheelOverlay.getBoundingClientRect();
@@ -279,12 +281,12 @@ ColorSelector.prototype._handleMouseMove = function (event) {
     this.updatingColor = true;
     this.onValueChanged(this.wheelImage);
 };
-ColorSelector.prototype._handleMouseUp = function (event) {
+ColorSelector.prototype._handleMouseUp = function(event) {
     this.pinHeld = false;
     this.updatingColor = false;
     this.updateRecentlyUsedColors();
 };
-ColorSelector.prototype._handleHueSatNumberChange = function () {
+ColorSelector.prototype._handleHueSatNumberChange = function() {
     var hsv = this.color.getHSV();
     var h = hsv.hue;
     var s = hsv.saturation;
@@ -296,7 +298,7 @@ ColorSelector.prototype._handleHueSatNumberChange = function () {
     this.pin.style.left = x + "px";
     this.pin.style.top = y + "px";
 };
-ColorSelector.prototype._emitChangeEvent = function () {
+ColorSelector.prototype._emitChangeEvent = function() {
     if (this._disableEventFiringOnce) {
         this._disableEventFiringOnce = false;
         return;
@@ -305,21 +307,21 @@ ColorSelector.prototype._emitChangeEvent = function () {
     event.initEvent("ValueChange", false, false);
     this.dispatchEvent(event);
 };
-ColorSelector.prototype._emitCloseEvent = function () {
+ColorSelector.prototype._emitCloseEvent = function() {
     Dom.emitEvent("p:CloseColorSelector", this.node(), {});
 };
-ColorSelector.prototype._changHS = function (hue, sat) {
+ColorSelector.prototype._changHS = function(hue, sat) {
     this.hue.value = hue;
     this.sat.value = sat;
     this._emitChangeEvent();
 };
-ColorSelector.prototype.setColor = function (color) {
+ColorSelector.prototype.setColor = function(color) {
     this.selectedCell = null;
     this.color = color;
     this.onValueChanged();
     if (!this.selectedCell) {
         var uppercaseVal = this.color.toRGBString().toUpperCase();
-        Dom.doOnAllChildRecursively(this.recentlyUsedColor, function (n) {
+        Dom.doOnAllChildRecursively(this.recentlyUsedColor, function(n) {
             if (n.getAttribute) {
                 if (n.getAttribute("color") == uppercaseVal) {
                     n.setAttribute("selected", "true");
@@ -331,13 +333,13 @@ ColorSelector.prototype.setColor = function (color) {
         });
     }
 };
-ColorSelector.prototype.setGridSelectorColor = function () {
+ColorSelector.prototype.setGridSelectorColor = function() {
     if (!this._initialized) this.initializeGridSelector();
 
     var uppercaseVal = this.color.toRGBString().toUpperCase();
 
     var thiz = this;
-    Dom.doOnAllChildRecursively(this.gridSelectorContainer, function (n) {
+    Dom.doOnAllChildRecursively(this.gridSelectorContainer, function(n) {
         if (n.getAttribute) {
             if (n.getAttribute("color") == uppercaseVal) {
                 n.setAttribute("selected", "true");
@@ -348,13 +350,13 @@ ColorSelector.prototype.setGridSelectorColor = function () {
         }
     });
 };
-ColorSelector.prototype.setupColors = function () {
+ColorSelector.prototype.setupColors = function() {
     this.loadRecentlyUsedColors();
     this.loadDocumentColors();
 };
-ColorSelector.prototype.loadRecentlyUsedColors = function () {
+ColorSelector.prototype.loadRecentlyUsedColors = function() {
     var colors = Config.get("gridcolorpicker.recentlyUsedColors", "");
-    
+
     this._lastUsedColors = colors;
     var c = colors.split(",");
     this.recentlyUsedColors = c;
@@ -370,49 +372,49 @@ ColorSelector.prototype.loadRecentlyUsedColors = function () {
         }
     }
 };
-ColorSelector.prototype.addToPalette = function () {
+ColorSelector.prototype.addToPalette = function() {
     if (!Pencil.controller || !Pencil.controller.doc) return;
     Pencil.controller.addColorIntoDocumentPalette(this.getColor());
     this.loadDocumentColors();
 };
-ColorSelector.prototype.loadDocumentColors = function () {
+ColorSelector.prototype.loadDocumentColors = function() {
     Dom.toggleClass(this.documentPalettePane, "NoDocument", Pencil.controller && Pencil.controller.doc ? false : true);
     if (!Pencil.controller || !Pencil.controller.doc) return;
-    
-    Dom.setInnerText(this.paletteTitle, (Pencil.controller.doc.name || "Untitled Document") + " color palette:")
-    
+
+    Dom.setInnerText(this.paletteTitle, (Pencil.controller.doc.name || "Untitled Document") + " color palette:");
+
     var colors = Pencil.controller.getDocumentColorPalette();
     if (!colors || colors.length == 0) {
         Dom.addClass(this.documentPalettePane, "Empty");
     } else {
         Dom.removeClass(this.documentPalettePane, "Empty");
     }
-    
+
     Dom.empty(this.documentPaletteContainer);
-    colors.forEach(function (c) {
+    colors.forEach(function(c) {
         var cell = document.createElement("div");
         cell.setAttribute("class", "colorpickertile");
         cell.setAttribute("title", c.toString());
         cell.setAttribute("color", c.toString());
         cell._color = c;
-        cell.setAttribute("style", "background-color: " + c.toRGBAString() + ";")
+        cell.setAttribute("style", "background-color: " + c.toRGBAString() + ";");
         this.documentPaletteContainer.appendChild(cell);
     }.bind(this));
 };
-ColorSelector.prototype.initializeGridSelector = function () {
+ColorSelector.prototype.initializeGridSelector = function() {
     if (this._initialized) return;
     this._initialized = true;
 
     var thiz = this;
     this.recentlyUsedColorElements = [];
-    Dom.doOnAllChildren(this.recentlyUsedColor, function (n) {
+    Dom.doOnAllChildren(this.recentlyUsedColor, function(n) {
         if (n.hasAttribute && n.hasAttribute("color")) {
             thiz.recentlyUsedColorElements.push(n);
         }
     });
     this.setupColors();
 };
-ColorSelector.prototype.updateRecentlyUsedColors = function () {
+ColorSelector.prototype.updateRecentlyUsedColors = function() {
     var aColor = this.color;
     if (this.updatingColor) return;
     this.updatingColor = true;
@@ -431,7 +433,7 @@ ColorSelector.prototype.updateRecentlyUsedColors = function () {
     this.updatingColor = false;
     this.clearSelectedColor(this.recentlyUsedColor);
 };
-ColorSelector.prototype.reloadRecentlyUsedColors = function () {
+ColorSelector.prototype.reloadRecentlyUsedColors = function() {
     var thiz = this;
     this.recentlyUsedColors = [];
     var colors = Config.get("gridcolorpicker.recentlyUsedColors");
@@ -450,20 +452,20 @@ ColorSelector.prototype.reloadRecentlyUsedColors = function () {
         if (color.length > 7) {
             color = color.substring(0, 7);
         }
-        //debug("color: " + color);
+        // debug("color: " + color);
         e[i].setAttribute("color", color);
         e[i].setAttribute("style", "background-color: " + color);
     }
 
     this.clearSelectedColor(this.recentlyUsedColor);
 };
-ColorSelector.prototype.clearSelectedColor = function (parentNode) {
-    Dom.doOnAllChildren(parentNode, function (n) {
+ColorSelector.prototype.clearSelectedColor = function(parentNode) {
+    Dom.doOnAllChildren(parentNode, function(n) {
         if (n.removeAttribute) n.removeAttribute("selected");
     });
 };
-ColorSelector.prototype.selectColorCell = function (cell, selectFromRecentlyUsedColors) {
-    //change selected cell
+ColorSelector.prototype.selectColorCell = function(cell, selectFromRecentlyUsedColors) {
+    // change selected cell
     if (this.selectedCell) {
         this.selectedCell.removeAttribute("selected");
     }
@@ -471,33 +473,33 @@ ColorSelector.prototype.selectColorCell = function (cell, selectFromRecentlyUsed
     this.selectedCell.setAttribute("selected", "true");
 
     if (selectFromRecentlyUsedColors) {
-        this.color =  Color.fromString(cell.getAttribute("color"));
+        this.color = Color.fromString(cell.getAttribute("color"));
         this.onValueChanged();
     } else {
         var a = this.color.a;
-        this.color =  Color.fromString(cell.getAttribute("color"));
+        this.color = Color.fromString(cell.getAttribute("color"));
         this.color.a = a;
 
         this.onValueChanged(this.gridSelectorContainer);
     }
 };
-ColorSelector.prototype.isColorCell = function (cell) {
+ColorSelector.prototype.isColorCell = function(cell) {
     return cell && cell.nodeType != 3 && cell.hasAttribute("color");
 };
-ColorSelector.prototype.getColor = function () {
+ColorSelector.prototype.getColor = function() {
     return this.color;
 };
-ColorSelector.prototype.isModified = function () {
+ColorSelector.prototype.isModified = function() {
     return this.isUserModified;
 };
-ColorSelector.prototype.onAttached = function () {
+ColorSelector.prototype.onAttached = function() {
     var thiz = this;
     thiz.radius = thiz.wheelImage.offsetWidth / 2;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz.radius = thiz.wheelImage.offsetWidth / 2;
     }, 10);
 };
-ColorSelector.prototype.invalidateUI = function (source) {
+ColorSelector.prototype.invalidateUI = function(source) {
     this.previewBox.style.backgroundColor = this.color.toRGBAString();
     if (source) this.isUserModified = true;
     var hsv = this.color.getHSV();
@@ -515,7 +517,7 @@ ColorSelector.prototype.invalidateUI = function (source) {
 
     this.previewBox.style.backgroundColor = this.color.toRGBAString();
 };
-ColorSelector.prototype.onValueChanged = function (source) {
+ColorSelector.prototype.onValueChanged = function(source) {
     if (source) {
         this.updateRecentlyUsedColors();
     }
@@ -523,12 +525,12 @@ ColorSelector.prototype.onValueChanged = function (source) {
     this.clearSelectedColor(this.recentlyUsedColor);
     this._emitChangeEvent();
 };
-ColorSelector.installGlobalListeners = function () {
+ColorSelector.installGlobalListeners = function() {
     if (ColorSelector.globalListenersInstalled) return;
 
     ColorSelector.globalListenersInstalled = true;
 
-    document.body.addEventListener("mousedown", function (event) {
+    document.body.addEventListener("mousedown", function(event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -543,44 +545,44 @@ ColorSelector.installGlobalListeners = function () {
             ColorSelector.currentPickerInstance.onColorPickingCanceled();
             return;
         }
-        
+
         var maxWidth = 0;
         var maxHeight = 0;
-        displays.forEach(function (d) {
+        displays.forEach(function(d) {
             maxWidth = Math.max(maxWidth, d.bounds.x + d.bounds.width);
             maxHeight = Math.max(maxHeight, d.bounds.y + d.bounds.height);
         });
-        
+
 
         document.body.setAttribute("color-picker-active", "picking");
-        
+
         var x = event.screenX;
         var y = event.screenY;
-        
+
         new Capturer().captureFullScreenData(
             {
                 x: 0,
                 y: 0,
                 width: maxWidth,
                 height: maxHeight,
-                processor: function (canvas, context) {
+                processor: function(canvas, context) {
                     var pixelData = context.getImageData(x, y, 1, 1).data;
                     return "#" + Color.Dec2Hex(pixelData[0]) + Color.Dec2Hex(pixelData[1]) + Color.Dec2Hex(pixelData[2]);
                 }
             },
-            function (color, error) {
+            function(color, error) {
                 if (!color) {
                     console.log("Error:", error);
                     ColorSelector.currentPickerInstance.onColorPickingCanceled();
                     return;
                 }
-                
+
                 ColorSelector.currentPickerInstance.onColorPicked(color);
                 ColorSelector.currentPickerInstance = null;
             });
     }, true);
 
-    document.body.addEventListener("focus", function (event) {
+    document.body.addEventListener("focus", function(event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -590,8 +592,7 @@ ColorSelector.installGlobalListeners = function () {
     }, true);
 
 
-
-    document.body.addEventListener("mouseup", function (event) {
+    document.body.addEventListener("mouseup", function(event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -600,7 +601,7 @@ ColorSelector.installGlobalListeners = function () {
         if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     }, true);
 
-    document.body.addEventListener("click", function (event) {
+    document.body.addEventListener("click", function(event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -609,17 +610,17 @@ ColorSelector.installGlobalListeners = function () {
         if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     }, true);
 };
-ColorSelector.prototype.onColorPickingCanceled = function () {
+ColorSelector.prototype.onColorPickingCanceled = function() {
     document.body.removeAttribute("color-picker-active");
     BaseWidget.closableProcessingDisabled = false;
     ColorSelector.currentPickerInstance = null;
     BaseWidget.unregisterClosable(ColorSelector._pickerClosable);
 };
-ColorSelector.prototype.onColorPicked = function (color) {
+ColorSelector.prototype.onColorPicked = function(color) {
     document.body.removeAttribute("color-picker-active");
     BaseWidget.closableProcessingDisabled = false;
     BaseWidget.unregisterClosable(ColorSelector._pickerClosable);
-    
+
     var a = this.color.a;
     this.color = Color.fromString(color);
     this.color.a = a;
@@ -628,12 +629,12 @@ ColorSelector.prototype.onColorPicked = function (color) {
 };
 
 ColorSelector._pickerClosable = {
-    close: function () {
+    close: function() {
         if (ColorSelector.currentPickerInstance) ColorSelector.currentPickerInstance.onColorPickingCanceled();
     }
 };
 
-ColorSelector.prototype.pickColor = function () {
+ColorSelector.prototype.pickColor = function() {
     ColorSelector.installGlobalListeners();
 
     document.body.setAttribute("color-picker-active", true);

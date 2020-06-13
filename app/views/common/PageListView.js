@@ -4,24 +4,23 @@ function PageListView() {
     this.filterCache = {};
     this.showFilterBar = false;
 
-    var findPageThumbnailView = function (event) {
-        var node = Dom.findUpward(event.target, function (n) {
+    var findPageThumbnailView = function(event) {
+        var node = Dom.findUpward(event.target, function(n) {
             return n.__widget && (n.__widget instanceof PageThumbnailView);
         });
         return node;
-    }
+    };
 
-    this.bind("click", function (event) {
+    this.bind("click", function(event) {
         var node = findPageThumbnailView(event);
         if (!node) return;
         this.handleSelectPage(node.__widget.page);
     }, this.pageListContainer);
 
-    this.bind("dblclick", function (event) {
+    this.bind("dblclick", function(event) {
         var node = findPageThumbnailView(event);
         if (!node) return;
         this.handleDoubleClick(node.__widget.page);
-
     }, this.pageListContainer);
 
     // this.bind("mouseover", function (event) {
@@ -36,28 +35,28 @@ function PageListView() {
     //
     // },this.childPageContainer)
 
-    this.bind("click", function (event) {
+    this.bind("click", function(event) {
         var page = Dom.findUpwardForData(event.target, "_page");
         if (!page) return;
         var node = Dom.findParentWithClass(event.target, "button_Down");
         if (node && node.nodeName != "#document") {
-            var childrenListMenu = new ChildPageListMenu(page, function (selectedPage) {
+            var childrenListMenu = new ChildPageListMenu(page, function(selectedPage) {
                 thiz.activatePage(selectedPage);
             });
             childrenListMenu.showMenu(node, "left-inside", "top", 0, 0, true);
         } else {
-           this.handleSelectPage(page);
-       }
+            this.handleSelectPage(page);
+        }
     }, this.childPageContainer);
 
-    this.bind("dblclick", function (event) {
+    this.bind("dblclick", function(event) {
         var page = Dom.findUpwardForData(event.target, "_page");
         if (!page) return;
         this.handleDoubleClick(page);
     }, this.childPageContainer);
 
-    this.bind("click", function (event) {
-        var node = Dom.findUpward(event.target, function (n) {
+    this.bind("click", function(event) {
+        var node = Dom.findUpward(event.target, function(n) {
             return typeof(n._page) != "undefined";
         });
         if (!node) return;
@@ -65,9 +64,9 @@ function PageListView() {
         if ((page == null && this.currentParentPage == null) || (page && this.currentParentPage && page.id == this.currentParentPage.id)) return;
 
         var newActivePage = null;
-        if (this.currentParentPage
-            && (!page && !this.currentParentPage.parentPage
-                    || (page && this.currentParentPage.parentPage && page.id == this.currentParentPage.parentPage.id))) {
+        if (this.currentParentPage &&
+            (!page && !this.currentParentPage.parentPage ||
+                    (page && this.currentParentPage.parentPage && page.id == this.currentParentPage.parentPage.id))) {
             newActivePage = this.currentParentPage;
         } else {
             if (page) {
@@ -86,7 +85,7 @@ function PageListView() {
 
     var thiz = this;
 
-    this.bind("contextmenu", function (event) {
+    this.bind("contextmenu", function(event) {
         var childOfListPage = Dom.isChildOf(this.pageListContainer, event.target);
         var childOfChildPage = Dom.isChildOf(this.childPageContainer, event.target);
         var page = null;
@@ -112,18 +111,18 @@ function PageListView() {
         pageMenu.showMenuAt(event.clientX, event.clientY);
     }, this.node());
 
-    this.bind("click", function (event) {
+    this.bind("click", function(event) {
         var dialog = new PageDetailDialog();
         dialog.open({
             defaultParentPage: this.currentParentPage,
-            onDone: function (page) {
+            onDone: function(page) {
                 if (!page) return;
                 thiz.activatePage(page);
             }
         });
     }, this.addPageButton);
 
-    this.bind("click", function (event) {
+    this.bind("click", function(event) {
         this.expanded = !this.expanded;
         this.invalidateExpandedState();
         this.pageListSrollView.invalidate();
@@ -136,7 +135,7 @@ function PageListView() {
     this.bind("click", function(ev) {
         this.showFilterBar = !this.showFilterBar;
         this.validateFilterBox();
-    },this.filterButton);
+    }, this.filterButton);
 
     this.bind("input", function(ev) {
         setTimeout(function() {
@@ -150,12 +149,12 @@ function PageListView() {
             thiz.filterPages();
             thiz.nameTextBox.focus();
         }, 500);
-    }, this.nameTextBox)
+    }, this.nameTextBox);
 
     this.bind("blur", function(ev) {
         this.showFilterBar = false;
         this.validateFilterBox();
-    }, this.nameTextBox)
+    }, this.nameTextBox);
 
     this.pageListContainer._isDropZone = true;
     this.childPageContainer._isDropZone = true;
@@ -165,7 +164,7 @@ function PageListView() {
         return page ? page.id : null;
     }
 
-    this.bind("dragstart", function (event) {
+    this.bind("dragstart", function(event) {
         nsDragAndDrop.dragStart(event);
         var n = Dom.findUpwardForNodeWithData(Dom.getTarget(event), "_index");
         if (!n) return;
@@ -187,7 +186,7 @@ function PageListView() {
         this.currentDraggedObject.setAttribute("dragged", "true");
     }, this.node());
 
-    this.bind("drop", function (event) {
+    this.bind("drop", function(event) {
         // if (event.dataTransfer.getData("dragType") != "page") return;
         if (nsDragAndDrop.getData("dragType") != "page") return;
         if (!this.lastDropCandidateObject || !this.currentDraggedObject) return;
@@ -199,7 +198,7 @@ function PageListView() {
         this.renderPages();
     }, this.node());
 
-    this.bind("dragover", function (event) {
+    this.bind("dragover", function(event) {
         // if (event.dataTransfer.getData("dragType") != "page") return;
         if (nsDragAndDrop.getData("dragType") != "page") return;
         var container = Dom.findUpwardForNodeWithData(Dom.getTarget(event), "_isDropZone");
@@ -228,7 +227,7 @@ function PageListView() {
         }
     }, this.node());
 
-    this.bind("dragend", function (event) {
+    this.bind("dragend", function(event) {
         if (this.lastDropCandidateObject) this.lastDropCandidateObject.removeAttribute("will-drop");
         this.lastDropCandidateObject = null;
 
@@ -239,7 +238,7 @@ function PageListView() {
     this.dndImage = new Image();
     this.dndImage.src = "css/bullet.png";
 
-    this.pageListSrollView.getStep = function () {
+    this.pageListSrollView.getStep = function() {
         return 120;
     };
 
@@ -251,7 +250,7 @@ __extend(BaseTemplatedWidget, PageListView);
 
 PageListView.prototype.restartFilterCache = function() {
     this.filterCache = {};
-}
+};
 
 PageListView.prototype.validateFilterBox = function() {
     if (this.showFilterBar == true) {
@@ -268,15 +267,17 @@ PageListView.prototype.validateFilterBox = function() {
         var thiz = this;
         window.setTimeout(function() {
             thiz.nameTextBox.focus();
-        }, 0)
+        }, 0);
     } else {
         this.filterButton.disabled = false;
         this.filterContainer.style.display = "none";
     }
-}
+};
 
 PageListView.prototype.filterPages = function() {
-    if (!this.controller.activePage) { return; }
+    if (!this.controller.activePage) {
+        return;
+    }
     var filterName = this.controller.activePage.parentPage ? this.controller.activePage.parentPage.name : "Root";
     var value = this.filterCache[filterName];
 
@@ -311,15 +312,15 @@ PageListView.prototype.filterPages = function() {
     // if (hiddenItemCount == selectedContainer.childNodes.length) {
     //     activePageItem.style.display = "inherit";
     // }
-}
+};
 
-PageListView.prototype.setController = function (controller) {
+PageListView.prototype.setController = function(controller) {
     this.controller = controller;
     this.currentParentPage = null;
     this.currentPage = null;
     this.renderPages();
 };
-PageListView.prototype.activatePage = function (page) {
+PageListView.prototype.activatePage = function(page) {
     this.controller.activatePage(page);
     this.renderPages();
 };
@@ -344,7 +345,6 @@ PageListView.prototype.renderPages = function() {
             var page = this.controller.doc.pages[i];
             if (!page.parentPage) pages.push(page);
         }
-
     } else {
         pages = this.currentParentPage.children;
 
@@ -382,9 +382,9 @@ PageListView.prototype.renderPages = function() {
 
     if (parentPages.length > 0) {
         node = Dom.newDOMElement({
-            _name: "hbox",
+            "_name": "hbox",
             "class": "OverflowIndicator",
-            _children: [
+            "_children": [
                 {
                     _name: "span",
                     _text: "..."
@@ -438,40 +438,40 @@ PageListView.prototype.renderPages = function() {
         pageThumbnailView.selectPage(selected);
         this.views.push(pageThumbnailView);
         var childNode;
-        if( page.children.length == 0 ) {
+        if ( page.children.length == 0 ) {
             childNode = Dom.newDOMElement({
-                _name: "hbox",
+                "_name": "hbox",
                 "selected": selected,
-                draggable: "true",
+                "draggable": "true",
                 "tabindex": "0",
-                _children: [
+                "_children": [
                     {
                         _name: "span",
                         _text: page.name
                     }
                 ]
             });
-        }  else {
+        } else {
             childNode = Dom.newDOMElement({
-                _name: "hbox",
+                "_name": "hbox",
                 "selected": selected,
-                draggable: "true",
-                class: "nodeHasChild",
+                "draggable": "true",
+                "class": "nodeHasChild",
                 "tabindex": "0",
-                _children: [
+                "_children": [
                     {
                         _name: "span",
                         _text: page.name
                     },
                     {
                         _name: "button",
-                        class:"button_Down",
-                        name:"showChildren",
+                        class: "button_Down",
+                        name: "showChildren",
                         _children: [
                             {
                                 _name: "i",
                                 _text: "keyboard_arrow_down",
-                                name:"showChildren",
+                                name: "showChildren"
                             }
                         ]
                     }
@@ -487,7 +487,7 @@ PageListView.prototype.renderPages = function() {
     this.childPageSrollView.invalidate();
     this.pageListSrollView.invalidate();
     var thiz = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         var childListFrom = 0;
         var childListTo = 0;
 
@@ -516,14 +516,13 @@ PageListView.prototype.renderPages = function() {
         thiz.pageListSrollView.ensuareVisible(thumbnailFrom, thumbnailTo);
         thiz.filterPages();
     }, 0);
-
 };
 
 PageListView.prototype.invalidateExpandedState = function() {
     Dom.toggleClass(this.node(), "Collapsed", !this.expanded);
 };
 
-PageListView.prototype.handlePageInfoChangedEvent = function (event) {
+PageListView.prototype.handlePageInfoChangedEvent = function(event) {
     if (!event || !event.page) return;
     for (var i in this.views) {
         if (this.views[i].page.id == event.page.id) {
@@ -533,16 +532,16 @@ PageListView.prototype.handlePageInfoChangedEvent = function (event) {
     }
 };
 
-PageListView.prototype.handleSelectPage = function (page) {
+PageListView.prototype.handleSelectPage = function(page) {
     if (!page) return;
-    Dom.doOnAllChildren(this.pageListContainer, function (n) {
+    Dom.doOnAllChildren(this.pageListContainer, function(n) {
         var view = n.__widget;
         if (!view) return;
         var p = view.page;
         view.selectPage(p.id == page.id);
     });
 
-    Dom.doOnAllChildren(this.childPageContainer, function (n) {
+    Dom.doOnAllChildren(this.childPageContainer, function(n) {
         var p = n._page;
         n.setAttribute("selected", p.id == page.id);
     });
@@ -550,7 +549,7 @@ PageListView.prototype.handleSelectPage = function (page) {
     this.controller.activatePage(page);
 };
 
-PageListView.prototype.handleDoubleClick = function (page) {
+PageListView.prototype.handleDoubleClick = function(page) {
     if (!page.children || page.children.length == 0) {
         this.handleSelectPage(page);
     } else {

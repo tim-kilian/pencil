@@ -1,4 +1,4 @@
-Pencil.behaviors.Attr = function (name, value, ns) {
+Pencil.behaviors.Attr = function(name, value, ns) {
     if (value != null) {
         if (ns) this.setAttributeNS(ns, name, value);
         else this.setAttribute(name, value);
@@ -7,44 +7,44 @@ Pencil.behaviors.Attr = function (name, value, ns) {
         else this.removeAttribute(name);
     }
 };
-Pencil.behaviors.Box = function (box) {
+Pencil.behaviors.Box = function(box) {
     Svg.setWidth(this, box.w);
     Svg.setHeight(this, box.h);
 };
-Pencil.behaviors.Bound = function (bound) {
+Pencil.behaviors.Bound = function(bound) {
     this.setAttribute("x", bound.x);
     this.setAttribute("y", bound.y);
     this.setAttribute("width", bound.w);
     this.setAttribute("height", bound.h);
 };
-Pencil.behaviors.Radius = function (rx, ry) {
+Pencil.behaviors.Radius = function(rx, ry) {
     this.setAttribute("rx", rx);
     this.setAttribute("ry", typeof(ry) != "undefined" ? ry : rx);
 };
-Pencil.behaviors.StopColor = function (color) {
+Pencil.behaviors.StopColor = function(color) {
     Svg.setStyle(this, "stop-color", color.toRGBString());
     Svg.setStyle(this, "stop-opacity", color.a);
 };
-Pencil.behaviors.Offset = function (offset) {
+Pencil.behaviors.Offset = function(offset) {
     this.setAttribute("offset", offset);
 };
-Pencil.behaviors.Fill = function (color) {
+Pencil.behaviors.Fill = function(color) {
     Svg.setStyle(this, "fill", color.toRGBString());
     Svg.setStyle(this, "fill-opacity", color.a);
 };
-Pencil.behaviors.Color = function (color) {
-	if (this.localName == "text") {
+Pencil.behaviors.Color = function(color) {
+    if (this.localName == "text") {
 	    Svg.setStyle(this, "fill", color.toRGBString());
 	    Svg.setStyle(this, "fill-opacity", color.a);
-	} else {
+    } else {
 	    Svg.setStyle(this, "color", color ? color.toRGBAString() : null);
-	}
+    }
 };
-Pencil.behaviors.StrokeColor = function (color) {
+Pencil.behaviors.StrokeColor = function(color) {
     Svg.setStyle(this, "stroke", color.toRGBString());
     Svg.setStyle(this, "stroke-opacity", color.a);
 };
-Pencil.behaviors.StrokeStyle = function (strokeStyle) {
+Pencil.behaviors.StrokeStyle = function(strokeStyle) {
     Svg.setStyle(this, "stroke-width", strokeStyle.w);
     if (strokeStyle.array) {
         Svg.setStyle(this, "stroke-dasharray", strokeStyle.array);
@@ -52,13 +52,13 @@ Pencil.behaviors.StrokeStyle = function (strokeStyle) {
         Svg.removeStyle(this, "stroke-dasharray");
     }
 };
-Pencil.behaviors.Visibility = function (bool) {
+Pencil.behaviors.Visibility = function(bool) {
     var value = bool;
     if (bool && bool.constructor == Bool) value = bool.value;
     Svg.setStyle(this, "visibility", value ? "visible" : "hidden");
     Svg.setStyle(this, "display", value ? null : "none");
 };
-Pencil.behaviors.ApplyFilter = function (bool) {
+Pencil.behaviors.ApplyFilter = function(bool) {
     var value = bool;
     if (bool && bool.constructor == Bool) value = bool.value;
     if (value) {
@@ -72,10 +72,10 @@ Pencil.behaviors.ApplyFilter = function (bool) {
     }
 };
 
-Pencil.behaviors.CustomStyle = function (name, value) {
+Pencil.behaviors.CustomStyle = function(name, value) {
     Svg.setStyle(this, name, value);
 };
-Pencil.behaviors.InnerText = function (text) {
+Pencil.behaviors.InnerText = function(text) {
     Dom.empty(this);
     this.appendChild(this.ownerDocument.createTextNode(text));
 };
@@ -91,11 +91,11 @@ Pencil.behaviors._createUnderline = function(text) {
 
     return underline;
 };
-Pencil.behaviors.AccelFor = function (textName, font, color, textContent) {
+Pencil.behaviors.AccelFor = function(textName, font, color, textContent) {
     try {
         var text = Pencil.findObjectByName(F._target, textName);
         var index = textContent.value.indexOf("&");
-        if (index < 0 || textContent.value.charAt(index + 1) == '&') {
+        if (index < 0 || textContent.value.charAt(index + 1) == "&") {
             Svg.setStyle(this, "visibility", "hidden");
             return;
         }
@@ -111,12 +111,11 @@ Pencil.behaviors.AccelFor = function (textName, font, color, textContent) {
         debug("extend.height: " + extend.height);
         var dLiteral = [M(start.x, bbox.y + bbox.height + 1.5), L(start.x + extend.width, bbox.y + bbox.height + 1.5)];
         this.setAttribute("d", dLiteral.join(" "));
-
     } catch (e) {
         Console.dumpError(e, "stdout");
     }
-}
-Pencil.behaviors.Font = function (font) {
+};
+Pencil.behaviors.Font = function(font) {
     Svg.setStyle(this, "font-family", font.family);
     Svg.setStyle(this, "font-size", font.size);
     Svg.setStyle(this, "font-weight", font.weight);
@@ -124,7 +123,7 @@ Pencil.behaviors.Font = function (font) {
     Svg.setStyle(this, "text-decoration", font.decor);
     Svg.setStyle(this, "line-height", font.lineHeight > 0 ? font.lineHeight : null);
 };
-Pencil.behaviors.BoxFit = function (bound, align) {
+Pencil.behaviors.BoxFit = function(bound, align) {
     try {
         var isText = (this.localName == "text");
         if (isText) {
@@ -144,26 +143,25 @@ Pencil.behaviors.BoxFit = function (bound, align) {
             Svg.setY(this, y);
 
             Svg.setStyle(this, "text-align", ["left", "center", "right"][align.h]);
-
         }
     } catch (e) {
     }
 };
-Pencil.behaviors.D = function (dLiteral) {
+Pencil.behaviors.D = function(dLiteral) {
     var s = typeof(dLiteral) == "string" ? dLiteral : (dLiteral.join ? dLiteral.join(" ") : "");
     this.setAttribute("d", s);
 };
-Pencil.behaviors.Scale = function (x, y) {
+Pencil.behaviors.Scale = function(x, y) {
     this.setAttribute("transform", "scale(" + [x, y] + ")");
-}
-Pencil.behaviors.Transform = function (s) {
+};
+Pencil.behaviors.Transform = function(s) {
     var t = s.join ? s.join(" ") : s;
     this.setAttribute("transform", t);
-}
-//D objects
+};
+// D objects
 Pencil.behaviors.D._lastX = 0;
 Pencil.behaviors.D._lastY = 0;
-Pencil.behaviors.D._setLastLocation = function (x, y) {
+Pencil.behaviors.D._setLastLocation = function(x, y) {
     Pencil.behaviors.D._lastX = x;
     Pencil.behaviors.D._lastY = y;
 };
@@ -222,61 +220,61 @@ const SKETCHY_ANGLE = 4;
 const SKETCHY_ANGLE_LEN_REF = 50;
 
 function skline(x1, y1, x2, y2, d, noMove) {
-	var result = [];
+    var result = [];
     if (!noMove) result.push(M(x1, y1));
 
-    var p1 = {x: x1, y: y1,};
-    var p2 = {x: x2, y: y2,};
+    var p1 = {x: x1, y: y1};
+    var p2 = {x: x2, y: y2};
 
-	result.push(L(x2, y2));
+    result.push(L(x2, y2));
 
-	Pencil.behaviors.D._setLastLocation(x2, y2);
+    Pencil.behaviors.D._setLastLocation(x2, y2);
 
-	return result.join(" ");
+    return result.join(" ");
 }
 
 
 function sk(x1, y1, x2, y2, d, noMove) {
-	var result = [];
+    var result = [];
     if (!noMove) result.push(M(x1, y1));
 
-    var p1 = {x: x1, y: y1,};
-    var p2 = {x: x2, y: y2,};
-    var l = geo_vectorLength (p1, p2) / 3;
+    var p1 = {x: x1, y: y1};
+    var p2 = {x: x2, y: y2};
+    var l = geo_vectorLength(p1, p2) / 3;
 
     var maxAngle = SKETCHY_ANGLE;
     if (l > SKETCHY_ANGLE_LEN_REF) {
         maxAngle = SKETCHY_ANGLE_LEN_REF * SKETCHY_ANGLE / l;
     }
 
-	var angle = Math.random() * maxAngle - (maxAngle / 2);
-	angle = Math.PI * angle / 180;
+    var angle = Math.random() * maxAngle - (maxAngle / 2);
+    angle = Math.PI * angle / 180;
 
-	var a = geo_getRotatedPoint(p2, p1, l, angle);
-	var b = geo_getRotatedPoint(p1, p2, l, 0 - angle);
-	result.push(C(a.x, a.y, b.x, b.y, x2, y2));
+    var a = geo_getRotatedPoint(p2, p1, l, angle);
+    var b = geo_getRotatedPoint(p1, p2, l, 0 - angle);
+    result.push(C(a.x, a.y, b.x, b.y, x2, y2));
 
-	Pencil.behaviors.D._setLastLocation(x2, y2);
+    Pencil.behaviors.D._setLastLocation(x2, y2);
 
-	return result.join(" ");
+    return result.join(" ");
 }
 
 function sk_old(x1, y1, x2, y2, d, noMove) {
-	var delta = (Math.random() - 1) * DEFAULT_SKETCHY_OVERSHOOT;
+    var delta = (Math.random() - 1) * DEFAULT_SKETCHY_OVERSHOOT;
 
-	var a = Math.PI * (180 - ROTATED_ANGLE + (Math.random() * ROTATED_ANGLE)) / 180;
-	var p1 = geo_getRotatedPoint({x: x2, y: y2}, {x: x1, y: y1}, delta, a);
+    var a = Math.PI * (180 - ROTATED_ANGLE + (Math.random() * ROTATED_ANGLE)) / 180;
+    var p1 = geo_getRotatedPoint({x: x2, y: y2}, {x: x1, y: y1}, delta, a);
 
-	delta = (Math.random() - 1) * DEFAULT_SKETCHY_OVERSHOOT;
-	a = Math.PI * (180 - ROTATED_ANGLE + (Math.random() * ROTATED_ANGLE)) / 180;
-	var p2 = geo_getRotatedPoint({x: x1, y: y1}, {x: x2, y: y2}, delta, a);
-	x1 = p1.x;
-	y1 = p1.y;
+    delta = (Math.random() - 1) * DEFAULT_SKETCHY_OVERSHOOT;
+    a = Math.PI * (180 - ROTATED_ANGLE + (Math.random() * ROTATED_ANGLE)) / 180;
+    var p2 = geo_getRotatedPoint({x: x1, y: y1}, {x: x2, y: y2}, delta, a);
+    x1 = p1.x;
+    y1 = p1.y;
 
-	x2 = p2.x;
-	y2 = p2.y;
+    x2 = p2.x;
+    y2 = p2.y;
 
-	var last = {x: x2, y: y2};
+    var last = {x: x2, y: y2};
 
     var dx = x2 - x1;
     var dy = y2 - y1;
@@ -313,7 +311,7 @@ function skTo(x, y, d) {
     return sk(Pencil.behaviors.D._lastX, Pencil.behaviors.D._lastY, x, y,
         d ? d : DEFAULT_SKETCHY_SEG_SIZE, "noMove");
 }
-function sklineTo(x,y,d) {
+function sklineTo(x, y, d) {
     return skline(Pencil.behaviors.D._lastX, Pencil.behaviors.D._lastY, x, y,
         d ? d : DEFAULT_SKETCHY_SEG_SIZE, "noMove");
 }
@@ -358,7 +356,7 @@ function skewY(a) {
 
 Util.importSandboxFunctions(rotate, translate, scale, skewX, skewY);
 
-Pencil.behaviors.TextContent = function (text, stripAccel, keepExistingRootElement) {
+Pencil.behaviors.TextContent = function(text, stripAccel, keepExistingRootElement) {
     var isText = (this.localName == "text");
 
     if (isText) {
@@ -370,10 +368,10 @@ Pencil.behaviors.TextContent = function (text, stripAccel, keepExistingRootEleme
             var content = (text.constructor == RichText) ? text.html : text.value;
             content = content.replace(/[\r\n]+/gi, "").replace(/<br[^>]*>/gi, "\n").replace(/<[^>]+>/gi, "");
             var thiz = this;
-            window.setTimeout(function () {
-                    Dom.empty(thiz);
-                    thiz.appendChild(thiz.ownerDocument.createTextNode(content));
-                }, 1);
+            window.setTimeout(function() {
+                Dom.empty(thiz);
+                thiz.appendChild(thiz.ownerDocument.createTextNode(content));
+            }, 1);
         } else {
             var html = (text.constructor == RichText) ? text.html : text.value;
             var divHTML = "<div xmlns=\"" + PencilNamespaces.html + "\">" + html + "</div>";
@@ -393,14 +391,14 @@ Pencil.behaviors.TextContent = function (text, stripAccel, keepExistingRootEleme
         }
     }
 };
-Pencil.behaviors.PlainTextContent = function (text, bound, alignment) {
+Pencil.behaviors.PlainTextContent = function(text, bound, alignment) {
     var domContent = F.buildTextWrapDomContent(F._target, text.value, bound.w, alignment);
     Dom.empty(this);
     this.appendChild(domContent);
 
     Pencil.behaviors.BoxFit.apply(this, [bound, alignment]);
 };
-Pencil.behaviors.RichTextContent = function (text, bound, alignment) {
+Pencil.behaviors.RichTextContent = function(text, bound, alignment) {
     var renderer = new SVGHTMLRenderer();
 
     renderer.importDefaultStyleFromNode(this);
@@ -416,20 +414,19 @@ Pencil.behaviors.RichTextContent = function (text, bound, alignment) {
         height: bound.h
     });
 };
-Pencil.behaviors.DomContent = function (xmlText) {
+Pencil.behaviors.DomContent = function(xmlText) {
     Dom.empty(this);
 
     var domNode = xmlText.nodeType ? xmlText : Dom.parseToNode(xmlText.value, this.ownerDocument);
 
     if (domNode) this.appendChild(domNode);
 };
-Pencil.behaviors.AttachmentContent = function (attachment) {
-
+Pencil.behaviors.AttachmentContent = function(attachment) {
     Dom.empty(this);
 
     if (!attachment.defId) return;
 
-    var canvas = Dom.findUpward(this, function (node) {
+    var canvas = Dom.findUpward(this, function(node) {
         return node.namespaceURI == PencilNamespaces.xul && node.localName == "pcanvas";
     });
 
@@ -455,12 +452,12 @@ Pencil.behaviors.AttachmentContent = function (attachment) {
         this.appendChild(g);
     }
 };
-Pencil.behaviors.RichTextFit = function (width) {
+Pencil.behaviors.RichTextFit = function(width) {
     Svg.setWidth(this, width);
     Svg.setHeight(this, 900);
     Svg.setHeight(this, Math.ceil(this.firstChild.scrollHeight));
 };
-Pencil.behaviors.Image = function (imageData) {
+Pencil.behaviors.Image = function(imageData) {
     var url = imageData.w > 0 ? (ImageData.refStringToUrl(imageData.data) || imageData.data) : "";
     this.setAttributeNS(PencilNamespaces.xlink, "xlink:href", url);
     Svg.setWidth(this, imageData.w);
@@ -468,20 +465,20 @@ Pencil.behaviors.Image = function (imageData) {
 };
 Pencil.behaviors.Image._offScreenSupport = true;
 
-Pencil.behaviors.EllipseFit = function (box) {
+Pencil.behaviors.EllipseFit = function(box) {
     this.setAttribute("cx", box.w / 2);
     this.setAttribute("cy", box.h / 2);
     this.setAttribute("rx", box.w / 2);
     this.setAttribute("ry", box.h / 2);
 };
-Pencil.behaviors.Property = function (name, value) {
+Pencil.behaviors.Property = function(name, value) {
     this[name] = value;
 };
-Pencil.behaviors.Call = function (name, args) {
+Pencil.behaviors.Call = function(name, args) {
     var f = this[name];
     f.apply(this, args);
 };
-Pencil.behaviors.Width = function (width) {
+Pencil.behaviors.Width = function(width) {
     if (this.namespaceURI == PencilNamespaces.xul) {
         this.setAttribute("width", width);
         this.width = width;
@@ -491,7 +488,7 @@ Pencil.behaviors.Width = function (width) {
 
     Svg.setStyle(this, "width", "" + width + "px");
 };
-Pencil.behaviors.Height = function (height) {
+Pencil.behaviors.Height = function(height) {
     if (this.namespaceURI == PencilNamespaces.xul) {
         this.setAttribute("height", height);
         this.height = height;
@@ -501,27 +498,27 @@ Pencil.behaviors.Height = function (height) {
 
     Svg.setStyle(this, "height", "" + height + "px");
 };
-Pencil.behaviors.Value = function (value, parseAccessKey) {
+Pencil.behaviors.Value = function(value, parseAccessKey) {
     var label = parseAccessKey ? F.stripAccessKey(value) : value;
     this.setAttribute("value", label);
     this.value = label;
 
     this.setAttribute("accesskey", parseAccessKey ? F.getAccessKey(value) : "");
 };
-Pencil.behaviors.Label = function (value, parseAccessKey) {
+Pencil.behaviors.Label = function(value, parseAccessKey) {
     var label = parseAccessKey ? F.stripAccessKey(value) : value;
     this.setAttribute("label", label);
 
     this.setAttribute("accesskey", parseAccessKey ? F.getAccessKey(value) : "");
 };
-Pencil.behaviors.Disabled = function (disabled) {
+Pencil.behaviors.Disabled = function(disabled) {
     this.setAttribute("disabled", disabled ? true : false);
     this.disabled = disabled ? true : false;
 };
 
-Pencil.behaviors.MaintainGlobalDef = function (id, contentFragement) {
+Pencil.behaviors.MaintainGlobalDef = function(id, contentFragement) {
     debug("MaintainGlobalDef");
-    var pcanvas = Dom.findUpward(this, function (node) {
+    var pcanvas = Dom.findUpward(this, function(node) {
         return (node.localName == "pcanvas") && node.drawingLayer;
     });
 
@@ -535,7 +532,7 @@ Pencil.behaviors.MaintainGlobalDef = function (id, contentFragement) {
     var drawingLayer = pcanvas.drawingLayer;
     var defs = Dom.getSingle("./svg:defs[@id='" + id + "']", drawingLayer);
 
-    if (defs) return;   //TODO: re-validate?
+    if (defs) return; // TODO: re-validate?
 
     debug("defs not found, create now");
 
@@ -556,14 +553,14 @@ Pencil.behaviors.MaintainGlobalDef = function (id, contentFragement) {
 
 function imageNodeForPatch(patch, x, y, w, h) {
     return {
-        _name: "image",
-        _uri: PencilNamespaces.svg,
-        x: x,
-        y: y,
-        width: w,
-        height: h,
-        preserveAspectRatio: "none",
-        //transform: "translate(" + x + ", " + y + ") scale(" + (w / patch.w) + ", " + (h / patch.h) + ")",
+        "_name": "image",
+        "_uri": PencilNamespaces.svg,
+        "x": x,
+        "y": y,
+        "width": w,
+        "height": h,
+        "preserveAspectRatio": "none",
+        // transform: "translate(" + x + ", " + y + ") scale(" + (w / patch.w) + ", " + (h / patch.h) + ")",
         "xlink:href": patch.url
     };
 }
@@ -638,20 +635,20 @@ function getNPatchBound(np, dim) {
 
 Util.importSandboxFunctions(buildNPatchDomFragment, imageNodeForPatch, getNPatchBound);
 
-Pencil.behaviors.NPatchDomContent = function (nPatch, dim) {
+Pencil.behaviors.NPatchDomContent = function(nPatch, dim) {
     Dom.empty(this);
     this.appendChild(buildNPatchDomFragment(nPatch, dim));
 };
-Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMaps, yAnchorMaps) {
-    //sorting
+Pencil.behaviors.NPatchDomContentFromImage = function(imageData, dim, xAnchorMaps, yAnchorMaps) {
+    // sorting
     var xCells = imageData.xCells;
     var yCells = imageData.yCells;
 
     if ((!xCells || xCells.length == 0) && (!yCells || yCells.length == 0)) {
         Dom.empty(this);
 
-        this.setAttribute("width", dim.w)
-        this.setAttribute("height", dim.h)
+        this.setAttribute("width", dim.w);
+        this.setAttribute("height", dim.h);
         this.setAttribute("style", "line-height: 1px;");
 
         this.appendChild(Dom.newDOMElement({
@@ -669,14 +666,16 @@ Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMa
     xCells = [].concat(xCells);
     yCells = [].concat(yCells);
 
-    xCells.push({from: imageData.w, to: imageData.w + 1});  //sentinel, fake cell
-    yCells.push({from: imageData.h, to: imageData.h + 1});  //sentinel, fake cell
+    xCells.push({from: imageData.w, to: imageData.w + 1}); // sentinel, fake cell
+    yCells.push({from: imageData.h, to: imageData.h + 1}); // sentinel, fake cell
 
-    var order = function (a, b) { return a.from - b.from };
+    var order = function(a, b) {
+        return a.from - b.from;
+    };
     xCells.sort(order);
     yCells.sort(order);
 
-    //generate np from imageData
+    // generate np from imageData
     var specs = [];
     var totalFlexW = 0;
     var totalFlexH = 0;
@@ -700,9 +699,9 @@ Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMa
     while (row < yCells.length && y < imageData.h) {
         var yCell = yCells[row];
 
-        var scaleY = yCell.from <= y; //starting within a scalable area? (1)
+        var scaleY = yCell.from <= y; // starting within a scalable area? (1)
         var y1 = !scaleY ? yCell.from : yCell.to;
-        if (y > yCell.from) y = yCell.from; //this should not be the case. better safe than sorry (2)
+        if (y > yCell.from) y = yCell.from; // this should not be the case. better safe than sorry (2)
 
         var h = y1 - y;
         var oh = h;
@@ -735,7 +734,7 @@ Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMa
             var x1 = !scaleX ? xCell.from : xCell.to;
             if (x > xCell.from) x = xCell.from; // same as (2)
 
-            //generate block: x, y, x1 - x, y1 - y, scaleX, scaleY
+            // generate block: x, y, x1 - x, y1 - y, scaleX, scaleY
             var w = x1 - x;
             var ow = w;
 
@@ -749,13 +748,13 @@ Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMa
 
 
             var css = new CSS()
-            .set("width", w + "px")
-            .set("height", h + "px")
-            .set("display", "inline-block")
-            .set("background-image", "url('" + (ImageData.refStringToUrl(imageData.data) || imageData.data) + "')")
-            .set("background-position", (0 - (w > ow ? x * w/ow : x)) + "px " + (0 - (h > oh ? y * h/oh : y)) + "px")
-            .set("background-repeat", "no-repeat")
-            .set("background-size", (w > ow ? (imageData.w * w/ow) : imageData.w) + "px " + (h > oh ? (imageData.h * h/oh) : imageData.h) + "px");
+                .set("width", w + "px")
+                .set("height", h + "px")
+                .set("display", "inline-block")
+                .set("background-image", "url('" + (ImageData.refStringToUrl(imageData.data) || imageData.data) + "')")
+                .set("background-position", (0 - (w > ow ? x * w/ow : x)) + "px " + (0 - (h > oh ? y * h/oh : y)) + "px")
+                .set("background-repeat", "no-repeat")
+                .set("background-size", (w > ow ? (imageData.w * w/ow) : imageData.w) + "px " + (h > oh ? (imageData.h * h/oh) : imageData.h) + "px");
 
 
             var cellSpec = {
@@ -782,15 +781,15 @@ Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMa
 
     Dom.empty(this);
 
-    this.setAttribute("width", dim.w)
-    this.setAttribute("height", dim.h)
+    this.setAttribute("width", dim.w);
+    this.setAttribute("height", dim.h);
 
     var outerSpec = {
         _name: "div",
         _uri: PencilNamespaces.html,
         style: new CSS().set("width", dim.w + "px").set("height", dim.h + "px").set("line-height", "1px").toString(),
         _children: rowSpecs
-    }
+    };
 
     this.appendChild(Dom.newDOMElement(outerSpec));
 };

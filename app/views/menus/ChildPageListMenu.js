@@ -7,33 +7,33 @@ function ChildPageListMenu(page, onDone) {
 
 __extend(Menu, ChildPageListMenu);
 
-ChildPageListMenu.prototype.getTemplatePath = function () {
+ChildPageListMenu.prototype.getTemplatePath = function() {
     return this.getTemplatePrefix() + "menus/Menu.xhtml";
 };
-ChildPageListMenu.prototype.setup = function () {
+ChildPageListMenu.prototype.setup = function() {
     var thiz = this;
 
-    function createSubCommand (page) {
+    function createSubCommand(page) {
         var key = "open" + page.name +"page";
         var items = {};
         items["key"] = key;
         items["item"] = {
-            key:  key,
+            key: key,
             label: page.name,
-            run: function () {
+            run: function() {
                 // thiz.onDone(page);
                 ApplicationPane._instance.activatePage(page);
-            },
+            }
         };
         return items;
     }
 
-    function createSubItems (page,subItems) {
+    function createSubItems(page, subItems) {
         var key = "open" + page.name +"page";
         var items = {"key": key, "item": {
-            key:  key,
+            key: key,
             label: page.name,
-            run: function () {
+            run: function() {
                 ApplicationPane._instance.activatePage(page);
                 // thiz.onDone(page);
             },
@@ -43,14 +43,14 @@ ChildPageListMenu.prototype.setup = function () {
         return items;
     }
 
-    function createChildMenu (page, subMenu) {
-        for(var i = 0; i < page.children.length; i++) {
+    function createChildMenu(page, subMenu) {
+        for (var i = 0; i < page.children.length; i++) {
             var childPage = page.children[i];
 
             if (childPage.children.length > 0) {
-                var subItems = [] ;
+                var subItems = [];
                 createChildMenu(childPage, subItems);
-                var item = createSubItems(childPage,subItems);
+                var item = createSubItems(childPage, subItems);
                 if (subMenu) {
                     subMenu.push(item["item"]);
                 } else {
@@ -67,4 +67,4 @@ ChildPageListMenu.prototype.setup = function () {
         }
     }
     createChildMenu(this.page);
-}
+};

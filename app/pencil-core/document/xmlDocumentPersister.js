@@ -5,7 +5,7 @@ XMLDocumentPersister.CHARSET = "UTF-8";
 XMLDocumentPersister.hooks = [];
 XMLDocumentPersister.currentFile = null;
 
-XMLDocumentPersister.load = function (file) {
+XMLDocumentPersister.load = function(file) {
     XMLDocumentPersister.currentFile = file;
     var fileContents = FileIO.read(file, XMLDocumentPersister.CHARSET);
     var domParser = new DOMParser();
@@ -15,12 +15,12 @@ XMLDocumentPersister.load = function (file) {
     return XMLDocumentPersister.parse(dom);
 };
 
-XMLDocumentPersister.parse = function (dom) {
+XMLDocumentPersister.parse = function(dom) {
     var doc = new PencilDocument();
-    Dom.workOn("./p:Properties/p:Property", dom.documentElement, function (propNode) {
+    Dom.workOn("./p:Properties/p:Property", dom.documentElement, function(propNode) {
         doc.properties[propNode.getAttribute("name")] = propNode.textContent;
     });
-    Dom.workOn("./p:Pages/p:Page", dom.documentElement, function (pageNode) {
+    Dom.workOn("./p:Pages/p:Page", dom.documentElement, function(pageNode) {
         var page = XMLDocumentPersister.parsePage(pageNode, doc);
 
         for (i in XMLDocumentPersister.hooks) {
@@ -58,9 +58,9 @@ XMLDocumentPersister.parse = function (dom) {
     return doc;
 };
 
-XMLDocumentPersister.parsePage = function (pageNode, doc) {
+XMLDocumentPersister.parsePage = function(pageNode, doc) {
     var page = new Page(doc);
-    Dom.workOn("./p:Properties/p:Property", pageNode, function (propNode) {
+    Dom.workOn("./p:Properties/p:Property", pageNode, function(propNode) {
         page.properties[propNode.getAttribute("name")] = propNode.textContent;
     });
     var contentNode = Dom.getSingle("./p:Content", pageNode);
@@ -73,10 +73,9 @@ XMLDocumentPersister.parsePage = function (pageNode, doc) {
     return page;
 };
 
-XMLDocumentPersister.save = function (doc, filePath) {
-
+XMLDocumentPersister.save = function(doc, filePath) {
     var file = Components.classes["@mozilla.org/file/local;1"]
-                         .createInstance(Components.interfaces.nsILocalFile);
+        .createInstance(Components.interfaces.nsILocalFile);
     file.initWithPath(filePath);
 
     XMLDocumentPersister.currentFile = file;
@@ -108,12 +107,12 @@ XMLDocumentPersister.save = function (doc, filePath) {
 
 
     var fos = Components.classes["@mozilla.org/network/file-output-stream;1"]
-                             .createInstance(Components.interfaces.nsIFileOutputStream);
+        .createInstance(Components.interfaces.nsIFileOutputStream);
     fos.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
 
-    //write the xml processing instruction
+    // write the xml processing instruction
     var os = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
-                       .createInstance(Components.interfaces.nsIConverterOutputStream);
+        .createInstance(Components.interfaces.nsIConverterOutputStream);
 
     // This assumes that fos is the nsIOutputStream you want to write to
     os.init(fos, XMLDocumentPersister.CHARSET, 0, 0x0000);

@@ -1,8 +1,8 @@
 Pencil.dragObserverClasses = [];
-Pencil.registerDragObserver = function (observerClass) {
+Pencil.registerDragObserver = function(observerClass) {
     Pencil.dragObserverClasses.push(observerClass);
 };
-Pencil.installDragObservers = function (canvas) {
+Pencil.installDragObservers = function(canvas) {
     for (var factory in Pencil.dragObserverClasses) {
         var constructorFunction = Pencil.dragObserverClasses[factory];
         var observer = new constructorFunction(canvas);
@@ -18,14 +18,14 @@ function ShapeDefDragObserver(canvas) {
     this.lastDragEnterTS = new Date().getTime();
 }
 ShapeDefDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
 
         flavours.appendFlavour("pencil/def");
 
         return flavours;
     },
-    onDragEnter: function (event, session) {
+    onDragEnter: function(event, session) {
         var now = new Date().getTime();
         var delta = now - this.lastDragEnterExitEventTS;
         this.lastDragEnterExitEventTS = now;
@@ -41,14 +41,14 @@ ShapeDefDragObserver.prototype = {
 
         this.canvas.insertShapeImpl_(def, new Bound(loc.x, loc.y, null, null));
 
-        //fake move marking:
+        // fake move marking:
         this.canvas.startFakeMove(event);
 
         this.commited = false;
         this.hasDrag = true;
     },
-    exit: function (event) {
-        //console.log("Event ", event);
+    exit: function(event) {
+        // console.log("Event ", event);
         this.aboutToDelete = false;
         if (this.deleteDiscarded) {
             return;
@@ -57,7 +57,7 @@ ShapeDefDragObserver.prototype = {
             var loc = {
                 x: event.clientX,
                 y: event.clientY
-            }
+            };
             if (loc.x == 0 && loc.y == 0 ) {
                 this.commited = true;
                 this.canvas.finishMoving(event);
@@ -96,13 +96,13 @@ ShapeDefDragObserver.prototype = {
         }
         this.hasDrag = false;
     },
-    onDragStart: function (evt, transferData, action) {
+    onDragStart: function(evt, transferData, action) {
         this.dragStart = true;
     },
-    onDragExit: function (event, session) {
+    onDragExit: function(event, session) {
         this.exit(event);
     },
-    onDragOver: function (event, flavour, session) {
+    onDragOver: function(event, flavour, session) {
         // console.log("drag over", event);
         if (!this.commited && this.hasDrag) {
             if (event.clientX != this._lastScreenX || event.clientY != this._lastScreenY) {
@@ -112,7 +112,7 @@ ShapeDefDragObserver.prototype = {
             }
         }
     },
-    onDrop: function (event, transferData, session) {
+    onDrop: function(event, transferData, session) {
         this.commited = true;
         this.canvas.finishMoving(event);
     }
@@ -128,13 +128,13 @@ function PrivateShapeDefDragObserver(canvas) {
     this.lastDragEnterTS = new Date().getTime();
 }
 PrivateShapeDefDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
         flavours.appendFlavour("pencil/privatedef");
         return flavours;
     },
 
-    onDragEnter: function (event, session) {
+    onDragEnter: function(event, session) {
         var now = new Date().getTime();
         var delta = now - this.lastDragEnterExitEventTS;
         this.lastDragEnterExitEventTS = now;
@@ -144,7 +144,7 @@ PrivateShapeDefDragObserver.prototype = {
             return;
         }
 
-//        if (delta < 200) return;
+        //        if (delta < 200) return;
 
         // var transferData = nsTransferable.get(this.getSupportedFlavours(), nsDragAndDrop.getDragData, true);
         // var defId = null;
@@ -159,7 +159,7 @@ PrivateShapeDefDragObserver.prototype = {
 
         var def = PrivateCollectionManager.locateShapeDefinition(defId);
         if (!def) def = CollectionManager.shapeDefinition.locateBuiltinPrivateShapeDef(defId);
-        
+
         if (!def) {
             console.log("Private def not found", defId);
             return;
@@ -169,13 +169,13 @@ PrivateShapeDefDragObserver.prototype = {
 
         this.canvas.insertPrivateShapeImpl_(def, new Bound(loc.x, loc.y, null, null));
 
-        //fake move marking:
+        // fake move marking:
         this.canvas.startFakeMove(event);
 
         this.commited = false;
         this.hasDrag = true;
     },
-    exit: function (event) {
+    exit: function(event) {
         this.aboutToDelete = false;
         if (this.deleteDiscarded) {
             return;
@@ -187,7 +187,7 @@ PrivateShapeDefDragObserver.prototype = {
             var loc = {
                 x: event.clientX,
                 y: event.clientY
-            }
+            };
             if (loc.x == 0 && loc.y == 0 ) {
                 this.commited = true;
                 this.canvas.finishMoving(event);
@@ -220,17 +220,17 @@ PrivateShapeDefDragObserver.prototype = {
 
         this.hasDrag = false;
     },
-    onDragExit: function (event, session) {
+    onDragExit: function(event, session) {
         var thiz = this;
 
         this.aboutToDelete = true;
         this.deleteDiscarded = false;
 
-        window.setTimeout(function () {
+        window.setTimeout(function() {
             thiz.exit(event);
         }, 10);
     },
-    onDragOver: function (event, flavour, session) {
+    onDragOver: function(event, flavour, session) {
         if (!this.commited && this.hasDrag) {
             if (event.clientX != this._lastScreenX || event.clientY != this._lastScreenY) {
                 this.canvas.handleMouseMove(event, "fake");
@@ -239,7 +239,7 @@ PrivateShapeDefDragObserver.prototype = {
             }
         }
     },
-    onDrop: function (event, transferData, session) {
+    onDrop: function(event, transferData, session) {
         this.commited = true;
         this.canvas.finishMoving(event);
     }
@@ -247,7 +247,7 @@ PrivateShapeDefDragObserver.prototype = {
 
 Pencil.registerDragObserver(PrivateShapeDefDragObserver);
 
-//====================================================================================
+// ====================================================================================
 
 function ShapeShortcutDragObserver(canvas) {
     this.canvas = canvas;
@@ -256,7 +256,7 @@ function ShapeShortcutDragObserver(canvas) {
     this.lastDragEnterTS = new Date().getTime();
 }
 ShapeShortcutDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
 
         flavours.appendFlavour("pencil/shortcut");
@@ -264,7 +264,7 @@ ShapeShortcutDragObserver.prototype = {
         return flavours;
     },
 
-    onDragEnter: function (event, session) {
+    onDragEnter: function(event, session) {
         var now = new Date().getTime();
         var delta = now - this.lastDragEnterExitEventTS;
         this.lastDragEnterExitEventTS = now;
@@ -281,13 +281,12 @@ ShapeShortcutDragObserver.prototype = {
 
         this.canvas.insertShapeImpl_(def, new Bound(loc.x, loc.y, null, null), overridingValueMap);
 
-        //fake move marking:
+        // fake move marking:
         this.commited = false;
         this.hasDrag = true;
         this.canvas.startFakeMove(event);
-
     },
-    exit: function (event) {
+    exit: function(event) {
         this.aboutToDelete = false;
         if (this.deleteDiscarded) {
             return;
@@ -319,7 +318,7 @@ ShapeShortcutDragObserver.prototype = {
             var loc = {
                 x: event.clientX,
                 y: event.clientY
-            }
+            };
             if (loc.x == 0 && loc.y == 0 ) {
                 this.commited = true;
                 this.canvas.finishMoving(event);
@@ -329,10 +328,10 @@ ShapeShortcutDragObserver.prototype = {
         }
         this.hasDrag = false;
     },
-    onDragExit: function (event, session) {
+    onDragExit: function(event, session) {
         this.exit(event);
     },
-    onDragOver: function (event, flavour, session) {
+    onDragOver: function(event, flavour, session) {
         if (!this.commited && this.hasDrag) {
             if (event.clientX != this._lastScreenX || event.clientY != this._lastScreenY) {
                 this.canvas.handleMouseMove(event, "fake");
@@ -341,7 +340,7 @@ ShapeShortcutDragObserver.prototype = {
             }
         }
     },
-    onDrop: function (event, transferData, session) {
+    onDrop: function(event, transferData, session) {
         this.commited = true;
         this.canvas.finishMoving(event);
     }
@@ -349,22 +348,21 @@ ShapeShortcutDragObserver.prototype = {
 
 Pencil.registerDragObserver(ShapeShortcutDragObserver);
 
-//====================================================================================
+// ====================================================================================
 
 function RichTextDragObserver(canvas) {
     this.canvas = canvas;
 }
 RichTextDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
 
         flavours.appendFlavour("text/html");
 
         return flavours;
     },
-    onDragOver: function (evt, flavour, session){},
-    onDrop: function (evt, transferData, session) {
-
+    onDragOver: function(evt, flavour, session) {},
+    onDrop: function(evt, transferData, session) {
         var html = transferData.data;
         try {
             var xhtml = Dom.toXhtml(html);
@@ -379,24 +377,22 @@ RichTextDragObserver.prototype = {
         } catch (e) {
             throw e;
         }
-
     }
 };
 
 Pencil.registerDragObserver(RichTextDragObserver);
 
-//====================================================================================
+// ====================================================================================
 
 function FileDragObserver(canvas) {
     this.canvas = canvas;
 }
 FileDragObserver.prototype = {
-    acceptsDataTransfer : function (dataTransfer) {
+    acceptsDataTransfer: function(dataTransfer) {
         return dataTransfer && dataTransfer.files && dataTransfer.files.length > 0;
     },
-    onDragOver: function (evt, flavour, session){},
-    onDrop: function (evt, dataTransfer, session) {
-
+    onDragOver: function(evt, flavour, session) {},
+    onDrop: function(evt, dataTransfer, session) {
         for (var i = 0; i < dataTransfer.files.length; i ++) {
             var file = dataTransfer.files[i];
             var fileType = path.extname(file.path);
@@ -414,7 +410,7 @@ FileDragObserver.prototype = {
 FileDragObserver.SVG_SHAPE_DEF_ID = "Evolus.Common:SVGImage";
 
 FileDragObserver.fileTypeHandler = {
-    _handleImageFile: function (canvas, url, loc, transparent) {
+    _handleImageFile: function(canvas, url, loc, transparent) {
         try {
             var def = CollectionManager.shapeDefinition.locateDefinition(PNGImageXferHelper.SHAPE_DEF_ID);
             if (!def) return;
@@ -424,7 +420,7 @@ FileDragObserver.fileTypeHandler = {
 
             var controller = canvas.currentController;
 
-            var handler = function (imageData) {
+            var handler = function(imageData) {
                 var r = imageData.w / (canvas.width * 0.9);
                 r = Math.max(r, imageData.h / (canvas.height * 0.9));
 
@@ -444,32 +440,32 @@ FileDragObserver.fileTypeHandler = {
             Console.dumpError(e);
         }
     },
-    png: function (canvas, url, loc) {
+    png: function(canvas, url, loc) {
         debug(url);
         this._handleImageFile(canvas, url, loc, "transparent");
     },
-    jpg: function (canvas, url, loc) {
+    jpg: function(canvas, url, loc) {
         this._handleImageFile(canvas, url, loc);
     },
-    gif: function (canvas, url, loc) {
+    gif: function(canvas, url, loc) {
         this._handleImageFile(canvas, url, loc, "transparent");
     },
-    svg: function (canvas, url, loc) {
+    svg: function(canvas, url, loc) {
         var fileContents = require("fs").readFileSync(url, {encoding: "utf8"});
         FileDragObserver.handleSVGData(fileContents, canvas, loc);
     },
-    ep: function (canvas, url) {
+    ep: function(canvas, url) {
         Pencil.documentHandler.loadDocument(url);
     },
-    epz: function (canvas, url) {
+    epz: function(canvas, url) {
         Pencil.documentHandler.loadDocument(url);
     },
-    epgz: function (canvas, url) {
+    epgz: function(canvas, url) {
         Pencil.documentHandler.loadDocument(url);
     }
 };
 
-FileDragObserver.handleSVGData = function (svg, canvas, loc) {
+FileDragObserver.handleSVGData = function(svg, canvas, loc) {
     try {
         var domParser = new DOMParser();
         var dom = domParser.parseFromString(svg, "text/xml");
@@ -477,11 +473,11 @@ FileDragObserver.handleSVGData = function (svg, canvas, loc) {
     } catch (e) {
         Console.dumpError(e);
     }
-}
+};
 
 FileDragObserver.svgMeasuringNode = null;
 
-FileDragObserver.handleSVGDOM = function (dom, canvas, loc) {
+FileDragObserver.handleSVGDOM = function(dom, canvas, loc) {
     if (!loc) {
         loc = canvas.lastMouse || {x: 10, y: 10};
     }
@@ -493,7 +489,7 @@ FileDragObserver.handleSVGDOM = function (dom, canvas, loc) {
     var dx = 0;
     var dy = 0;
 
-    //parse the provided svg viewBox
+    // parse the provided svg viewBox
     if (dom.documentElement.viewBox) {
         var viewBox = dom.documentElement.viewBox.baseVal;
         if (viewBox.width > 0 && viewBox.height > 0) {
@@ -536,7 +532,7 @@ FileDragObserver.handleSVGDOM = function (dom, canvas, loc) {
     // FileDragObserver.svgMeasuringNode.appendChild(g);
     // FileDragObserver.svgMeasuringNode.removeChild(g);
 
-    //g.setAttribute("transform", "translate(" + (0 - dx) + "," + (0 - dy) + ")");
+    // g.setAttribute("transform", "translate(" + (0 - dx) + "," + (0 - dy) + ")");
 
     var g0 = dom.createElementNS(PencilNamespaces.svg, "g");
     g0.appendChild(g);
@@ -565,7 +561,7 @@ FileDragObserver.handleSVGDOM = function (dom, canvas, loc) {
         controller.setProperty("box", dim);
         controller.setProperty("originalDim", new Dimension(width, height));
     }
-}
+};
 
 Pencil.registerDragObserver(FileDragObserver);
 
@@ -573,15 +569,15 @@ function SVGDragObserver(canvas) {
     this.canvas = canvas;
 }
 SVGDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
 
         flavours.appendFlavour("image/svg+xml");
 
         return flavours;
     },
-    onDragOver: function (evt, flavour, session){},
-    onDrop: function (evt, transferData, session) {
+    onDragOver: function(evt, flavour, session) {},
+    onDrop: function(evt, transferData, session) {
         var svg = transferData.data;
         var loc = this.canvas.getEventLocation(evt, "withoutZoom");
         FileDragObserver.handleSVGData(svg, this.canvas, loc);
@@ -595,23 +591,22 @@ function PNGDragObserver(canvas) {
     this.canvas = canvas;
 }
 PNGDragObserver.prototype = {
-    getSupportedFlavours : function () {
+    getSupportedFlavours: function() {
         var flavours = new FlavourSet();
 
         flavours.appendFlavour("pencil/png");
 
         return flavours;
     },
-    onDragOver: function (evt, flavour, session){},
-    onDrop: function (evt, transferData, session) {
-
+    onDragOver: function(evt, flavour, session) {},
+    onDrop: function(evt, transferData, session) {
         var url = transferData.data;
 
         var loc = this.canvas.getEventLocation(evt, "withoutZoom");
 
         this._handleImageFile(this.canvas, url, loc, "transparent");
     },
-    _handleImageFile: function (canvas, url, loc, transparent) {
+    _handleImageFile: function(canvas, url, loc, transparent) {
         try {
             var def = CollectionManager.shapeDefinition.locateDefinition(PNGImageXferHelper.SHAPE_DEF_ID);
             if (!def) return;
@@ -619,14 +614,14 @@ PNGDragObserver.prototype = {
             if (Config.get("document.EmbedImages") == null) {
                 Config.set("document.EmbedImages", false);
             }
-            var embedImages = Config.get("document.EmbedImages")
+            var embedImages = Config.get("document.EmbedImages");
 
             canvas.insertShape(def, new Bound(loc.x, loc.y, null, null));
             if (!canvas.currentController) return;
 
             var controller = canvas.currentController;
 
-            var handler = function (imageData) {
+            var handler = function(imageData) {
                 var w = imageData.w;
                 var h = imageData.h;
 

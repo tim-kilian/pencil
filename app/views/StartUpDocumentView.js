@@ -12,9 +12,9 @@ function StartUpDocumentView() {
     } else {
         Dom.addClass(this.gridViewButton, "Active");
     }
-    this.recentDocumentRepeater.populator = function (doc, binding) {
+    this.recentDocumentRepeater.populator = function(doc, binding) {
         var filePath = doc.filePath;
-        var handler = function (error, thumbPath) {
+        var handler = function(error, thumbPath) {
             var stats = fs.statSync(filePath);
             if (stats) {
                 binding.name.innerHTML = Dom.htmlEncode(path.basename(filePath));
@@ -23,7 +23,7 @@ function StartUpDocumentView() {
                 var pinDocs = Config.get("pin-documents");
                 if (pinDocs && pinDocs.indexOf(filePath) >= 0) Dom.addClass(binding.pin, "Unpin");
                 if (thumbPath) {
-                    window.setTimeout(function () {
+                    window.setTimeout(function() {
                         Util.setupImage(binding.thumbnailImage, ImageData.filePathToURL(thumbPath), "center-crop", "allowUpscale");
                     }, 10);
                 }
@@ -37,16 +37,16 @@ function StartUpDocumentView() {
             handler(null, doc.thumbPath);
         } else {
             handler(null, "");
-            //Pencil.documentHandler.parseDocumentThumbnail(filePath, handler);
+            // Pencil.documentHandler.parseDocumentThumbnail(filePath, handler);
         }
-    }
+    };
 
     var thiz = this;
-    this.bind ("click", function(ev) {
+    this.bind("click", function(ev) {
         var button = Dom.findUpward(ev.target, function(node) {
             if (node == thiz.listViewButton || node == thiz.gridViewButton) return true;
             return false;
-        })
+        });
         if (button == thiz.gridViewButton) {
             if (gridViewCheck) return;
             gridViewCheck = true;
@@ -66,15 +66,15 @@ function StartUpDocumentView() {
         }
     }, this.changeViewButtons);
 
-    this.bind("click", function (event) {
+    this.bind("click", function(event) {
         var node = Dom.findUpward(event.target, function(node) {
             if (node.getAttribute("command") == "pinDocument") return true;
             return false;
-        })
+        });
 
         var filePath = Dom.findUpwardForData(event.target, "_filePath");
         if (!filePath) return;
-        //var pinCheck = Dom.findUpwardForData(event.target, "_pin");
+        // var pinCheck = Dom.findUpwardForData(event.target, "_pin");
 
         if (node) {
             var pinFiles = Config.get("pin-documents") || [];
@@ -108,25 +108,23 @@ function StartUpDocumentView() {
             return;
         }
         handler();
-
     }, this.recentDocumentRepeater);
 
-    Dom.doOnAllChildRecursively(this.node(), function (n) {
+    Dom.doOnAllChildRecursively(this.node(), function(n) {
         if (!n.getAttribute || !n.getAttribute("command")) return;
         var command = n.getAttribute("command");
         UICommandManager.installControl(command, n);
     });
 
-    this.bind("click", function () {
+    this.bind("click", function() {
         Controller._instance.handleGlobalScreencapture();
     }, this.takeScreenshotButton);
-
 }
 
 __extend(BaseTemplatedWidget, StartUpDocumentView);
 
 
-StartUpDocumentView.prototype.reload = function () {
+StartUpDocumentView.prototype.reload = function() {
     var recentFiles = Config.get("recent-documents") || [];
     var pinFiles = Config.get("pin-documents") || [];
 
@@ -136,11 +134,11 @@ StartUpDocumentView.prototype.reload = function () {
     var recentDocs = [];
     var pinDocs = [];
 
-    var loadFiles = function (files, deletedFiles, pinFlag) {
+    var loadFiles = function(files, deletedFiles, pinFlag) {
         var doc = [];
         for (var i = 0; i < Math.min(files.length, 8); i++) {
             var checkExist = fs.existsSync(files[i]);
-            if(!checkExist) {
+            if (!checkExist) {
                 deletedFiles.push(files[i]);
             } else {
                 if (!pinFlag && pinFiles.indexOf(files[i]) >= 0) continue;
@@ -154,7 +152,7 @@ StartUpDocumentView.prototype.reload = function () {
             }
         }
         return doc;
-    }
+    };
 
     var deleteFiles = [];
     if (recentFiles) {
@@ -183,7 +181,7 @@ StartUpDocumentView.prototype.reload = function () {
         var docLeft = 8 - startDocs.length;
         startDocs = recentDocs.slice(0, Math.min(docLeft, recentDocs.length)).concat(startDocs);
     }
-    startDocs.sort(function(a,b){
+    startDocs.sort(function(a, b) {
         var aIndex = recentFiles.indexOf(a.filePath);
         var bIndex = recentFiles.indexOf(b.filePath);
         return aIndex - bIndex;
@@ -192,14 +190,12 @@ StartUpDocumentView.prototype.reload = function () {
     if (startDocs.length > 0) {
         this.startDocs = startDocs;
         this.changeViewButtons.style.visibility = "inherit";
-
     }
 
     var thiz = this;
     this.recentDocumentRepeater.node().style.visibility = "hidden";
-    setTimeout(function () {
+    setTimeout(function() {
         thiz.recentDocumentRepeater.setItems(startDocs);
         thiz.recentDocumentRepeater.node().style.visibility = "inherit";
     }, 200);
-
 };

@@ -1,4 +1,4 @@
-function ScrollableView () {
+function ScrollableView() {
     BaseTemplatedWidget.call(this);
     this.offset = 0;
 
@@ -16,19 +16,19 @@ function ScrollableView () {
 
     var thiz = this;
     var startScroll = null;
-    var stopScroll = function () {
-        if(startScroll) {
+    var stopScroll = function() {
+        if (startScroll) {
             console.log("stopScroll");
             clearInterval(startScroll);
             startScroll = null;
         }
     };
     this.bind("mousedown", function() {
-        if(startScroll) stopScroll();
+        if (startScroll) stopScroll();
         startScroll = setInterval(function() {
             thiz.offset += thiz.getStep();
             thiz.invalidate();
-        } , 50);
+        }, 50);
     }, this.previousButton);
 
     this.previousButton.addEventListener("mouseup", function() {
@@ -39,37 +39,37 @@ function ScrollableView () {
     }, false);
     this.previousButton.addEventListener("focusout", function() {
         stopScroll();
-    }, false)
+    }, false);
 
     this.bind("mousedown", function() {
-        if(startScroll) stopScroll();
+        if (startScroll) stopScroll();
         startScroll = setInterval(function() {
             thiz.offset -= thiz.getStep();
             thiz.invalidate();
-        } , 50);
+        }, 50);
     }, this.nextButton);
 
     this.nextButton.addEventListener("mouseup", function() {
         thiz.nextButton.blur();
-    }, false)
+    }, false);
     this.nextButton.addEventListener("mouseout", function() {
         thiz.nextButton.blur();
     }, false);
     this.nextButton.addEventListener("focusout", function() {
         stopScroll();
-    }, false)
-    window.addEventListener("resize", function(ev){
+    }, false);
+    window.addEventListener("resize", function(ev) {
         thiz.invalidate();
-    },false)
+    }, false);
     this.wheelAllow = true;
     this.addWheelHandle();
 }
 
 __extend(BaseTemplatedWidget, ScrollableView);
 
-ScrollableView.prototype.setWheelAllow = function (value) {
+ScrollableView.prototype.setWheelAllow = function(value) {
     this.wheelAllow = value;
-}
+};
 
 ScrollableView.prototype.addWheelHandle = function() {
     this.wheelHandle = function(ev) {
@@ -77,19 +77,19 @@ ScrollableView.prototype.addWheelHandle = function() {
             this.offset -= event.deltaY;
             this.invalidate();
         }
-    }
+    };
     this.bind("wheel", this.wheelHandle, this.node());
-}
+};
 
-ScrollableView.prototype.getStep = function () {
+ScrollableView.prototype.getStep = function() {
     return 80;
 };
 
-ScrollableView.prototype.setContentFragment = function (fragment) {
+ScrollableView.prototype.setContentFragment = function(fragment) {
     this.content.appendChild(fragment);
     window.setTimeout(this.invalidate.bind(this), 10);
 };
-ScrollableView.prototype.onAttached = function () {
+ScrollableView.prototype.onAttached = function() {
     window.setTimeout(this.invalidate.bind(this), 100);
 };
 
@@ -99,16 +99,16 @@ function logSizing(name, node) {
         clientWidth: node.clientWidth,
         offsetWidth: node.offsetWidth,
         rect: node.getBoundingClientRect()
-    })
+    });
 }
-ScrollableView.prototype.invalidate = function () {
+ScrollableView.prototype.invalidate = function() {
     if (this.orient == "vertical") {
         this.invalidateVertical();
     } else {
         this.invalidateHorizontal();
     }
 };
-ScrollableView.prototype.invalidateHorizontal = function () {
+ScrollableView.prototype.invalidateHorizontal = function() {
     var contentSize = this.content.scrollWidth;
 
     var size = this.node().clientWidth;
@@ -135,9 +135,8 @@ ScrollableView.prototype.invalidateHorizontal = function () {
 
         this.content.style.left = (this.offset - borderWidth) + "px";
     }
-
 };
-ScrollableView.prototype.invalidateVertical = function () {
+ScrollableView.prototype.invalidateVertical = function() {
     var contentSize = this.content.scrollHeight;
 
     var size = this.node().clientHeight;
@@ -165,20 +164,20 @@ ScrollableView.prototype.invalidateVertical = function () {
         this.content.style.top = (this.offset - borderHeight) + "px";
     }
 };
-ScrollableView.prototype.moveTo = function (position) {
+ScrollableView.prototype.moveTo = function(position) {
     this.offset = - position + this.getButtonSize() + this.getBorderSize() + 2 * Util.em();
     this.invalidate();
 };
-ScrollableView.prototype.getSize = function () {
+ScrollableView.prototype.getSize = function() {
     return this.orient == "vertical" ? this.node().clientHeight : this.node().clientWidth;
 };
-ScrollableView.prototype.getButtonSize = function () {
+ScrollableView.prototype.getButtonSize = function() {
     return this.orient == "vertical" ? this.previousButton.offsetHeight : this.previousButton.offsetWidth;
 };
-ScrollableView.prototype.getBorderSize = function () {
+ScrollableView.prototype.getBorderSize = function() {
     return this.orient == "vertical" ? Math.round((this.node().offsetHeight - this.getSize()) / 2) : Math.round((this.node().offsetWidth - this.getSize()) / 2);
 };
-ScrollableView.prototype.ensuareVisible = function (from, to) {
+ScrollableView.prototype.ensuareVisible = function(from, to) {
     var max = Math.abs(this.offset) + this.getSize() - this.getBorderSize() - this.getButtonSize();
     var min = Math.abs(this.offset) + this.getBorderSize() + this.getButtonSize();
     if (min < from && to < max) return;

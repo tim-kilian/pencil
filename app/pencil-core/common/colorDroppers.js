@@ -1,4 +1,4 @@
-var ColorDropper = function () {
+var ColorDropper = function() {
     var active = false;
     var dropper = null;
     var colorCallback = null;
@@ -7,10 +7,10 @@ var ColorDropper = function () {
     var lastPanelY = 0;
     try {
         dropper = Components.classes["@iosart.com/Utils/ColorZilla;1"].createInstance()
-                            .QueryInterface(Components.interfaces.mozIColorZilla);
+            .QueryInterface(Components.interfaces.mozIColorZilla);
     } catch (e) {}
 
-	function stop() {
+    function stop() {
 	    active = false;
 	    if (currentPanel) {
 	        currentPanel.openPopupAtScreen(lastPanelX, lastPanelY, false);
@@ -23,7 +23,7 @@ var ColorDropper = function () {
         if (window.opener) {
             window.opener.document.documentElement.removeAttributeNS(PencilNamespaces.p, "probing");
         }
-	}
+    }
 
     function getRValue(color) {
 	    return color & 0xff;
@@ -37,7 +37,7 @@ var ColorDropper = function () {
 	    return (color >> 16) & 0xff;
     }
 
-    var clickHandler = function (event) {
+    var clickHandler = function(event) {
         if (!active || !dropper || !colorCallback) {
             if (active) {
                 stop();
@@ -67,10 +67,10 @@ var ColorDropper = function () {
     }
 
     return {
-        begin: function (callback, node) {
+        begin: function(callback, node) {
             colorCallback = callback;
 
-            currentPanel = Dom.findUpward(node, function (n) {
+            currentPanel = Dom.findUpward(node, function(n) {
                 return n.localName == "panel" && n.namespaceURI == PencilNamespaces.xul;
             });
 
@@ -87,8 +87,8 @@ var ColorDropper = function () {
 
             active = true;
         },
-        isAvailable: function () {
+        isAvailable: function() {
             return dropper != null;
         }
     };
-} ();
+}();

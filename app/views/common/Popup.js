@@ -16,23 +16,23 @@ function Popup(node) {
 __extend(BaseTemplatedWidget, Popup);
 Popup.Z_INDEX = 9001;
 
-Popup.registerGlobalListeners = function () {
+Popup.registerGlobalListeners = function() {
     if (Popup._globalListenersRegistered) return;
     Popup._globalListenersRegistered = true;
 
-    document.addEventListener("mousedown", function () {
+    document.addEventListener("mousedown", function() {
         Popup.mouseHeld = true;
     }, false);
-    document.addEventListener("mouseup", function () {
+    document.addEventListener("mouseup", function() {
         Popup.mouseHeld = false;
     }, false);
-    document.addEventListener("mousemove", function (event) {
+    document.addEventListener("mousemove", function(event) {
         if (!Popup.mouseHeld) return;
         if (BaseWidget.closables.length == 0) return;
         var closable = BaseWidget.closables[BaseWidget.closables.length - 1];
         if (!__isAssignableFrom(closable.constructor, Popup)) return;
         if (closable.allowMouseDragging) return;
-        var input = Dom.findUpward(event.target, function (n) {
+        var input = Dom.findUpward(event.target, function(n) {
             return n.localName == "input" || n.localName == "select" || n.localName == "textarea";
         });
         if (input) return;
@@ -41,7 +41,7 @@ Popup.registerGlobalListeners = function () {
     }, false);
 };
 
-Popup.prototype.onAttached = function () {
+Popup.prototype.onAttached = function() {
     if (this.popupContainer) {
         // this.reparent();
 	    this.popupContainer.style.position = "absolute";
@@ -49,14 +49,14 @@ Popup.prototype.onAttached = function () {
 	    this.popupContainer.style.top = "0px";
         this.hidePopupContainer();
 	    // this.hide();
-	}
+    }
 };
-Popup.prototype.setPopupClass = function (clazz) {
+Popup.prototype.setPopupClass = function(clazz) {
     Dom.addClass(this.popupContainer, clazz);
 };
-Popup.prototype.closeUpward = function (event) {
+Popup.prototype.closeUpward = function(event) {
     var thiz = this;
-    var node = !event ? null : Dom.findUpward(event.target, function (n) {
+    var node = !event ? null : Dom.findUpward(event.target, function(n) {
         return n == thiz.popupContainer;
     });
 
@@ -67,15 +67,15 @@ Popup.prototype.closeUpward = function (event) {
 
     if (this._parent) this._parent.closeUpward(event);
 };
-Popup.prototype.shouldCloseOnBlur = function (event) {
+Popup.prototype.shouldCloseOnBlur = function(event) {
     return true;
 };
-Popup.prototype.checkToCloseParent = function (element) {
+Popup.prototype.checkToCloseParent = function(element) {
     var thiz = this;
-    var handler = function (popup) {
+    var handler = function(popup) {
         if (!popup._parent) return;
 
-        var node = Dom.findUpward(element, function (n) {
+        var node = Dom.findUpward(element, function(n) {
             return n == popup._parent.popupContainer;
         });
 
@@ -90,27 +90,27 @@ Popup.prototype.checkToCloseParent = function (element) {
 
     handler(this);
 };
-Popup.prototype.setContentFragment = function (fragment) {
+Popup.prototype.setContentFragment = function(fragment) {
     this.popupContainer.appendChild(fragment);
 };
-Popup.prototype.reparent = function () {
+Popup.prototype.reparent = function() {
     if (this.popupContainer.parentNode != this.node().ownerDocument.body) {
         if (this.popupContainer.parentNode) this.popupContainer.parentNode.removeChild(this.popupContainer);
         this.node().ownerDocument.body.appendChild(this.popupContainer);
     }
 };
-Popup.prototype.toggle = function (anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
+Popup.prototype.toggle = function(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
     if (this.isVisible()) {
         this.hide();
     } else {
         this.show(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip);
     }
 };
-Popup.prototype._showContainer = function () {
+Popup.prototype._showContainer = function() {
     var name = this.popupContainer.localName;
     this.popupContainer.style.display = (name == "hbox" || name == "vbox" || name == "box") ? "flex" : "block";
 };
-Popup.prototype.show = function (anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
+Popup.prototype.show = function(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
     this.reparent();
 
     if (this.mode) {
@@ -127,14 +127,14 @@ Popup.prototype.show = function (anchor, hAlign, vAlign, hPadding, vPadding, aut
     this.popupContainer.style.overflow = "visible";
 
     var thiz = this;
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         thiz._showImpl(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip || true);
     }, 10);
 };
-Popup.prototype.isVisible = function () {
+Popup.prototype.isVisible = function() {
     return this.visible;
 };
-Popup.prototype.showAt = function (x, y, skipEvent, autoFlip) {
+Popup.prototype.showAt = function(x, y, skipEvent, autoFlip) {
     this.reparent();
 
     console.log("Showing at: ", [x, y]);
@@ -178,7 +178,7 @@ Popup.prototype.showAt = function (x, y, skipEvent, autoFlip) {
         BaseWidget.registerClosable(this);
     }
 };
-Popup.prototype._calculatePosition = function (anchor, hAlign, vAlign, hPadding, vPadding) {
+Popup.prototype._calculatePosition = function(anchor, hAlign, vAlign, hPadding, vPadding) {
     var w = this.popupContainer.offsetWidth;
     var h = this.popupContainer.offsetHeight;
 
@@ -210,7 +210,7 @@ Popup.prototype._calculatePosition = function (anchor, hAlign, vAlign, hPadding,
 
     return {x: x, y: y, viewportWidth: viewportRect.width, viewportHeight: viewportRect.height};
 };
-Popup.prototype.invalidatePosition = function () {
+Popup.prototype.invalidatePosition = function() {
     if (!this.lastShowOptions) return;
     this._showImpl(this.lastShowOptions.anchor,
         this.lastShowOptions.hAlign,
@@ -220,7 +220,7 @@ Popup.prototype.invalidatePosition = function () {
         this.lastShowOptions.autoFlip,
         "skipEvent");
 };
-Popup.prototype._showImpl = function (anchor, hAlign, vAlign, hPadding, vPadding, autoFlip, skipEvent) {
+Popup.prototype._showImpl = function(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip, skipEvent) {
     this.lastShowOptions = {
         anchor: anchor,
         hAlign: hAlign,
@@ -237,7 +237,7 @@ Popup.prototype._showImpl = function (anchor, hAlign, vAlign, hPadding, vPadding
     var x = p.x;
     var y = p.y;
     var rect = anchor.getBoundingClientRect();
-    //invalidate into view
+    // invalidate into view
     var screenW = p.viewportWidth - 10;
     if (x + w > screenW || x < 0) {
         if (autoFlip && (hAlign == "right" || hAlign == "left-inside")) {
@@ -273,12 +273,12 @@ Popup.prototype._showImpl = function (anchor, hAlign, vAlign, hPadding, vPadding
                 y = Math.max(0, y);
                 if (y == 0 && h > screenH) {
                     y = rect.top + rect.height;
-                    this.popupContainer.style.height = ((screenH - y) * 0.9)  + "px";
+                    this.popupContainer.style.height = ((screenH - y) * 0.9) + "px";
                     this.popupContainer.style.overflow = "auto";
                 }
             }
         } else {
-            if (this.forceInside)  {
+            if (this.forceInside) {
                 this.popupContainer.style.height = (screenH - y) + "px";
                 this.popupContainer.style.overflow = "auto";
             }
@@ -299,22 +299,22 @@ Popup.prototype._showImpl = function (anchor, hAlign, vAlign, hPadding, vPadding
         BaseWidget.registerClosable(this);
     }
 };
-Popup.prototype._setPosition = function (x, y) {
+Popup.prototype._setPosition = function(x, y) {
     this.popupContainer.style.left = x + "px";
     this.popupContainer.style.top = y + "px";
 };
-Popup.prototype.close = function (reason, event) {
+Popup.prototype.close = function(reason, event) {
     this.hide(undefined, reason, event);
 };
-Popup.prototype.getClosableContainer = function () {
+Popup.prototype.getClosableContainer = function() {
     return this.popupContainer;
 };
-Popup.prototype.hidePopupContainer = function () {
+Popup.prototype.hidePopupContainer = function() {
     this.popupContainer.style.opacity = 0;
     this.popupContainer.style.visibility = "hidden";
     this.visible = false;
-}
-Popup.prototype.hide = function (silent, reason, event) {
+};
+Popup.prototype.hide = function(silent, reason, event) {
     this.hidePopupContainer();
     if (!silent) Dom.emitEvent("p:PopupHidden", this.node());
     if (this.onHide) this.onHide(reason, event);
@@ -322,11 +322,11 @@ Popup.prototype.hide = function (silent, reason, event) {
     BaseWidget.unregisterClosable(this);
     if (this.e(this.shouldDetach)) this.detach();
 };
-Popup.prototype.detach = function () {
+Popup.prototype.detach = function() {
     if (this.popupContainer.parentNode) {
         this.popupContainer.parentNode.removeChild(this.popupContainer);
     }
 };
-Popup.hasShowPopup = function () {
+Popup.hasShowPopup = function() {
     return BaseWidget.closables.length;
 };

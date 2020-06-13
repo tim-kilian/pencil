@@ -1,4 +1,4 @@
-module.exports = function () {
+module.exports = function() {
     const path = require("path");
     const fs = require("fs");
 
@@ -21,13 +21,13 @@ module.exports = function () {
         }
 
         return "file://" + encodeURI(filePath);
-    };
+    }
 
     function buildEmbeddedFontFaceCSS(faces, callback) {
-        //creating combinedCSS
+        // creating combinedCSS
         var combinedCSS = "";
         if (!faces) {
-            callback(combinedCSS)
+            callback(combinedCSS);
             return;
         }
 
@@ -42,7 +42,7 @@ module.exports = function () {
 
             var installedFace = faces[index];
 
-            fs.readFile(installedFace.filePath, function (error, bytes) {
+            fs.readFile(installedFace.filePath, function(error, bytes) {
                 var ext = path.extname(installedFace.filePath).toLowerCase();
                 var mime = MIME_MAP[ext];
                 if (!mime) {
@@ -53,18 +53,18 @@ module.exports = function () {
 
                 var url = "data:" + mime + ";base64," + new Buffer(bytes).toString("base64");
 
-                combinedCSS +=  "@font-face {\n"
-                                + "    font-family: '" + installedFace.name + "';\n"
-                                + "    src: url('" + url + "') format('" + format + "');\n"
-                                + "    font-weight: " + installedFace.weight + ";\n"
-                                + "    font-style: " + installedFace.style + ";\n"
-                                + "}\n";
+                combinedCSS += "@font-face {\n" +
+                                "    font-family: '" + installedFace.name + "';\n" +
+                                "    src: url('" + url + "') format('" + format + "');\n" +
+                                "    font-weight: " + installedFace.weight + ";\n" +
+                                "    font-style: " + installedFace.style + ";\n" +
+                                "}\n";
                 next();
             });
         }
 
         next();
-    };
+    }
 
     function buildFontFaceCSS(faces) {
         if (!faces) return "";
@@ -77,21 +77,21 @@ module.exports = function () {
 
             var url = filePathToURL(installedFace.filePath);
 
-            combinedCSS +=  "@font-face {\n"
-                            + "    font-family: '" + installedFace.name + "';\n"
-                            + "    src: url('" + url + "') format('" + format + "');\n"
-                            + "    font-weight: " + installedFace.weight + ";\n"
-                            + "    font-style: " + installedFace.style + ";\n"
-                            + "}\n";
+            combinedCSS += "@font-face {\n" +
+                            "    font-family: '" + installedFace.name + "';\n" +
+                            "    src: url('" + url + "') format('" + format + "');\n" +
+                            "    font-weight: " + installedFace.weight + ";\n" +
+                            "    font-style: " + installedFace.style + ";\n" +
+                            "}\n";
         }
 
         return combinedCSS;
-    };
+    }
 
 
     return {
         buildEmbeddedFontFaceCSS: buildEmbeddedFontFaceCSS,
         buildFontFaceCSS: buildFontFaceCSS,
         filePathToURL: filePathToURL
-    }
+    };
 }();

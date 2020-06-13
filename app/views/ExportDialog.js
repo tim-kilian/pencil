@@ -1,4 +1,4 @@
-function ExportDialog () {
+function ExportDialog() {
     Dialog.call(this);
     this.title = "Export Document";
     this.subTitle = "Select source pages and target output format with options";
@@ -7,23 +7,23 @@ function ExportDialog () {
         if (!a) return !b;
         if (!b) return false;
         return a.id == b.id;
-    };
+    }
 
-    this.exporterCombo.renderer = function (exporter) {
+    this.exporterCombo.renderer = function(exporter) {
         return exporter.name;
     };
     this.exporterCombo.comparer = sameIdComparer;
 
     this.exporterCombo.setItems(Pencil.documentExporters);
 
-    this.exporterCombo.addEventListener("p:ItemSelected", function () {
+    this.exporterCombo.addEventListener("p:ItemSelected", function() {
         this.invalidateUIByExporter();
     }.bind(this), false);
 
-    this.templateCombo.renderer = function (template) {
+    this.templateCombo.renderer = function(template) {
         return template.name;
     };
-    this.templateCombo.addEventListener("p:ItemSelected", function () {
+    this.templateCombo.addEventListener("p:ItemSelected", function() {
         this.invalidateUIByTemplate();
     }.bind(this), false);
 
@@ -31,12 +31,11 @@ function ExportDialog () {
 
 
     this.invalidateUIByExporter();
-
 }
 __extend(Dialog, ExportDialog);
 
 
-ExportDialog.prototype.invalidateUIByExporter = function () {
+ExportDialog.prototype.invalidateUIByExporter = function() {
     var exporter = this.exporterCombo.getSelectedItem();
     if (exporter.linkingSupported) {
         Dom.addClass(this.optionPane, "LinkingSupported");
@@ -73,23 +72,23 @@ ExportDialog.prototype.invalidateUIByExporter = function () {
 
     this.invalidateUIByTemplate();
 };
-ExportDialog.prototype.invalidateUIByTemplate = function () {
+ExportDialog.prototype.invalidateUIByTemplate = function() {
     var template = this.templateCombo.getSelectedItem();
     Dom.empty(this.optionEditorPane);
     Dom.toggleClass(this.optionPane, "NoExtraOptions", !template || !template.editableProperties || template.editableProperties.length == 0);
     this.propertyEditors = {};
     if (!template) return;
-    for(var i = 0; i < template.editableProperties.length; i++) {
+    for (var i = 0; i < template.editableProperties.length; i++) {
         var property = template.editableProperties[i];
         var propName = property.displayName;
         var editorWrapper = Dom.newDOMElement({
-            _name: "hbox",
+            "_name": "hbox",
             "class": "Wrapper",
-            _children: [
+            "_children": [
                 {
-                    _name: "div",
+                    "_name": "div",
                     "class": "Label Property",
-                    _text: propName + ":"
+                    "_text": propName + ":"
                 }
             ]
         });
@@ -110,15 +109,15 @@ ExportDialog.prototype.invalidateUIByTemplate = function () {
         this.optionEditorPane.appendChild(editorWrapper);
     }
 };
-ExportDialog.prototype.setup = function (options) {
-    var source = function (page, callback) {
+ExportDialog.prototype.setup = function(options) {
+    var source = function(page, callback) {
         if (!page) {
             callback(Pencil.controller.getRootPages());
         } else {
             callback(page.children);
         }
     };
-    var renderer = function (page) {
+    var renderer = function(page) {
         return Dom.htmlEncode(page.name);
     };
 
@@ -127,8 +126,12 @@ ExportDialog.prototype.setup = function (options) {
         checkable: true,
         propagateCheckActionDownwards: true,
         propagateUncheckActionDownwards: true,
-        isItemSelectable: function () { return false; },
-        isItemInitiallyChecked: function () { return false; }
+        isItemSelectable: function() {
+            return false;
+        },
+        isItemInitiallyChecked: function() {
+            return false;
+        }
     });
 
     if (options.forcedExporterId) {
@@ -140,7 +143,6 @@ ExportDialog.prototype.setup = function (options) {
         var exporter = this.exporterCombo.getSelectedItem();
         if (exporter) {
             this.title = exporter.name;
-            
         }
     }
 
@@ -163,7 +165,7 @@ ExportDialog.prototype.setup = function (options) {
         this.pageTree.setCheckedItems(Pencil.controller.doc.pages);
     }
 };
-ExportDialog.prototype.setOptionValues = function (valueMap) {
+ExportDialog.prototype.setOptionValues = function(valueMap) {
     var template = this.templateCombo.getSelectedItem();
     if (!template) return;
 
@@ -181,17 +183,17 @@ ExportDialog.prototype.setOptionValues = function (valueMap) {
 };
 
 
-ExportDialog.prototype.getDialogActions = function () {
+ExportDialog.prototype.getDialogActions = function() {
     var thiz = this;
     return [
-        {   type: "cancel", title: "Cancel",
+        {type: "cancel", title: "Cancel",
             isCloseHandler: true,
-            run: function () {
+            run: function() {
                 return true;
             }
         },
-        {   type: "accept", title: "Export",
-            run: function () {
+        {type: "accept", title: "Export",
+            run: function() {
                 var exporter = this.exporterCombo.getSelectedItem();
                 var template = this.templateCombo.getSelectedItem();
 
@@ -225,7 +227,7 @@ ExportDialog.prototype.getDialogActions = function () {
                     if (isFile) {
                         var filters = [];
                         var firstExt = null;
-                        exporter.getOutputFileExtensions().forEach(function (filter) {
+                        exporter.getOutputFileExtensions().forEach(function(filter) {
                             if (!firstExt) firstExt = filter.ext;
                             filters.push({
                                 name: filter.title || filter.ext,
@@ -236,7 +238,7 @@ ExportDialog.prototype.getDialogActions = function () {
                         if (!dialogOptions.defaultPath) {
                             if (Pencil.controller.documentPath) {
                                 dialogOptions.defaultPath = path.join(path.dirname(Pencil.controller.documentPath),
-                                                                path.basename(Pencil.controller.documentPath, path.extname(Pencil.controller.documentPath)) + "." + firstExt);
+                                    path.basename(Pencil.controller.documentPath, path.extname(Pencil.controller.documentPath)) + "." + firstExt);
                             } else {
                                 dialogOptions.defaultPath = path.join(os.homedir(), "Output." + firstExt);
                             }
@@ -244,12 +246,11 @@ ExportDialog.prototype.getDialogActions = function () {
 
                         dialogOptions.filters = filters;
                         console.log("dialogOptions", dialogOptions);
-                        dialog.showSaveDialog(dialogOptions, function (filename) {
+                        dialog.showSaveDialog(dialogOptions, function(filename) {
                             if (!filename) return;
                             result.targetPath = filename;
 
                             this.close(result);
-
                         }.bind(this));
                     } else {
                         dialogOptions.properties = ["openDirectory"];
@@ -262,23 +263,20 @@ ExportDialog.prototype.getDialogActions = function () {
                             }
                         }
 
-                        dialog.showOpenDialog(dialogOptions, function (filenames) {
+                        dialog.showOpenDialog(dialogOptions, function(filenames) {
                             if (!filenames || filenames.length <= 0) return;
                             result.targetPath = filenames[0];
 
                             this.close(result);
-
                         }.bind(this));
                     }
-
                 } else {
                     this.close(result);
                 }
 
 
-
                 return false;
             }
         }
-    ]
+    ];
 };

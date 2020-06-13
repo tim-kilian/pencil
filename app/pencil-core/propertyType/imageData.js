@@ -13,7 +13,7 @@ ImageData.win = null;
 100,200,10-20 45-33,
 */
 
-ImageData.fromString = function (literal) {
+ImageData.fromString = function(literal) {
     if (literal.match(ImageData.REG_EX2)) {
         var w = parseInt(RegExp.$1, 10);
         var h = parseInt(RegExp.$2, 10);
@@ -24,17 +24,17 @@ ImageData.fromString = function (literal) {
         var xCells = ImageData.parseCellString(xCellsString);
         var yCells = ImageData.parseCellString(yCellsString);
 
-        return new ImageData(w, h, data, xCells,yCells);
+        return new ImageData(w, h, data, xCells, yCells);
     }
     if (literal.match(ImageData.REG_EX)) {
         return new ImageData(parseInt(RegExp.$1, 10),
-                            parseInt(RegExp.$2, 10),
-                            RegExp.$3);
+            parseInt(RegExp.$2, 10),
+            RegExp.$3);
     }
 
     return new ImageData(literal);
 };
-ImageData.parseCellString = function (literal) {
+ImageData.parseCellString = function(literal) {
     var cells = [];
     var blocks = literal.split(/[ ]+/);
     for (var block of blocks) {
@@ -42,13 +42,13 @@ ImageData.parseCellString = function (literal) {
             cells.push({
                 from: parseInt(RegExp.$1, 10),
                 to: parseInt(RegExp.$2, 10)
-            })
+            });
         }
     }
 
     return cells;
 };
-ImageData.generateCellString = function (cells) {
+ImageData.generateCellString = function(cells) {
     if (!cells) return "";
     var blocks = [];
     for (var cell of cells) {
@@ -57,11 +57,11 @@ ImageData.generateCellString = function (cells) {
 
     return blocks.join(" ");
 };
-ImageData.invalidateValue = function (oldData, callback) {
+ImageData.invalidateValue = function(oldData, callback) {
     if (oldData.data.startsWith(ImageData.SVG_IMAGE_DATA_PREFIX)) {
         var svg = oldData.data.substring(ImageData.SVG_IMAGE_DATA_PREFIX.length + 1);
 
-        let id = Pencil.controller.svgImageToRefSync(svg);
+        const id = Pencil.controller.svgImageToRefSync(svg);
         callback(new ImageData(oldData.w, oldData.h, ImageData.idToRefString(id)), null);
     } else if (oldData.data.match(/^data:/)) {
         var image = null;
@@ -70,17 +70,16 @@ ImageData.invalidateValue = function (oldData, callback) {
         } catch (e) {
             console.e(e);
         }
-        
+
         if (!image) {
             callback(null);
             return;
         }
 
-        let id = Pencil.controller.nativeImageToRefSync(image);
+        const id = Pencil.controller.nativeImageToRefSync(image);
         callback(new ImageData(oldData.w, oldData.h, ImageData.idToRefString(id)), null);
-
     } else if (!oldData.data.match(/^ref:\/\//)) {
-        Pencil.controller.copyAsRef(oldData.data, function (id, error) {
+        Pencil.controller.copyAsRef(oldData.data, function(id, error) {
             if (id) {
                 callback(new ImageData(oldData.w, oldData.h, ImageData.idToRefString(id)), null);
             } else {
@@ -91,7 +90,7 @@ ImageData.invalidateValue = function (oldData, callback) {
         callback(null);
     }
 };
-ImageData.prepareForEmbedding = function (oldData, callback) {
+ImageData.prepareForEmbedding = function(oldData, callback) {
     if (oldData.data.match(/^ref:\/\//)) {
         var id = ImageData.refStringToId(oldData.data);
         if (!id) {
@@ -113,7 +112,7 @@ ImageData.prepareForEmbedding = function (oldData, callback) {
     }
 };
 
-ImageData.performIntialProcessing = function (data, def, currentCollection) {
+ImageData.performIntialProcessing = function(data, def, currentCollection) {
     if (data.data.match(/^collection:\/\/(.+)$/)) {
         var declaredPath = RegExp.$1;
         var id = Pencil.controller.collectionResourceAsRefSync(currentCollection || def.collection, declaredPath);
@@ -125,7 +124,7 @@ ImageData.performIntialProcessing = function (data, def, currentCollection) {
     return null;
 };
 
-ImageData.filePathToURL = function (filePath, options) {
+ImageData.filePathToURL = function(filePath, options) {
     filePath = path.resolve(filePath).replace(/\\/g, "/");
 
     if (!filePath.match(/^\/.+$/)) {
@@ -135,50 +134,50 @@ ImageData.filePathToURL = function (filePath, options) {
     return "file://" + encodeURI(filePath);
 };
 
-ImageData.idToRefString = function (id) {
+ImageData.idToRefString = function(id) {
     return "ref://" + id;
 };
-ImageData.refStringToId = function (refString) {
+ImageData.refStringToId = function(refString) {
     if (refString.match(/^ref:\/\/(.+)$/)) return RegExp.$1;
     return null;
 };
-ImageData.refStringToUrl = function (refString) {
+ImageData.refStringToUrl = function(refString) {
     var id = ImageData.refStringToId(refString);
     if (!id) return null;
     return Pencil.controller.refIdToUrl(id);
 };
 
-ImageData.prompt = function (callback, ext) {
+ImageData.prompt = function(callback, ext) {
     dialog.showOpenDialog(remote.getCurrentWindow(), {
         title: "Select Image",
         defaultPath: os.homedir(),
         filters: [
-            { name: "Image files", extensions: ext || ["png", "jpg", "jpeg", "gif", "bmp", "svg"] }
+            {name: "Image files", extensions: ext || ["png", "jpg", "jpeg", "gif", "bmp", "svg"]}
         ]
 
-    }, function (filenames) {
+    }, function(filenames) {
         if (!filenames || filenames.length <= 0) return;
         ImageData.fromExternalToImageData(filenames[0], callback);
     });
 };
 
-ImageData.fromExternalToImageData = function (filePath, callback) {
-    Pencil.controller.copyAsRef(filePath, function (id) {
+ImageData.fromExternalToImageData = function(filePath, callback) {
+    Pencil.controller.copyAsRef(filePath, function(id) {
         var url = Pencil.controller.refIdToUrl(id);
         var image = new Image();
-        image.onload = function () {
+        image.onload = function() {
             callback(new ImageData(image.width, image.height, ImageData.idToRefString(id)));
             image.src = "";
         };
         image.src = url;
     });
 };
-ImageData.fromUrl = function (url, callback) {
+ImageData.fromUrl = function(url, callback) {
     ImageData.win.document.body.innerHTML = "";
     var image = ImageData.win.document.createElementNS(PencilNamespaces.html, "img");
     ImageData.win.document.body.appendChild(image);
 
-    image.addEventListener("load", function (event) {
+    image.addEventListener("load", function(event) {
         debug("image loaded");
         try {
             callback(new ImageData(image.width, image.height, url));
@@ -190,9 +189,9 @@ ImageData.fromUrl = function (url, callback) {
     image.setAttribute("src", url);
     debug("after setting image url: " + image.src);
 };
-ImageData.fromUrlEmbedded = function (url, callback) {
+ImageData.fromUrlEmbedded = function(url, callback) {
     var image = new Image();
-    image.onload = function () {
+    image.onload = function() {
         var canvas = document.createElementNS(PencilNamespaces.html, "canvas");
         canvas.style.width = image.width + "px";
         canvas.style.height = image.height + "px";
@@ -213,7 +212,7 @@ ImageData.fromUrlEmbedded = function (url, callback) {
     image.src = url;
 };
 
-ImageData.convertToEmbeded = function (imageData, callback) {
+ImageData.convertToEmbeded = function(imageData, callback) {
     if (imageData.data.match(/^data:/)) {
         alert("This image is already in the embedded mode. No conversion was taken.");
         return;
@@ -221,7 +220,7 @@ ImageData.convertToEmbeded = function (imageData, callback) {
     ImageData.fromUrlEmbedded(imageData.data, callback);
 };
 
-ImageData.commandsToData = function (pathCommands) {
+ImageData.commandsToData = function(pathCommands) {
     var newData = "";
 
     for (var command of pathCommands) {
@@ -236,7 +235,7 @@ ImageData.commandsToData = function (pathCommands) {
 
     return newData;
 };
-ImageData.generatePathSVGData = function (svgPathData, size) {
+ImageData.generatePathSVGData = function(svgPathData, size) {
     var specs = [];
     var json = svgPathData.data;
     if (!json.startsWith("json:")) return specs;
@@ -262,23 +261,23 @@ ImageData.generatePathSVGData = function (svgPathData, size) {
             {
                 _name: "g",
                 _uri: PencilNamespaces.svg,
-                //transform: scale(size.w / svgPathData.w, size.h / svgPathData.h),
+                // transform: scale(size.w / svgPathData.w, size.h / svgPathData.h),
                 _children: specs
             }
         ]
-    }
+    };
 
     var svgDom = Dom.newDOMElement(svg);
     var svgData = encodeURIComponent(Dom.serializeNode(svgDom));
     return "data:image/svg+xml," + svgData;
 };
 
-ImageData.prototype.isBitmap = function () {
+ImageData.prototype.isBitmap = function() {
     // Only support ref file for now
     return !!ImageData.refStringToId(this.data);
 };
 
-ImageData.prototype.toImageSrc = function () {
+ImageData.prototype.toImageSrc = function() {
     if (!this.data) return "";
 
     if (this.data.startsWith("json:")) {
@@ -289,7 +288,7 @@ ImageData.prototype.toImageSrc = function () {
         return ImageData.refStringToUrl(this.data);
     }
 };
-ImageData.prototype.toString = function () {
+ImageData.prototype.toString = function() {
     if (!this.xCells && !this.yCells) {
         return [this.w, this.h, this.data].join(",");
     } else {
@@ -298,7 +297,7 @@ ImageData.prototype.toString = function () {
 };
 
 ImageData.SVG_IMAGE_DATA_PREFIX = "data:image/svg+xml";
-ImageData.prototype.getDataAsXML = function () {
+ImageData.prototype.getDataAsXML = function() {
     var url = this.data;
     if (!url) return null;
 
@@ -319,7 +318,7 @@ ImageData.prototype.getDataAsXML = function () {
     return null;
 };
 
-ImageData.fromScreenshot = function (callback, providedOptions) {
+ImageData.fromScreenshot = function(callback, providedOptions) {
     /*
     var capturer = require("electron-screencapture");
     var electron = require("electron");
@@ -360,7 +359,7 @@ ImageData.fromScreenshot = function (callback, providedOptions) {
         return;
     }
 
-    var executer = function (options) {
+    var executer = function(options) {
         var tmp = require("tmp");
         var localPath = tmp.tmpNameSync();
 
@@ -373,22 +372,22 @@ ImageData.fromScreenshot = function (callback, providedOptions) {
 
         var delay = (options.delay ? parseInt(options.delay, 10) * 1000 : 0) + 100;
 
-        window.setTimeout(function () {
-            provider.capture(options).then(function () {
+        window.setTimeout(function() {
+            provider.capture(options).then(function() {
                 if (options.hidePencil) win.show();
-                ImageData.fromExternalToImageData(localPath, function (imageData) {
-                    //As the image is getting directly from device screenshot, the number of pixel was already multiplied by the scale
+                ImageData.fromExternalToImageData(localPath, function(imageData) {
+                    // As the image is getting directly from device screenshot, the number of pixel was already multiplied by the scale
                     var ratio = remote.screen.getPrimaryDisplay().scaleFactor;
                     if (ratio > 1) {
                         imageData.w = Math.round(imageData.w / ratio);
                         imageData.h = Math.round(imageData.h / ratio);
                     }
-                    
+
                     var fs = require("fs");
                     fs.unlinkSync(localPath);
                     callback(imageData, options);
                 });
-            }).catch(function (error) {
+            }).catch(function(error) {
                 if (options.hidePencil) win.show();
                 callback(null, options, error);
             });
@@ -404,7 +403,7 @@ ImageData.fromScreenshot = function (callback, providedOptions) {
     }
 };
 
-window.addEventListener("load", function () {
+window.addEventListener("load", function() {
     var iframe = document.createElementNS(PencilNamespaces.html, "html:iframe");
     iframe.setAttribute("style", "border: none; min-width: 0px; min-height: 0px; width: 1px; height: 1px; xvisibility: hidden;");
     iframe.setAttribute("src", "pencil-core/blank.html");
@@ -419,15 +418,15 @@ window.addEventListener("load", function () {
     container.appendChild(box);
 
     ImageData.win = iframe.contentWindow;
-    ImageData.win.document.body.setAttribute("style", "padding: 0px; margin: 0px;")
+    ImageData.win.document.body.setAttribute("style", "padding: 0px; margin: 0px;");
 }, false);
 
 
 pencilSandbox.ImageData = {
-    newImageData: function (w, h, data) {
+    newImageData: function(w, h, data) {
         return new ImageData(w, h, data);
     }
 };
 for (var p in ImageData) {
     pencilSandbox.ImageData[p] = ImageData[p];
-};
+}

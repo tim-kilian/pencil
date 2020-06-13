@@ -21,11 +21,11 @@ function SnappingData(type, pos, applyTo, vertical, id, disabled, limit1, limit2
         if (limit2) {
             this.limit2 = parseInt(limit2);
         }
-    } catch(e) {
+    } catch (e) {
         error("invalid pos: " + pos);
     }
-};
-/*SnappingData.REG_EX = /^([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|(.+)$/i;
+}
+/* SnappingData.REG_EX = /^([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|(.+)$/i;
 SnappingData.fromString = function(literal) {
     var snapping = new SnappingData();
     if (literal.match(SnappingData.REG_EX)) {
@@ -33,22 +33,22 @@ SnappingData.fromString = function(literal) {
     }
     return snapping;
 };*/
-SnappingData.prototype.toString = function () {
+SnappingData.prototype.toString = function() {
     return [this.type, this.pos, this.applyTo, this.vertical, this.limit1, this.limit2].join("|");
 };
-SnappingData.prototype.clone = function () {
+SnappingData.prototype.clone = function() {
     return new SnappingData(this.type, this.pos, this.applyTo, this.vertical, Util.newUUID(), false, this.limit1, this.limit2);
 };
-SnappingData.prototype.makeLocal = function (local) {
-	this.local = local;
-	return this;
+SnappingData.prototype.makeLocal = function(local) {
+    this.local = local;
+    return this;
 };
 
 pencilSandbox.SnappingData = {
-    newSnappingData: function (type, pos, applyTo, vertical, id, disabled, limit1, limit2) {
+    newSnappingData: function(type, pos, applyTo, vertical, id, disabled, limit1, limit2) {
         return new SnappingData(type, pos, applyTo, vertical, id, disabled, limit1, limit2);
     }
 };
 for (var p in SnappingData) {
     pencilSandbox.SnappingData[p] = SnappingData[p];
-};
+}

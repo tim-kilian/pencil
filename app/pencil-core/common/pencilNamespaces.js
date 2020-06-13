@@ -25,7 +25,7 @@ PencilNamespaces["media"] = "http://search.yahoo.com/mrss/";
 PencilNamespaces["atom"] = "http://www.w3.org/2005/Atom";
 
 
-PencilNamespaces.resolve = function (prefix) {
+PencilNamespaces.resolve = function(prefix) {
     var uri = PencilNamespaces[prefix];
     if (uri) return uri;
 

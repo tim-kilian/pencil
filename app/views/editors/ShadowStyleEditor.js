@@ -1,9 +1,9 @@
 function ShadowStyleEditor() {
     PropertyEditor.call(this);
-    
+
     var thiz = this;
     this.selectorContainer.shouldCloseOnBlur = function(event) {
-        var found = Dom.findUpward(event.target, function (node) {
+        var found = Dom.findUpward(event.target, function(node) {
             return node == thiz.colorButton;
         });
         return !found;
@@ -11,10 +11,10 @@ function ShadowStyleEditor() {
 }
 __extend(PropertyEditor, ShadowStyleEditor);
 
-ShadowStyleEditor.prototype.setup = function () {
+ShadowStyleEditor.prototype.setup = function() {
     var thiz = this;
-    
-    this.colorButton.addEventListener("click", function (event) {
+
+    this.colorButton.addEventListener("click", function(event) {
         if (thiz.selectorContainer.isVisible()) {
             thiz.selectorContainer.hide();
             return;
@@ -24,24 +24,24 @@ ShadowStyleEditor.prototype.setup = function () {
         event.cancelBubble = true;
     }, false);
 
-    this.selector.addEventListener("ValueChange", function (event) {
+    this.selector.addEventListener("ValueChange", function(event) {
         thiz.color = thiz.selector.getColor().toRGBString();
         thiz.invalidateColorDisplay();
         thiz.fireChangeEvent();
     }, false);
 
-    this.selector.addEventListener("p:CloseColorSelector", function (event) {
+    this.selector.addEventListener("p:CloseColorSelector", function(event) {
         if (thiz.selectorContainer.isVisible()) {
             thiz.selectorContainer.hide();
             return;
         }
     }, false);
 
-    this.node().addEventListener("change", function (event) {
+    this.node().addEventListener("change", function(event) {
         thiz.fireChangeEvent();
     }, false);
 };
-ShadowStyleEditor.prototype.setValue = function (shadowStyle) {
+ShadowStyleEditor.prototype.setValue = function(shadowStyle) {
     if (!shadowStyle) return;
     this.dx.value = shadowStyle.dx;
     this.dy.value = shadowStyle.dy;
@@ -50,10 +50,10 @@ ShadowStyleEditor.prototype.setValue = function (shadowStyle) {
     this.color = shadowStyle.color || "#000000";
     this.invalidateColorDisplay();
 };
-ShadowStyleEditor.prototype.invalidateColorDisplay = function () {
+ShadowStyleEditor.prototype.invalidateColorDisplay = function() {
     this.colorButton.style.background = this.color;
 };
-ShadowStyleEditor.prototype.getValue = function () {
+ShadowStyleEditor.prototype.getValue = function() {
     var shadowStyle = new ShadowStyle();
     shadowStyle.dx = this.dx.value;
     shadowStyle.dy = this.dy.value;

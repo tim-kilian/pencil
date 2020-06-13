@@ -2,17 +2,17 @@ function SharedPropertyEditor() {
     BaseTemplatedWidget.call(this);
     Pencil.registerSharedEditor(this);
     this.canAttach = true;
-    //ToolBar.setupFocusHandling(this.node());
+    // ToolBar.setupFocusHandling(this.node());
 }
 __extend(BaseTemplatedWidget, SharedPropertyEditor);
 
-SharedPropertyEditor.prototype.setup = function () {
+SharedPropertyEditor.prototype.setup = function() {
     this.propertyContainer.innerHTML = "";
     var thiz = this;
 
     this.propertyContainer.addEventListener("p:ValueChanged", function(event) {
         if (!thiz.target) return;
-        var editor = Dom.findUpward(event.target, function (n) {
+        var editor = Dom.findUpward(event.target, function(n) {
             return n._property;
         });
         if (!editor) return;
@@ -35,18 +35,18 @@ SharedPropertyEditor.prototype.setup = function () {
     }, false);
 };
 SharedPropertyEditor.prototype.getTitle = function() {
-	return "Properties";
-}
+    return "Properties";
+};
 SharedPropertyEditor.prototype.getIconName = function() {
-	return "tune";
-}
-SharedPropertyEditor.prototype.sizeChanged = function (expanded) {
-	this.canAttach = expanded;
-	if (this.canAttach && this.pendingTarget) {
-		this.attach(this.pendingTarget);
-		this.pendingTarget = null;
-	}
-}
+    return "tune";
+};
+SharedPropertyEditor.prototype.sizeChanged = function(expanded) {
+    this.canAttach = expanded;
+    if (this.canAttach && this.pendingTarget) {
+        this.attach(this.pendingTarget);
+        this.pendingTarget = null;
+    }
+};
 SharedPropertyEditor.prototype.validationEditorUI = function() {
     if (!this.validationEditor) return;
 
@@ -60,15 +60,16 @@ SharedPropertyEditor.prototype.validationEditorUI = function() {
     }
 };
 
-SharedPropertyEditor.prototype.attach = function (target) {
-
+SharedPropertyEditor.prototype.attach = function(target) {
     if (!target) return;
-    if (target && target.getAttributeNS && target.getAttributeNS(PencilNamespaces.p, "locked") == "true") { return; }
+    if (target && target.getAttributeNS && target.getAttributeNS(PencilNamespaces.p, "locked") == "true") {
+        return;
+    }
 
     if (!this.canAttach) {
-		this.pendingTarget = target;
-		return;
-	}
+        this.pendingTarget = target;
+        return;
+    }
 
     if (this.target && this.target.id == target.id) {
         this.target = target;
@@ -143,18 +144,18 @@ SharedPropertyEditor.prototype.attach = function (target) {
     var uuid = Util.newUUID();
     this.currentExecutorUUID = uuid;
 
-    var executor = function () {
+    var executor = function() {
         if (!thiz.target || uuid != thiz.currentExecutorUUID) return;
         if (properties.length == 0) {
             if (thiz.target.def && thiz.target.def.collection.propertyGroups && thiz.target.def.collection.propertyGroups.length > 0) {
                 var hbox = Dom.newDOMElement({
-                    _name: "hbox",
+                    "_name": "hbox",
                     "class": "FooterActions",
-                    _children: [
+                    "_children": [
                         {
-                            _name: "button",
-                            _text: "Restore Default Settings",
-                            command: "setDefault",
+                            "_name": "button",
+                            "_text": "Restore Default Settings",
+                            "command": "setDefault",
                             "class": "DefaultButton"
                         }
                     ]
@@ -164,9 +165,9 @@ SharedPropertyEditor.prototype.attach = function (target) {
 
             if (StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection() && thiz.target.getSymbolName) {
                 thiz.propertyContainer.appendChild(Dom.newDOMElement({
-                    _name: "vbox",
+                    "_name": "vbox",
                     "class": "SymbolNameContainer",
-                    _children: [
+                    "_children": [
                         {
                             _name: "label",
                             _text: "Symbol Name:"
@@ -191,14 +192,14 @@ SharedPropertyEditor.prototype.attach = function (target) {
         var property = properties.shift();
         if (!currentGroupNode || currentGroupNode._group != property._group) {
             currentGroupNode = Dom.newDOMElement({
-                _name: "vbox",
+                "_name": "vbox",
                 "class": "Group"
             });
 
             currentGroupNode._group = property._group;
             var titleNode = Dom.newDOMElement({
-                _name: "div",
-                _text: property._group.name,
+                "_name": "div",
+                "_text": property._group.name,
                 "class": "Label Group"
             });
             currentGroupNode.appendChild(titleNode);
@@ -208,21 +209,23 @@ SharedPropertyEditor.prototype.attach = function (target) {
         var propName = property.displayName ? property.displayName.trim() : null;
         var groupName = property._group.name ? property._group.name.trim() : null;
 
-        if (!propName || !groupName) { return; }
+        if (!propName || !groupName) {
+            return;
+        }
 
         if (propName.indexOf(groupName) == 0) {
             propName = propName.substring(groupName.length);
         }
 
         var editorWrapper = Dom.newDOMElement({
-            _name: "hbox",
+            "_name": "hbox",
             "class": "Wrapper Type_" + property.type.name,
-            _children: [
+            "_children": [
                 {
-                    _name: "div",
+                    "_name": "div",
                     "class": "Label Property",
                     "flex": "2",
-                    _text: propName + ":"
+                    "_text": propName + ":"
                 }
             ]
         });
@@ -268,7 +271,7 @@ SharedPropertyEditor.prototype.setDefaultProperties = function() {
     for (p in shapeProperties) {
         var property = defaultProperties[p] || null;
         if (property && this.propertyEditor[p]) {
-            property
+            property;
             var type = property.type;
             var name = ShapeDefCollectionParser.getCollectionPropertyConfigName(collection.id, property.name);
             var value = Config.get(name);
@@ -280,19 +283,19 @@ SharedPropertyEditor.prototype.setDefaultProperties = function() {
             this.target.setProperty(p, propertyValue);
         }
     }
-}
+};
 
-SharedPropertyEditor.prototype.detach = function () {
+SharedPropertyEditor.prototype.detach = function() {
     this.propertyContainer.style.display = "none";
     this.noTargetMessagePane.style.display = "flex";
     this.propertyContainer.innerHTML = "";
     this.target = null;
     Dom.emitEvent("p:TitleChanged", this.node(), {});
 };
-SharedPropertyEditor.prototype.invalidate = function () {
+SharedPropertyEditor.prototype.invalidate = function() {
     if (!this.target) {
         this.detach();
     } else {
         this.attach(this.target);
     }
-}
+};

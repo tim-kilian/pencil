@@ -16,23 +16,23 @@ OnScreenTextEditor._runEditorCommand = function(command, arg) {
     }
 };
 
-OnScreenTextEditor._runEditorCommandByList = function (command, list) {
+OnScreenTextEditor._runEditorCommandByList = function(command, list) {
     var v = list.value;
     if (!v) return;
     try {
         OnScreenTextEditor._runEditorCommand(command, v);
     } catch (e) { }
-    //list.selectedIndex = 0;
+    // list.selectedIndex = 0;
 };
 
-OnScreenTextEditor._enableTextToolbar = function (enable) {
+OnScreenTextEditor._enableTextToolbar = function(enable) {
     var toolbar = document.getElementById("textFormatToolbar");
-    Dom.workOn(".//*[local-name() = 'toolbarbutton' or local-name() = 'menulist']", toolbar, function (node) {
+    Dom.workOn(".//*[local-name() = 'toolbarbutton' or local-name() = 'menulist']", toolbar, function(node) {
         node.disabled = !enable;
     });
 };
 
-OnScreenTextEditor._enableGlobalClipboardKeys = function (enable) {
+OnScreenTextEditor._enableGlobalClipboardKeys = function(enable) {
     try {
         OnScreenTextEditor._enableGlobalKey("copyKey", enable);
         OnScreenTextEditor._enableGlobalKey("cutKey", enable);
@@ -43,16 +43,16 @@ OnScreenTextEditor._enableGlobalClipboardKeys = function (enable) {
         Console.dumpError(e, "stdout");
     }
 };
-OnScreenTextEditor._enableGlobalKey = function (id, enable) {
+OnScreenTextEditor._enableGlobalKey = function(id, enable) {
     var key = document.getElementById(id);
     if (enable) {
         key.removeAttribute("disabled");
-    }  else {
+    } else {
         key.setAttribute("disabled", "true");
     }
-}
+};
 
-OnScreenTextEditor._ensureSupportElements = function () {
+OnScreenTextEditor._ensureSupportElements = function() {
     try {
         OnScreenTextEditor._ensureSupportElementsImpl();
     } catch (e) {
@@ -63,21 +63,20 @@ OnScreenTextEditor._ensureSupportElements = function () {
 OnScreenTextEditor.focusCausedByCanvasClick = false;
 OnScreenTextEditor._ensureSupportElementsImpl = function() {
     if (!OnScreenTextEditor.richTextEditor) {
-
-        window.addEventListener("focus", function (event) {
-                if (event.originalTarget != OnScreenTextEditor.richTextEditor) {
-                    if (OnScreenTextEditor.isEditing) {
-                        OnScreenTextEditor.richTextEditor.focus();
-                        OnScreenTextEditor.shoudClose = false;
-                    }
+        window.addEventListener("focus", function(event) {
+            if (event.originalTarget != OnScreenTextEditor.richTextEditor) {
+                if (OnScreenTextEditor.isEditing) {
+                    OnScreenTextEditor.richTextEditor.focus();
+                    OnScreenTextEditor.shoudClose = false;
                 }
-            }, false);
-        document.addEventListener("p:CanvasMouseDown", function (event) {
-                OnScreenTextEditor.currentInstance.applyChanges();
-                OnScreenTextEditor._hide();
-            }, false);
+            }
+        }, false);
+        document.addEventListener("p:CanvasMouseDown", function(event) {
+            OnScreenTextEditor.currentInstance.applyChanges();
+            OnScreenTextEditor._hide();
+        }, false);
 
-        //setup toolbar
+        // setup toolbar
         var fontPopup = document.getElementById("fontlist-popup");
         var mfontPopup = document.getElementById("mfontPopup");
         var localFonts = Local.getInstalledFonts();
@@ -108,7 +107,7 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
         OnScreenTextEditor.miniToolbarPane.style.visibility = "hidden";
         OnScreenTextEditor.richtextEditorSizeGrip.style.display = "none";
 
-        OnScreenTextEditor.miniToolbarPane.addEventListener("mousedown", function (event) {
+        OnScreenTextEditor.miniToolbarPane.addEventListener("mousedown", function(event) {
             if (event.button != 0 || !event.originalTarget || (event.originalTarget.nodeName != "toolbar" && event.originalTarget.nodeName != "toolbox" && event.originalTarget.nodeName != "vbox")) return;
             OnScreenTextEditor.miniToolbarPane._oX = event.clientX;
             OnScreenTextEditor.miniToolbarPane._oY = event.clientY;
@@ -116,7 +115,7 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
             OnScreenTextEditor.miniToolbarPane._top = parseInt(OnScreenTextEditor.miniToolbarPane.getAttribute("top"));
             OnScreenTextEditor.miniToolbarPane._hold = true;
         }, true);
-        window.addEventListener("mousemove", function (event) {
+        window.addEventListener("mousemove", function(event) {
             if (OnScreenTextEditor.miniToolbarPane._hold) {
                 var dx = event.clientX - OnScreenTextEditor.miniToolbarPane._oX;
                 var dy = event.clientY - OnScreenTextEditor.miniToolbarPane._oY;
@@ -141,12 +140,12 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
                 }
             }
         }, true);
-        window.addEventListener("mouseup", function (event) {
+        window.addEventListener("mouseup", function(event) {
             OnScreenTextEditor.miniToolbarPane._hold = false;
             OnScreenTextEditor.richtextEditorSizeGrip._hold = false;
         }, true);
 
-        OnScreenTextEditor.richtextEditorSizeGrip.addEventListener("mousedown", function (event) {
+        OnScreenTextEditor.richtextEditorSizeGrip.addEventListener("mousedown", function(event) {
             if (event.button != 0 || !event.originalTarget) return;
             OnScreenTextEditor.richtextEditorSizeGrip._oX = event.screenX;
             OnScreenTextEditor.richtextEditorSizeGrip._oY = event.screenY;
@@ -157,17 +156,17 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
             OnScreenTextEditor.richtextEditorSizeGrip._hold = true;
         }, true);
 
-        document.getElementById("navigator-toolbox").addEventListener("focus", function (event) {
+        document.getElementById("navigator-toolbox").addEventListener("focus", function(event) {
             OnScreenTextEditor.shoudClose = false;
         }, true);
-        document.getElementById("mtextColorButton").addEventListener("focus", function (event) {
+        document.getElementById("mtextColorButton").addEventListener("focus", function(event) {
             OnScreenTextEditor.shoudClose = false;
         }, true);
-        document.getElementById("mhilightColorButton").addEventListener("focus", function (event) {
+        document.getElementById("mhilightColorButton").addEventListener("focus", function(event) {
             OnScreenTextEditor.shoudClose = false;
         }, true);
 
-        OnScreenTextEditor.richTextEditor.contentWindow.addEventListener("blur", function (event) {
+        OnScreenTextEditor.richTextEditor.contentWindow.addEventListener("blur", function(event) {
             OnScreenTextEditor.shoudClose = true;
 
             window.setTimeout(function() {
@@ -180,10 +179,9 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
                 }
                 OnScreenTextEditor.currentInstance.applyChanges();
                 OnScreenTextEditor._hide();
-            }, 20)
-
+            }, 20);
         }, false);
-        OnScreenTextEditor.richTextEditor.contentDocument.addEventListener("keypress", function (event) {
+        OnScreenTextEditor.richTextEditor.contentDocument.addEventListener("keypress", function(event) {
             if (event.keyCode == event.DOM_VK_ESCAPE) {
                 OnScreenTextEditor._hide();
             } else if (event.keyCode == event.DOM_VK_RETURN && !event.shiftKey && !event.ctrlKey) {
@@ -196,7 +194,6 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
                         event.keyCode == event.DOM_VK_DOWN ||
                         event.keyCode == event.DOM_VK_LEFT ||
                         event.keyCode == event.DOM_VK_RIGHT) {
-
                 var code = event.keyCode;
                 var char = event.charCode;
                 if (event.eventPhase == 3) {
@@ -205,7 +202,7 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
                 }
             }
         }, true);
-        var selectListener = function (event) {
+        var selectListener = function(event) {
             var temp = OnScreenTextEditor.isEditing;
             OnScreenTextEditor.isEditing = false;
 
@@ -228,7 +225,7 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
         };
 
         OnScreenTextEditor.richTextEditor.contentDocument.body.addEventListener("mouseup", selectListener, false);
-        //OnScreenTextEditor.richTextEditor.contentDocument.body.addEventListener("keypress", selectListener, false);
+        // OnScreenTextEditor.richTextEditor.contentDocument.body.addEventListener("keypress", selectListener, false);
 
         OnScreenTextEditor._installListCommandHandler("mfontList", "fontname");
         OnScreenTextEditor._installListCommandHandler("mfontSize", "fontsize");
@@ -251,7 +248,7 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
         OnScreenTextEditor._installSimpleCommandHandler("medDecreaseFontButton", "decreasefontsize");
         OnScreenTextEditor._installSimpleCommandHandler("mclearButton", "removeformat");
 
-        document.getElementById("medCleanUpButton").addEventListener("command", function (event) {
+        document.getElementById("medCleanUpButton").addEventListener("command", function(event) {
             var html = Dom.serializeNode(OnScreenTextEditor.richTextEditor.contentDocument.body);
             html = html.replace(/(class|style)="[^"]*"/gi, "");
             html = html.replace(/<(\/)?(span|p)[^>]*>/gi, "");
@@ -260,16 +257,16 @@ OnScreenTextEditor._ensureSupportElementsImpl = function() {
         }, false);
     }
 };
-OnScreenTextEditor._installListCommandHandler = function (id, commandName) {
+OnScreenTextEditor._installListCommandHandler = function(id, commandName) {
     var doc = OnScreenTextEditor.richTextEditor.ownerDocument;
-    doc.getElementById(id).addEventListener("command", function (event) {
+    doc.getElementById(id).addEventListener("command", function(event) {
         if (!OnScreenTextEditor.isEditing) return;
         OnScreenTextEditor._runEditorCommandByList(commandName, event.originalTarget);
     }, false);
 };
-OnScreenTextEditor._installSimpleCommandHandler = function (id, commandName, value) {
+OnScreenTextEditor._installSimpleCommandHandler = function(id, commandName, value) {
     var doc = OnScreenTextEditor.richTextEditor.ownerDocument;
-    doc.getElementById(id).addEventListener("command", function (event) {
+    doc.getElementById(id).addEventListener("command", function(event) {
         if (!OnScreenTextEditor.isEditing) return;
         if (value) {
             OnScreenTextEditor._runEditorCommand(commandName, event.originalTarget);
@@ -285,16 +282,16 @@ OnScreenTextEditor._installSimpleCommandHandler = function (id, commandName, val
         }
     }, false);
 };
-OnScreenTextEditor._installColorCommandHandler = function (id, commandName) {
+OnScreenTextEditor._installColorCommandHandler = function(id, commandName) {
     var doc = OnScreenTextEditor.richTextEditor.ownerDocument;
     var picker = doc.getElementById(id);
-    picker.addEventListener("change", function (event) {
+    picker.addEventListener("change", function(event) {
         if (!OnScreenTextEditor.isEditing) return;
         OnScreenTextEditor._runEditorCommand(commandName, picker.color.toRGBAString());
     }, false);
 };
 
-OnScreenTextEditor._updateListByCommandValue = function (commandName, controlId) {
+OnScreenTextEditor._updateListByCommandValue = function(commandName, controlId) {
     var value = null;
     try {
         value = OnScreenTextEditor.richTextEditor.contentDocument.queryCommandValue(commandName);
@@ -307,8 +304,8 @@ OnScreenTextEditor._updateListByCommandValue = function (commandName, controlId)
         if (value == null) return;
         control.value = value;
     }
-}
-OnScreenTextEditor._updateColorButtonByCommandValue = function (commandName, controlId) {
+};
+OnScreenTextEditor._updateColorButtonByCommandValue = function(commandName, controlId) {
     var value = null;
     try {
         value = OnScreenTextEditor.richTextEditor.contentDocument.queryCommandValue(commandName);
@@ -321,8 +318,8 @@ OnScreenTextEditor._updateColorButtonByCommandValue = function (commandName, con
         if (value == null) return;
         control.color = Color.fromString(value);
     }
-}
-OnScreenTextEditor._updateButtonByCommandState = function (commandName, controlId) {
+};
+OnScreenTextEditor._updateButtonByCommandState = function(commandName, controlId) {
     var value = null;
     try {
         value = OnScreenTextEditor.richTextEditor.contentDocument.queryCommandState(commandName);
@@ -334,8 +331,8 @@ OnScreenTextEditor._updateButtonByCommandState = function (commandName, controlI
     if (control.localName == "toolbarbutton") {
         control.checked = value ? true : false;
     }
-}
-OnScreenTextEditor._hide = function () {
+};
+OnScreenTextEditor._hide = function() {
     Dom.removeClass(document.documentElement, "RichTextEditActivated");
 
     if (!OnScreenTextEditor.isEditing) return;
@@ -367,9 +364,9 @@ OnScreenTextEditor._hide = function () {
         OnScreenTextEditor.backedupTarget = null;
     }
 };
-OnScreenTextEditor.getRichtextValue = function () {
+OnScreenTextEditor.getRichtextValue = function() {
     var html = Dom.serializeNode(OnScreenTextEditor.richTextEditor.contentDocument.body);
-    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function (zero) {
+    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function(zero) {
         return zero.toLowerCase();
     });
     if (html.match(/^<body[^>]*>([^\0]*)<\/body>$/)) {
@@ -378,13 +375,13 @@ OnScreenTextEditor.getRichtextValue = function () {
     return html;
 };
 
-OnScreenTextEditor.prototype.applyChanges = function () {
+OnScreenTextEditor.prototype.applyChanges = function() {
     if (this.currentTarget && this.textEditingInfo) {
-        Dom.workOn(".//html:script", OnScreenTextEditor.richTextEditor.contentDocument.body, function (node) {
+        Dom.workOn(".//html:script", OnScreenTextEditor.richTextEditor.contentDocument.body, function(node) {
             node.parentNode.removeChild(node);
         });
         var html = Dom.serializeNode(OnScreenTextEditor.richTextEditor.contentDocument.body);
-        html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function (zero) {
+        html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function(zero) {
             return zero.toLowerCase();
         });
         if (html.match(/^<body[^>]*>([^\0]*)<\/body>$/)) {
@@ -394,7 +391,7 @@ OnScreenTextEditor.prototype.applyChanges = function () {
     }
 };
 
-OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
+OnScreenTextEditor.prototype._setupRichTextEditor = function(event) {
     for (var i in Pencil.sharedEditors) {
         try {
             Pencil.sharedEditors[i].detach();
@@ -421,7 +418,7 @@ OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
     var ctm = this.textEditingInfo.target.getScreenCTM();
     var svgCTM = this.canvas.svg.getScreenCTM();
 
-    //tricky dx, dy: screenCTM of SVG and screen location of its parent is not the same.
+    // tricky dx, dy: screenCTM of SVG and screen location of its parent is not the same.
     var dx = this.canvas.svg.parentNode.boxObject.screenX - svgCTM.e;
     var dy = this.canvas.svg.parentNode.boxObject.screenY - svgCTM.f;
 
@@ -429,8 +426,8 @@ OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
     var boxObject = OnScreenTextEditor.richTextEditorPane.parentNode.boxObject;
     var targetCtm = this.currentTarget.svg.getScreenCTM();
 
-    //var x = ctm.e - boxObject.screenX + dx;
-    //var y = ctm.f - boxObject.screenY + dy;
+    // var x = ctm.e - boxObject.screenX + dx;
+    // var y = ctm.f - boxObject.screenY + dy;
     var x = targetCtm.e - boxObject.x;
     var y = targetCtm.f - boxObject.y;
 
@@ -487,7 +484,7 @@ OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
     var buttonBox = document.getElementById("mclearButton").getBoundingClientRect();
     var mw = buttonBox.left + buttonBox.width + 1 - OnScreenTextEditor.miniToolbarPane.getBoundingClientRect().left;
 
-    //mx = mx - ((mw - width) / 2);
+    // mx = mx - ((mw - width) / 2);
     if (mx < 0) {
         mx = 0;
     }
@@ -499,7 +496,7 @@ OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
         mx -= mw + mx - boxObject.width + 30;
     }
 
-    //my -= 10;
+    // my -= 10;
 
     OnScreenTextEditor.miniToolbarPane.setAttribute("left", mx);
     OnScreenTextEditor.miniToolbarPane.setAttribute("top", my);
@@ -516,9 +513,9 @@ OnScreenTextEditor.prototype._setupRichTextEditor = function (event) {
     OnScreenTextEditor.richtextEditorSizeGrip.style.display = "";
 
     OnScreenTextEditor.richTextEditor.contentWindow.focus();
-    //OnScreenTextEditor.richTextEditor.contentWindow.scrollTo(0, 0);
+    // OnScreenTextEditor.richTextEditor.contentWindow.scrollTo(0, 0);
 
-    window.setTimeout(function () {
+    window.setTimeout(function() {
         OnScreenTextEditor.richTextEditor.contentWindow.focus();
         OnScreenTextEditor._runEditorCommand("selectall");
         OnScreenTextEditor.isEditing = true;

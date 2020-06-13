@@ -13,16 +13,16 @@ Alignment.fromString = function(literal) {
     return align;
 };
 
-Alignment.prototype.toString = function () {
+Alignment.prototype.toString = function() {
     return this.h + "," + this.v;
 };
 
 pencilSandbox.Alignment = {
-    newAlignment: function (h, v) {
+    newAlignment: function(h, v) {
         return new Alignment(h, v);
     }
 };
 for (var p in Alignment) {
     pencilSandbox.Alignment[p] = Alignment[p];
-};
+}
 

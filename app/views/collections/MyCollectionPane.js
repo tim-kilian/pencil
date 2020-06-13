@@ -4,13 +4,13 @@ function MyCollectionPane() {
 __extend(BaseCollectionPane, MyCollectionPane);
 
 MyCollectionPane.prototype.getTitle = function() {
-	return "My Shapes";
+    return "My Shapes";
 };
 MyCollectionPane.prototype.getIconName = function() {
-	return "business_center";
+    return "business_center";
 };
-MyCollectionPane.prototype.initialize = function () {
-    this.bind("contextmenu", function (event) {
+MyCollectionPane.prototype.initialize = function() {
+    this.bind("contextmenu", function(event) {
         var n = Dom.findUpwardForNodeWithData(Dom.getTarget(event), "_def");
         var def = n ? n._def : null;
         var collection = this.last;
@@ -23,22 +23,22 @@ MyCollectionPane.prototype.initialize = function () {
     // this.loaded = false;
     this.reload();
 };
-MyCollectionPane.prototype.handleCollectionContextMenu = function (collection, event) {
+MyCollectionPane.prototype.handleCollectionContextMenu = function(collection, event) {
     (new PrivateCollectionMenu(this, collection)).showMenuAt(event.clientX, event.clientY);
 };
-MyCollectionPane.prototype.addDefDataToDataTransfer = function (def, event) {
+MyCollectionPane.prototype.addDefDataToDataTransfer = function(def, event) {
     event.dataTransfer.setData("pencil/privatedef", def.id);
     nsDragAndDrop.setData("pencil/privatedef", def.id);
 };
-MyCollectionPane.prototype.getCollections = function () {
+MyCollectionPane.prototype.getCollections = function() {
     return PrivateCollectionManager.privateShapeDef.collections;
 };
-MyCollectionPane.prototype.getLastUsedCollection = function () {
+MyCollectionPane.prototype.getLastUsedCollection = function() {
     return PrivateCollectionManager.getLastUsedCollection();
 };
-MyCollectionPane.prototype.setLastUsedCollection = function (collection) {
+MyCollectionPane.prototype.setLastUsedCollection = function(collection) {
     PrivateCollectionManager.setLastUsedCollection(collection);
 };
-MyCollectionPane.prototype.openCollectionPane = function (collectionId) {
+MyCollectionPane.prototype.openCollectionPane = function(collectionId) {
     this.reload(collectionId);
 };

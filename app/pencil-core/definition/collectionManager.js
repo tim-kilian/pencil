@@ -5,12 +5,12 @@ CollectionManager.shapeDefinition.collections = [];
 CollectionManager.shapeDefinition.shapeDefMap = {};
 CollectionManager.shapeDefinition.shortcutMap = {};
 
-CollectionManager.addShapeDefCollection = function (collection) {
+CollectionManager.addShapeDefCollection = function(collection) {
     if (!collection) return;
     CollectionManager.shapeDefinition.collections.push(collection);
     collection.visible = CollectionManager.isCollectionVisible(collection);
     collection.collapsed = CollectionManager.isCollectionCollapsed(collection);
-    //collection.usage = CollectionManager.getCollectionUsage(collection);
+    // collection.usage = CollectionManager.getCollectionUsage(collection);
 
     for (var item in collection.shapeDefs) {
         var shapeDef = collection.shapeDefs[item];
@@ -22,11 +22,11 @@ CollectionManager.addShapeDefCollection = function (collection) {
     }
     debug("   Loaded: " + collection.displayName);
 };
-CollectionManager.shapeDefinition.locateDefinition = function (shapeDefId) {
+CollectionManager.shapeDefinition.locateDefinition = function(shapeDefId) {
     var def = CollectionManager.shapeDefinition.shapeDefMap[shapeDefId];
     return def;
 };
-CollectionManager.shapeDefinition.locateBuiltinPrivateShapeDef = function (shapeDefId) {
+CollectionManager.shapeDefinition.locateBuiltinPrivateShapeDef = function(shapeDefId) {
     for (var collection of CollectionManager.shapeDefinition.collections) {
         if (!collection.builtinPrivateCollection || !collection.builtinPrivateCollection.map) continue;
         var def = collection.builtinPrivateCollection.map[shapeDefId];
@@ -38,10 +38,10 @@ CollectionManager.shapeDefinition.locateBuiltinPrivateShapeDef = function (shape
     }
     return null;
 };
-CollectionManager.shapeDefinition.locateShortcut = function (shortcutId) {
+CollectionManager.shapeDefinition.locateShortcut = function(shortcutId) {
     return CollectionManager.shapeDefinition.shortcutMap[shortcutId];
 };
-CollectionManager.loadUserDefinedStencils = function () {
+CollectionManager.loadUserDefinedStencils = function() {
     try {
         var stencilDir = CollectionManager.getUserStencilDirectory();
         console.log("Loading optional stencils in: " + stencilDir.path);
@@ -50,16 +50,16 @@ CollectionManager.loadUserDefinedStencils = function () {
         console.error(e);
     }
 };
-CollectionManager.getUserStencilDirectory = function () {
+CollectionManager.getUserStencilDirectory = function() {
     return Config.getDataFilePath(Config.STENCILS_DIR_NAME);
 };
-CollectionManager.findCollection = function (collectionId) {
+CollectionManager.findCollection = function(collectionId) {
     for (var col of CollectionManager.shapeDefinition.collections) {
         if (col.id == collectionId) return col;
     }
     return null;
 };
-CollectionManager.loadAdHocCollection = function (dir) {
+CollectionManager.loadAdHocCollection = function(dir) {
     CollectionManager.unloadLastAdHocCollection();
 
     var collection = new ShapeDefCollectionParser().parseURL(path.join(dir, "Definition.xml"));
@@ -73,7 +73,7 @@ CollectionManager.loadAdHocCollection = function (dir) {
 
     return collection;
 };
-CollectionManager.unloadLastAdHocCollection = function () {
+CollectionManager.unloadLastAdHocCollection = function() {
     if (!CollectionManager.adHocCollection) return;
 
     for (var item in CollectionManager.adHocCollection.shapeDefs) {
@@ -87,7 +87,7 @@ CollectionManager.unloadLastAdHocCollection = function () {
 
     CollectionManager.adHocCollection = null;
 };
-CollectionManager.reloadDeveloperStencil = function (showNotification) {
+CollectionManager.reloadDeveloperStencil = function(showNotification) {
     ApplicationPane._instance.busy();
 
     var collections = [];
@@ -114,21 +114,21 @@ CollectionManager.reloadDeveloperStencil = function (showNotification) {
 
     if (showNotification) NotificationPopup.show("Developer collections were reloaded.");
 };
-CollectionManager.getDeveloperStencil = function () {
+CollectionManager.getDeveloperStencil = function() {
     for (var collection of CollectionManager.shapeDefinition.collections) {
         if (collection.developerStencil) return collection;
     }
     return null;
 };
-CollectionManager._loadDeveloperStencil = function () {
+CollectionManager._loadDeveloperStencil = function() {
     try {
-		var stencilPath = Config.get("dev.stencil.path", "null");
-		if (!stencilPath || stencilPath == "none" || stencilPath == "null") {
-			Config.set("dev.stencil.path", "none");
-		} else {
-			if (!fs.existsSync(stencilPath)) return;
+        var stencilPath = Config.get("dev.stencil.path", "null");
+        if (!stencilPath || stencilPath == "none" || stencilPath == "null") {
+            Config.set("dev.stencil.path", "none");
+        } else {
+            if (!fs.existsSync(stencilPath)) return;
 
-			var parser = new ShapeDefCollectionParser();
+            var parser = new ShapeDefCollectionParser();
             var collection = parser.parseURL(stencilPath);
             if (!collection) return;
             collection.userDefined = false;
@@ -136,48 +136,47 @@ CollectionManager._loadDeveloperStencil = function () {
             collection.developerStencil = true;
             CollectionManager.addShapeDefCollection(collection);
             CollectionManager.installCollectionFonts(collection);
-		}
-
-	} catch (e) {
+        }
+    } catch (e) {
         console.error(e);
         // Util.error("Failed to load developer stencil", ex.message + "\n" + definitionFile.path, Util.getMessage("button.cancel.close"));
-	}
+    }
 
-	try {
-		var dirPath = Config.get("dev.stencil.dir", "null");
-		if (!dirPath || dirPath == "none" || dirPath == "null") {
-			Config.set("dev.stencil.dir", "none");
-		} else {
+    try {
+        var dirPath = Config.get("dev.stencil.dir", "null");
+        if (!dirPath || dirPath == "none" || dirPath == "null") {
+            Config.set("dev.stencil.dir", "none");
+        } else {
             var dirPaths = dirPath.split(/;/);
-            dirPaths.forEach(function (p) {
+            dirPaths.forEach(function(p) {
                 if (!fs.existsSync(p)) return;
     			CollectionManager._loadUserDefinedStencilsIn(p, null, "isSystem", "isDeveloperStencil");
             });
-		}
-	} catch (e) {
+        }
+    } catch (e) {
         Console.dumpError(e);
         // Util.error("Failed to load developer stencil", ex.message + "\n" + definitionFile.path, Util.getMessage("button.cancel.close"));
-	}
-    
-    CollectionManager._addActiveBuilderCollection();    
+    }
+
+    CollectionManager._addActiveBuilderCollection();
 };
-CollectionManager._addActiveBuilderCollection = function () {
+CollectionManager._addActiveBuilderCollection = function() {
     CollectionManager._builderCollection = null;
     if (!StencilCollectionBuilder.activeCollectionInfo) return;
-    
+
     try {
         var collection = new ShapeDefCollectionParser().parseURL(path.join(StencilCollectionBuilder.activeCollectionInfo.dir, "Definition.xml"));
         collection.installDirPath = StencilCollectionBuilder.activeCollectionInfo.dir;
         collection.developerStencil = true;
         collection.builderStencil = true;
         CollectionManager.addShapeDefCollection(collection);
-        //CollectionManager.installCollectionFonts(collection);
+        // CollectionManager.installCollectionFonts(collection);
         CollectionManager._builderCollection = collection;
     } catch (e) {
         console.error(e);
     }
 };
-CollectionManager.reloadActiveBuilderCollection = function () {
+CollectionManager.reloadActiveBuilderCollection = function() {
     ApplicationPane._instance.busy();
 
     var collections = [];
@@ -203,20 +202,22 @@ CollectionManager.reloadActiveBuilderCollection = function () {
     Pencil.collectionPane.reload();
 
     return CollectionManager._builderCollection;
-
 };
-CollectionManager.getActiveBuilderCollection = function () {
+CollectionManager.getActiveBuilderCollection = function() {
     return CollectionManager._builderCollection;
 };
 
-CollectionManager._loadStencil = function (dir, parser, isSystem, isDeveloperStencil) {
-
+CollectionManager._loadStencil = function(dir, parser, isSystem, isDeveloperStencil) {
     var definitionFile = CollectionManager.findDefinitionFile(dir);
-    if (!definitionFile) { return null; }
+    if (!definitionFile) {
+        return null;
+    }
 
     try {
         var collection = parser.parseURL(definitionFile);
-        if (!collection) { return null; }
+        if (!collection) {
+            return null;
+        }
 
         collection.userDefined = isSystem ? false : true;
         collection.installDirPath = dir;
@@ -228,13 +229,15 @@ CollectionManager._loadStencil = function (dir, parser, isSystem, isDeveloperSte
         console.error(e);
     }
 };
-CollectionManager._loadUserDefinedStencilsIn = function (stencilDir, excluded, isSystem, isDeveloperStencil) {
+CollectionManager._loadUserDefinedStencilsIn = function(stencilDir, excluded, isSystem, isDeveloperStencil) {
     var parser = new ShapeDefCollectionParser();
     var count = 0;
 
-    //loading all stencils
+    // loading all stencils
     try {
-        if (!fs.existsSync(stencilDir)) { return; }
+        if (!fs.existsSync(stencilDir)) {
+            return;
+        }
 
         var definitionFiles = fs.readdirSync(stencilDir);
         for (var i in definitionFiles) {
@@ -263,7 +266,7 @@ CollectionManager.loadStencils = function(showNotification) {
     CollectionManager.shapeDefinition.collections = [];
     CollectionManager.shapeDefinition.shapeDefMap = {};
 
-    //load all system stencils
+    // load all system stencils
     var parser = new ShapeDefCollectionParser();
 
     debug("Start loading built-in stencil collections:");
@@ -288,7 +291,7 @@ CollectionManager.loadStencils = function(showNotification) {
     var config = Config.get("Collection.collectionPosition");
     var collectionOrder = config ? (config.split(",") || []) : [];
 
-    CollectionManager.shapeDefinition.collections = CollectionManager.shapeDefinition.collections.sort(function (a, b) {
+    CollectionManager.shapeDefinition.collections = CollectionManager.shapeDefinition.collections.sort(function(a, b) {
         var indexA = collectionOrder.indexOf(a.id);
         var indexB = collectionOrder.indexOf(b.id);
         return indexA - indexB;
@@ -301,19 +304,19 @@ CollectionManager.loadStencils = function(showNotification) {
     if (ApplicationPane._instance) ApplicationPane._instance.unbusy();
     if (showNotification) NotificationPopup.show("All collections were reloaded.");
 };
-CollectionManager.reloadCollectionPane = function () {
+CollectionManager.reloadCollectionPane = function() {
     Pencil.collectionPane.loaded = false;
     Pencil.collectionPane.reload();
 };
-CollectionManager.installNewCollection = function (callback) {
+CollectionManager.installNewCollection = function(callback) {
     var files = dialog.showOpenDialog({
         title: "Install from",
         defaultPath: Config.get("collection.install.recentlyDirPath", null) || os.homedir(),
         filters: [
-            { name: "Stencil files", extensions: ["zip", "epc"] }
+            {name: "Stencil files", extensions: ["zip", "epc"]}
         ]
 
-    }, function (filenames) {
+    }, function(filenames) {
         if (!filenames || filenames.length <= 0) return;
         Config.set("collection.install.recentlyDirPath", path.dirname(filenames[0]));
         CollectionManager.installCollectionFromFilePath(filenames[0], callback);
@@ -341,7 +344,6 @@ CollectionManager.findDefinitionFile = function(dir) {
     return null;
 };
 CollectionManager.extractCollection = function(file, callback) {
-
     return QP.Promise(function(resolve, reject) {
         function error(err) {
             if (callback) {
@@ -356,10 +358,10 @@ CollectionManager.extractCollection = function(file, callback) {
         var targetDir = path.join(CollectionManager.getUserStencilDirectory(), fileName);
         console.log("extracting to", targetDir);
 
-        var admZip = require('adm-zip');
+        var admZip = require("adm-zip");
 
         var zip = new admZip(filePath);
-        zip.extractAllToAsync(targetDir, true, function (err) {
+        zip.extractAllToAsync(targetDir, true, function(err) {
             if (err) {
                 error(err);
                 setTimeout(function() {
@@ -389,7 +391,7 @@ CollectionManager.extractCollection = function(file, callback) {
         // fs.createReadStream(filePath).pipe(extractor);
     });
 };
-CollectionManager.installCollectionFonts = function (collection) {
+CollectionManager.installCollectionFonts = function(collection) {
     if (!collection.fonts || collection.fonts.length == 0) {
         return;
     }
@@ -402,14 +404,14 @@ CollectionManager.installCollectionFonts = function (collection) {
                 FontLoader.instance.userRepo.removeFont(existingFont);
             } else {
                 console.log("Skip installing: " + font.name);
-                continue;   //skip installing this font
+                continue; // skip installing this font
             }
         }
 
         var fontData = {
             fontName: font.name,
             source: collection.id
-        }
+        };
 
         for (var variantName in FontRepository.SUPPORTED_VARIANTS) {
             var declaredPath = font[variantName];
@@ -434,7 +436,7 @@ CollectionManager.installCollectionFonts = function (collection) {
     }
 
     if (installedFonts.length > 0) {
-        NotificationPopup.show("New fonts installed:\n   " + installedFonts.join("\n   "), "View", function () {
+        NotificationPopup.show("New fonts installed:\n   " + installedFonts.join("\n   "), "View", function() {
             (new FontManagementDialog()).open();
         });
     }
@@ -449,7 +451,7 @@ CollectionManager.installCollection = function(targetDir, callback) {
             var collection = parser.parseURL(definitionFile);
 
             if (collection && collection.id) {
-                //check for duplicate of name
+                // check for duplicate of name
                 for (i in CollectionManager.shapeDefinition.collections) {
                     var existingCollection = CollectionManager.shapeDefinition.collections[i];
                     if (existingCollection.id == collection.id) {
@@ -459,7 +461,7 @@ CollectionManager.installCollection = function(targetDir, callback) {
                 collection.userDefined = true;
                 collection.installDirPath = targetDir;
 
-                //install fonts
+                // install fonts
                 CollectionManager.installCollectionFonts(collection);
 
                 CollectionManager.setCollectionVisible(collection, true);
@@ -485,8 +487,7 @@ CollectionManager.installCollection = function(targetDir, callback) {
         }
     });
 };
-CollectionManager.installCollectionFromFile = function (file, callback) {
-
+CollectionManager.installCollectionFromFile = function(file, callback) {
     console.log("installCollectionFromFile", file);
     ApplicationPane._instance.busy();
 
@@ -511,19 +512,19 @@ CollectionManager.installCollectionFromFile = function (file, callback) {
         });
 };
 
-CollectionManager.installCollectionFromFilePath = function (filePath, callback) {
+CollectionManager.installCollectionFromFilePath = function(filePath, callback) {
     var file = {
         path: filePath,
         name: path.basename(filePath)
     };
     CollectionManager.installCollectionFromFile(file, callback);
 };
-CollectionManager.installCollectionFromUrl = function (url, callback) {
+CollectionManager.installCollectionFromUrl = function(url, callback) {
     var nugget = require("nugget");
-    var tempDir = tmp.dirSync({ keep: false, unsafeCleanup: true }).name;
+    var tempDir = tmp.dirSync({keep: false, unsafeCleanup: true}).name;
     var filename = path.basename(url);
 
-    console.log('Downloading zip', url, 'to', tempDir, filename);
+    console.log("Downloading zip", url, "to", tempDir, filename);
     var nuggetOpts = {
         target: filename,
         dir: tempDir,
@@ -531,10 +532,10 @@ CollectionManager.installCollectionFromUrl = function (url, callback) {
         quiet: true
     };
 
-    nugget(url, nuggetOpts, function (errors) {
+    nugget(url, nuggetOpts, function(errors) {
         if (errors) {
-            var error = errors[0] // nugget returns an array of errors but we only need 1st because we only have 1 url
-            if (error.message.indexOf('404') === -1) {
+            var error = errors[0]; // nugget returns an array of errors but we only need 1st because we only have 1 url
+            if (error.message.indexOf("404") === -1) {
                 Dialog.error(`Error installing collection: ${error.message}`);
                 return callback(error);
             }
@@ -543,7 +544,7 @@ CollectionManager.installCollectionFromUrl = function (url, callback) {
         }
 
         var filepath = path.join(tempDir, filename);
-        console.log('collection downloaded', filepath);
+        console.log("collection downloaded", filepath);
 
         CollectionManager.installCollectionFromFilePath(filepath, (err, collection) => {
             if (!err && collection) {
@@ -553,20 +554,20 @@ CollectionManager.installCollectionFromUrl = function (url, callback) {
         });
     });
 };
-CollectionManager.setCollectionVisible = function (collection, visible) {
+CollectionManager.setCollectionVisible = function(collection, visible) {
     collection.visible = visible;
     Config.set("Collection." + collection.id + ".visible", visible);
 };
-CollectionManager.isCollectionVisible = function (collection) {
+CollectionManager.isCollectionVisible = function(collection) {
     var visible = Config.get("Collection." + collection.id + ".visible");
     if (visible == null) visible = true;
     return visible;
 };
-CollectionManager.setCollectionCollapsed = function (collection, collapsed) {
+CollectionManager.setCollectionCollapsed = function(collection, collapsed) {
     collection.collapsed = collapsed;
     Config.set("Collection." + collection.id + ".collapsed", collapsed);
 };
-CollectionManager.isCollectionCollapsed = function (collection) {
+CollectionManager.isCollectionCollapsed = function(collection) {
     var collapsed = Config.get("Collection." + collection.id + ".collapsed");
     if (collapsed == null) collapsed = false;
     return collapsed;
@@ -581,21 +582,21 @@ CollectionManager.isCollectionCollapsed = function (collection) {
 //     if (value) return parseInt(value, 10);
 //     return 0;
 // };
-CollectionManager.setLastUsedCollection = function (collection) {
+CollectionManager.setLastUsedCollection = function(collection) {
     Config.set("Collection.lastUsedCollection.id", collection.id);
 };
-CollectionManager.getLastUsedCollection = function () {
+CollectionManager.getLastUsedCollection = function() {
     return Config.get("Collection.lastUsedCollection.id");
 };
 
-CollectionManager.removeCollectionDir = function (targetDir, onRemoved) {
+CollectionManager.removeCollectionDir = function(targetDir, onRemoved) {
     rimraf(targetDir, {}, function(err) {
         if (onRemoved) {
             onRemoved(err);
         }
     });
 };
-CollectionManager.uninstallCollection = function (collection, callback) {
+CollectionManager.uninstallCollection = function(collection, callback) {
     callback = callback || function() {};
 
     if (!collection.installDirPath || !collection.userDefined) {
@@ -603,7 +604,7 @@ CollectionManager.uninstallCollection = function (collection, callback) {
     }
 
     ApplicationPane._instance.busy();
-    CollectionManager.removeCollectionDir(collection.installDirPath, function (err) {
+    CollectionManager.removeCollectionDir(collection.installDirPath, function(err) {
         ApplicationPane._instance.unbusy();
 
         if (!err) {
@@ -613,17 +614,16 @@ CollectionManager.uninstallCollection = function (collection, callback) {
         callback(err);
     });
 };
-CollectionManager.selectDeveloperStencilDir = function () {
-	//alert("Please select the directory that contains the 'Definition.xml' file of your stencil");
+CollectionManager.selectDeveloperStencilDir = function() {
+    // alert("Please select the directory that contains the 'Definition.xml' file of your stencil");
     dialog.showOpenDialog({
         title: "Select Developer Stetcil 'Definition.xml' file",
         defaultPath: Config.get("dev.stencil.path") || os.homedir(),
         filters: [
-            { name: "Definition.xml", extensions: ["xml"] }
+            {name: "Definition.xml", extensions: ["xml"]}
         ]
 
-    }, function (filenames) {
-
+    }, function(filenames) {
         ApplicationPane._instance.unbusy();
         if (!filenames || filenames.length <= 0) return;
         var filePath = filenames[0];
@@ -633,9 +633,9 @@ CollectionManager.selectDeveloperStencilDir = function () {
         }
         Config.set("dev.stencil.path", filenames[0]);
         CollectionManager.loadStencils();
-    }.bind(this));
+    });
 };
-CollectionManager.unselectDeveloperStencilDir = function () {
+CollectionManager.unselectDeveloperStencilDir = function() {
     Config.set("dev.stencil.path", "none");
     CollectionManager.reloadDeveloperStencil();
     CollectionManager.saveCollectionOrder();
@@ -649,16 +649,16 @@ CollectionManager.reorderCollections = function(collectionId, targetCollectionId
     var targetCollection = CollectionManager.findCollection(targetCollectionId);
     var index = collections.indexOf(collection);
     collections.splice(index, 1);
-    index =  collections.indexOf(targetCollection);
+    index = collections.indexOf(targetCollection);
     collections.splice(index, 0, collection);
 
     CollectionManager.saveCollectionOrder();
-}
+};
 
-CollectionManager.saveCollectionOrder = function () {
+CollectionManager.saveCollectionOrder = function() {
     var positionString = "";
     for (var i = 0; i < CollectionManager.shapeDefinition.collections.length; i++) {
         positionString += CollectionManager.shapeDefinition.collections[i].id + ",";
     }
     Config.set("Collection.collectionPosition", positionString);
-}
+};
