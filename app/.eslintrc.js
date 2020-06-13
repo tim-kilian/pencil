@@ -32,6 +32,6 @@ module.exports = {
         "camelcase": "off",
 
         "no-invalid-this": "off",
-        "no-with": "off
+        "no-with": "off"
     }
 };
