@@ -73,7 +73,7 @@ Color.RGB2Hex = function(r, g, b) {
 // RGB2HSV and HSV2RGB are based on Color Match Remix [http://color.twysted.net/]
 // which is based on or copied from ColorMatch 5K [http://colormatch.dk/]
 Color.HSV2RGB = function(hsv) {
-    var rgb = new Object();
+    var rgb = { };
     if (hsv.saturation == 0) {
         rgb.r = rgb.g = rgb.b = Math.round(hsv.value * 2.55);
     } else {
@@ -108,7 +108,7 @@ Color.max3 = function(a, b, c) {
 };
 
 Color.RGB2HSV = function(rgb) {
-    var hsv = new Object();
+    var hsv = { };
     var max=Color.max3(rgb.r, rgb.g, rgb.b);
     var dif=max-Color.min3(rgb.r, rgb.g, rgb.b);
     hsv.saturation=(max==0.0)?0:(100*dif/max);

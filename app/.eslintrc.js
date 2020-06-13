@@ -31,7 +31,7 @@ module.exports = {
         "prefer-rest-params": "off",
         "camelcase": "off",
 
-        "no-invalid-this": "off"
-
+        "no-invalid-this": "off",
+        "no-with": "off
     }
 };

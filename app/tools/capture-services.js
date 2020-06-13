@@ -282,7 +282,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
                 } catch (e) {}
             });
 
-            reject("canceled");
+            reject(new Error("canceled"));
         });
 
         ipcRenderer.once("region-selected", function(event, args) {

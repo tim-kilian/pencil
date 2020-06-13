@@ -60,7 +60,7 @@ if (typeof(JSIO) != "boolean") {
 
         read: function(file, charset) {
             try {
-                var data = new String();
+                var data = String();
                 var fiStream = Components.classes[this.finstreamCID]
                     .createInstance(this.finstreamIID);
                 var siStream = Components.classes[this.sinstreamCID]
@@ -228,7 +228,7 @@ if (typeof(JSIO) != "boolean") {
         },
 
         read: function(dir, recursive) {
-            var list = new Array();
+            var list = [];
             try {
                 if (dir.isDirectory()) {
                     if (recursive == null) {
@@ -244,14 +244,14 @@ if (typeof(JSIO) != "boolean") {
         },
 
         _read: function(dirEntry, recursive) {
-            var list = new Array();
+            var list = [];
             try {
                 while (dirEntry.hasMoreElements()) {
                     list.push(dirEntry.getNext()
                         .QueryInterface(FileIO.localfileIID));
                 }
                 if (recursive) {
-                    var list2 = new Array();
+                    var list2 = [];
                     for (var i = 0; i < list.length; ++i) {
                         if (list[i].isDirectory()) {
                             files = list[i].directoryEntries;
@@ -286,7 +286,7 @@ if (typeof(JSIO) != "boolean") {
 
         split: function(str, join) {
             var arr = str.split(/\/|\\/); var i;
-            str = new String();
+            str = String();
             for (i = 0; i < arr.length; ++i) {
                 str += arr[i] + ((i != arr.length - 1) ?
                     join : "");
@@ -296,7 +296,7 @@ if (typeof(JSIO) != "boolean") {
 
         join: function(str, split) {
             var arr = str.split(split); var i;
-            str = new String();
+            str = String();
             for (i = 0; i < arr.length; ++i) {
                 str += arr[i] + ((i != arr.length - 1) ?
                     this.sep : "");

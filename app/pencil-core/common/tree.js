@@ -9,9 +9,9 @@ function handleEdit(event) {
     });
 
     var box = tree.treeBoxObject;
-    var row = new Object();
-    var col = new Object();
-    var child = new Object();
+    var row = { };
+    var col = { };
+    var child = { };
     box.getCellAt(event.clientX, event.clientY, row, col, child);
     var editor = document.getElementById("editor");
 
@@ -19,10 +19,10 @@ function handleEdit(event) {
         return;
     }
 
-    var x = new Object();
-    var y = new Object();
-    var w = new Object();
-    var h = new Object();
+    var x = { };
+    var y = { };
+    var w = { };
+    var h = { };
 
     box.getCoordsForCellItem(row.value, col.value, "cell", x, y, w, h);
 

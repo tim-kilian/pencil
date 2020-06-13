@@ -164,7 +164,7 @@ TargetSet.prototype.makeSameHorizontalSpace = function() {
     var nObjects = 0;
     var objectsWidth = 0;
 
-    var orderedList = new Array();
+    var orderedList = [];
 
     for (var i in this.targets) {
         var rect = this.targets[i].getBoundingRect();
@@ -219,7 +219,7 @@ TargetSet.prototype.makeSameVerticalSpace = function() {
     var nObjects = 0;
     var objectsHeight = 0;
 
-    var orderedList = new Array();
+    var orderedList = [];
 
     for (var i in this.targets) {
         var rect = this.targets[i].getBoundingRect();

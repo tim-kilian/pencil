@@ -8,7 +8,7 @@ function SAXParser() {
     this.doc = false;
     this.handler = false;
     this.str = "";
-    this.cname = new Array();
+    this.cname = [];
     this.curr = 0;
     this.notToBeParsed_CDATA = {running: false, value: ""};
 }
@@ -114,8 +114,8 @@ SAXParser.prototype.parse = function(aData) {
                 starttag = this.str.substring(1, close);
             }
             var nextspace = starttag.indexOf(" ");
-            var attribs = new String();
-            var name = new String();
+            var attribs = "";
+            var name = "";
             if (nextspace != -1) {
                 name = starttag.substring(0, nextspace);
                 attribs = starttag.substring(nextspace + 1, starttag.length);
@@ -203,9 +203,9 @@ SAXParser.prototype.indexEndElement = function(aStr) {
    */
 
 SAXParser.prototype.attribution = function(aStr) {
-    var attribs = new Array();
-    var ids = new Number();
-    var eq = id1 = id2 = nextid = val = key = new String();
+    var attribs = [];
+    var ids = Number();
+    var eq = id1 = id2 = nextid = val = key = "";
 
     while (1) {
         // dump("in attribution\n");
@@ -255,7 +255,7 @@ SAXParser.prototype.attribution = function(aStr) {
    */
 
 SAXParser.prototype.entityCheck = function(aStr) {
-    var A = new Array();
+    var A = [];
 
     A = aStr.split("&lt;");
     aStr = A.join("<");
