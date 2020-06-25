@@ -11,27 +11,36 @@ module.exports = {
         "ecmaVersion": 11
     },
     "rules": {
-        "linebreak-style": "off",
-        "require-jsdoc": "off",
-        "valid-jsdoc": "off",
+        // Reduce error count
         "indent": ["error", 4],
-        "comma-dangle": ["error", "never"],
         "quotes": ["error", "double"],
+        "no-var": "off",
+        "space-before-function-paren": ["error", "always"],
         "max-len": "off",
+        "comma-dangle": ["error", "never"],
+        "no-tabs": "off",
+
+        // google
+        "linebreak-style": "error",
+        "semi": ["error", "always"],
+        "spaced-comment": ["error", "always"],
+        "no-trailing-spaces": "error",
+        "brace-style": ["error", "1tbs"],
         "no-extra-semi": ["error"],
 
-        "no-var": "off",
-        "no-throw-literal": "off",
-        "guard-for-in": "off",
+        // After --fix
+        "require-jsdoc": "off",
         "no-unused-vars": "off",
-        "no-caller": "off",
-        "new-cap": "off",
-        "no-tabs": "off",
+        "guard-for-in": "off",
         "no-mixed-spaces-and-tabs": "off",
-        "prefer-rest-params": "off",
+        "new-cap": "off",
+        "valid-jsdoc": "off",
+        "no-caller": "off",
+        "no-throw-literal": "off",
         "camelcase": "off",
-
-        "no-invalid-this": "off",
+        "prefer-rest-params": "off",
         "no-with": "off"
+
+        // "no-invalid-this": "off"
     }
 };
