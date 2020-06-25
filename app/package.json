@@ -65,10 +65,12 @@
   "devDependencies": {
     "electron-rebuild": "^1.8.5",
     "eslint": "^7.2.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "eslint-stats": "^1.0.1"
   },
   "scripts": {
     "lint": "eslint .",
-    "lint-fix": "eslint . --fix"
+    "lint-fix": "eslint . --fix",
+    "lint-stats": "eslint --format node_modules/eslint-stats/byError.js ."
   }
 }
