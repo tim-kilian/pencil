@@ -1,9 +1,9 @@
-function OpenClipartPane() {
+function OpenClipartPane () {
     BaseTemplatedWidget.call(this);
     var thiz = this;
     this.backend = new OpenClipartSearch();
 
-    function injectSvgInfo(svg) {
+    function injectSvgInfo (svg) {
         try {
             var g = Dom.parseToNode(svg);
             g.setAttributeNS(PencilNamespaces.p, "p:ImageSource", "OpenClipart.org");
@@ -12,7 +12,7 @@ function OpenClipartPane() {
             Console.dumpError(e);
         }
     }
-    this.shapeList.addEventListener("dragstart", function(event) {
+    this.shapeList.addEventListener("dragstart", function (event) {
         nsDragAndDrop.dragStart(event);
         var n = Dom.findUpwardForNodeWithData(Dom.getTarget(event), "_def");
         var def = n._def;
@@ -34,7 +34,7 @@ function OpenClipartPane() {
     this.dndImage = new Image();
     this.dndImage.src = "css/bullet.png";
 
-    this.searchInput.addEventListener("keyup", function(event) {
+    this.searchInput.addEventListener("keyup", function (event) {
         if (event.keyCode == DOM_VK_RETURN) {
             thiz.searchOptions.page = 1;
             thiz.search();
@@ -44,24 +44,24 @@ function OpenClipartPane() {
     UICommandManager.register({
         key: "searchFocusCommand",
         shortcut: "Ctrl+F",
-        run: function() {
+        run: function () {
             thiz.searchInput.focus();
             thiz.searchInput.select();
         }
     });
 
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         Config.set("clipartbrowser.scale", this.scaleImageCheckbox.checked);
     }, this.scaleImageCheckbox);
 
     this.scaleImageCheckbox.checked = Config.get("clipartbrowser.scale") == true;
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         this.searchOptions.page -= 1;
         this.search();
     }, this.goPrevious);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         this.searchOptions.page += 1;
         this.search();
     }, this.goNext);
@@ -77,14 +77,14 @@ function OpenClipartPane() {
 }
 __extend(BaseTemplatedWidget, OpenClipartPane);
 
-OpenClipartPane.prototype.getTitle = function() {
+OpenClipartPane.prototype.getTitle = function () {
     return "Clipart";
 };
 
-OpenClipartPane.prototype.getIconName = function() {
+OpenClipartPane.prototype.getIconName = function () {
     return "photo";
 };
-OpenClipartPane.prototype.search = function() {
+OpenClipartPane.prototype.search = function () {
     if (this.node().offsetWidth <= 0) return;
     Dom.empty(this.shapeList);
 
@@ -101,12 +101,12 @@ OpenClipartPane.prototype.search = function() {
 
     var thiz = this;
     this.loader.style.display = "";
-    this.backend.search(this.searchInput.value, this.searchOptions, function(result) {
+    this.backend.search(this.searchInput.value, this.searchOptions, function (result) {
         thiz.renderResult(result);
         thiz.loader.style.display = "none";
     });
 };
-OpenClipartPane.prototype.renderResult = function(result) {
+OpenClipartPane.prototype.renderResult = function (result) {
     console.log("SEARCH RESULT", result);
     this.searchAborted = false;
     var shapeDefs = result;
@@ -149,7 +149,7 @@ OpenClipartPane.prototype.renderResult = function(result) {
         this.shapeList.appendChild(node);
 
         var thiz = this;
-        holder.iconImage.onload = function() {
+        holder.iconImage.onload = function () {
             if (thiz.searchAborted) return;
         };
 
@@ -163,10 +163,10 @@ OpenClipartPane.prototype.renderResult = function(result) {
     this.goNext.disabled = (result.length <= 0);
 };
 
-OpenClipartPane.prototype.getSVG = function(item) {
+OpenClipartPane.prototype.getSVG = function (item) {
     var loaded = 1;
     var thiz = this;
-    WebUtil.get(item.src, function(svg) {
+    WebUtil.get(item.src, function (svg) {
         if (!svg || thiz.searchAborted) return;
         try {
             item._svg = svg;

@@ -3,7 +3,7 @@ var Ci = Components.interfaces;
 var Cu = Components.utils;
 var Cr = Components.results;
 
-function test() {
+function test () {
     var browser = document.getElementById("browser");
     var printSettings = Cc["@mozilla.org/gfx/printsettings-service;1"]
         .getService(Ci.nsIPrintSettingsService)
@@ -35,21 +35,21 @@ function test() {
     printSettings.printBGColors = true;
     printSettings.title = "Pencil printing";
     var listener = {
-        onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+        onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {
             if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
                 // sendAsyncMessage("Browser:SaveAs:Return", { type: json.type, id: json.id, referrer: json.referrer });
             }
         },
-        onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {},
+        onProgressChange: function (aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {},
 
         // stubs for the nsIWebProgressListener interfaces which nsIWebBrowserPrint doesn't use.
-        onLocationChange: function() {
+        onLocationChange: function () {
             throw "Unexpected onLocationChange";
         },
-        onStatusChange: function() {
+        onStatusChange: function () {
             throw "Unexpected onStatusChange";
         },
-        onSecurityChange: function() {
+        onSecurityChange: function () {
             throw "Unexpected onSecurityChange";
         }
     };

@@ -47,7 +47,7 @@ if (typeof(JSIO) != "boolean") {
         suniconvCID: "@mozilla.org/intl/scriptableunicodeconverter",
         suniconvIID: Components.interfaces.nsIScriptableUnicodeConverter,
 
-        open: function(path) {
+        open: function (path) {
             try {
                 var file = Components.classes[this.localfileCID]
                     .createInstance(this.localfileIID);
@@ -58,7 +58,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        read: function(file, charset) {
+        read: function (file, charset) {
             try {
                 var data = String();
                 var fiStream = Components.classes[this.finstreamCID]
@@ -79,7 +79,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        write: function(file, data, mode, charset) {
+        write: function (file, data, mode, charset) {
             try {
                 var foStream = Components.classes[this.foutstreamCID]
                     .createInstance(this.foutstreamIID);
@@ -100,7 +100,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        create: function(file) {
+        create: function (file) {
             try {
                 file.create(0x00, 0664);
                 return true;
@@ -109,7 +109,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        unlink: function(file) {
+        unlink: function (file) {
             try {
                 file.remove(false);
                 return true;
@@ -118,7 +118,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        path: function(file) {
+        path: function (file) {
             try {
                 return "file:///" + file.path.replace(/\\/g, "\/")
                     .replace(/^\s*\/?/, "").replace(/\ /g, "%20");
@@ -127,7 +127,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        toUnicode: function(charset, data) {
+        toUnicode: function (charset, data) {
             try {
                 var uniConv = Components.classes[this.suniconvCID]
                     .createInstance(this.suniconvIID);
@@ -139,7 +139,7 @@ if (typeof(JSIO) != "boolean") {
             return data;
         },
 
-        fromUnicode: function(charset, data) {
+        fromUnicode: function (charset, data) {
             try {
                 var uniConv = Components.classes[this.suniconvCID]
                     .createInstance(this.suniconvIID);
@@ -203,7 +203,7 @@ if (typeof(JSIO) != "boolean") {
 
         fileIID: Components.interfaces.nsIFile,
 
-        get: function(type) {
+        get: function (type) {
             try {
                 var dir = Components.classes[this.dirservCID]
                     .createInstance(this.propsIID)
@@ -214,11 +214,11 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        open: function(path) {
+        open: function (path) {
             return FileIO.open(path);
         },
 
-        create: function(dir) {
+        create: function (dir) {
             try {
                 dir.create(0x01, 0664);
                 return true;
@@ -227,7 +227,7 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        read: function(dir, recursive) {
+        read: function (dir, recursive) {
             var list = [];
             try {
                 if (dir.isDirectory()) {
@@ -243,7 +243,7 @@ if (typeof(JSIO) != "boolean") {
             return list;
         },
 
-        _read: function(dirEntry, recursive) {
+        _read: function (dirEntry, recursive) {
             var list = [];
             try {
                 while (dirEntry.hasMoreElements()) {
@@ -268,7 +268,7 @@ if (typeof(JSIO) != "boolean") {
             return list;
         },
 
-        unlink: function(dir, recursive) {
+        unlink: function (dir, recursive) {
             try {
                 if (recursive == null) {
                     recursive = false;
@@ -280,11 +280,11 @@ if (typeof(JSIO) != "boolean") {
             }
         },
 
-        path: function(dir) {
+        path: function (dir) {
             return FileIO.path(dir);
         },
 
-        split: function(str, join) {
+        split: function (str, join) {
             var arr = str.split(/\/|\\/); var i;
             str = String();
             for (i = 0; i < arr.length; ++i) {
@@ -294,7 +294,7 @@ if (typeof(JSIO) != "boolean") {
             return str;
         },
 
-        join: function(str, split) {
+        join: function (str, split) {
             var arr = str.split(split); var i;
             str = String();
             for (i = 0; i < arr.length; ++i) {

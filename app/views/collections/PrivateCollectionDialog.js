@@ -1,11 +1,11 @@
-function PrivateCollectionDialog() {
+function PrivateCollectionDialog () {
     WizardDialog.call(this);
     this.title = "Private Collection Wizard";
     this.subTitle = "This wizard help you through the process of creating a private collection";
     this.myCollection;
 
     var thiz = this;
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         var top = Dom.findUpwardForNodeWithData(event.target, "collection");
         if (thiz.activeCollectionNode) {
             thiz.activeCollectionNode.removeAttribute("active");
@@ -19,7 +19,7 @@ function PrivateCollectionDialog() {
         }
     }, this.collectionList);
 
-    this.bind("dblclick", function(event) {
+    this.bind("dblclick", function (event) {
         var top = Dom.findUpwardForNodeWithData(event.target, "collection");
         if (thiz.activeCollectionNode) {
             thiz.activeCollectionNode.removeAttribute("active");
@@ -34,7 +34,7 @@ function PrivateCollectionDialog() {
         this.onNext();
     }, this.collectionList);
 
-    this.bind("change", function() {
+    this.bind("change", function () {
         var value = this.generateIconCheck.checked;
         if (value) {
             this.shapeIcon.disabled = "true";
@@ -45,13 +45,13 @@ function PrivateCollectionDialog() {
         }
     }, this.generateIconCheck);
 
-    this.browse.addEventListener("click", function(event) {
+    this.browse.addEventListener("click", function (event) {
         thiz.browseIconFile();
     }, false);
 }
 __extend(WizardDialog, PrivateCollectionDialog);
 
-PrivateCollectionDialog.prototype.setupUI = function(options) {
+PrivateCollectionDialog.prototype.setupUI = function (options) {
     if (options) {
         if (options.onDone) {
             this.onDone = options.onDone;
@@ -78,7 +78,7 @@ PrivateCollectionDialog.prototype.setupUI = function(options) {
     var thiz = this;
     var lastSelectCollectionId = Config.get("PrivateCollection.lastSelectCollection.id");
 
-    var addItem = function(collection) {
+    var addItem = function (collection) {
         var item = Dom.newDOMElement({
             _name: "li",
             _text: collection.displayName
@@ -101,7 +101,7 @@ PrivateCollectionDialog.prototype.setupUI = function(options) {
     }
 };
 
-PrivateCollectionDialog.prototype.invalidateFinish = function() {
+PrivateCollectionDialog.prototype.invalidateFinish = function () {
     if (!this.generateIconCheck.checked && this.shapeIcon.value == "" || this.shapeName.value == "" ||
     !this.activeCollectionNode.collection.id && this.collectionName.value == "") {
         Dialog.alert("Empty text box", "Please enter all require text box", null);
@@ -109,7 +109,7 @@ PrivateCollectionDialog.prototype.invalidateFinish = function() {
     }
     return true;
 };
-PrivateCollectionDialog.prototype.onFinish = function() {
+PrivateCollectionDialog.prototype.onFinish = function () {
     // add Shape
     this.valueHolder.shapeName = this.shapeName.value;
     if (this.generateIconCheck.checked) {
@@ -129,7 +129,7 @@ PrivateCollectionDialog.prototype.onFinish = function() {
     }
 };
 
-PrivateCollectionDialog.prototype.invalidateSelection = function() {
+PrivateCollectionDialog.prototype.invalidateSelection = function () {
     var thiz = this;
     if (this.activePane == this.collectionsListPane) {
         if (!thiz.activeCollectionNode) {
@@ -140,7 +140,7 @@ PrivateCollectionDialog.prototype.invalidateSelection = function() {
     return true;
 };
 
-PrivateCollectionDialog.prototype.onSelectionChanged = function(activePane) {
+PrivateCollectionDialog.prototype.onSelectionChanged = function (activePane) {
     var thiz = this;
     if (activePane == this.collectionsDefinePane) {
         thiz.stepTitle.innerHTML = "Completing the create private collection wizard";
@@ -160,7 +160,7 @@ PrivateCollectionDialog.prototype.onSelectionChanged = function(activePane) {
     }
 };
 
-PrivateCollectionDialog.prototype.browseIconFile = function() {
+PrivateCollectionDialog.prototype.browseIconFile = function () {
     var thiz = this;
     dialog.showOpenDialog({
         title: "Open Icon File",
@@ -168,7 +168,7 @@ PrivateCollectionDialog.prototype.browseIconFile = function() {
         filters: [
             {name: "Icon File", extensions: ["icon", "png"]}
         ]
-    }, function(filenames) {
+    }, function (filenames) {
         if (!filenames || filenames.length <= 0) return;
         thiz.shapeIcon.value = filenames;
         thiz.shape.iconPath = filenames;

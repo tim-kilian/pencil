@@ -3,11 +3,11 @@ const pkg = require("../../package.json");
 
 exports.MacOSToolbar = {
 
-    createMacOSToolbar() {
+    createMacOSToolbar () {
         var template = [{
             label: pkg.name,
             submenu: [
-                {label: "Quit", accelerator: "Command+Q", click: function() {
+                {label: "Quit", accelerator: "Command+Q", click: function () {
                     app.quit();
                 }}
             ]}, {

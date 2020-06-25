@@ -1,9 +1,9 @@
-function AboutCollectionDialog(collection) {
+function AboutCollectionDialog (collection) {
     Dialog.call(this);
-    this.title = function() {
+    this.title = function () {
         return collection.displayName;
     };
-    this.subTitle = function() {
+    this.subTitle = function () {
         return collection.description || "Information about this shape collection";
     };
 
@@ -55,7 +55,7 @@ function AboutCollectionDialog(collection) {
 
     if (collection.userDefined || collection.developerStencil) {
         this.locationButton.innerHTML = "" + collection.installDirPath;
-        this.locationButton.addEventListener("click", function() {
+        this.locationButton.addEventListener("click", function () {
             require("electron").shell.openItem(collection.installDirPath);
         }, false);
     } else {
@@ -64,11 +64,11 @@ function AboutCollectionDialog(collection) {
 }
 __extend(Dialog, AboutCollectionDialog);
 
-AboutCollectionDialog.prototype.getDialogActions = function() {
+AboutCollectionDialog.prototype.getDialogActions = function () {
     return [
         {
             type: "accept", title: "Close",
-            run: function() {
+            run: function () {
                 return true;
             }
         }

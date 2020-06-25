@@ -1,4 +1,4 @@
-function ColorSelector() {
+function ColorSelector () {
     BaseTemplatedWidget.call(this);
 
 
@@ -18,7 +18,7 @@ function ColorSelector() {
     var thiz = this;
     // register the event handler
     // wheel selector event handler
-    this.htmlCodeInput.addEventListener("change", function(event) {
+    this.htmlCodeInput.addEventListener("change", function (event) {
         var val = thiz.htmlCodeInput.value;
         if (val == "") {
             thiz.htmlCodeInput.value = thiz.color.toRGBString() || "";
@@ -86,7 +86,7 @@ function ColorSelector() {
         thiz.color.a = a;
         thiz.onValueChanged(thiz.htmlCodeInput);
     }, false);
-    this.brightScale.addEventListener("change", function(event) {
+    this.brightScale.addEventListener("change", function (event) {
         var hsv = thiz.color.getHSV();
         var a = thiz.color.a;
 
@@ -94,17 +94,17 @@ function ColorSelector() {
         thiz.color.a = a;
         thiz.onValueChanged(thiz.brightScale);
     }, false);
-    this.brightScale.addEventListener("mouseup", function(event) {
+    this.brightScale.addEventListener("mouseup", function (event) {
         // thiz._emitChangeEvent();
     }, false);
 
-    this.opacity.addEventListener("change", function(event) {
+    this.opacity.addEventListener("change", function (event) {
         thiz.color.a = thiz.opacity.value / 100;
         thiz.onValueChanged(thiz.opacity);
     }, false);
 
 
-    this.bright.addEventListener("input", function(event) {
+    this.bright.addEventListener("input", function (event) {
         if (!thiz.bright.value) thiz.bright.value = 0;
 
         var hsv = thiz.color.getHSV();
@@ -115,7 +115,7 @@ function ColorSelector() {
         thiz.onValueChanged(thiz.bright);
     }, false);
 
-    this.hue.addEventListener("input", function(event) {
+    this.hue.addEventListener("input", function (event) {
         if (!thiz.hue.value) thiz.hue.value = 0;
 
         var hsv = thiz.color.getHSV();
@@ -125,7 +125,7 @@ function ColorSelector() {
         thiz.color.a = a;
         thiz.onValueChanged(thiz.hue);
     }, false);
-    this.sat.addEventListener("input", function(event) {
+    this.sat.addEventListener("input", function (event) {
         if (!thiz.sat.value) thiz.sat.value = 0;
 
         var hsv = thiz.color.getHSV();
@@ -135,7 +135,7 @@ function ColorSelector() {
         thiz.color.a = a;
         thiz.onValueChanged(thiz.sat);
     }, false);
-    this.wheelOverlay.addEventListener("mousedown", function(event) {
+    this.wheelOverlay.addEventListener("mousedown", function (event) {
         if (thiz.getAttribute("disabled")) return;
         ColorSelector.heldInstance = thiz;
         var r = thiz.wheelOverlay.getBoundingClientRect();
@@ -173,8 +173,8 @@ function ColorSelector() {
         this.setColor(new Color());
     }
 
-    this.gridSelectorContainer.addEventListener("click", function(event) {
-        var colorCell = Dom.findUpward(event.target, function(n) {
+    this.gridSelectorContainer.addEventListener("click", function (event) {
+        var colorCell = Dom.findUpward(event.target, function (n) {
             return n.hasAttribute("color");
         });
         if (!colorCell) return;
@@ -183,8 +183,8 @@ function ColorSelector() {
         thiz._emitCloseEvent();
     }, false);
 
-    function colorListSelectHandler(event) {
-        var colorCell = Dom.findUpward(event.target, function(n) {
+    function colorListSelectHandler (event) {
+        var colorCell = Dom.findUpward(event.target, function (n) {
             return n.hasAttribute("color");
         });
         if (!colorCell) return;
@@ -194,7 +194,7 @@ function ColorSelector() {
     this.recentlyUsedColor.addEventListener("click", colorListSelectHandler, false);
     this.documentPaletteContainer.addEventListener("click", colorListSelectHandler, false);
 
-    this.bind("contextmenu", function(event) {
+    this.bind("contextmenu", function (event) {
         var color = Dom.findUpwardForData(event.target, "_color");
         if (!color) return;
 
@@ -211,27 +211,27 @@ ColorSelector.heldInstance = null;
 /*
     Register global event listener
  */
-document.addEventListener("mousemove", function(event) {
+document.addEventListener("mousemove", function (event) {
     if (!ColorSelector.heldInstance) return;
     ColorSelector.heldInstance._handleMouseMove(event);
 }, false);
 
-document.addEventListener("mouseup", function() {
+document.addEventListener("mouseup", function () {
     if (!ColorSelector.heldInstance) return;
     ColorSelector.heldInstance._handleMouseUp(event);
     ColorSelector.heldInstance = null;
 }, false);
 
 
-ColorSelector._handlePaletteMenu = function(thiz, color, event) {
+ColorSelector._handlePaletteMenu = function (thiz, color, event) {
     if (!ColorSelector._paletteMenu) {
         ColorSelector._paletteMenu = new Menu();
         ColorSelector._paletteMenu.register({
-            getLabel: function() {
+            getLabel: function () {
                 return "Remove";
             },
             icon: "delete",
-            run: function() {
+            run: function () {
                 Pencil.controller.removeColorFromDocumentPalette(ColorSelector._colorToRemove);
                 ColorSelector._instanceForMenu.loadDocumentColors();
             }
@@ -243,14 +243,14 @@ ColorSelector._handlePaletteMenu = function(thiz, color, event) {
     ColorSelector._paletteMenu.showMenuAt(event.clientX, event.clientY);
 };
 
-ColorSelector.prototype.onInsertedIntoDocument = function() {
+ColorSelector.prototype.onInsertedIntoDocument = function () {
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.radius = thiz.wheelImage.offsetWidth / 2;
         thiz.invalidateUI();
     }, 10);
 };
-ColorSelector.prototype._handleMouseMove = function(event) {
+ColorSelector.prototype._handleMouseMove = function (event) {
     event.preventDefault();
 
     var r = this.wheelOverlay.getBoundingClientRect();
@@ -281,12 +281,12 @@ ColorSelector.prototype._handleMouseMove = function(event) {
     this.updatingColor = true;
     this.onValueChanged(this.wheelImage);
 };
-ColorSelector.prototype._handleMouseUp = function(event) {
+ColorSelector.prototype._handleMouseUp = function (event) {
     this.pinHeld = false;
     this.updatingColor = false;
     this.updateRecentlyUsedColors();
 };
-ColorSelector.prototype._handleHueSatNumberChange = function() {
+ColorSelector.prototype._handleHueSatNumberChange = function () {
     var hsv = this.color.getHSV();
     var h = hsv.hue;
     var s = hsv.saturation;
@@ -298,7 +298,7 @@ ColorSelector.prototype._handleHueSatNumberChange = function() {
     this.pin.style.left = x + "px";
     this.pin.style.top = y + "px";
 };
-ColorSelector.prototype._emitChangeEvent = function() {
+ColorSelector.prototype._emitChangeEvent = function () {
     if (this._disableEventFiringOnce) {
         this._disableEventFiringOnce = false;
         return;
@@ -307,21 +307,21 @@ ColorSelector.prototype._emitChangeEvent = function() {
     event.initEvent("ValueChange", false, false);
     this.dispatchEvent(event);
 };
-ColorSelector.prototype._emitCloseEvent = function() {
+ColorSelector.prototype._emitCloseEvent = function () {
     Dom.emitEvent("p:CloseColorSelector", this.node(), {});
 };
-ColorSelector.prototype._changHS = function(hue, sat) {
+ColorSelector.prototype._changHS = function (hue, sat) {
     this.hue.value = hue;
     this.sat.value = sat;
     this._emitChangeEvent();
 };
-ColorSelector.prototype.setColor = function(color) {
+ColorSelector.prototype.setColor = function (color) {
     this.selectedCell = null;
     this.color = color;
     this.onValueChanged();
     if (!this.selectedCell) {
         var uppercaseVal = this.color.toRGBString().toUpperCase();
-        Dom.doOnAllChildRecursively(this.recentlyUsedColor, function(n) {
+        Dom.doOnAllChildRecursively(this.recentlyUsedColor, function (n) {
             if (n.getAttribute) {
                 if (n.getAttribute("color") == uppercaseVal) {
                     n.setAttribute("selected", "true");
@@ -333,13 +333,13 @@ ColorSelector.prototype.setColor = function(color) {
         });
     }
 };
-ColorSelector.prototype.setGridSelectorColor = function() {
+ColorSelector.prototype.setGridSelectorColor = function () {
     if (!this._initialized) this.initializeGridSelector();
 
     var uppercaseVal = this.color.toRGBString().toUpperCase();
 
     var thiz = this;
-    Dom.doOnAllChildRecursively(this.gridSelectorContainer, function(n) {
+    Dom.doOnAllChildRecursively(this.gridSelectorContainer, function (n) {
         if (n.getAttribute) {
             if (n.getAttribute("color") == uppercaseVal) {
                 n.setAttribute("selected", "true");
@@ -350,11 +350,11 @@ ColorSelector.prototype.setGridSelectorColor = function() {
         }
     });
 };
-ColorSelector.prototype.setupColors = function() {
+ColorSelector.prototype.setupColors = function () {
     this.loadRecentlyUsedColors();
     this.loadDocumentColors();
 };
-ColorSelector.prototype.loadRecentlyUsedColors = function() {
+ColorSelector.prototype.loadRecentlyUsedColors = function () {
     var colors = Config.get("gridcolorpicker.recentlyUsedColors", "");
 
     this._lastUsedColors = colors;
@@ -372,12 +372,12 @@ ColorSelector.prototype.loadRecentlyUsedColors = function() {
         }
     }
 };
-ColorSelector.prototype.addToPalette = function() {
+ColorSelector.prototype.addToPalette = function () {
     if (!Pencil.controller || !Pencil.controller.doc) return;
     Pencil.controller.addColorIntoDocumentPalette(this.getColor());
     this.loadDocumentColors();
 };
-ColorSelector.prototype.loadDocumentColors = function() {
+ColorSelector.prototype.loadDocumentColors = function () {
     Dom.toggleClass(this.documentPalettePane, "NoDocument", Pencil.controller && Pencil.controller.doc ? false : true);
     if (!Pencil.controller || !Pencil.controller.doc) return;
 
@@ -391,7 +391,7 @@ ColorSelector.prototype.loadDocumentColors = function() {
     }
 
     Dom.empty(this.documentPaletteContainer);
-    colors.forEach(function(c) {
+    colors.forEach(function (c) {
         var cell = document.createElement("div");
         cell.setAttribute("class", "colorpickertile");
         cell.setAttribute("title", c.toString());
@@ -401,20 +401,20 @@ ColorSelector.prototype.loadDocumentColors = function() {
         this.documentPaletteContainer.appendChild(cell);
     }.bind(this));
 };
-ColorSelector.prototype.initializeGridSelector = function() {
+ColorSelector.prototype.initializeGridSelector = function () {
     if (this._initialized) return;
     this._initialized = true;
 
     var thiz = this;
     this.recentlyUsedColorElements = [];
-    Dom.doOnAllChildren(this.recentlyUsedColor, function(n) {
+    Dom.doOnAllChildren(this.recentlyUsedColor, function (n) {
         if (n.hasAttribute && n.hasAttribute("color")) {
             thiz.recentlyUsedColorElements.push(n);
         }
     });
     this.setupColors();
 };
-ColorSelector.prototype.updateRecentlyUsedColors = function() {
+ColorSelector.prototype.updateRecentlyUsedColors = function () {
     var aColor = this.color;
     if (this.updatingColor) return;
     this.updatingColor = true;
@@ -433,7 +433,7 @@ ColorSelector.prototype.updateRecentlyUsedColors = function() {
     this.updatingColor = false;
     this.clearSelectedColor(this.recentlyUsedColor);
 };
-ColorSelector.prototype.reloadRecentlyUsedColors = function() {
+ColorSelector.prototype.reloadRecentlyUsedColors = function () {
     var thiz = this;
     this.recentlyUsedColors = [];
     var colors = Config.get("gridcolorpicker.recentlyUsedColors");
@@ -459,12 +459,12 @@ ColorSelector.prototype.reloadRecentlyUsedColors = function() {
 
     this.clearSelectedColor(this.recentlyUsedColor);
 };
-ColorSelector.prototype.clearSelectedColor = function(parentNode) {
-    Dom.doOnAllChildren(parentNode, function(n) {
+ColorSelector.prototype.clearSelectedColor = function (parentNode) {
+    Dom.doOnAllChildren(parentNode, function (n) {
         if (n.removeAttribute) n.removeAttribute("selected");
     });
 };
-ColorSelector.prototype.selectColorCell = function(cell, selectFromRecentlyUsedColors) {
+ColorSelector.prototype.selectColorCell = function (cell, selectFromRecentlyUsedColors) {
     // change selected cell
     if (this.selectedCell) {
         this.selectedCell.removeAttribute("selected");
@@ -483,23 +483,23 @@ ColorSelector.prototype.selectColorCell = function(cell, selectFromRecentlyUsedC
         this.onValueChanged(this.gridSelectorContainer);
     }
 };
-ColorSelector.prototype.isColorCell = function(cell) {
+ColorSelector.prototype.isColorCell = function (cell) {
     return cell && cell.nodeType != 3 && cell.hasAttribute("color");
 };
-ColorSelector.prototype.getColor = function() {
+ColorSelector.prototype.getColor = function () {
     return this.color;
 };
-ColorSelector.prototype.isModified = function() {
+ColorSelector.prototype.isModified = function () {
     return this.isUserModified;
 };
-ColorSelector.prototype.onAttached = function() {
+ColorSelector.prototype.onAttached = function () {
     var thiz = this;
     thiz.radius = thiz.wheelImage.offsetWidth / 2;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.radius = thiz.wheelImage.offsetWidth / 2;
     }, 10);
 };
-ColorSelector.prototype.invalidateUI = function(source) {
+ColorSelector.prototype.invalidateUI = function (source) {
     this.previewBox.style.backgroundColor = this.color.toRGBAString();
     if (source) this.isUserModified = true;
     var hsv = this.color.getHSV();
@@ -517,7 +517,7 @@ ColorSelector.prototype.invalidateUI = function(source) {
 
     this.previewBox.style.backgroundColor = this.color.toRGBAString();
 };
-ColorSelector.prototype.onValueChanged = function(source) {
+ColorSelector.prototype.onValueChanged = function (source) {
     if (source) {
         this.updateRecentlyUsedColors();
     }
@@ -525,12 +525,12 @@ ColorSelector.prototype.onValueChanged = function(source) {
     this.clearSelectedColor(this.recentlyUsedColor);
     this._emitChangeEvent();
 };
-ColorSelector.installGlobalListeners = function() {
+ColorSelector.installGlobalListeners = function () {
     if (ColorSelector.globalListenersInstalled) return;
 
     ColorSelector.globalListenersInstalled = true;
 
-    document.body.addEventListener("mousedown", function(event) {
+    document.body.addEventListener("mousedown", function (event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -548,7 +548,7 @@ ColorSelector.installGlobalListeners = function() {
 
         var maxWidth = 0;
         var maxHeight = 0;
-        displays.forEach(function(d) {
+        displays.forEach(function (d) {
             maxWidth = Math.max(maxWidth, d.bounds.x + d.bounds.width);
             maxHeight = Math.max(maxHeight, d.bounds.y + d.bounds.height);
         });
@@ -565,12 +565,12 @@ ColorSelector.installGlobalListeners = function() {
                 y: 0,
                 width: maxWidth,
                 height: maxHeight,
-                processor: function(canvas, context) {
+                processor: function (canvas, context) {
                     var pixelData = context.getImageData(x, y, 1, 1).data;
                     return "#" + Color.Dec2Hex(pixelData[0]) + Color.Dec2Hex(pixelData[1]) + Color.Dec2Hex(pixelData[2]);
                 }
             },
-            function(color, error) {
+            function (color, error) {
                 if (!color) {
                     console.log("Error:", error);
                     ColorSelector.currentPickerInstance.onColorPickingCanceled();
@@ -582,7 +582,7 @@ ColorSelector.installGlobalListeners = function() {
             });
     }, true);
 
-    document.body.addEventListener("focus", function(event) {
+    document.body.addEventListener("focus", function (event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -592,7 +592,7 @@ ColorSelector.installGlobalListeners = function() {
     }, true);
 
 
-    document.body.addEventListener("mouseup", function(event) {
+    document.body.addEventListener("mouseup", function (event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -601,7 +601,7 @@ ColorSelector.installGlobalListeners = function() {
         if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     }, true);
 
-    document.body.addEventListener("click", function(event) {
+    document.body.addEventListener("click", function (event) {
         if (!ColorSelector.currentPickerInstance) return;
 
         event.cancelBubble = true;
@@ -610,13 +610,13 @@ ColorSelector.installGlobalListeners = function() {
         if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     }, true);
 };
-ColorSelector.prototype.onColorPickingCanceled = function() {
+ColorSelector.prototype.onColorPickingCanceled = function () {
     document.body.removeAttribute("color-picker-active");
     BaseWidget.closableProcessingDisabled = false;
     ColorSelector.currentPickerInstance = null;
     BaseWidget.unregisterClosable(ColorSelector._pickerClosable);
 };
-ColorSelector.prototype.onColorPicked = function(color) {
+ColorSelector.prototype.onColorPicked = function (color) {
     document.body.removeAttribute("color-picker-active");
     BaseWidget.closableProcessingDisabled = false;
     BaseWidget.unregisterClosable(ColorSelector._pickerClosable);
@@ -629,12 +629,12 @@ ColorSelector.prototype.onColorPicked = function(color) {
 };
 
 ColorSelector._pickerClosable = {
-    close: function() {
+    close: function () {
         if (ColorSelector.currentPickerInstance) ColorSelector.currentPickerInstance.onColorPickingCanceled();
     }
 };
 
-ColorSelector.prototype.pickColor = function() {
+ColorSelector.prototype.pickColor = function () {
     ColorSelector.installGlobalListeners();
 
     document.body.setAttribute("color-picker-active", true);

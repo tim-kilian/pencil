@@ -6,11 +6,11 @@ var Connector = {};
 
 Connector.isWorking = false;
 
-Connector.prepareInvalidation = function(canvas) {
+Connector.prepareInvalidation = function (canvas) {
     Connector.caches = [];
     Connector.cacheMap = {};
     Connector.incomingMap = {};
-    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function(node) {
+    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function (node) {
         if (canvas.isShapeLocked(node)) return;
 
         var defId = canvas.getType(node);
@@ -53,18 +53,18 @@ Connector.prepareInvalidation = function(canvas) {
         Connector.cacheMap[node.id] = cache;
     });
 };
-Connector.prepareInvalidationIfNeeded = function(canvas) {
+Connector.prepareInvalidationIfNeeded = function (canvas) {
     if (Connector.caches) return;
     Connector.prepareInvalidation(canvas);
 };
-Connector.finishInvalidation = function(canvas) {
+Connector.finishInvalidation = function (canvas) {
     Connector.caches = null;
     Connector.cacheMap = null;
     Connector.incomingMap = null;
 };
 
 
-Connector.invalidateInboundConnections = function(canvas, shape) {
+Connector.invalidateInboundConnections = function (canvas, shape) {
     if (Connector.isWorking) return;
     try {
         Connector.isWorking = true;
@@ -73,7 +73,7 @@ Connector.invalidateInboundConnections = function(canvas, shape) {
         Connector.isWorking = false;
     }
 };
-Connector.invalidateInboundConnectionsForShapeTarget = function(target) {
+Connector.invalidateInboundConnectionsForShapeTarget = function (target) {
     Connector.prepareInvalidationIfNeeded(target.canvas);
 
     var incomings = Connector.incomingMap[target.svg.id];
@@ -125,7 +125,7 @@ Connector.invalidateInboundConnectionsForShapeTarget = function(target) {
         }
     }
 };
-Connector.invalidateInboundConnectionsImpl = function(canvas, shape) {
+Connector.invalidateInboundConnectionsImpl = function (canvas, shape) {
     var target = canvas.createControllerFor(shape);
 
     if (target.invalidateInboundConnections) {
@@ -133,7 +133,7 @@ Connector.invalidateInboundConnectionsImpl = function(canvas, shape) {
     }
 };
 
-Connector.calculateViaPoint = function(target, outlet, matrix) {
+Connector.calculateViaPoint = function (target, outlet, matrix) {
     var cx = 0;
     var cy = 0;
     if (target) {
@@ -180,7 +180,7 @@ Connector.calculateViaPoint = function(target, outlet, matrix) {
     return via;
 };
 
-Connector.invalidateOutboundConnections = function(canvas, node) {
+Connector.invalidateOutboundConnections = function (canvas, node) {
     if (Connector.isWorking) return;
     try {
         Connector.isWorking = true;
@@ -189,7 +189,7 @@ Connector.invalidateOutboundConnections = function(canvas, node) {
         Connector.isWorking = false;
     }
 };
-Connector.invalidateOutboundConnectionsForShapeTarget = function(target) {
+Connector.invalidateOutboundConnectionsForShapeTarget = function (target) {
     var canvas = target.canvas;
     var node = target.svg;
 
@@ -250,7 +250,7 @@ Connector.invalidateOutboundConnectionsForShapeTarget = function(target) {
         source.setProperty(prop.name, handle);
     }
 };
-Connector.invalidateOutboundConnectionsImpl = function(canvas, node) {
+Connector.invalidateOutboundConnectionsImpl = function (canvas, node) {
     var target = canvas.createControllerFor(node);
 
     if (target.invalidateOutboundConnections) {
@@ -258,7 +258,7 @@ Connector.invalidateOutboundConnectionsImpl = function(canvas, node) {
     }
 };
 
-Connector.areClassesMatched = function(classes1, classes2) {
+Connector.areClassesMatched = function (classes1, classes2) {
     return true;
     for (var i = 0; i < classes1.length; i ++) {
         if (classes1[i] == "*" || classes2.indexOf(classes1[i]) >= 0) return true;
@@ -266,10 +266,10 @@ Connector.areClassesMatched = function(classes1, classes2) {
 
     return false;
 };
-Connector.getMatchingOutlets = function(canvas, shape, classes) {
+Connector.getMatchingOutlets = function (canvas, shape, classes) {
     var matchingOutlets = [];
     var classes1 = classes.split(/[ ]*\,[ ]*/);
-    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function(node) {
+    Dom.workOn(".//svg:g[@p:type='Shape']", canvas.drawingLayer, function (node) {
         if (node.id == shape.id) return;
 
         var source = canvas.createControllerFor(node);
@@ -299,7 +299,7 @@ Connector.getMatchingOutlets = function(canvas, shape, classes) {
 };
 
 var ConnectorUtil = {};
-ConnectorUtil.generateStandarOutlets = function(shape, classes) {
+ConnectorUtil.generateStandarOutlets = function (shape, classes) {
     var box = shape.getProperty("box");
     if (box) {
         return [
@@ -333,7 +333,7 @@ ConnectorUtil.generateStandarOutlets = function(shape, classes) {
     }
 };
 
-function getSegmentsToHandle(startPoints, handle, VIA_LENGTH) {
+function getSegmentsToHandle (startPoints, handle, VIA_LENGTH) {
     var points = [];
     var start = null;
     for (var i = 0; i < startPoints.length; i ++) {
@@ -369,7 +369,7 @@ function getSegmentsToHandle(startPoints, handle, VIA_LENGTH) {
 
     return points;
 }
-function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
+function arrowTo (startPoints, handle, w, VIA_LENGTH, supportUnconnected,
     withStartArrow, withEndArrow, straight, detachedDelta) {
     if (!supportUnconnected && !handle.isConnected()) return [];
 
@@ -451,7 +451,7 @@ function arrowTo(startPoints, handle, w, VIA_LENGTH, supportUnconnected,
 
 Util.importSandboxFunctions(getSegmentsToHandle, arrowTo);
 
-function Outlet(id, classes, x, y, direction) {
+function Outlet (id, classes, x, y, direction) {
     this.id = id;
     this.classes = classes;
     this.x = x;
@@ -459,12 +459,12 @@ function Outlet(id, classes, x, y, direction) {
     this.direction = direction;
 }
 
-Outlet.prototype.toString = function() {
+Outlet.prototype.toString = function () {
     return this.id + "[" + this.classes + "]@" + [this.x, this.y];
 };
 
 pencilSandbox.Outlet = {
-    newOutlet: function(id, classes, x, y, direction) {
+    newOutlet: function (id, classes, x, y, direction) {
         return new Outlet(id, classes, x, y, direction);
     }
 };

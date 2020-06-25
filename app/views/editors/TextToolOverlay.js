@@ -1,13 +1,13 @@
-function TextToolOverlay() {
+function TextToolOverlay () {
     BaseTemplatedWidget.call(this);
     var thiz = this;
-    this.selectorContainer.onHide = function() {
+    this.selectorContainer.onHide = function () {
         thiz.selector._commandName = "";
         thiz.selector._control = null;
     };
 
-    this.bind("click", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("click", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("command");
         });
 
@@ -37,7 +37,7 @@ function TextToolOverlay() {
     }, this.popupContainer);
 
 
-    var selectListener = function(event) {
+    var selectListener = function (event) {
         // var temp = OnScreenTextEditor.isEditing;
         // OnScreenTextEditor.isEditing = false;
 
@@ -60,8 +60,8 @@ function TextToolOverlay() {
     };
     window.document.body.addEventListener("mouseup", selectListener, false);
 
-    this.bind("click", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("click", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("command");
         });
 
@@ -73,15 +73,15 @@ function TextToolOverlay() {
         }
     }, this.textFormatContainer);
 
-    this.bind("click", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("click", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("command");
         });
 
         if (!node) return;
         node.setAttribute("checked", "true");
 
-        Dom.doOnAllChildren(thiz.malignContainer, function(child) {
+        Dom.doOnAllChildren(thiz.malignContainer, function (child) {
             if (child != node && child.removeAttribute) {
                 child.removeAttribute("checked");
             }
@@ -89,7 +89,7 @@ function TextToolOverlay() {
     }, this.malignContainer);
 
 
-    FontEditor._setupFontCombo(this.fontCombo, function() {
+    FontEditor._setupFontCombo(this.fontCombo, function () {
         if (thiz.currentRange) {
             thiz.editor.setAttribute("contenteditable", "true");
             window.getSelection().removeAllRanges();
@@ -99,18 +99,18 @@ function TextToolOverlay() {
         thiz.runEditorCommand("fontname", thiz.fontCombo.getSelectedItem().family);
     }, true);
 
-    this.fontCombo.addEventListener("keydown", function(event) {
+    this.fontCombo.addEventListener("keydown", function (event) {
         if (!thiz.currentRange) {
             thiz.currentRange = window.getSelection().getRangeAt(0);
             thiz.editor.removeAttribute("contenteditable");
             thiz.settingFont = true;
         }
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             thiz.fontCombo.button.focus();
         }, 10);
     }, false);
 
-    this.fontCombo.popup.addEventListener("p:PopupHidden", function() {
+    this.fontCombo.popup.addEventListener("p:PopupHidden", function () {
         if (thiz.currentRange) {
             thiz.editor.setAttribute("contenteditable", "true");
             window.getSelection().removeAllRanges();
@@ -123,7 +123,7 @@ function TextToolOverlay() {
     }, false);
 
     this.fontSizeCombo.setItems([1, 2, 3, 4, 5, 6, 7]);
-    this.fontSizeCombo.addEventListener("p:ItemSelected", function(event) {
+    this.fontSizeCombo.addEventListener("p:ItemSelected", function (event) {
         thiz.runEditorCommand("fontsize", thiz.fontSizeCombo.getSelectedItem());
         thiz.fixFontSize();
     }, false);
@@ -144,7 +144,7 @@ function TextToolOverlay() {
     //     }
     // }, false)
 
-    var changeColorListener = function(control, commandName) {
+    var changeColorListener = function (control, commandName) {
         var color = thiz.getColorByCommandValue(commandName);
         thiz.selector.setColor(color);
         thiz.selector._commandName = commandName;
@@ -154,20 +154,20 @@ function TextToolOverlay() {
         Dom.addClass(thiz._richTextEditor.textEditorWrapper, "ChoosingColor");
         thiz.selector.focus();
     };
-    this.selectorContainer.addEventListener("p:PopupHidden", function() {
+    this.selectorContainer.addEventListener("p:PopupHidden", function () {
         Dom.removeClass(thiz._richTextEditor.textEditorWrapper, "ChoosingColor");
     }, false);
-    this.mtextColorButton.addEventListener("click", function(event) {
+    this.mtextColorButton.addEventListener("click", function (event) {
         changeColorListener(thiz.mtextColorButton, "forecolor");
         event.cancelBubble = true;
     }, false);
 
-    this.mhilightColorButton.addEventListener("click", function(event) {
+    this.mhilightColorButton.addEventListener("click", function (event) {
         changeColorListener(thiz.mhilightColorButton, "hilitecolor");
         event.cancelBubble = true;
     }, false);
 
-    this.selector.addEventListener("ValueChange", function(event) {
+    this.selector.addEventListener("ValueChange", function (event) {
         var color = thiz.selector.getColor();
         var control = thiz.selector._control;
         var commandName = thiz.selector._commandName;
@@ -175,7 +175,7 @@ function TextToolOverlay() {
         thiz.updateButtonColor(control, color.toRGBAString());
     }, false);
 
-    this.selector.addEventListener("p:CloseColorSelector", function(event) {
+    this.selector.addEventListener("p:CloseColorSelector", function (event) {
         thiz.selectorContainer.hide();
     }, false);
 }
@@ -200,9 +200,9 @@ for (var fontMap of TextToolOverlay.FONT_SIZES) {
     TextToolOverlay.FONT_SIZE_MAP[fontMap.name] = fontMap.value;
 }
 
-TextToolOverlay.prototype.fixFontSize = function() {
+TextToolOverlay.prototype.fixFontSize = function () {
     var container = this._richTextEditor.textEditor;
-    Dom.doOnAllChildRecursively(container, function(node) {
+    Dom.doOnAllChildRecursively(container, function (node) {
         if (node.style && node.style.fontSize) {
             var em = TextToolOverlay.FONT_SIZE_MAP[node.style.fontSize];
             if (em) {
@@ -211,7 +211,7 @@ TextToolOverlay.prototype.fixFontSize = function() {
         }
     });
 };
-TextToolOverlay.prototype.queryFontSizeValue = function() {
+TextToolOverlay.prototype.queryFontSizeValue = function () {
     var node = window.getSelection().anchorNode;
     if (!node) return TextToolOverlay.DEFAULT_FONT;
     if (!node.style) node = node.parentNode;
@@ -228,7 +228,7 @@ TextToolOverlay.prototype.queryFontSizeValue = function() {
     return found;
 };
 
-TextToolOverlay.prototype.updateListByCommandValue = function(commandName, control) {
+TextToolOverlay.prototype.updateListByCommandValue = function (commandName, control) {
     var value = null;
     try {
         value = window.document.queryCommandValue(commandName);
@@ -250,7 +250,7 @@ TextToolOverlay.prototype.updateListByCommandValue = function(commandName, contr
     control.selectItem(value);
 };
 
-TextToolOverlay.prototype.getColorByCommandValue = function(commandName) {
+TextToolOverlay.prototype.getColorByCommandValue = function (commandName) {
     var value = null;
     try {
         value = window.document.queryCommandValue(commandName);
@@ -261,21 +261,21 @@ TextToolOverlay.prototype.getColorByCommandValue = function(commandName) {
     return Color.fromString(value);
 };
 
-TextToolOverlay.prototype.updateColorButtonByCommandValue = function(commandName, control) {
+TextToolOverlay.prototype.updateColorButtonByCommandValue = function (commandName, control) {
     var value = this.getColorByCommandValue(commandName);
     if (control.localName == "button") {
         if (value == null) return;
         this.updateButtonColor(control, value.toRGBString());
     }
 };
-TextToolOverlay.prototype.updateButtonColor = function(control, value) {
+TextToolOverlay.prototype.updateButtonColor = function (control, value) {
     if (control == this.mhilightColorButton) {
         // this.mhilightColorButton.style.color = value;
     } else if (control == this.mtextColorButton) {
         this.mtextColorButton.style.color = value;
     }
 };
-TextToolOverlay.prototype.updateButtonByCommandState = function(commandName, control) {
+TextToolOverlay.prototype.updateButtonByCommandState = function (commandName, control) {
     var value = null;
     try {
         value = window.document.queryCommandState(commandName);
@@ -289,32 +289,32 @@ TextToolOverlay.prototype.updateButtonByCommandState = function(commandName, con
         control.removeAttribute("checked");
     }
 };
-TextToolOverlay.prototype.showToolBar = function(target, anchor, popup, hAlign, vAlign, hPadding, vPadding, autoFlip) {
+TextToolOverlay.prototype.showToolBar = function (target, anchor, popup, hAlign, vAlign, hPadding, vPadding, autoFlip) {
     this.target = target;
     this.relatedPopup = popup;
     this.show(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip);
 };
-TextToolOverlay.prototype.showToolBarAt = function(target, x, y) {
+TextToolOverlay.prototype.showToolBarAt = function (target, x, y) {
     this.target = target;
     this.showAt(x, y);
 };
 
-TextToolOverlay.prototype.dontCloseUpward = function(event) {
+TextToolOverlay.prototype.dontCloseUpward = function (event) {
     var thiz = this;
-    var node = Dom.findUpward(event.target, function(n) {
+    var node = Dom.findUpward(event.target, function (n) {
         return thiz.relatedPopup && n == thiz.relatedPopup.popupContainer;
     });
     return node;
     // return true;
 };
 
-TextToolOverlay.prototype.onHide = function() {
+TextToolOverlay.prototype.onHide = function () {
     if (this.relatedPopup) {
         this.relatedPopup.hide("silent");
     }
 };
 
-TextToolOverlay.prototype.runEditorCommand = function(command, arg) {
+TextToolOverlay.prototype.runEditorCommand = function (command, arg) {
     try {
         this.editor.focus();
         this.settingFont = null;

@@ -1,18 +1,18 @@
-function ScreenCaptureOptionDialog() {
+function ScreenCaptureOptionDialog () {
     Dialog.call(this);
     this.title="Screenshot";
 
     var thiz = this;
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         this.close(this.makeResult(BaseCaptureService.MODE_AREA));
     }, this.areaButton);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         this.close(this.makeResult(BaseCaptureService.MODE_WINDOW));
     }, this.windowButton);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         this.close(this.makeResult(BaseCaptureService.MODE_FULLSCREEN));
     }, this.fullscreenButton);
 
@@ -33,7 +33,7 @@ Config.CAPTURE_OPTIONS_DELAY = Config.define("capture.options.delay", 0);
 Config.CAPTURE_OPTIONS_INSERT_MODE_NORMAL = "normal";
 Config.CAPTURE_OPTIONS_INSERT_MODE = Config.define("capture.options.insert_mode", Config.CAPTURE_OPTIONS_INSERT_MODE_NORMAL);
 
-ScreenCaptureOptionDialog.prototype.setup = function(provider) {
+ScreenCaptureOptionDialog.prototype.setup = function (provider) {
     var providedCaps = provider.capabilities || {
         captureArea: true,
         captureWindow: true,
@@ -51,7 +51,7 @@ ScreenCaptureOptionDialog.prototype.setup = function(provider) {
     }
 };
 
-ScreenCaptureOptionDialog.prototype.makeResult = function(mode) {
+ScreenCaptureOptionDialog.prototype.makeResult = function (mode) {
     var hidePointer = this.hideCursorCheckbox.checked;
     var hidePencilWindow = this.hidePencilCheckbox.checked;
     var delay = this.delayInput.value;
@@ -71,12 +71,12 @@ ScreenCaptureOptionDialog.prototype.makeResult = function(mode) {
     };
 };
 
-ScreenCaptureOptionDialog.prototype.getDialogActions = function() {
+ScreenCaptureOptionDialog.prototype.getDialogActions = function () {
     return [
         {
             type: "cancel", title: "Cancel",
             isCloseHandler: true,
-            run: function() {
+            run: function () {
                 return true;
             }
         }

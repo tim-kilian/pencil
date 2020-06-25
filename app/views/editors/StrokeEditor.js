@@ -1,9 +1,9 @@
-function StrokeEditor() {
+function StrokeEditor () {
     PropertyEditor.call(this);
 }
 __extend(PropertyEditor, StrokeEditor);
 
-StrokeEditor.prototype.setup = function() {
+StrokeEditor.prototype.setup = function () {
     // setting up dasharray
     var STYLES = [[Util.getMessage("stroke.style.solid"), ""],
         [Util.getMessage("stroke.style.dotted"), "1,3"],
@@ -28,7 +28,7 @@ StrokeEditor.prototype.setup = function() {
 
     this.items = strokeItems;
     var thiz = this;
-    this.styleCombo.renderer = function(style) {
+    this.styleCombo.renderer = function (style) {
         var svg = Dom.newDOMElement({
             "_name": "div",
             "class": "StrokeStyleComboItem",
@@ -55,21 +55,21 @@ StrokeEditor.prototype.setup = function() {
         });
         return svg;
     };
-    this.styleCombo.decorator = function(node, style) {
+    this.styleCombo.decorator = function (node, style) {
     };
 
     this.styleCombo.setItems(strokeItems);
     var thiz = this;
-    this.styleCombo.addEventListener("p:ItemSelected", function(event) {
+    this.styleCombo.addEventListener("p:ItemSelected", function (event) {
         thiz.fireChangeEvent();
     }, false);
-    this.strokeWidth.addEventListener("input", function(event) {
+    this.strokeWidth.addEventListener("input", function (event) {
         if (thiz.strokeWidth.value == "") thiz.strokeWidth.value = 1;
         thiz.fireChangeEvent();
     }, false);
 };
 
-StrokeEditor.prototype.setValue = function(stroke) {
+StrokeEditor.prototype.setValue = function (stroke) {
     this.strokeWidth.value = stroke.w;
     var item = null;
     for (var i = 0; i < this.items.length; i++) {
@@ -81,13 +81,13 @@ StrokeEditor.prototype.setValue = function(stroke) {
     this.styleCombo.selectItem(item);
 };
 
-StrokeEditor.prototype.getValue = function() {
+StrokeEditor.prototype.getValue = function () {
     var stroke = new StrokeStyle();
     stroke.w = this.strokeWidth.value;
     stroke.array = this.styleCombo.getSelectedItem().value;
     return stroke;
 };
-StrokeEditor.prototype.setDisabled = function(disabled) {
+StrokeEditor.prototype.setDisabled = function (disabled) {
     if (disabled == true) {
         this.strokeWidth.setAttribute("disabled", "true");
         this.styleCombo.setDisabled(true);

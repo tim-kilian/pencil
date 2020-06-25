@@ -1,9 +1,9 @@
 var AndroidSupports = {};
 
-AndroidSupports.insertScreenCapture = function() {
+AndroidSupports.insertScreenCapture = function () {
     Util.beginProgressJob("Taking screenshot", AndroidSupports.screenCaptureStarter);
 };
-AndroidSupports.screenCaptureStarter = function(listener) {
+AndroidSupports.screenCaptureStarter = function (listener) {
     // alert("inserting screen capture...");
 
     var SEP = "/";
@@ -46,12 +46,12 @@ AndroidSupports.screenCaptureStarter = function(listener) {
     process.runAsync(args, args.length);
 
     var count = 0;
-    var tracker = function() {
+    var tracker = function () {
         if (process.isRunning) {
             window.setTimeout(tracker, 200);
             listener.onProgressUpdated("Please wait", count ++, 20);
         } else {
-            var handler = function(imageData) {
+            var handler = function (imageData) {
                 var def = CollectionManager.shapeDefinition.locateDefinition(PNGImageXferHelper.SHAPE_DEF_ID);
 
                 var w = imageData.w;
@@ -88,7 +88,7 @@ AndroidSupports.screenCaptureStarter = function(listener) {
     window.setTimeout(tracker, 1000);
 };
 
-AndroidSupports.submit = function() {
+AndroidSupports.submit = function () {
 
 };
 

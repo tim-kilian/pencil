@@ -1,9 +1,9 @@
-function NPatchDialog() {
+function NPatchDialog () {
     Dialog.call(this);
     this.title="N-Patch script generator";
 
     var thiz = this;
-    this.bind("click", function() {
+    this.bind("click", function () {
         dialog.showOpenDialog({
             title: "Open Nine Patch File",
             defaultPath: os.homedir(),
@@ -11,7 +11,7 @@ function NPatchDialog() {
                 {name: "Android n-Patch", extensions: ["png"]},
                 {name: "All files", extensions: ["*"]}
             ]
-        }, function(filenames) {
+        }, function (filenames) {
             console.log(filenames);
             if (!filenames || filenames.length <= 0) return;
 
@@ -21,7 +21,7 @@ function NPatchDialog() {
                 _name: "img",
                 src: filenames + "?time=" + new Date().getTime()
             });
-            img.onload = function() {
+            img.onload = function () {
                 thiz.handleImageLoad(img);
             };
             thiz.sourceImageContainer.appendChild(img);
@@ -31,26 +31,26 @@ function NPatchDialog() {
         });
     }, this.browse);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         thiz.result.select();
     }, this.result);
 
 
-    function openExternalLink(url) {
+    function openExternalLink (url) {
         require("shell").openExternal(url);
     }
-    this.bind("click", function() {
+    this.bind("click", function () {
         openExternalLink("http://developer.android.com/guide/topics/graphics/2d-graphics.html#nine-patch");
     }, this.aboutNPatchLink);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         openExternalLink("http://www.pencil-project.org/wiki/devguide/Tutorial/Nine_Patches.html");
     }, this.usageNPatchLink);
 }
 
 __extend(Dialog, NPatchDialog);
 
-NPatchDialog.prototype.handleImageLoad = function(img) {
+NPatchDialog.prototype.handleImageLoad = function (img) {
     var image = img;
     var path = this.path;
     var html = "<strong>Path:</strong>";
@@ -60,23 +60,23 @@ NPatchDialog.prototype.handleImageLoad = function(img) {
     this.createPatches(img);
 };
 
-NPatchDialog.prototype.setup = function() {
+NPatchDialog.prototype.setup = function () {
 
 };
 
-NPatchDialog.prototype.getDialogActions = function() {
+NPatchDialog.prototype.getDialogActions = function () {
     return [
         {
             type: "cancel", title: "Close",
             isCloseHandler: true,
-            run: function() {
+            run: function () {
                 return true;
             }
         }
     ];
 };
 
-NPatchDialog.prototype.getPixel = function(imageData, x, y) {
+NPatchDialog.prototype.getPixel = function (imageData, x, y) {
     var base = (x + y * imageData.width) * 4;
     return {
         r: imageData.data[base],
@@ -86,7 +86,7 @@ NPatchDialog.prototype.getPixel = function(imageData, x, y) {
     };
 };
 
-NPatchDialog.prototype.createPatch = function(srcImage, p1, p2, scaleX, scaleY, container) {
+NPatchDialog.prototype.createPatch = function (srcImage, p1, p2, scaleX, scaleY, container) {
     var canvas = this.canvas;
     var w = p2.x - p1.x;
     var h = p2.y - p1.y;
@@ -101,7 +101,7 @@ NPatchDialog.prototype.createPatch = function(srcImage, p1, p2, scaleX, scaleY, 
     this.appendResult(data, w, h, scaleX, scaleY, container);
 };
 
-NPatchDialog.prototype.appendResult = function(data, w, h, scaleX, scaleY, container) {
+NPatchDialog.prototype.appendResult = function (data, w, h, scaleX, scaleY, container) {
     var result = container ? container : this.parsedImageContainer;
     var img = Dom.newDOMElement({
         _name: "img",
@@ -122,7 +122,7 @@ NPatchDialog.prototype.appendResult = function(data, w, h, scaleX, scaleY, conta
     this.currentRow.push(patch);
 };
 
-NPatchDialog.prototype.createPatches = function(image) {
+NPatchDialog.prototype.createPatches = function (image) {
     var w = image.width;
     var h = image.height;
 
@@ -249,13 +249,13 @@ NPatchDialog.prototype.createPatches = function(image) {
     this.result.focus();
 };
 
-function Walker() {
+function Walker () {
     this.segments = [];
     this.currentSegment = null;
     this.i = -1;
 }
 
-Walker.prototype.step = function(alpha) {
+Walker.prototype.step = function (alpha) {
     this.i ++;
     if (!this.currentSegment || this.currentSegment.alpha != alpha) {
         this.currentSegment = {
@@ -270,7 +270,7 @@ Walker.prototype.step = function(alpha) {
     }
 };
 
-function test() {
+function test () {
     var cases = [
         ["#off", "#on"],
         ["disabled", null],
@@ -278,7 +278,7 @@ function test() {
         ["holo_dark.png", "holo_light.png"]
     ];
 
-    function gen(i) {
+    function gen (i) {
         var b = cases[i];
         var result = [];
         if (i == cases.length - 1) {
@@ -299,7 +299,7 @@ function test() {
     return gen(0);
 }
 
-function name(x) {
+function name (x) {
     if (x) return "_" + x;
     return "";
 }

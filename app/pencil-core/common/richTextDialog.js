@@ -1,5 +1,5 @@
 var RichTextDialog = {};
-RichTextDialog.handleLoad = function(event) {
+RichTextDialog.handleLoad = function (event) {
     try {
         // setup font list
         var fontPopup = document.getElementById("fontPopup");
@@ -26,7 +26,7 @@ RichTextDialog.handleLoad = function(event) {
             body.style.fontStyle = font.style;
         }
         runEditorCommand("styleWithCSS", true);
-        RichTextDialog.editor.addEventListener("keypress", function(event) {
+        RichTextDialog.editor.addEventListener("keypress", function (event) {
             if (event.keyCode == event.DOM_VK_ESCAPE) {
                 if (RichTextDialog.doCancel()) window.close();
             }
@@ -39,7 +39,7 @@ RichTextDialog.handleLoad = function(event) {
 };
 
 
-RichTextDialog.doCancel = function() {
+RichTextDialog.doCancel = function () {
     try {
         RichTextDialog.returnValueHolder.ok = false;
     } catch (e) {
@@ -47,9 +47,9 @@ RichTextDialog.doCancel = function() {
     }
     return true;
 };
-RichTextDialog.doApply = function() {
+RichTextDialog.doApply = function () {
     var html = Dom.serializeNode(RichTextDialog.editor.contentDocument.body);
-    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function(zero) {
+    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function (zero) {
         return zero.toLowerCase();
     });
     if (html.match(/^<body[^>]*>([^\0]*)<\/body>$/)) {
@@ -61,7 +61,7 @@ RichTextDialog.doApply = function() {
     return true;
 };
 
-function runEditorCommand(command, arg) {
+function runEditorCommand (command, arg) {
     try {
         if (typeof(arg) != "undefined") RichTextDialog.editor.contentDocument.execCommand(command, false, arg);
         else RichTextDialog.editor.contentDocument.execCommand(command, false, null);
@@ -69,7 +69,7 @@ function runEditorCommand(command, arg) {
         alert(e);
     }
 }
-function runCommandByList(command, list) {
+function runCommandByList (command, list) {
     var v = list.value;
     if (!v) return;
     try {
@@ -77,15 +77,15 @@ function runCommandByList(command, list) {
     } catch (e) { }
     list.selectedIndex = 0;
 }
-function queryValue(command) {
+function queryValue (command) {
     alert(RichTextDialog.editor.contentDocument.queryCommandValue(command));
 }
-function queryState(command) {
+function queryState (command) {
     alert(RichTextDialog.editor.contentDocument.queryCommandState(command));
 }
 
 
-function doInsertLink() {
+function doInsertLink () {
     var url = window.prompt("Please specify the URL", "http://www.evolus.vn");
     if (url) {
         runEditorCommand("createlink", url);

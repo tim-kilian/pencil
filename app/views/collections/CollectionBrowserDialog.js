@@ -1,4 +1,4 @@
-function CollectionBrowserDialog(collectionPanel, managerDialog) {
+function CollectionBrowserDialog (collectionPanel, managerDialog) {
     this.grabHeight = true;
     this.grabWidth = true;
     this.heightMargin = 5 * Util.em();
@@ -12,7 +12,7 @@ function CollectionBrowserDialog(collectionPanel, managerDialog) {
 
     var thiz = this;
 
-    this.bind("e:TabChange", function(event) {
+    this.bind("e:TabChange", function (event) {
         var tab = this.tabPane.getActiveTabPane();
         if (!tab._initialized) {
             tab._initialized = true;
@@ -22,23 +22,23 @@ function CollectionBrowserDialog(collectionPanel, managerDialog) {
 }
 __extend(Dialog, CollectionBrowserDialog);
 
-CollectionBrowserDialog.prototype.setup = function() {
+CollectionBrowserDialog.prototype.setup = function () {
     var thiz = this;
     var repos = CollectionRepository.getCollectionRepos();
-    repos.forEach(function(repo) {
+    repos.forEach(function (repo) {
         var view = new CollectionRepoBrowserView(thiz.collectionPanel, thiz.managerDialog, repo);
         thiz.tabPane.addTab(repo.name, view.node());
     });
 };
 
-CollectionBrowserDialog.prototype.getDialogActions = function() {
+CollectionBrowserDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         Dialog.ACTION_CLOSE,
         {
             type: "extra1", title: "Install From URL...",
-            run: function() {
-                Dialog.prompt("Enter your url here", "", "OK", function(value) {
+            run: function () {
+                Dialog.prompt("Enter your url here", "", "OK", function (value) {
                     const url = value;
                     if (!url) {
                         return;

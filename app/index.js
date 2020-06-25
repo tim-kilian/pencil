@@ -29,7 +29,7 @@ var handleRedirect = (e, url) => {
 };
 
 var mainWindow = null;
-function createWindow() {
+function createWindow () {
     var mainWindowProperties = {
         title: pkg.name,
         autoHideMenuBar: true,
@@ -71,7 +71,7 @@ function createWindow() {
 
     // mainWindow.webContents.openDevTools();
 
-    mainWindow.on("closed", function() {
+    mainWindow.on("closed", function () {
         mainWindow = null;
         app.exit(0);
     });
@@ -94,24 +94,24 @@ function createWindow() {
 }
 
 // Quit when all windows are closed.
-app.on("window-all-closed", function() {
+app.on("window-all-closed", function () {
     if (process.platform !== "darwin") {
         app.quit();
     }
 });
 
-app.on("ready", function() {
-    protocol.registerBufferProtocol("ref", function(request, callback) {
+app.on("ready", function () {
+    protocol.registerBufferProtocol("ref", function (request, callback) {
         var path = request.url.substr(6);
 
-        fs.readFile(path, function(err, data) {
+        fs.readFile(path, function (err, data) {
             if (err) {
                 callback({mimeType: "text/html", data: new Buffer("Not found")});
             } else {
                 callback({mimeType: "image/jpeg", data: new Buffer(data)});
             }
         });
-    }, function(error, scheme) {
+    }, function (error, scheme) {
         if (error) {
             console.log("ERROR REGISTERING", error);
         }
@@ -130,7 +130,7 @@ app.on("ready", function() {
     const globalShortcutMainService = require("./tools/global-shortcut-main.js");
     globalShortcutMainService.start();
 });
-app.on("activate", function() {
+app.on("activate", function () {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
@@ -140,10 +140,10 @@ app.on("activate", function() {
     }
 });
 
-app.on("will-quit", function() {
+app.on("will-quit", function () {
     require("electron").globalShortcut.unregisterAll();
 });
 
-process.on("uncaughtException", function(error) {
+process.on("uncaughtException", function (error) {
     console.error(error);
 });

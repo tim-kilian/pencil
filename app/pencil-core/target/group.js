@@ -1,4 +1,4 @@
-function Group(canvas, svg) {
+function Group (canvas, svg) {
     this.svg = svg;
     this.canvas = canvas;
 
@@ -10,7 +10,7 @@ function Group(canvas, svg) {
 
     this.targets = [];
     var thiz = this;
-    Dom.workOn("./svg:g[@p:type]", this.svg, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.svg, function (node) {
         var controller = thiz.canvas.createControllerFor(node);
         thiz.targets.push(controller);
     });
@@ -57,13 +57,13 @@ function Group(canvas, svg) {
 
     // this.dockingManager = new DockingManager(this);
 }
-Group.prototype.getName = function() {
+Group.prototype.getName = function () {
     return "Group";
 };
-Group.prototype.isFor = function(svg) {
+Group.prototype.isFor = function (svg) {
     return this.svg == svg;
 };
-Group.prototype.getProperties = function() {
+Group.prototype.getProperties = function () {
     var properties = {};
     for (var p in this.propertyGroup.properties) {
         var name = this.propertyGroup.properties[p].name;
@@ -72,15 +72,15 @@ Group.prototype.getProperties = function() {
 
     return properties;
 };
-Group.prototype.getPropertyGroups = function() {
+Group.prototype.getPropertyGroups = function () {
     return [this.propertyGroup];
 };
-Group.prototype.setProperty = function(name, value) {
+Group.prototype.setProperty = function (name, value) {
     for (t in this.targets) {
         this.targets[t].setProperty(name, value);
     }
 };
-Group.prototype.getProperty = function(name) {
+Group.prototype.getProperty = function (name) {
     if (name == "box") return null;
     var firstValue = this.targets[0].getProperty(name);
 
@@ -102,16 +102,16 @@ Group.prototype.getProperty = function(name) {
     //
     // return same ? firstValue : null;
 };
-Group.prototype.setMetadata = function(name, value) {
+Group.prototype.setMetadata = function (name, value) {
     return Util.setNodeMetadata(this.svg, name, value);
 };
-Group.prototype.getMetadata = function(name) {
+Group.prototype.getMetadata = function (name) {
     return Util.getNodeMetadata(this.svg, name);
 };
 
 // new imple for geometry editing
 
-Group.prototype.moveBy = function(dx, dy, targetSet, moving) {
+Group.prototype.moveBy = function (dx, dy, targetSet, moving) {
     var matrix = this.svg.ownerSVGElement.createSVGTransform().matrix;
     matrix = matrix.translate(dx, dy);
     var ctm = this.svg.getTransformToElement(this.svg.parentNode);
@@ -123,7 +123,7 @@ Group.prototype.moveBy = function(dx, dy, targetSet, moving) {
     //   this.dockingManager.handleMoveBy(dx, dy, targetSet, moving);
     // }
 };
-Group.getSizingOriginalInfo = function(node) {
+Group.getSizingOriginalInfo = function (node) {
     return {
         gw0: Util.getCustomNumberProperty(node, "sizing-gow", 1),
         gh0: Util.getCustomNumberProperty(node, "sizing-goh", 1),
@@ -134,7 +134,7 @@ Group.getSizingOriginalInfo = function(node) {
         y0: Util.getCustomNumberProperty(node, "sizing-oy", 0)
     };
 };
-Group.prototype.scaleTo_noPolicy = function(nw, nh, group) {
+Group.prototype.scaleTo_noPolicy = function (nw, nh, group) {
     var geo = this.getGeometry();
     var dw = nw / geo.dim.w;
     var dh = nh / geo.dim.h;
@@ -159,7 +159,7 @@ Group.prototype.scaleTo_noPolicy = function(nw, nh, group) {
     //    this.dockingManager.handleScaleTo(nw, nh, geo.dim.w, geo.dim.h, group);
     // }
 };
-Group.calculateLayout = function(ePos0, eSize0, gSize0, posPolicy, sizePolicy, size, eSize) {
+Group.calculateLayout = function (ePos0, eSize0, gSize0, posPolicy, sizePolicy, size, eSize) {
     var layout = {};
 
     if (sizePolicy == "relative") {
@@ -184,7 +184,7 @@ Group.calculateLayout = function(ePos0, eSize0, gSize0, posPolicy, sizePolicy, s
 
     return layout;
 };
-Group.prototype.scaleTo = function(nw, nh, group) {
+Group.prototype.scaleTo = function (nw, nh, group) {
     if (!this.svg.getAttributeNS(PencilNamespaces.p, "sizing-gow")) {
         this.scaleTo_noPolicy(nw, nh, group);
         return;
@@ -213,11 +213,11 @@ Group.prototype.scaleTo = function(nw, nh, group) {
         target.scaleTo(Math.round(hLayout.size), Math.round(vLayout.size), true);
     }
 };
-Group.prototype.layoutChildren = function() {
+Group.prototype.layoutChildren = function () {
     var geo = this.getGeometry();
     this.scaleTo(geo.dim.w, geo.dim.h);
 };
-Group.prototype.rotateBy = function(da) {
+Group.prototype.rotateBy = function (da) {
     debug("rotateBy: " + da);
     var ctm = this.svg.getTransformToElement(this.svg.parentNode);
     var bbox = this.svg.getBBox();
@@ -239,7 +239,7 @@ Group.prototype.rotateBy = function(da) {
     //    this.dockingManager.handleRotateBy(da);
     // }
 };
-Group.prototype.getBounding = function(to) {
+Group.prototype.getBounding = function (to) {
     var context = to ? to : this.canvas.drawingLayer;
     var ctm = this.svg.getTransformToElement(context);
 
@@ -259,11 +259,11 @@ Group.prototype.getBounding = function(to) {
 
     return rect;
 };
-Group.prototype.supportScaling = function() {
+Group.prototype.supportScaling = function () {
     return true;
 };
 
-Group.prototype.ungroup = function() {
+Group.prototype.ungroup = function () {
     var nodes = [];
     for (t in this.targets) {
         var target = this.targets[t];
@@ -287,7 +287,7 @@ Group.prototype.ungroup = function() {
 // ~new impl
 
 Group.TRANSLATE_REGEX = /^translate\(([\-0-9]+)\,([\-0-9]+)\)$/;
-Group.prototype.getGeometry = function() {
+Group.prototype.getGeometry = function () {
     var geo = new Geometry();
     geo.ctm = this.svg.getTransformToElement(this.canvas.drawingLayer);
 
@@ -300,7 +300,7 @@ Group.prototype.getGeometry = function() {
 
     return geo;
 };
-Group.prototype.getBoundingRect = function() {
+Group.prototype.getBoundingRect = function () {
     var rect = null;
     var thiz = this;
     for (t in this.targets) {
@@ -310,7 +310,7 @@ Group.prototype.getBoundingRect = function() {
 
     return rect;
 };
-Group.prototype.setGeometry = function(geo) {
+Group.prototype.setGeometry = function (geo) {
     var thiz = this;
     for (t in this.targets) {
         var childRect = this.targets[t].getBoundingRect();
@@ -318,7 +318,7 @@ Group.prototype.setGeometry = function(geo) {
     }
 };
 
-Group.prototype.moveByx = function(x, y, zoomAware) {
+Group.prototype.moveByx = function (x, y, zoomAware) {
     var thiz = this;
     for (t in this.targets) {
         this.targets[t].moveBy(x, y, zoomAware ? true : false);
@@ -326,7 +326,7 @@ Group.prototype.moveByx = function(x, y, zoomAware) {
 };
 
 
-Group.prototype.setPositionSnapshot = function() {
+Group.prototype.setPositionSnapshot = function () {
 /*
     var ctm = this.svg.getTransformToElement(this.canvas.drawingLayer);
 
@@ -342,7 +342,7 @@ Group.prototype.setPositionSnapshot = function() {
 */
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
-Group.prototype.moveFromSnapshot = function(dx, dy, dontNormalize, targetSet) {
+Group.prototype.moveFromSnapshot = function (dx, dy, dontNormalize, targetSet) {
 /*
     var v = Svg.vectorInCTM({x: dx, y: dy},
                             this._pSnapshot.ctm,
@@ -366,7 +366,7 @@ Group.prototype.moveFromSnapshot = function(dx, dy, dontNormalize, targetSet) {
     this._pSnapshot.lastDX = dx;
     this._pSnapshot.lastDY = dy;
 };
-Group.prototype.clearPositionSnapshot = function() {
+Group.prototype.clearPositionSnapshot = function () {
 /*
     delete this._pSnapshot;
     this._pSnapshot = null;
@@ -375,12 +375,12 @@ Group.prototype.clearPositionSnapshot = function() {
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
 
-Group.prototype.deleteTarget = function() {
+Group.prototype.deleteTarget = function () {
     this.canvas.snappingHelper.updateSnappingGuide(this, true);
     // this.dockingManager.deleteTarget();
     this.svg.parentNode.removeChild(this.svg);
 };
-Group.prototype.bringForward = function() {
+Group.prototype.bringForward = function () {
     try {
         var next = this.svg.nextSibling;
         if (next) {
@@ -398,7 +398,7 @@ Group.prototype.bringForward = function() {
         alert(e);
     }
 };
-Group.prototype.bringToFront = function() {
+Group.prototype.bringToFront = function () {
     try {
         var next = this.svg.nextSibling;
         if (next) {
@@ -411,7 +411,7 @@ Group.prototype.bringToFront = function() {
         alert(e);
     }
 };
-Group.prototype.sendBackward = function() {
+Group.prototype.sendBackward = function () {
     try {
         var previous = this.svg.previousSibling;
         if (previous) {
@@ -424,7 +424,7 @@ Group.prototype.sendBackward = function() {
         alert(e);
     }
 };
-Group.prototype.sendToBack = function() {
+Group.prototype.sendToBack = function () {
     try {
         var previous = this.svg.previousSibling;
         if (previous) {
@@ -437,27 +437,27 @@ Group.prototype.sendToBack = function() {
         alert(e);
     }
 };
-Group.prototype.getTextEditingInfo = function() {
+Group.prototype.getTextEditingInfo = function () {
     var info = null;
     return info;
 };
 
-Group.prototype.createTransferableData = function() {
+Group.prototype.createTransferableData = function () {
     return {type: ShapeXferHelper.MIME_TYPE,
         isSVG: true,
         dataNode: this.svg.cloneNode(true)
     };
 };
-Group.prototype.lock = function() {
+Group.prototype.lock = function () {
     this.svg.setAttributeNS(PencilNamespaces.p, "p:locked", "true");
 };
 
-Group.prototype.markAsMoving = function(moving) {
+Group.prototype.markAsMoving = function (moving) {
     // this.dockingManager.moving = moving;
     Svg.optimizeSpeed(this.svg, moving);
 };
 
-Group.prototype.getSnappingGuide = function() {
+Group.prototype.getSnappingGuide = function () {
     var b = this.getBounding();
 
     var vertical = [];
@@ -475,18 +475,18 @@ Group.prototype.getSnappingGuide = function() {
         vertical: vertical, horizontal: horizontal
     };
 };
-Group.prototype.invalidateInboundConnections = function() {
+Group.prototype.invalidateInboundConnections = function () {
     for (t in this.targets) {
         this.targets[t].invalidateInboundConnections();
     }
 };
-Group.prototype.invalidateOutboundConnections = function() {
+Group.prototype.invalidateOutboundConnections = function () {
     for (t in this.targets) {
     	var target = this.targets[t];
         target.invalidateOutboundConnections();
     }
 };
-Group.prototype.processNewGroup = function() {
+Group.prototype.processNewGroup = function () {
     var geo = this.getGeometry();
     Util.setCustomProperty(this.svg, "sizing-gow", geo.dim.w);
     Util.setCustomProperty(this.svg, "sizing-goh", geo.dim.h);
@@ -504,7 +504,7 @@ Group.prototype.processNewGroup = function() {
         Util.setCustomProperty(target.svg, "sizing-oh", targetGeo.dim.h);
     }
 };
-Group.prototype.validateAll = function() {
+Group.prototype.validateAll = function () {
     for (t in this.targets) {
         var target = this.targets[t];
         target.validateAll();
@@ -512,7 +512,7 @@ Group.prototype.validateAll = function() {
 };
 
 
-Group.getSizingPolicy = function(target) {
+Group.getSizingPolicy = function (target) {
     return {
         xPolicy: Util.getCustomProperty(target.svg, "sizing-x-policy", "relative"),
         yPolicy: Util.getCustomProperty(target.svg, "sizing-y-policy", "relative"),
@@ -520,7 +520,7 @@ Group.getSizingPolicy = function(target) {
         hPolicy: Util.getCustomProperty(target.svg, "sizing-h-policy", "relative")
     };
 };
-Group.openSizingPolicyDialog = function(target) {
+Group.openSizingPolicyDialog = function (target) {
     var holder = {
         input: Group.getSizingPolicy(target)
     };
@@ -528,7 +528,7 @@ Group.openSizingPolicyDialog = function(target) {
     var dialog = new SizingPolicyDialog();
     dialog.open({
         holder: holder,
-        callback: function(valueHolder) {
+        callback: function (valueHolder) {
             if (!valueHolder.output) return;
             Util.setCustomProperty(target.svg, "sizing-x-policy", valueHolder.output.xPolicy);
         	Util.setCustomProperty(target.svg, "sizing-y-policy", valueHolder.output.yPolicy);
@@ -537,9 +537,9 @@ Group.openSizingPolicyDialog = function(target) {
         }
     });
 };
-Group.prototype.getSymbolName = function() {
+Group.prototype.getSymbolName = function () {
     return Svg.getSymbolName(this.svg);
 };
-Group.prototype.setSymbolName = function(name) {
+Group.prototype.setSymbolName = function (name) {
     return Svg.setSymbolName(this.svg, name);
 };

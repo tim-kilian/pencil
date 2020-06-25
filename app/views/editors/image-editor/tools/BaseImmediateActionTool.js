@@ -1,4 +1,4 @@
-function BaseImmediateActionTool() {
+function BaseImmediateActionTool () {
     BaseTemplatedWidget.call(this);
 
     this.icon.innerHTML = this.getIcon ? this.getIcon() : "";
@@ -13,54 +13,54 @@ function BaseImmediateActionTool() {
 }
 __extend(BaseTemplatedWidget, BaseImmediateActionTool);
 
-BaseImmediateActionTool.prototype.getTemplatePath = function() {
+BaseImmediateActionTool.prototype.getTemplatePath = function () {
     var p = this.getTemplatePrefix() + (this.constructor.__templatePath ? this.constructor.__templatePath + "/" : "") + "BaseImmediateActionTool.xhtml";
     return p;
 };
 
-BaseImmediateActionTool.prototype._run = function() {
+BaseImmediateActionTool.prototype._run = function () {
     var thiz = this;
 
-    this.imageSource.start(function() {
+    this.imageSource.start(function () {
         var image = thiz.imageSource.get();
 
-        thiz.modifyImage(image, function(error) {
+        thiz.modifyImage(image, function (error) {
             if (!error) {
-                thiz.imageSource.set(image, thiz.getImageCommitOptions(), function() {
-                    thiz.imageSource.commit(function() {});
+                thiz.imageSource.set(image, thiz.getImageCommitOptions(), function () {
+                    thiz.imageSource.commit(function () {});
                 });
             }
         });
     });
 };
-BaseImmediateActionTool.prototype.getImageCommitOptions = function() {
+BaseImmediateActionTool.prototype.getImageCommitOptions = function () {
     return {};
 };
-BaseImmediateActionTool.prototype.setup = function(imageSource) {
+BaseImmediateActionTool.prototype.setup = function (imageSource) {
     this.imageSource = imageSource;
 };
 
 // //////////////// TOOLS: Crop to selection
 
-function CropToSelectionTool() {
+function CropToSelectionTool () {
     BaseImmediateActionTool.call(this);
 }
 
 __extend(BaseImmediateActionTool, CropToSelectionTool);
 
-CropToSelectionTool.prototype.getIcon = function() {
+CropToSelectionTool.prototype.getIcon = function () {
     return "crop";
 };
-CropToSelectionTool.prototype.getLabel = function() {
+CropToSelectionTool.prototype.getLabel = function () {
     return "Crop";
 };
-CropToSelectionTool.prototype.getToolTip = function() {
+CropToSelectionTool.prototype.getToolTip = function () {
     return "Crop to selection";
 };
-CropToSelectionTool.prototype.modifyImage = function(image, callback) {
+CropToSelectionTool.prototype.modifyImage = function (image, callback) {
     callback();
 };
-CropToSelectionTool.prototype.getImageCommitOptions = function() {
+CropToSelectionTool.prototype.getImageCommitOptions = function () {
     return {
         replace: true
     };
@@ -68,25 +68,25 @@ CropToSelectionTool.prototype.getImageCommitOptions = function() {
 
 // //////////////// TOOLS: Crop to selection
 
-function CropToSelectionTool() {
+function CropToSelectionTool () {
     BaseImmediateActionTool.call(this);
 }
 
 __extend(BaseImmediateActionTool, CropToSelectionTool);
 
-CropToSelectionTool.prototype.getIcon = function() {
+CropToSelectionTool.prototype.getIcon = function () {
     return "crop";
 };
-CropToSelectionTool.prototype.getLabel = function() {
+CropToSelectionTool.prototype.getLabel = function () {
     return "Crop";
 };
-CropToSelectionTool.prototype.getToolTip = function() {
+CropToSelectionTool.prototype.getToolTip = function () {
     return "Crop to selection";
 };
-CropToSelectionTool.prototype.modifyImage = function(image, callback) {
+CropToSelectionTool.prototype.modifyImage = function (image, callback) {
     callback();
 };
-CropToSelectionTool.prototype.getImageCommitOptions = function() {
+CropToSelectionTool.prototype.getImageCommitOptions = function () {
     return {
         replace: true
     };

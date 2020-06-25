@@ -1,18 +1,18 @@
-function SizeToolbar() {
+function SizeToolbar () {
     ToolBar.call(this);
 }
 __extend(ToolBar, SizeToolbar);
 
-SizeToolbar.prototype.registerCommands = function() {
+SizeToolbar.prototype.registerCommands = function () {
     UICommandManager.register({
         key: "makeSameWidthCommand",
         watchEvents: "p:TargetChanged",
         label: "Make same width",
         shortcut: "W",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameWidth;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameWidth();
         }
     });
@@ -22,10 +22,10 @@ SizeToolbar.prototype.registerCommands = function() {
         watchEvents: "p:TargetChanged",
         label: "Make same height",
         shortcut: "H",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameHeight;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameHeight();
         }
     });
@@ -34,10 +34,10 @@ SizeToolbar.prototype.registerCommands = function() {
         watchEvents: "p:TargetChanged",
         label: "Make same min width",
         shortcut: "Ctrl+W",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameMinWidth;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameMinWidth();
         }
     });
@@ -46,10 +46,10 @@ SizeToolbar.prototype.registerCommands = function() {
         watchEvents: "p:TargetChanged",
         label: "Make same min height",
         shortcut: "Ctrl+H",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameMinHeight;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameMinHeight();
         }
     });
@@ -58,10 +58,10 @@ SizeToolbar.prototype.registerCommands = function() {
         watchEvents: "p:TargetChanged",
         label: "Make same horizontal gap",
         shortcut: "O",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameHorizontalSpace;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameHorizontalSpace();
         }
     });
@@ -70,10 +70,10 @@ SizeToolbar.prototype.registerCommands = function() {
         watchEvents: "p:TargetChanged",
         shortcut: "V",
         label: "Make same vertical gap",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController && Pencil.activeCanvas.currentController.makeSameVerticalSpace;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.currentController.makeSameVerticalSpace();
         }
     });

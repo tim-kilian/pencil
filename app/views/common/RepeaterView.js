@@ -1,9 +1,9 @@
-function RepeaterView(definitionNode) {
+function RepeaterView (definitionNode) {
     BaseWidget.call(this, definitionNode);
 }
 __extend(BaseWidget, RepeaterView);
 
-RepeaterView.prototype.buildDOMNode = function(definitionNode) {
+RepeaterView.prototype.buildDOMNode = function (definitionNode) {
     var nodeName = "hbox";
     if (definitionNode) {
         nodeName = definitionNode.getAttribute("tag") || nodeName;
@@ -11,7 +11,7 @@ RepeaterView.prototype.buildDOMNode = function(definitionNode) {
 
     return document.createElement(nodeName);
 };
-RepeaterView.prototype.setContentFragment = function(fragment) {
+RepeaterView.prototype.setContentFragment = function (fragment) {
     for (var i = 0; i < fragment.childNodes.length; i ++) {
         var node = fragment.childNodes[i];
         if (!node.getAttribute) continue;
@@ -29,20 +29,20 @@ RepeaterView.prototype.setContentFragment = function(fragment) {
     }
 };
 
-RepeaterView.prototype.createBinding = function(container) {
+RepeaterView.prototype.createBinding = function (container) {
     container._binding = {};
     container._binding._node = container;
     Dom.doOnChildRecursively(container, {
-        eval: function(n) {
+        eval: function (n) {
             return n.getAttribute && n.getAttribute("anon-id");
         }
-    }, function(n) {
+    }, function (n) {
         container._binding[n.getAttribute("anon-id")] = n.__widget || n;
     });
 };
 
 
-RepeaterView.prototype.generate = function(container, templateNode, data) {
+RepeaterView.prototype.generate = function (container, templateNode, data) {
     var node = templateNode.cloneNode(true);
     this.createBinding(node);
 
@@ -52,7 +52,7 @@ RepeaterView.prototype.generate = function(container, templateNode, data) {
 
     return node;
 };
-RepeaterView.prototype.setItems = function(items) {
+RepeaterView.prototype.setItems = function (items) {
     this.items = items;
     Dom.empty(this.node());
     if (!items || items.length <= 0) {

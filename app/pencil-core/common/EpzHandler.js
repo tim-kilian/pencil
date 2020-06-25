@@ -1,4 +1,4 @@
-function EpzHandler(controller) {
+function EpzHandler (controller) {
     FileHandler.call(this);
     this.controller = controller;
     this.name = "Pencil Document (Compressed)";
@@ -7,14 +7,14 @@ function EpzHandler(controller) {
 __extend(FileHandler, EpzHandler);
 
 EpzHandler.EXT = ".epz";
-EpzHandler.prototype.loadDocument = function(filePath) {
+EpzHandler.prototype.loadDocument = function (filePath) {
     var thiz = this;
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var admZip = require("adm-zip");
 
         var zip = new admZip(filePath);
-        zip.extractAllToAsync(Pencil.documentHandler.tempDir.name, true, function(err) {
+        zip.extractAllToAsync(Pencil.documentHandler.tempDir.name, true, function (err) {
             if (err) {
                 reject(new Error("File could not be loaded: " + err));
             } else {

@@ -2,9 +2,9 @@
 // License: GPL/MPL
 // $Id$
 
-/* class */ function ShapeDefCollectionParser() {
+/* class */ function ShapeDefCollectionParser () {
 }
-ShapeDefCollectionParser.prototype.injectEntityDefs = function(content, file) {
+ShapeDefCollectionParser.prototype.injectEntityDefs = function (content, file) {
     // getting the current local
     var locale = Config.getLocale();
 
@@ -30,13 +30,13 @@ ShapeDefCollectionParser.prototype.injectEntityDefs = function(content, file) {
 
     var doctypeContent = "<!DOCTYPE Shapes [\n" + dtdContent + "\n]>\n";
 
-    content = content.replace(/(<Shapes)/, function(zero, one) {
+    content = content.replace(/(<Shapes)/, function (zero, one) {
         return doctypeContent + one;
     });
 
     return content;
 };
-ShapeDefCollectionParser.prototype.injectEntityDefsFromUrl = function(content, url) {
+ShapeDefCollectionParser.prototype.injectEntityDefsFromUrl = function (content, url) {
     // try {
     //     //getting the current local
     //     var locale = "en-US";
@@ -58,11 +58,11 @@ ShapeDefCollectionParser.prototype.injectEntityDefsFromUrl = function(content, u
     return content;
 };
 ShapeDefCollectionParser.CHARSET = "UTF-8";
-ShapeDefCollectionParser.getCollectionPropertyConfigName = function(collectionId, propName) {
+ShapeDefCollectionParser.getCollectionPropertyConfigName = function (collectionId, propName) {
     return "Collection." + collectionId + ".properties." + propName;
 };
 
-/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parseURL = function(url) {
+/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parseURL = function (url) {
     try {
         var dom = null;
         if (url.match(/^[a-z]+:\/\/.*/)) {
@@ -88,13 +88,13 @@ ShapeDefCollectionParser.getCollectionPropertyConfigName = function(collectionId
     }
 };
 
-/* void */ ShapeDefCollectionParser.prototype.parseURLAsync = function(url, callback) {
+/* void */ ShapeDefCollectionParser.prototype.parseURLAsync = function (url, callback) {
     try {
         var thiz = this;
 
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
-        request.onreadystatechange = function(event) {
+        request.onreadystatechange = function (event) {
             if (request.readyState != 4) return;
 
             if (request.status != 200 && request.status != 0) {
@@ -121,7 +121,7 @@ ShapeDefCollectionParser.getCollectionPropertyConfigName = function(collectionId
         error(e);
     }
 };
-/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parseFile = function(file, uri) {
+/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parseFile = function (file, uri) {
     try {
         var fileContents = FileIO.read(file, ShapeDefCollectionParser.CHARSET);
         var domParser = new DOMParser();
@@ -140,7 +140,7 @@ ShapeDefCollectionParser.getCollectionPropertyConfigName = function(collectionId
     }
 };
 
-ShapeDefCollectionParser.prototype.loadBuiltinPrivateCollection = function(installDirPath) {
+ShapeDefCollectionParser.prototype.loadBuiltinPrivateCollection = function (installDirPath) {
     var collectionFile = path.join(installDirPath, "PrivateCollection.xml");
     if (!fs.existsSync(collectionFile)) return null;
 
@@ -148,7 +148,7 @@ ShapeDefCollectionParser.prototype.loadBuiltinPrivateCollection = function(insta
     return collection;
 };
 
-ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, collection) {
+ShapeDefCollectionParser.prototype.loadCustomLayout = function (installDirPath, collection) {
     var layoutUri = path.join(installDirPath, "Layout.xhtml");
     if (!fs.existsSync(layoutUri)) return null;
 
@@ -168,7 +168,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
             div.appendChild(n);
         }
 
-        Dom.workOn("//html:img[@src]", div, function(image) {
+        Dom.workOn("//html:img[@src]", div, function (image) {
             var src = image.getAttribute("src");
             if (src && src.indexOf("data:image") != 0) {
                 var parts = src.split("/");
@@ -187,7 +187,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
 
     return null;
 };
-/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parse = function(dom, uri) {
+/* public ShapeDefCollection */ ShapeDefCollectionParser.prototype.parse = function (dom, uri) {
     var collection = new ShapeDefCollection();
     collection.url = uri ? uri : dom.documentURI;
     collection.installDirPath = path.dirname(uri);
@@ -215,7 +215,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     collection.system = shapeDefsNode.getAttribute("system") == "true";
     collection.fonts = [];
 
-    Dom.workOn("./p:Script", shapeDefsNode, function(scriptNode) {
+    Dom.workOn("./p:Script", shapeDefsNode, function (scriptNode) {
         var context = {collection: collection};
         try {
             pEval(scriptNode.textContent, context, "COLLECTION_SCRIPT: " + collection.displayName + ", " + collection.relURL + " (" + scriptNode.getAttribute("comments") + ")");
@@ -223,7 +223,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
             console.error("Collection script evaluation failed: " + collection.displayName, e);
         }
     });
-    Dom.workOn("./p:Fonts/p:Font", shapeDefsNode, function(fontNode) {
+    Dom.workOn("./p:Fonts/p:Font", shapeDefsNode, function (fontNode) {
         var font = {
             name: fontNode.getAttribute("name")
         };
@@ -240,7 +240,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
 
     var parser = this;
 
-    Dom.workOn("./p:Shape | ./p:Shortcut", shapeDefsNode, function(node) {
+    Dom.workOn("./p:Shape | ./p:Shortcut", shapeDefsNode, function (node) {
         if (node.localName == "Shape") {
             collection.addDefinition(parser.parseShapeDef(node, collection));
         } else {
@@ -251,12 +251,12 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     return collection;
 };
 
-/* private void */ ShapeDefCollectionParser.prototype.parseCollectionProperties = function(shapeDefsNode, collection) {
-    Dom.workOn("./p:Properties/p:PropertyGroup", shapeDefsNode, function(propGroupNode) {
+/* private void */ ShapeDefCollectionParser.prototype.parseCollectionProperties = function (shapeDefsNode, collection) {
+    Dom.workOn("./p:Properties/p:PropertyGroup", shapeDefsNode, function (propGroupNode) {
         var group = new PropertyGroup;
         group.name = propGroupNode.getAttribute("name");
 
-        Dom.workOn("./p:Property", propGroupNode, function(propNode) {
+        Dom.workOn("./p:Property", propGroupNode, function (propNode) {
             var property = new Property();
             property.name = propNode.getAttribute("name");
             property.displayName = propNode.getAttribute("displayName");
@@ -284,9 +284,9 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
             }
 
             // parsing meta
-            Dom.workOn("./@p:*", propNode, function(metaAttribute) {
+            Dom.workOn("./@p:*", propNode, function (metaAttribute) {
                 var metaValue = metaAttribute.nodeValue;
-                metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+                metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                     property.relatedProperties[one] = true;
                     return "properties." + one;
                 });
@@ -342,7 +342,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     });
     //debug(collection.styleGroups);/*/
 };
-/* public ShapeDef */ ShapeDefCollectionParser.prototype.parseShapeDef = function(shapeDefNode, collection) {
+/* public ShapeDef */ ShapeDefCollectionParser.prototype.parseShapeDef = function (shapeDefNode, collection) {
     var shapeDef = new ShapeDef();
     shapeDef.id = collection.id + ":" + shapeDefNode.getAttribute("id");
     shapeDef.displayName = shapeDefNode.getAttribute("displayName");
@@ -366,9 +366,9 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
 
     // adding shapeDef meta
     shapeDef.meta = {};
-    Dom.workOn("./@p:*", shapeDefNode, function(metaAttribute) {
+    Dom.workOn("./@p:*", shapeDefNode, function (metaAttribute) {
         var metaValue = metaAttribute.nodeValue;
-        metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+        metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
             property.relatedProperties[one] = true;
             return "properties." + one;
         });
@@ -378,7 +378,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     var parser = this;
 
     // parse properties
-    Dom.workOn("./p:Properties/p:PropertyGroup", shapeDefNode, function(propGroupNode) {
+    Dom.workOn("./p:Properties/p:PropertyGroup", shapeDefNode, function (propGroupNode) {
         // find existing property group to support duplicate inherited groups
         var groupName = propGroupNode.getAttribute("name");
         var group = null;
@@ -394,7 +394,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
             shapeDef.propertyGroups.push(group);
         }
 
-        Dom.workOn("./p:Property", propGroupNode, function(propNode) {
+        Dom.workOn("./p:Property", propGroupNode, function (propNode) {
             var property = new Property();
             property.name = propNode.getAttribute("name");
             property.displayName = propNode.getAttribute("displayName");
@@ -415,7 +415,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
             if (valueElement) {
                 if (valueElement.localName == "E") {
                     var expression = Dom.getText(valueElement);
-                    expression = expression.replace(/\$\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+                    expression = expression.replace(/\$\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                         return "collection.properties." + one + ".value";
                     });
 
@@ -429,9 +429,9 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
 
             property.relatedProperties = {};
             // parsing meta
-            Dom.workOn("./@p:*", propNode, function(metaAttribute) {
+            Dom.workOn("./@p:*", propNode, function (metaAttribute) {
                 var metaValue = metaAttribute.nodeValue;
-                metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+                metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                     property.relatedProperties[one] = true;
                     return "properties." + one;
                 });
@@ -507,7 +507,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     8*/
 
     // parse behaviors
-    Dom.workOn("./p:Behaviors/p:For", shapeDefNode, function(forNode) {
+    Dom.workOn("./p:Behaviors/p:For", shapeDefNode, function (forNode) {
         var targets = forNode.getAttribute("ref");
         if (targets) {
             targets = targets.split(",");
@@ -517,10 +517,10 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
 
                 shapeDef.behaviorMap[behavior.target] = behavior;
 
-                Dom.workOn("./p:*", forNode, function(behaviorItemNode) {
+                Dom.workOn("./p:*", forNode, function (behaviorItemNode) {
                     var item = new BehaviorItem();
                     item.handler = Pencil.behaviors[behaviorItemNode.localName];
-                    var count = Dom.workOn("./p:Arg", behaviorItemNode, function(argNode) {
+                    var count = Dom.workOn("./p:Arg", behaviorItemNode, function (argNode) {
                         item.args.push(new BehaviorItemArg(Dom.getText(argNode), shapeDef, behavior.target, argNode.getAttribute("literal")));
                     });
 
@@ -538,15 +538,15 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     });
 
     // parsing actions
-    Dom.workOn("./p:Actions/p:Action", shapeDefNode, function(actionNode) {
+    Dom.workOn("./p:Actions/p:Action", shapeDefNode, function (actionNode) {
         var action = new ShapeAction();
         action.id = actionNode.getAttribute("id");
         action.displayName = actionNode.getAttribute("displayName");
         action.meta = {};
 
-        Dom.workOn("./@p:*", actionNode, function(metaAttribute) {
+        Dom.workOn("./@p:*", actionNode, function (metaAttribute) {
             var metaValue = metaAttribute.nodeValue;
-            metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+            metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                 return "properties." + one;
             });
             action.meta[metaAttribute.localName] = metaValue;
@@ -556,7 +556,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
         var text = implNode.textContent;
         action.implFunction = null;
         try {
-            action.implFunction = function() {
+            action.implFunction = function () {
                 var s = "var x = function () { " + text + "}; x.apply(contextObject)";
                 return pEval(s, {contextObject: this});
             };
@@ -576,7 +576,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     shapeDef.contentNode = Dom.getSingle("./p:Content", shapeDefNode);
 
     // replacing id -> p:name
-    Dom.workOn(".//*[@id]", shapeDef.contentNode, function(node) {
+    Dom.workOn(".//*[@id]", shapeDef.contentNode, function (node) {
         var id = node.getAttribute("id");
         node.setAttributeNS(PencilNamespaces.p, "p:name", id);
         node.removeAttribute("id");
@@ -598,7 +598,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     return shapeDef;
 };
 
-/* public ShapeDef */ ShapeDefCollectionParser.prototype.processInheritance = function(shapeDef) {
+/* public ShapeDef */ ShapeDefCollectionParser.prototype.processInheritance = function (shapeDef) {
 // this.contentNode = null;
 // this.propertyGroups = [];
 // this.behaviors = [];
@@ -628,7 +628,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
         shapeDef.actionMap[name] = shapeDef.parentShapeDef.actionMap[name];
     }
 };
-/* public Shortcut */ ShapeDefCollectionParser.prototype.parseShortcut = function(shortcutNode, collection) {
+/* public Shortcut */ ShapeDefCollectionParser.prototype.parseShortcut = function (shortcutNode, collection) {
     var shortcut = new Shortcut();
 
     shortcut.displayName = shortcutNode.getAttribute("displayName");
@@ -653,7 +653,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
     shortcut.id = "system:ref:" + shortcut.displayName.replace(/[^a-z0-9]+/gi, "_").toLowerCase() + shortcut.shape.id;
 
     // parse property values
-    Dom.workOn(".//p:PropertyValue", shortcutNode, function(propValueNode) {
+    Dom.workOn(".//p:PropertyValue", shortcutNode, function (propValueNode) {
         var name = propValueNode.getAttribute("name");
 
         var valueElement = Dom.getSingle("./p:*", propValueNode);
@@ -661,7 +661,7 @@ ShapeDefCollectionParser.prototype.loadCustomLayout = function(installDirPath, c
         if (valueElement) {
             if (valueElement.localName == "E") {
                 var expression = Dom.getText(valueElement);
-                expression = expression.replace(/\$\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+                expression = expression.replace(/\$\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                     return "collection.properties." + one + ".value";
                 });
 

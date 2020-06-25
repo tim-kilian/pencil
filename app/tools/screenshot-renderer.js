@@ -13,7 +13,7 @@ var parentId = null;
 var index = null;
 var url = null;
 
-function boot() {
+function boot () {
     selectedAreaPane = document.getElementById("selectedAreaPane");
 
     if (window.location.href.match(/^[^\?]+\?i=([^&]+)&index=([^&]+)&id=([^&]+)$/)) {
@@ -24,12 +24,12 @@ function boot() {
         parentId = parseInt(RegExp.$3, 10);
     }
 
-    document.addEventListener("mousedown", function(event) {
+    document.addEventListener("mousedown", function (event) {
         ox = event.clientX;
         oy = event.clientY;
         held = true;
     }, false);
-    document.addEventListener("mousemove", function(event) {
+    document.addEventListener("mousemove", function (event) {
         if (!held) return;
         x = Math.min(ox, event.clientX);
         y = Math.min(oy, event.clientY);
@@ -40,7 +40,7 @@ function boot() {
         redraw();
     }, false);
 
-    document.addEventListener("mouseup", function(event) {
+    document.addEventListener("mouseup", function (event) {
         held = false;
         redraw();
         const {app, BrowserWindow} = require("electron").remote;
@@ -48,7 +48,7 @@ function boot() {
         parentWindow.webContents.send("region-selected", {x: x, y: y, width: w, height: h, index: index});
     });
 
-    window.addEventListener("keyup", function(event) {
+    window.addEventListener("keyup", function (event) {
         if (event.keyCode == 27) {
             const {app, BrowserWindow} = require("electron").remote;
             var parentWindow = BrowserWindow.fromId(parentId);
@@ -59,7 +59,7 @@ function boot() {
     redraw();
 }
 
-function redraw() {
+function redraw () {
     selectedAreaPane.style.borderLeftWidth = x + "px";
     selectedAreaPane.style.borderTopWidth = y + "px";
     selectedAreaPane.style.borderRightWidth = (selectedAreaPane.offsetWidth - x - w) + "px";

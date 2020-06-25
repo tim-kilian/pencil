@@ -1,4 +1,4 @@
-function OOConversionExporter(name, id, mime, extTitle, ext) {
+function OOConversionExporter (name, id, mime, extTitle, ext) {
     this.name = name;
     this.id = id;
     this.mime = mime;
@@ -7,14 +7,14 @@ function OOConversionExporter(name, id, mime, extTitle, ext) {
 }
 
 OOConversionExporter.converters = {};
-OOConversionExporter.getConverter = function() {
+OOConversionExporter.getConverter = function () {
     var key = Config.get("export.oo.converter", "uno");
     return OOConversionExporter.converters[key];
 };
 
 
 OOConversionExporter.converters["uno"] = {
-    getFormatFromMime: function(mime) {
+    getFormatFromMime: function (mime) {
         var map = {
             "application/pdf": "pdf",
             "application/msword": "doc"
@@ -22,7 +22,7 @@ OOConversionExporter.converters["uno"] = {
 
         return map[mime];
     },
-    convert: function(src, dest, mime, callback) {
+    convert: function (src, dest, mime, callback) {
         debug("converting using UNOCONV");
         var processService = Components.classes["@mozilla.org/process/util;1"]
             .getService(Components.interfaces.nsIProcess);
@@ -53,16 +53,16 @@ OOConversionExporter.converters["uno"] = {
 };
 
 OOConversionExporter.converters["jod"] = {
-    convert: function(src, dest, mime, callback) {
+    convert: function (src, dest, mime, callback) {
         debug("converting using JOD");
         var url = Config.get("export.oo.converter.jod.url", "http://ks300916.kimsufi.com:8080/jodconverter/service");
 
         var listener = {
-            onMessage: function(message) {
+            onMessage: function (message) {
             },
-            onProgress: function(percent) {
+            onProgress: function (percent) {
             },
-            onDone: function() {
+            onDone: function () {
                 callback();
             }
         };
@@ -81,20 +81,20 @@ OOConversionExporter.converters["jod"] = {
 
 OOConversionExporter.prototype = new ODTExporter();
 OOConversionExporter.prototype.super$export = OOConversionExporter.prototype.export;
-OOConversionExporter.prototype.export = function(doc, options, destFile, xmlFile, callback) {
+OOConversionExporter.prototype.export = function (doc, options, destFile, xmlFile, callback) {
     var tmpODTFile = Local.newTempFile("penciloo", "odt");
 
     var thiz = this;
-    this.super$export(doc, options, tmpODTFile, xmlFile, function() {
+    this.super$export(doc, options, tmpODTFile, xmlFile, function () {
         var converter = OOConversionExporter.getConverter();
-        converter.convert(tmpODTFile, destFile, thiz.mime, function() {
+        converter.convert(tmpODTFile, destFile, thiz.mime, function () {
             tmpODTFile.remove(true);
             callback();
         });
     });
 };
 
-OOConversionExporter.prototype.getOutputFileExtensions = function() {
+OOConversionExporter.prototype.getOutputFileExtensions = function () {
     return [
         {
             title: this.extTitle,

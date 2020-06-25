@@ -1,28 +1,28 @@
-function SharedFillColorEditor(propertyName, buttonId) {
+function SharedFillColorEditor (propertyName, buttonId) {
     this.target = null;
     this.color = null;
     this.propertyName = propertyName;
     this.buttonId = buttonId;
 }
 
-SharedFillColorEditor.prototype.setup = function() {
+SharedFillColorEditor.prototype.setup = function () {
     // grab control references
     this.fillColorButton = document.getElementById(this.buttonId);
 
     var thiz = this;
-    this.fillColorButton.addEventListener("change", function(event) {
+    this.fillColorButton.addEventListener("change", function (event) {
         if (!thiz.target || !thiz.color) return;
         thiz.color = thiz.fillColorButton.color;
         thiz._applyValue();
     }, false);
 };
-SharedFillColorEditor.prototype._applyValue = function() {
+SharedFillColorEditor.prototype._applyValue = function () {
     var thiz = this;
-    Pencil.activeCanvas.run(function() {
+    Pencil.activeCanvas.run(function () {
         this.setProperty(thiz.propertyName, thiz.color);
     }, this.target, Util.getMessage("action.apply.properties.value"));
 };
-SharedFillColorEditor.prototype.attach = function(target) {
+SharedFillColorEditor.prototype.attach = function (target) {
     this.target = null;
     this.color = target.getProperty(this.propertyName);
     if (!this.color) {
@@ -36,13 +36,13 @@ SharedFillColorEditor.prototype.attach = function(target) {
 
     this.target = target;
 };
-SharedFillColorEditor.prototype.detach = function() {
+SharedFillColorEditor.prototype.detach = function () {
     this.fillColorButton.setEnable(false);
 
     this.target = null;
     this.font = null;
 };
-SharedFillColorEditor.prototype.attach.invalidate = function() {
+SharedFillColorEditor.prototype.attach.invalidate = function () {
     if (!this.target) {
         this.detach();
     } else {

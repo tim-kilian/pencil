@@ -1,4 +1,4 @@
-function BaseCaptureService() {
+function BaseCaptureService () {
 
 }
 
@@ -11,17 +11,17 @@ BaseCaptureService.OUTPUT_FILE = "file";
 
 Config.CAPTURE_ACTIVE_PROVIDER_ID = Config.define("capture.active_provider_id", "");
 
-function BaseCmdCaptureService() {
+function BaseCmdCaptureService () {
     BaseCaptureService.call(this);
 }
 
 BaseCmdCaptureService.prototype = new BaseCaptureService();
 
-BaseCmdCaptureService.prototype.capture = function(options) {
+BaseCmdCaptureService.prototype.capture = function (options) {
     var thiz = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var cmd = thiz.buildCommandLine(options);
-        require("child_process").execFile(cmd.path, cmd.args, function(error) {
+        require("child_process").execFile(cmd.path, cmd.args, function (error) {
             if (error) {
                 reject(error);
             } else {
@@ -32,7 +32,7 @@ BaseCmdCaptureService.prototype.capture = function(options) {
 };
 
 
-function GnomeScreenshotService() {
+function GnomeScreenshotService () {
     BaseCmdCaptureService.call(this);
 
     this.id = "GnomeScreenshotService";
@@ -43,7 +43,7 @@ GnomeScreenshotService.prototype = new BaseCmdCaptureService();
 
 Config.CAPTURE_GNOME_EXEC_PATH = Config.define("capture.gnome_screenshot.exec_path", "/usr/bin/gnome-screenshot");
 
-GnomeScreenshotService.prototype.buildCommandLine = function(options) {
+GnomeScreenshotService.prototype.buildCommandLine = function (options) {
     var cmd = {
         path: this.getExecPath(),
         args: []
@@ -63,15 +63,15 @@ GnomeScreenshotService.prototype.buildCommandLine = function(options) {
 
     return cmd;
 };
-GnomeScreenshotService.prototype.getExecPath = function() {
+GnomeScreenshotService.prototype.getExecPath = function () {
     return Config.get(Config.CAPTURE_GNOME_EXEC_PATH);
 };
-GnomeScreenshotService.prototype.isSupported = function(options) {
+GnomeScreenshotService.prototype.isSupported = function (options) {
     return process.platform == "linux" && fs.existsSync(this.getExecPath());
 };
 
 
-function MacScreenshotService() {
+function MacScreenshotService () {
     BaseCmdCaptureService.call(this);
 
     this.id = "MacScreenshotService";
@@ -82,7 +82,7 @@ MacScreenshotService.prototype = new BaseCmdCaptureService();
 
 Config.CAPTURE_MAC_EXEC_PATH = Config.define("capture.mac_screenshot.exec_path", "/usr/sbin/screencapture");
 
-MacScreenshotService.prototype.buildCommandLine = function(options) {
+MacScreenshotService.prototype.buildCommandLine = function (options) {
     var cmd = {
         path: this.getExecPath(),
         args: []
@@ -108,15 +108,15 @@ MacScreenshotService.prototype.buildCommandLine = function(options) {
 
     return cmd;
 };
-MacScreenshotService.prototype.getExecPath = function() {
+MacScreenshotService.prototype.getExecPath = function () {
     return Config.get(Config.CAPTURE_MAC_EXEC_PATH);
 };
-MacScreenshotService.prototype.isSupported = function(options) {
+MacScreenshotService.prototype.isSupported = function (options) {
     return process.platform == "darwin" && fs.existsSync(this.getExecPath());
 };
 
 
-function WindowsSnippingToolScreenshotService() {
+function WindowsSnippingToolScreenshotService () {
     BaseCmdCaptureService.call(this);
 
     this.id = "WindowsSnippingToolScreenshotService";
@@ -127,7 +127,7 @@ WindowsSnippingToolScreenshotService.prototype = new BaseCmdCaptureService();
 
 Config.CAPTURE_SNIPPING_TOOL_EXEC_PATH = Config.define("capture.snippingtool_screenshot.exec_path", process.env.windir + "\\system32\\SnippingTool.exe");
 
-WindowsSnippingToolScreenshotService.prototype.buildCommandLine = function(options) {
+WindowsSnippingToolScreenshotService.prototype.buildCommandLine = function (options) {
     var cmd = {
         path: this.getExecPath(),
         args: []
@@ -147,15 +147,15 @@ WindowsSnippingToolScreenshotService.prototype.buildCommandLine = function(optio
 
     return cmd;
 };
-WindowsSnippingToolScreenshotService.prototype.getExecPath = function() {
+WindowsSnippingToolScreenshotService.prototype.getExecPath = function () {
     return Config.get(Config.CAPTURE_SNIPPING_TOOL_EXEC_PATH);
 };
-WindowsSnippingToolScreenshotService.prototype.isSupported = function(options) {
+WindowsSnippingToolScreenshotService.prototype.isSupported = function (options) {
     return process.platform == "win32" && fs.existsSync(this.getExecPath());
 };
 
 
-function ElectronScreenshotService() {
+function ElectronScreenshotService () {
     BaseCmdCaptureService.call(this);
 
     this.id = "ElectronScreenshotService";
@@ -170,13 +170,13 @@ function ElectronScreenshotService() {
 
 ElectronScreenshotService.prototype = new BaseCmdCaptureService();
 
-ElectronScreenshotService.prototype.capture = function(options) {
+ElectronScreenshotService.prototype.capture = function (options) {
     console.log("options", options);
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         const {app, BrowserWindow} = require("electron").remote;
         const ipcRenderer = require("electron").ipcRenderer;
 
-        function canvasToFileProcessor(canvas, context) {
+        function canvasToFileProcessor (canvas, context) {
             var dataURL = canvas.toDataURL("image/png");
             var ni = nativeImage.createFromDataURL(dataURL);
 
@@ -191,7 +191,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
 
         var imageFilePaths = [];
         var index = -1;
-        (function next() {
+        (function next () {
             index ++;
             if (index >= displays.length) {
                 onFinishedCapturing();
@@ -207,7 +207,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
                 height: display.bounds.height,
                 processor: canvasToFileProcessor
             },
-            function(filePath, error) {
+            function (filePath, error) {
                 if (!filePath) {
                     reject(error);
                     return;
@@ -223,7 +223,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
 
         var currentWindow = require("electron").remote.getCurrentWindow();
 
-        function onFinishedCapturing() {
+        function onFinishedCapturing () {
             if (options && options.mode == "fullscreen") {
                 if (options.outputType == "file") {
                     fs.createReadStream(imageFilePaths[0].filePath).pipe(fs.createWriteStream(options.outputPath));
@@ -234,7 +234,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
                 return;
             }
 
-            imageFilePaths.forEach(function(info, index) {
+            imageFilePaths.forEach(function (info, index) {
                 var browserWindow = new BrowserWindow({
                     x: info.display.bounds.x,
                     y: info.display.bounds.y,
@@ -261,7 +261,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
                             "&index=" + index +
                             "&id=" + currentWindow.id;
                 browserWindow.loadURL(url);
-                browserWindow.once("ready-to-show", function() {
+                browserWindow.once("ready-to-show", function () {
                     browserWindow.show();
                     browserWindow.focus();
                     browserWindow.setSize(info.display.bounds.width, info.display.bounds.height, false);
@@ -271,8 +271,8 @@ ElectronScreenshotService.prototype.capture = function(options) {
             });
         }
 
-        ipcRenderer.once("region-canceled", function(event, args) {
-            imageFilePaths.forEach(function(info) {
+        ipcRenderer.once("region-canceled", function (event, args) {
+            imageFilePaths.forEach(function (info) {
                 try {
                     info.browserWindow.destroy();
                 } catch (e) {}
@@ -285,9 +285,9 @@ ElectronScreenshotService.prototype.capture = function(options) {
             reject(new Error("canceled"));
         });
 
-        ipcRenderer.once("region-selected", function(event, args) {
+        ipcRenderer.once("region-selected", function (event, args) {
             console.log("region-selected, args", args);
-            imageFilePaths.forEach(function(info) {
+            imageFilePaths.forEach(function (info) {
                 try {
                     info.browserWindow.destroy();
                 } catch (e) {}
@@ -296,7 +296,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
             var selectedPath = imageFilePaths[args.index].filePath;
 
             var image = new Image();
-            image.onload = function() {
+            image.onload = function () {
                 var canvas = document.createElement("canvas");
                 canvas.width = args.width;
                 canvas.height = args.height;
@@ -313,7 +313,7 @@ ElectronScreenshotService.prototype.capture = function(options) {
                 image.src = "";
                 image = null;
 
-                imageFilePaths.forEach(function(info) {
+                imageFilePaths.forEach(function (info) {
                     try {
                         fs.unlinkSync(info.filePath);
                     } catch (e) {}
@@ -326,38 +326,38 @@ ElectronScreenshotService.prototype.capture = function(options) {
     });
 };
 
-ElectronScreenshotService.prototype.isSupported = function() {
+ElectronScreenshotService.prototype.isSupported = function () {
     return true;
 };
 
 
-function Capturer() {}
-Capturer.prototype.captureFullScreenData = function(options, callback) {
+function Capturer () {}
+Capturer.prototype.captureFullScreenData = function (options, callback) {
     const {desktopCapturer, remote} = require("electron");
 
     var displays = remote.screen.getAllDisplays();
 
     var maxWidth = 0;
     var maxHeight = 0;
-    displays.forEach(function(d) {
+    displays.forEach(function (d) {
         maxWidth = Math.max(maxWidth, d.bounds.x + d.bounds.width);
         maxHeight = Math.max(maxHeight, d.bounds.y + d.bounds.height);
     });
 
-    function onStreamReceived(stream) {
+    function onStreamReceived (stream) {
         var video = document.createElement("video");
         video.style.cssText = "position: absolute; top: -9999px; left: -9999px; width: 100px; height: 100px;";
-        video.onloadedmetadata = function() {
+        video.onloadedmetadata = function () {
             video.style.cssText = "position: absolute; top: -9999px; left: -9999px; width: " + options.width + "px; height: " + options.height + "px;";
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 var canvas = document.createElement("canvas");
                 canvas.width = options.width;
                 canvas.height = options.height;
                 var ctx = canvas.getContext("2d");
                 ctx.drawImage(video, options.x || 0, options.y || 0, options.width, options.height, 0, 0, options.width, options.height);
 
-                var processor = options.processor || function(canvas, ctx) {
+                var processor = options.processor || function (canvas, ctx) {
                     return canvas.toDataURL("image/png");
                 };
 
@@ -374,12 +374,12 @@ Capturer.prototype.captureFullScreenData = function(options, callback) {
         video.play();
     }
 
-    function onCaptureError(e) {
+    function onCaptureError (e) {
         console.log(e);
         callback(null, e);
     }
 
-    desktopCapturer.getSources({types: ["screen"]}, function(e, sources) {
+    desktopCapturer.getSources({types: ["screen"]}, function (e, sources) {
         if (e) {
             callback(null, e);
             return;
@@ -450,17 +450,17 @@ Capturer.prototype.captureFullScreenData = function(options, callback) {
 var ScreenCaptureProvider = {
     providers: []
 };
-ScreenCaptureProvider.register = function(provider) {
+ScreenCaptureProvider.register = function (provider) {
     if (provider.isSupported && !provider.isSupported()) return;
 
     ScreenCaptureProvider.providers.push(provider);
     if (!ScreenCaptureProvider.defaultProviderId) ScreenCaptureProvider.defaultProviderId = provider.id;
 };
-ScreenCaptureProvider.setActiveProvider = function(providerId) {
+ScreenCaptureProvider.setActiveProvider = function (providerId) {
     Config.set(Config.CAPTURE_ACTIVE_PROVIDER_ID, providerId);
 };
 
-ScreenCaptureProvider.getActiveProvider = function() {
+ScreenCaptureProvider.getActiveProvider = function () {
     var providerId = Config.get(Config.CAPTURE_ACTIVE_PROVIDER_ID) || ScreenCaptureProvider.defaultProviderId;
     for (var p of ScreenCaptureProvider.providers) {
         if (p.id == providerId) return p;

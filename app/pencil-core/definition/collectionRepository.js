@@ -7,7 +7,7 @@ Config.EXTRA_COLLECTION_REPO_URLS = Config.define("collection.repo.extra_repo_ur
 var CollectionRepository = {
 };
 
-CollectionRepository.getCollectionRepos = function() {
+CollectionRepository.getCollectionRepos = function () {
     var repos = [];
 
     var core = Config.get(Config.CORE_COLLECTION_REPO_URL);
@@ -22,7 +22,7 @@ CollectionRepository.getCollectionRepos = function() {
     var extras = Config.get(Config.EXTRA_COLLECTION_REPO_URLS);
     if (extras) {
         var untitledCount = 0;
-        repos = repos.concat(extras.split(/\|/).map(function(item) {
+        repos = repos.concat(extras.split(/\|/).map(function (item) {
             if (item.match(/^([^:]+)=(.+)$/)) {
                 var name = RegExp.$1;
                 var url = RegExp.$2;
@@ -55,8 +55,8 @@ CollectionRepository.getCollectionRepos = function() {
     return repos;
 };
 
-CollectionRepository.loadCollections = function(url) {
-    return QP.Promise(function(resolve, reject) {
+CollectionRepository.loadCollections = function (url) {
+    return QP.Promise(function (resolve, reject) {
         var nugget = require("nugget");
         var tempDir = tmp.dirSync({keep: false, unsafeCleanup: true}).name;
         var filename = "repository-" + new Date().getTime() + ".xml";
@@ -68,7 +68,7 @@ CollectionRepository.loadCollections = function(url) {
             quiet: true
         };
 
-        nugget(url || STENCILS_REPO_URL, nuggetOpts, function(errors) {
+        nugget(url || STENCILS_REPO_URL, nuggetOpts, function (errors) {
             if (errors) {
                 var error = errors[0]; // nugget returns an array of errors but we only need 1st because we only have 1 url
                 if (error.message.indexOf("404") === -1) {
@@ -88,10 +88,10 @@ CollectionRepository.loadCollections = function(url) {
         });
     });
 };
-CollectionRepository.parseFile = function(url, callback) {
+CollectionRepository.parseFile = function (url, callback) {
     try {
         var fs = require("fs");
-        fs.readFile(url, "utf8", function(err, data) {
+        fs.readFile(url, "utf8", function (err, data) {
             if (err) {
                 callback();
                 return console.log(err);
@@ -108,18 +108,18 @@ CollectionRepository.parseFile = function(url, callback) {
     }
 };
 
-CollectionRepository.parse = function(dom, url) {
+CollectionRepository.parse = function (dom, url) {
     var collections = [];
 
     var collectionsNode = dom.documentElement;
     var metadata = {};
 
-    Dom.workOn("./p:metadata", collectionsNode, function(node) {
+    Dom.workOn("./p:metadata", collectionsNode, function (node) {
         metadata[node.localName] = Dom.getText(node);
     });
 
     // the one with uppercase "C" is intended for newer version with support for version checking
-    Dom.workOn("./p:Collection", collectionsNode, function(node) {
+    Dom.workOn("./p:Collection", collectionsNode, function (node) {
         var minVersion = node.getAttribute("required-version");
         if (minVersion) {
             if (Util.compareVersion(pkgInfo.version, minVersion) < 0) return;
@@ -127,12 +127,12 @@ CollectionRepository.parse = function(dom, url) {
         collections.push(CollectionRepository.parseCollection(node));
     });
 
-    Dom.workOn("./p:collection", collectionsNode, function(node) {
+    Dom.workOn("./p:collection", collectionsNode, function (node) {
         collections.push(CollectionRepository.parseCollection(node));
     });
 
-    _.forEach(collections, function(c) {
-        var existed = _.find(CollectionManager.shapeDefinition.collections, function(e) {
+    _.forEach(collections, function (c) {
+        var existed = _.find(CollectionManager.shapeDefinition.collections, function (e) {
             return e.id == c.id;
         });
         if (existed) {
@@ -146,10 +146,10 @@ CollectionRepository.parse = function(dom, url) {
     };
 };
 
-CollectionRepository.parseCollection = function(collectionNode) {
+CollectionRepository.parseCollection = function (collectionNode) {
     var collection = {};
 
-    Dom.workOn("./*", collectionNode, function(node) {
+    Dom.workOn("./*", collectionNode, function (node) {
         collection[_.camelCase(node.localName)] = Dom.getText(node);
     });
 

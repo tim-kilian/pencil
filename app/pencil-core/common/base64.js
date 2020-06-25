@@ -11,7 +11,7 @@ var Base64 = {
     _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 
     // public method for encoding
-    encode: function(input, isBinaryData) {
+    encode: function (input, isBinaryData) {
         var output = "";
         var chr1; var chr2; var chr3; var enc1; var enc2; var enc3; var enc4;
         var i = 0;
@@ -45,7 +45,7 @@ var Base64 = {
     },
 
     // public method for decoding
-    decode: function(input, isBinaryData) {
+    decode: function (input, isBinaryData) {
         var output = "";
         var chr1; var chr2; var chr3;
         var enc1; var enc2; var enc3; var enc4;
@@ -81,7 +81,7 @@ var Base64 = {
     },
 
     // private method for UTF-8 encoding
-    _utf8_encode: function(string) {
+    _utf8_encode: function (string) {
         string = string.replace(/\r\n/g, "\n");
         var utftext = "";
 
@@ -104,7 +104,7 @@ var Base64 = {
     },
 
     // private method for UTF-8 decoding
-    _utf8_decode: function(utftext) {
+    _utf8_decode: function (utftext) {
         var string = "";
         var i = 0;
         var c = c1 = c2 = 0;

@@ -1,4 +1,4 @@
-function Shape(canvas, svg, forcedDefinition) {
+function Shape (canvas, svg, forcedDefinition) {
     this.svg = svg;
     this.canvas = canvas;
 
@@ -21,7 +21,7 @@ function Shape(canvas, svg, forcedDefinition) {
     this.setupTargetMap("shouldRepair");
     // this.dockingManager = new DockingManager(this);
 }
-Shape.prototype.setupTargetMap = function(shouldRepair) {
+Shape.prototype.setupTargetMap = function (shouldRepair) {
     this.targetMap = {};
     for (i in this.def.behaviors) {
         var name = this.def.behaviors[i].target;
@@ -44,13 +44,13 @@ Shape.prototype.setupTargetMap = function(shouldRepair) {
         this.targetMap[name] = target;
     }
 };
-Shape.prototype.getName = function() {
+Shape.prototype.getName = function () {
     return this.def.displayName;
 };
-Shape.prototype.isFor = function(svg) {
+Shape.prototype.isFor = function (svg) {
     return this.svg == svg;
 };
-Shape.prototype.getProperties = function() {
+Shape.prototype.getProperties = function () {
     var properties = {};
     for (var name in this.def.propertyMap) {
         properties[name] = this.getProperty(name);
@@ -58,11 +58,11 @@ Shape.prototype.getProperties = function() {
 
     return properties;
 };
-Shape.prototype.getPropertyGroups = function() {
+Shape.prototype.getPropertyGroups = function () {
     return this.def.propertyGroups;
 };
 
-Shape.prototype.setInitialPropertyValues = function(overridingValueMap) {
+Shape.prototype.setInitialPropertyValues = function (overridingValueMap) {
     this._evalContext = {collection: this.def.collection};
     F._target = this.svg;
 
@@ -110,7 +110,7 @@ Shape.prototype.setInitialPropertyValues = function(overridingValueMap) {
         this.applyBehaviorForProperty(name);
     }
 };
-Shape.prototype.repairShapeProperties = function() {
+Shape.prototype.repairShapeProperties = function () {
     this._evalContext = {collection: this.def.collection};
 
     var hasPostProcessing = false;
@@ -149,7 +149,7 @@ Shape.prototype.repairShapeProperties = function() {
         this.applyBehaviorForProperty(name);
     }
 };
-Shape.prototype.renewTargetProperties = function() {
+Shape.prototype.renewTargetProperties = function () {
     this._evalContext = {collection: this.def.collection};
     F._target = this.svg;
 
@@ -191,14 +191,14 @@ Shape.prototype.renewTargetProperties = function() {
 
     return true;
 };
-Shape.prototype.repair = function() {
+Shape.prototype.repair = function () {
     this.canvas.invalidateShapeContent(this.svg, this.def);
     this.setupTargetMap();
     for (var name in this.def.propertyMap) {
         this.applyBehaviorForProperty(name);
     }
 };
-Shape.prototype.applyBehaviorForProperty = function(name, dontValidateRelatedProperties) {
+Shape.prototype.applyBehaviorForProperty = function (name, dontValidateRelatedProperties) {
     var propertyDef = this.def.propertyMap[name];
     if (!propertyDef) return;
     this.prepareExpressionEvaluation();
@@ -244,7 +244,7 @@ Shape.prototype.applyBehaviorForProperty = function(name, dontValidateRelatedPro
         Console.dumpError(e, "--to-console");
     }
 };
-Shape.prototype.validateAll = function(offScreen) {
+Shape.prototype.validateAll = function (offScreen) {
     this.repairShapeProperties();
     this.prepareExpressionEvaluation();
 
@@ -282,7 +282,7 @@ Shape.prototype.validateAll = function(offScreen) {
         }
     }
 };
-Shape.prototype.prepareForEmbedding = function(offScreen) {
+Shape.prototype.prepareForEmbedding = function (offScreen) {
     this.prepareExpressionEvaluation();
 
     for (var b = 0; b < this.def.behaviors.length; b ++) {
@@ -319,7 +319,7 @@ Shape.prototype.prepareForEmbedding = function(offScreen) {
         }
     }
 };
-Shape.prototype.validateRelatedProperties = function(name) {
+Shape.prototype.validateRelatedProperties = function (name) {
     for (propName in this.def.propertyMap) {
         // if (this.def.isPropertyAffectedBy(name, propName)) continue;
 
@@ -345,10 +345,10 @@ Shape.prototype.validateRelatedProperties = function(name) {
         this.applyBehaviorForProperty(propName, "dontValidateRelatedProperties");
     }
 };
-Shape.prototype.prepareExpressionEvaluation = function() {
+Shape.prototype.prepareExpressionEvaluation = function () {
     this._evalContext = {properties: this.getProperties(), functions: Pencil.functions, collection: this.def.collection};
 };
-Shape.prototype.evalExpression = function(expression, value) {
+Shape.prototype.evalExpression = function (expression, value) {
     var defaultValue = value ? value : null;
     if (!expression) return defaultValue;
     if (!this._evalContext) throw Util.getMessage("please.prepare.by.calling.prepareexpressionevaluation.first");
@@ -360,10 +360,10 @@ Shape.prototype.evalExpression = function(expression, value) {
         return defaultValue;
     }
 };
-Shape.prototype.setProperty = function(name, value, nested) {
+Shape.prototype.setProperty = function (name, value, nested) {
     if (!nested) {
         this._appliedTargets = [];
-        this.canvas.run( function() {
+        this.canvas.run( function () {
             this.storeProperty(name, value);
             this.applyBehaviorForProperty(name);
         }, this, Util.getMessage("action.set.shape.properties"));
@@ -380,7 +380,7 @@ Shape.prototype.setProperty = function(name, value, nested) {
         try {
             if (prop && (prop.type == PlainText || prop.type == RichText)) {
                 // find top most group
-                var topGroup = Dom.findTop(this.svg, function(node) {
+                var topGroup = Dom.findTop(this.svg, function (node) {
                     return node.getAttributeNS(PencilNamespaces.p, "type") == "Group";
                 });
 
@@ -396,7 +396,7 @@ Shape.prototype.setProperty = function(name, value, nested) {
         }
     }
 };
-Shape.prototype.getProperty = function(name) {
+Shape.prototype.getProperty = function (name) {
     var propNode = this.locatePropertyNode(name);
     if (!propNode) {
         // return null;
@@ -436,16 +436,16 @@ Shape.prototype.getProperty = function(name) {
 
     return value;
 };
-Shape.prototype.setMetadata = function(name, value) {
+Shape.prototype.setMetadata = function (name, value) {
     return Util.setNodeMetadata(this.svg, name, value);
 };
-Shape.prototype.getMetadata = function(name) {
+Shape.prototype.getMetadata = function (name) {
     return Util.getNodeMetadata(this.svg, name);
 };
-Shape.prototype.locatePropertyNode = function(name) {
+Shape.prototype.locatePropertyNode = function (name) {
     return Dom.getSingle("./p:property[@name='" + name +"']", this.metaNode);
 };
-Shape.prototype.storeProperty = function(name, value) {
+Shape.prototype.storeProperty = function (name, value) {
     // debug("setting: " + name + " = " + value.toString());
     var propNode = this.locatePropertyNode(name);
     if (!propNode) {
@@ -456,7 +456,7 @@ Shape.prototype.storeProperty = function(name, value) {
 
     Shape.storePropertyToNode(name, value, propNode);
 };
-Shape.storePropertyToNode = function(name, value, propNode) {
+Shape.storePropertyToNode = function (name, value, propNode) {
     Dom.empty(propNode);
     var attrs = propNode.attributes;
     for (var i = attrs.length - 1; i >= 0; i --) {
@@ -474,7 +474,7 @@ Shape.storePropertyToNode = function(name, value, propNode) {
     propNode.appendChild(cdata);
 };
 Shape.TRANSLATE_REGEX = /^translate\(([\-0-9]+)\,([\-0-9]+)\)$/;
-Shape.prototype.getGeometry = function() {
+Shape.prototype.getGeometry = function () {
     var geo = new Geometry();
     geo.ctm = this.svg.getTransformToElement(this.canvas.drawingLayer);
     geo.dim = this.getProperty("box");
@@ -493,7 +493,7 @@ Shape.prototype.getGeometry = function() {
     return geo;
 };
 
-Shape.prototype.getBoundingSize = function() {
+Shape.prototype.getBoundingSize = function () {
     var rect = this.svg.getBoundingClientRect();
     var parentRect = this.svg.ownerSVGElement.getBoundingClientRect();
     var wPadding = 2 * parentRect.left;
@@ -504,7 +504,7 @@ Shape.prototype.getBoundingSize = function() {
 
 // new imple for geometry editing
 
-Shape.prototype.moveBy = function(dx, dy, targetSet, moving) {
+Shape.prototype.moveBy = function (dx, dy, targetSet, moving) {
     var matrix = this.svg.ownerSVGElement.createSVGTransform().matrix;
     matrix = matrix.translate(dx, dy);
     var ctm = this.svg.getTransformToElement(this.svg.parentNode);
@@ -518,7 +518,7 @@ Shape.prototype.moveBy = function(dx, dy, targetSet, moving) {
     //    this.dockingManager.handleMoveBy(dx, dy, targetSet, moving);
     // }
 };
-Shape.prototype.scaleTo = function(nw, nh, group) {
+Shape.prototype.scaleTo = function (nw, nh, group) {
     if (this.def.propertyMap["box"]) {
         var box = this.getProperty("box");
         var fw = nw / box.w;
@@ -555,7 +555,7 @@ Shape.prototype.scaleTo = function(nw, nh, group) {
         error(this.def.displayName + " does not support scaling.");
     }
 };
-Shape.prototype.rotateBy = function(da) {
+Shape.prototype.rotateBy = function (da) {
     var ctm = this.svg.getTransformToElement(this.svg.parentNode);
 
     var x = 0; var y = 0;
@@ -585,7 +585,7 @@ Shape.prototype.rotateBy = function(da) {
     //    this.dockingManager.handleRotateBy(da);
     // }
 };
-Shape.prototype.getBounding = function(to) {
+Shape.prototype.getBounding = function (to) {
     var context = to ? to : this.canvas.drawingLayer;
     var ctm = this.svg.getTransformToElement(context);
 
@@ -607,11 +607,11 @@ Shape.prototype.getBounding = function(to) {
 
     return rect;
 };
-Shape.prototype.supportScaling = function() {
+Shape.prototype.supportScaling = function () {
     return this.getProperty("box") ? this.isBoxEnabled() : false;
 };
 
-Shape.prototype.isBoxEnabled = function() {
+Shape.prototype.isBoxEnabled = function () {
     try {
         this.prepareExpressionEvaluation();
 
@@ -627,7 +627,7 @@ Shape.prototype.isBoxEnabled = function() {
 
 // ~new impl
 
-Shape.prototype.getBoundingRect = function() {
+Shape.prototype.getBoundingRect = function () {
     var rect = {x: 0, y: 0, width: 0, height: 0};
     try {
         rect = this.svg.getBBox();
@@ -642,7 +642,7 @@ Shape.prototype.getBoundingRect = function() {
 
     return this.canvas.getZoomedRect(rect);
 };
-Shape.prototype.setGeometry = function(geo) {
+Shape.prototype.setGeometry = function (geo) {
     if (geo.ctm) {
         Svg.ensureCTM(this.svg, geo.ctm);
     }
@@ -677,7 +677,7 @@ Shape.prototype.setGeometry = function(geo) {
     }
 };
 
-Shape.prototype.getBound = function() {
+Shape.prototype.getBound = function () {
     throw "@method: Shape.prototype.getBound is now depricated, using getGeometry instead.";
 
     var box = this.getProperty("box");
@@ -693,13 +693,13 @@ Shape.prototype.getBound = function() {
 
     return bound;
 };
-Shape.prototype.setBound = function(bound) {
+Shape.prototype.setBound = function (bound) {
     throw "@method: Shape.prototype.setBound(bound) is now depricated, using setGeometry(geometry) instead.";
 
     this.setProperty("box", new Dimension(bound.w, bound.h));
     this.move(bound.x, bound.y);
 };
-Shape.prototype.moveByx = function(x, y, zoomAware) {
+Shape.prototype.moveByx = function (x, y, zoomAware) {
     var ctm = this.svg.getTransformToElement(this.canvas.drawingLayer);
     var v = Svg.vectorInCTM({x: x / (zoomAware ? this.canvas.zoom : 1), y: y / (zoomAware ? this.canvas.zoom : 1)}, ctm, true);
     ctm = ctm.translate(v.x, v.y);
@@ -707,7 +707,7 @@ Shape.prototype.moveByx = function(x, y, zoomAware) {
     Svg.ensureCTM(this.svg, ctm);
 };
 
-Shape.prototype.setPositionSnapshot = function() {
+Shape.prototype.setPositionSnapshot = function () {
 /*
     var ctm = this.svg.getTransformToElement(this.canvas.drawingLayer);
 
@@ -723,7 +723,7 @@ Shape.prototype.setPositionSnapshot = function() {
 */
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
-Shape.prototype.moveFromSnapshot = function(dx, dy, dontNormalize, targetSet) {
+Shape.prototype.moveFromSnapshot = function (dx, dy, dontNormalize, targetSet) {
 /*
     var v = Svg.vectorInCTM({x: dx, y: dy},
                             this._pSnapshot.ctm,
@@ -747,7 +747,7 @@ Shape.prototype.moveFromSnapshot = function(dx, dy, dontNormalize, targetSet) {
     this._pSnapshot.lastDX = dx;
     this._pSnapshot.lastDY = dy;
 };
-Shape.prototype.clearPositionSnapshot = function() {
+Shape.prototype.clearPositionSnapshot = function () {
 /*
     delete this._pSnapshot;
     this._pSnapshot = null;
@@ -755,22 +755,22 @@ Shape.prototype.clearPositionSnapshot = function() {
 */
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
-Shape.prototype.normalizePositionToGrid = function() {
+Shape.prototype.normalizePositionToGrid = function () {
     this.setPositionSnapshot();
     this.moveFromSnapshot(0, 0);
     this.clearPositionSnapshot();
 };
-Shape.prototype.deleteTarget = function() {
+Shape.prototype.deleteTarget = function () {
     this.canvas.snappingHelper.updateSnappingGuide(this, true);
     // this.dockingManager.deleteTarget();
     this.svg.parentNode.removeChild(this.svg);
 };
-Shape.prototype.bringForward = function() {
+Shape.prototype.bringForward = function () {
     try {
         var next = this.svg.nextSibling;
         if (next) {
             var thiz = this;
-            this.canvas.run( function() {
+            this.canvas.run( function () {
                 var parentNode = thiz.svg.parentNode;
                 parentNode.removeChild(thiz.svg);
                 var next2 = next.nextSibling;
@@ -786,12 +786,12 @@ Shape.prototype.bringForward = function() {
         alert(e);
     }
 };
-Shape.prototype.bringToFront = function() {
+Shape.prototype.bringToFront = function () {
     try {
         var next = this.svg.nextSibling;
         if (next) {
             var thiz = this;
-            this.canvas.run( function() {
+            this.canvas.run( function () {
                 var parentNode = thiz.svg.parentNode;
                 parentNode.removeChild(thiz.svg);
                 parentNode.appendChild(thiz.svg);
@@ -802,11 +802,11 @@ Shape.prototype.bringToFront = function() {
         alert(e);
     }
 };
-Shape.prototype.sendBackward = function() {
+Shape.prototype.sendBackward = function () {
     try {
         var previous = this.svg.previousSibling;
         if (previous) {
-            this.canvas.run( function() {
+            this.canvas.run( function () {
                 var parentNode = this.svg.parentNode;
                 parentNode.removeChild(this.svg);
                 parentNode.insertBefore(this.svg, previous);
@@ -817,11 +817,11 @@ Shape.prototype.sendBackward = function() {
         alert(e);
     }
 };
-Shape.prototype.sendToBack = function() {
+Shape.prototype.sendToBack = function () {
     try {
         var previous = this.svg.previousSibling;
         if (previous) {
-            this.canvas.run( function() {
+            this.canvas.run( function () {
                 var parentNode = this.svg.parentNode;
                 parentNode.removeChild(this.svg);
                 parentNode.insertBefore(this.svg, parentNode.firstChild);
@@ -832,7 +832,7 @@ Shape.prototype.sendToBack = function() {
         alert(e);
     }
 };
-Shape.prototype.getTextEditingInfo = function(editingEvent) {
+Shape.prototype.getTextEditingInfo = function (editingEvent) {
     var infos = [];
 
     this.prepareExpressionEvaluation();
@@ -1058,22 +1058,22 @@ Shape.prototype.getTextEditingInfo = function(editingEvent) {
     return selectedInfo;
 };
 
-Shape.prototype.createTransferableData = function() {
+Shape.prototype.createTransferableData = function () {
     return {
         type: ShapeXferHelper.MIME_TYPE,
         isSVG: true,
         dataNode: this.svg.cloneNode(true)
     };
 };
-Shape.prototype.lock = function() {
+Shape.prototype.lock = function () {
     this.svg.setAttributeNS(PencilNamespaces.p, "p:locked", "true");
 };
 
-Shape.prototype.markAsMoving = function(moving) {
+Shape.prototype.markAsMoving = function (moving) {
     // this.dockingManager.moving = moving;
     Svg.optimizeSpeed(this.svg, moving);
 };
-Shape.prototype.performAction = function(id) {
+Shape.prototype.performAction = function (id) {
     // this.prepareExpressionEvaluation();
     var shapeAction = this.def.actionMap[id];
     if (!shapeAction) {
@@ -1083,7 +1083,7 @@ Shape.prototype.performAction = function(id) {
     return shapeAction.implFunction.apply(this, []);
 };
 
-Shape.prototype.getAttachedSlots = function() {
+Shape.prototype.getAttachedSlots = function () {
     var r = [];
     var props = this.getPropertyGroups();
     for (var t in props) {
@@ -1099,7 +1099,7 @@ Shape.prototype.getAttachedSlots = function() {
     }
     return r;
 };
-Shape.prototype.canDetach = function() {
+Shape.prototype.canDetach = function () {
     var props = this.getPropertyGroups();
     for (var t in props) {
         for (var k in props[t].properties) {
@@ -1114,14 +1114,14 @@ Shape.prototype.canDetach = function() {
     }
     return false;
 };
-Shape.prototype.getConnectorOutlets = function() {
+Shape.prototype.getConnectorOutlets = function () {
     var outlets = this.performAction("getConnectorOutlets");
     if (outlets == null) {
         outlets = ConnectorUtil.generateStandarOutlets(this);
     }
     return outlets;
 };
-Shape.prototype.getSnappingGuide = function() {
+Shape.prototype.getSnappingGuide = function () {
     var b = this.getBounding();
 
     var vertical = [];
@@ -1180,24 +1180,24 @@ Shape.prototype.getSnappingGuide = function() {
         vertical: vertical, horizontal: horizontal
     };
 };
-Shape.prototype.invalidateInboundConnections = function() {
+Shape.prototype.invalidateInboundConnections = function () {
     Connector.invalidateInboundConnectionsForShapeTarget(this);
 };
-Shape.prototype.invalidateOutboundConnections = function() {
+Shape.prototype.invalidateOutboundConnections = function () {
     Connector.invalidateOutboundConnectionsForShapeTarget(this);
 };
-Shape.prototype.getSymbolName = function() {
+Shape.prototype.getSymbolName = function () {
     return Svg.getSymbolName(this.svg);
 };
-Shape.prototype.setSymbolName = function(name) {
+Shape.prototype.setSymbolName = function (name) {
     return Svg.setSymbolName(this.svg, name);
 };
-Shape.prototype.generateShortcutXML = function() {
+Shape.prototype.generateShortcutXML = function () {
     new PromptDialog().open({
         title: "Shortcut",
         message: "Please enter shortcut name",
         defaultValue: "Shortcut",
-        callback: function(shortcutName) {
+        callback: function (shortcutName) {
             if (!shortcutName) return;
             var fileName = shortcutName.replace(/[^a-z0-9\\-]+/gi, "").toLowerCase() + ".png";
 
@@ -1249,7 +1249,7 @@ Shape.prototype.generateShortcutXML = function() {
                 });
             }
 
-            var next = function() {
+            var next = function () {
                 var shortcutNode = Dom.newDOMElement(spec, dom);
                 var xml = "    " + Dom.serializeNode(shortcutNode).replace(/<PropertyValue/g, "\n        <PropertyValue").replace("</Shortcut>", "\n    </Shortcut>");
 
@@ -1265,7 +1265,7 @@ Shape.prototype.generateShortcutXML = function() {
 
             if (this.def.collection.developerStencil) {
                 var targetPath = path.join(path.join(this.def.collection.installDirPath, "icons"), fileName);
-                Pencil.rasterizer.rasterizeSelectionToFile(this, targetPath, function(p, error) {
+                Pencil.rasterizer.rasterizeSelectionToFile(this, targetPath, function (p, error) {
                     if (!error) {
                         spec.icon = "icons/" + fileName;
                         next();
@@ -1278,7 +1278,7 @@ Shape.prototype.generateShortcutXML = function() {
     });
 };
 
-Shape.prototype.getContentEditActions = function(event) {
+Shape.prototype.getContentEditActions = function (event) {
     var actions = [];
     var editInfo = this.getTextEditingInfo(event);
     if (editInfo) {
@@ -1298,7 +1298,7 @@ Shape.prototype.getContentEditActions = function(event) {
 
     return actions;
 };
-Shape.prototype.handleOtherContentEditAction = function(action) {
+Shape.prototype.handleOtherContentEditAction = function (action) {
     if (action.type != "action") return;
     this.performAction(action.actionId);
 };

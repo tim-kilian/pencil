@@ -1,9 +1,9 @@
 var TypeEditorRegistry = {};
 TypeEditorRegistry.typeEditorMap = [];
-TypeEditorRegistry.registerTypeEditor = function(type, tagName) {
+TypeEditorRegistry.registerTypeEditor = function (type, tagName) {
     this.typeEditorMap[type.name] = tagName;
 };
-TypeEditorRegistry.getTypeEditor = function(type) {
+TypeEditorRegistry.getTypeEditor = function (type) {
     var editor = this.typeEditorMap[type.name];
     if (!editor) return null;
     return editor;

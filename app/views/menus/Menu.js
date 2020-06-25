@@ -1,8 +1,8 @@
-function Menu() {
+function Menu () {
     Popup.call(this);
     this.items = [];
     var thiz = this;
-    this.popupContainer.addEventListener("click", function(event) {
+    this.popupContainer.addEventListener("click", function (event) {
         var itemNode = Dom.findUpwardForNodeWithData(event.target, "_item");
         if (!itemNode) return;
         var item = itemNode._item;
@@ -48,14 +48,14 @@ function Menu() {
 }
 __extend(Popup, Menu);
 
-Menu.prototype.hideCurrentSubMenu = function() {
+Menu.prototype.hideCurrentSubMenu = function () {
     if (this.currentItemNodeWithSubMenu) {
         Dom.removeClass(this.currentItemNodeWithSubMenu, "Active");
         this.currentItemNodeWithSubMenu._subMenu.hideMenu();
         this.currentItemNodeWithSubMenu = null;
     }
 };
-Menu.prototype.openSubMenu = function(itemNode) {
+Menu.prototype.openSubMenu = function (itemNode) {
     if (itemNode == this.currentItemNodeWithSubMenu) return;
 
     this.hideCurrentSubMenu();
@@ -77,7 +77,7 @@ Menu.prototype.openSubMenu = function(itemNode) {
     this.currentSubMenu = menu;
 };
 
-Menu.prototype.handleMouseIn = function(event) {
+Menu.prototype.handleMouseIn = function (event) {
     var thiz = this;
 
     if (this._parent && this._parent.currentHideMenuTimeout && this == this._parent.currentItemNodeWithSubMenu._subMenu) {
@@ -102,7 +102,7 @@ Menu.prototype.handleMouseIn = function(event) {
         }
 
         Dom.removeClass(this.currentItemNodeWithSubMenu, "Active");
-        this.currentHideMenuTimeout = window.setTimeout(function() {
+        this.currentHideMenuTimeout = window.setTimeout(function () {
             thiz.hideCurrentSubMenu();
             thiz.currentHideMenuTimeout = null;
         }, 70);
@@ -112,23 +112,23 @@ Menu.prototype.handleMouseIn = function(event) {
         this.currentShowMenuTimeout = null;
     }
     if (item.type == "SubMenu" && !disabled && itemNode != this.currentItemNodeWithSubMenu) {
-        this.currentShowMenuTimeout = window.setTimeout(function() {
+        this.currentShowMenuTimeout = window.setTimeout(function () {
             thiz.openSubMenu(itemNode);
             thiz.currentShowMenuTimeout = null;
         }, 100);
     }
 };
 
-Menu.prototype.register = function(item) {
+Menu.prototype.register = function (item) {
     if (!item) return;
     this.items.push(item);
 };
 Menu.SEPARATOR = {
 };
-Menu.prototype.separator = function() {
+Menu.prototype.separator = function () {
     this.register(Menu.SEPARATOR);
 };
-Menu.prototype.renderItem = function(item) {
+Menu.prototype.renderItem = function (item) {
     if (item.isAvailable && !item.isAvailable() || item.disabled) return;
 
     if (item == Menu.SEPARATOR) {
@@ -217,10 +217,10 @@ Menu.prototype.renderItem = function(item) {
 
     return hbox;
 };
-Menu.prototype.getMenuItemNodes = function() {
+Menu.prototype.getMenuItemNodes = function () {
     return this.popupContainer.childNodes;
 };
-Menu.prototype.render = function() {
+Menu.prototype.render = function () {
     Dom.empty(this.popupContainer);
     var actualItems = [];
     for (var i in this.items) {
@@ -249,29 +249,29 @@ Menu.prototype.render = function() {
         Dom.addClass(this.popupContainer, "NoPrefix");
     }
 };
-Menu.prototype.showMenu = function(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
+Menu.prototype.showMenu = function (anchor, hAlign, vAlign, hPadding, vPadding, autoFlip) {
     this.render();
     this.show(anchor, hAlign, vAlign, hPadding, vPadding, autoFlip);
 };
-Menu.prototype.showMenuAt = function(x, y) {
+Menu.prototype.showMenuAt = function (x, y) {
     this.render();
     this.showAt(x, y, false, "autoFlip");
 };
-Menu.prototype.hideMenu = function() {
+Menu.prototype.hideMenu = function () {
     this.hide();
     if (this.currentItemNodeWithSubMenu && this.currentItemNodeWithSubMenu._subMenu) {
         this.currentItemNodeWithSubMenu._subMenu.hideMenu();
     }
 };
-Menu.prototype.onHide = function() {
+Menu.prototype.onHide = function () {
     if (this._parent) this._parent.currentItemNodeWithSubMenu = null;
     if (this.currentShowMenuTimeout) window.clearTimeout(this.currentShowMenuTimeout);
 };
-Menu.prototype.close = function(onBlur, event) {
+Menu.prototype.close = function (onBlur, event) {
     this.hide();
     if (onBlur && event && this._parent) BaseWidget.tryCloseClosableOnBlur(this._parent, event);
 };
-Menu.prototype.closeUpward = function(onBlur, event) {
+Menu.prototype.closeUpward = function (onBlur, event) {
     this.hide();
     if (this._parent) this._parent.closeUpward();
 };

@@ -1,9 +1,9 @@
-function EditToolbar() {
+function EditToolbar () {
     ToolBar.call(this);
 }
 __extend(ToolBar, EditToolbar);
 
-EditToolbar.prototype.registerCommands = function() {
+EditToolbar.prototype.registerCommands = function () {
     UICommandManager.register({
         key: "cutCommand",
         watchEvents: "p:TargetChanged",
@@ -11,10 +11,10 @@ EditToolbar.prototype.registerCommands = function() {
         icon: "content_cut",
         shortcut: "Ctrl+X",
         applyWhenClass: "CanvasScrollPane",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController;
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.doCopy();
             Pencil.activeCanvas.deleteSelected();
         }
@@ -25,11 +25,11 @@ EditToolbar.prototype.registerCommands = function() {
         label: "Copy",
         icon: "content_copy",
         shortcut: "Ctrl+C",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && Pencil.activeCanvas.currentController;
         },
         applyWhenClass: "CanvasScrollPane",
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.doCopy();
         }
     });
@@ -40,10 +40,10 @@ EditToolbar.prototype.registerCommands = function() {
         icon: "content_paste",
         applyWhenClass: "CanvasScrollPane",
         shortcut: "Ctrl+V",
-        isValid: function() {
+        isValid: function () {
             return Pencil.activeCanvas && clipboard.availableFormats(); /* FIXED: check for clipboard content*/
         },
-        run: function() {
+        run: function () {
             Pencil.activeCanvas.doPaste();
         }
     });

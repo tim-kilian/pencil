@@ -16,7 +16,7 @@ var nsTransferable = {
    * @param TransferData aTransferData
    *        a javascript object in the format described above
    **/
-    set: function(aTransferDataSet) {
+    set: function (aTransferDataSet) {
         var trans = this.createTransferable();
         for (var i = 0; i < aTransferDataSet.dataList.length; ++i) {
             var currData = aTransferDataSet.dataList[i];
@@ -57,7 +57,7 @@ var nsTransferable = {
    *        data of the type of the first flavour in the flavourlist parameter is returned,
    *        otherwise the best flavour supported will be returned.
    **/
-    get: function(aFlavourSet, aRetrievalFunc, aAnyFlag) {
+    get: function (aFlavourSet, aRetrievalFunc, aAnyFlag) {
         if (!aRetrievalFunc) {
             throw "No data retrieval handler provided!";
         }
@@ -103,7 +103,7 @@ var nsTransferable = {
    *
    * Creates and returns a transferable object.
    **/
-    createTransferable: function() {
+    createTransferable: function () {
         const kXferableContractID = "@mozilla.org/widget/transferable;1";
         const kXferableIID = Components.interfaces.nsITransferable;
         return Components.classes[kXferableContractID].createInstance(kXferableIID);
@@ -120,7 +120,7 @@ var nsTransferable = {
  * Hash:  Convenient lookup of flavour data using the content type (MIME type)
  *        of data as a key.
  */
-function FlavourSet(aFlavourList) {
+function FlavourSet (aFlavourList) {
     this.flavours = aFlavourList || [];
     this.flavourTable = { };
 
@@ -132,7 +132,7 @@ function FlavourSet(aFlavourList) {
 }
 
 FlavourSet.prototype = {
-    appendFlavour: function(aFlavour, aFlavourIIDKey) {
+    appendFlavour: function (aFlavour, aFlavourIIDKey) {
         var flavour = new Flavour(aFlavour, aFlavourIIDKey);
         this.flavours.push(flavour);
         this.flavourTable[flavour.contentType] = flavour;
@@ -146,20 +146,20 @@ FlavourSet.prototype = {
  * which is used to QI data to an appropriate form. The default interface is
  * assumed to be wide-string.
  */
-function Flavour(aContentType, aDataIIDKey) {
+function Flavour (aContentType, aDataIIDKey) {
     this.contentType = aContentType;
     this.dataIIDKey = aDataIIDKey || "nsISupportsString";
 
     this._XferID = "Flavour";
 }
 
-function TransferDataBase() {}
+function TransferDataBase () {}
 TransferDataBase.prototype = {
-    push: function(aItems) {
+    push: function (aItems) {
         this.dataList.push(aItems);
     },
 
-    get first() {
+    get first () {
         return "dataList" in this && this.dataList.length ? this.dataList[0] : null;
     }
 };
@@ -168,7 +168,7 @@ TransferDataBase.prototype = {
  * TransferDataSet is a list (array) of TransferData objects, which represents
  * data dragged from one or more elements.
  */
-function TransferDataSet(aTransferDataList) {
+function TransferDataSet (aTransferDataList) {
     this.dataList = aTransferDataList || [];
 
     this._XferID = "TransferDataSet";
@@ -179,7 +179,7 @@ TransferDataSet.prototype = TransferDataBase.prototype;
  * TransferData is a list (array) of FlavourData for all the applicable content
  * types associated with a drag from a single item.
  */
-function TransferData(aFlavourDataList) {
+function TransferData (aFlavourDataList) {
     this.dataList = aFlavourDataList || [];
 
     this._XferID = "TransferData";
@@ -187,7 +187,7 @@ function TransferData(aFlavourDataList) {
 TransferData.prototype = {
     __proto__: TransferDataBase.prototype,
 
-    addDataForFlavour: function(aFlavourString, aData, aLength, aDataIIDKey) {
+    addDataForFlavour: function (aFlavourString, aData, aLength, aDataIIDKey) {
         this.dataList.push(new FlavourData(aData, aLength,
             new Flavour(aFlavourString, aDataIIDKey)));
     }
@@ -202,7 +202,7 @@ TransferData.prototype = {
  * onDrop. They access the 'data' property to retrieve data, which is either data
  * QI'ed to a usable form, or unicode string.
  */
-function FlavourData(aData, aLength, aFlavour) {
+function FlavourData (aData, aLength, aFlavour) {
     this.supports = aData;
     this.contentLength = aLength;
     this.flavour = aFlavour || null;
@@ -211,7 +211,7 @@ function FlavourData(aData, aLength, aFlavour) {
 }
 
 FlavourData.prototype = {
-    get data() {
+    get data () {
         if (this.flavour &&
         this.flavour.dataIIDKey != "nsISupportsString" ) {
             return this.supports.QueryInterface(Components.interfaces[this.flavour.dataIIDKey]);
@@ -231,13 +231,13 @@ FlavourData.prototype = {
  * Create a TransferData object with a single FlavourData entry. Used when
  * unwrapping data of a specific flavour from the drag service.
  */
-function FlavourToXfer(aData, aLength, aFlavour) {
+function FlavourToXfer (aData, aLength, aFlavour) {
     return new TransferData([new FlavourData(aData, aLength, aFlavour)]);
 }
 
 var transferUtils = {
 
-    retrieveURLFromData: function(aData, flavour) {
+    retrieveURLFromData: function (aData, flavour) {
         switch (flavour) {
         case "text/unicode":
             return aData.replace(/^\s+|\s+$/g, "");
@@ -283,7 +283,7 @@ var transferUtils = {
 var nsDragAndDrop = {
 
     _mDS: null,
-    get mDragService() {
+    get mDragService () {
         if (!this._mDS) {
             const kDSContractID = "@mozilla.org/widget/dragservice;1";
             const kDSIID = Components.interfaces.nsIDragService;
@@ -303,7 +303,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    startDrag: function(aEvent, aDragDropObserver) {
+    startDrag: function (aEvent, aDragDropObserver) {
         if (!("onDragStart" in aDragDropObserver)) {
             return;
         }
@@ -402,7 +402,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    dragOver: function(aEvent, aDragDropObserver) {
+    dragOver: function (aEvent, aDragDropObserver) {
         if (!this.checkCanDrop(aEvent, aDragDropObserver)) {
             return;
         }
@@ -424,7 +424,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    drop: function(aEvent, aDragDropObserver) {
+    drop: function (aEvent, aDragDropObserver) {
         if (!("onDrop" in aDragDropObserver)) {
             return;
         }
@@ -454,7 +454,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    dragExit: function(aEvent, aDragDropObserver) {
+    dragExit: function (aEvent, aDragDropObserver) {
         if (!this.checkCanDrop(aEvent, aDragDropObserver)) {
             return;
         }
@@ -474,7 +474,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    dragEnter: function(aEvent, aDragDropObserver) {
+    dragEnter: function (aEvent, aDragDropObserver) {
         var flavourSet = aDragDropObserver.getSupportedFlavours();
         for (var flavour in flavourSet.flavourTable) {
             if (this.mDragSession.isDataFlavorSupported(flavour)) {
@@ -499,7 +499,7 @@ var nsDragAndDrop = {
    * @param FlavourSet aFlavourSet
    *        formatted flavour list.
    **/
-    getDragData: function(aFlavourSet) {
+    getDragData: function (aFlavourSet) {
         var supportsArray = Components.classes["@mozilla.org/supports-array;1"]
             .createInstance(Components.interfaces.nsISupportsArray);
 
@@ -526,7 +526,7 @@ var nsDragAndDrop = {
    *        javascript object of format described above that specifies
    *        the way in which the element responds to drag events.
    **/
-    checkCanDrop: function(aEvent, aDragDropObserver) {
+    checkCanDrop: function (aEvent, aDragDropObserver) {
         if (!this.mDragSession) {
             this.mDragSession = this.mDragService.getCurrentSession();
         }
@@ -553,7 +553,7 @@ var nsDragAndDrop = {
    * @param String aDraggedText
    *        the text being dragged
    **/
-    dragDropSecurityCheck: function(aEvent, aDragSession, aDraggedText) {
+    dragDropSecurityCheck: function (aEvent, aDragSession, aDraggedText) {
         var sourceDoc = aDragSession.sourceDocument;
         if (!sourceDoc) {
             return;

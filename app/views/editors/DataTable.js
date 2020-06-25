@@ -1,12 +1,12 @@
-var DataTable = function() {
-    Dom.registerEvent(window, "load", function() {
-        var f = function(event) {
+var DataTable = function () {
+    Dom.registerEvent(window, "load", function () {
+        var f = function (event) {
             var target = Dom.getTarget(event);
             Dom.doOnChildRecursively(target, {
-                eval: function(node) {
+                eval: function (node) {
                     return Dom.hasClass(node, "DataTable") && node._dt && node._dt.invalidateSizing;
                 }
-            }, function(node) {
+            }, function (node) {
                 node._dt.invalidateSizing();
             });
         };
@@ -14,12 +14,12 @@ var DataTable = function() {
         Dom.registerEvent(document.body, "underflow", f, false);
     });
 
-    function clickHandler(event) {
+    function clickHandler (event) {
         var target = Dom.getTarget(event);
         var link = Dom.findUpward(target, new DomTagNameEvaluator("a"));
         if (link) return;
         var selectionPane = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 var hasClass = Dom.hasClass(n, "ActionInfoPane");
                 return hasClass;
             }
@@ -28,14 +28,14 @@ var DataTable = function() {
 
         // alert("start checking from: " + event.type);
         var checkbox = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 var hasClass = Dom.hasClass(n, "DataTableCheck");
                 return hasClass;
             }
         });
 
         var infoSelection = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 var hasClass = Dom.hasClass(n, "DataTableCheckInfo");
                 return hasClass;
             }
@@ -58,23 +58,23 @@ var DataTable = function() {
         if (th) return;
 
         var actionNode = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 return n.getAttribute && n.getAttribute("action-id");
             }
         });
 
 
         // check for primary clickable item
-        var td = Dom.findUpward(target, new DomTagNameEvaluator("td"), function(node) {
+        var td = Dom.findUpward(target, new DomTagNameEvaluator("td"), function (node) {
             return node == dataTable.container;
         });
         if (td) {
             var primary = null;
             Dom.doOnChildRecursively(td, {
-                eval: function(n) {
+                eval: function (n) {
                     return n.getAttribute && n.getAttribute("primary") == "true";
                 }
-            }, function(n) {
+            }, function (n) {
                 primary = n;
             });
 
@@ -86,7 +86,7 @@ var DataTable = function() {
 
         // find data row instance
         var row = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 return n.getAttribute && n.getAttribute("data-index");
             }
         });
@@ -110,7 +110,7 @@ var DataTable = function() {
             dataTable.defaultSelectionHandler.run(data);
         }
     }
-    function actionClickHandler(target, actionNode, row, data, dataTable, event) {
+    function actionClickHandler (target, actionNode, row, data, dataTable, event) {
         var id = actionNode.getAttribute("action-id");
         // find action instance
         var action = null;
@@ -134,7 +134,7 @@ var DataTable = function() {
         action.handler(data);
     }
 
-    function checkBoxClickHandler(target, checkbox, event) {
+    function checkBoxClickHandler (target, checkbox, event) {
         var dataTable = DataTable.findInstance(event);
         if (!dataTable) return;
 
@@ -161,18 +161,18 @@ var DataTable = function() {
         } else {
             var allChecked = true;
             Dom.doOnChildRecursively(dataTable.table, {
-                eval: function(n) {
+                eval: function (n) {
                     return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item");
                 }
-            }, function(c) {
+            }, function (c) {
                 if (!c.checked) allChecked = false;
             });
 
             Dom.doOnChildRecursively(dataTable.table, {
-                eval: function(n) {
+                eval: function (n) {
                     return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "All");
                 }
-            }, function(c) {
+            }, function (c) {
                 c.checked = allChecked && !dataTable.multiPages;
             });
 
@@ -185,13 +185,13 @@ var DataTable = function() {
         dataTable.fireSelectionChangedEvent(true);
     }
 
-    function columnHeaderClickHandler(event) {
+    function columnHeaderClickHandler (event) {
         var dataTable = DataTable.findInstance(event);
         if (!dataTable) return;
 
         var target = Dom.getTarget(event);
         var th = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "Sortable") && n.id;
             }
         });
@@ -218,43 +218,43 @@ var DataTable = function() {
         }
     }
 
-    function SelectorColumn(exclusive, selectable, checked) {
+    function SelectorColumn (exclusive, selectable, checked) {
         this.exclusive = exclusive;
         this.headerClass = "DTCheckbox DTCheckboxAll";
-        this.selectable = selectable || function() {
+        this.selectable = selectable || function () {
             return true;
         };
-        this.checked = checked || function() {
+        this.checked = checked || function () {
             return false;
         };
         this.name = "name" + widget.random();
     }
 
-    SelectorColumn.prototype.getCellContentHtml = function(data, row, col) {
+    SelectorColumn.prototype.getCellContentHtml = function (data, row, col) {
         return "<input primary=\"true\" type=\"" + (this.exclusive ? "radio" : "checkbox") + "\"" + (this.selectable(data) ? "" : " disabled=\"true\"") + (this.selectable(data) ? "" : " _isSelectable=\"false\"") + (this.checked(data) ? "" : " checked=\"true\"") + " class=\"DataTableCheck Item\" data-index=\"" + row + "\" name=\"" + this.name + "\" />";
     };
-    SelectorColumn.prototype.getTitleInfo = function() {
+    SelectorColumn.prototype.getTitleInfo = function () {
         return "Select all";
     };
-    SelectorColumn.prototype.getTitleContentHtml = function() {
+    SelectorColumn.prototype.getTitleContentHtml = function () {
         return this.exclusive ? "" : "<input type=\"checkbox\" class=\"DataTableCheck All\" /><span class=\"DataTableCheckInfo\" title=\"View selection details\"><i class=\"fa fa fa-info\"></i></span>";
     };
-    SelectorColumn.prototype.getBodyClass = function() {
+    SelectorColumn.prototype.getBodyClass = function () {
         return "DTCheckBoxBody";
     };
-    SelectorColumn.prototype.getExtraWrapperClass = function() {
+    SelectorColumn.prototype.getExtraWrapperClass = function () {
         return "DTCheckBox";
     };
 
-    function ActionColumn(actions) {
+    function ActionColumn (actions) {
         this.actions = actions;
         this.headerClass = "Actions";
         this.title = "Actions";
     }
-    ActionColumn.prototype.getTitleContentHtml = function() {
+    ActionColumn.prototype.getTitleContentHtml = function () {
         return this.title;
     };
-    ActionColumn.prototype.getCellContentHtml = function(data, row, col) {
+    ActionColumn.prototype.getCellContentHtml = function (data, row, col) {
         var html = "";
         for (var i = 0; i < this.actions.length; i ++) {
             var action = this.actions[i];
@@ -265,18 +265,18 @@ var DataTable = function() {
         }
         return html;
     };
-    ActionColumn.prototype.getBodyClass = function() {
+    ActionColumn.prototype.getBodyClass = function () {
         return "Actions";
     };
-    ActionColumn.prototype.getTitleInfo = function() {
+    ActionColumn.prototype.getTitleInfo = function () {
         return Messages["actions"];
     };
-    ActionColumn.prototype.width = function(w) {
+    ActionColumn.prototype.width = function (w) {
         this.preferredWidth = "" + w;
         return this;
     };
 
-    function DataTable() {
+    function DataTable () {
         BaseWidget.call(this);
 
         this.container = this.node();
@@ -305,7 +305,7 @@ var DataTable = function() {
                 ua.indexOf("trident") >= 0) {
             // detect container size change
             var thiz = this;
-            function detector() {
+            function detector () {
                 try {
                     if (typeof (thiz.lastContainerWidth) != "undefined") {
                         var w = Dom.getOffsetWidth(thiz.container);
@@ -328,7 +328,7 @@ var DataTable = function() {
     }
     __extend(BaseTemplatedWidget, DataTable);
 
-    DataTable.prototype.withOverflowIndicators = function(indicatorContainer) {
+    DataTable.prototype.withOverflowIndicators = function (indicatorContainer) {
         var thiz = this;
         var left = document.createElement("div");
         Dom.addClass(left, "DTOverflowIndicator DTOverflowIndicatorLeft");
@@ -340,22 +340,22 @@ var DataTable = function() {
         indicatorContainer.appendChild(right);
         this.rightOverflowIndicator = right;
 
-        Dom.registerEvent(this.container, "scroll", function() {
+        Dom.registerEvent(this.container, "scroll", function () {
             thiz.invalidateOverflowIndicators();
         }, false);
 
         return this;
     };
-    DataTable.prototype.invalidateSelectionInfo = function(paginator) {
+    DataTable.prototype.invalidateSelectionInfo = function (paginator) {
         if (!this._selectionPane || !this._selectionPane._dt) return;
         var thiz = this;
         this._selectionPane._pg = paginator;
-        paginator.getSelectedItems(function(items) {
+        paginator.getSelectedItems(function (items) {
             thiz._selectionPane._dt.setItems(items);
             Dom.toggleClass(thiz.container, "HasSelectionInfo", items && items.length > 0);
         });
     };
-    DataTable.prototype.addSelectionInfoPane = function() {
+    DataTable.prototype.addSelectionInfoPane = function () {
         var thiz = this;
         var infoPane = document.createElement("div");
         Dom.addClass(infoPane, "SelectionInfoPane");
@@ -367,16 +367,16 @@ var DataTable = function() {
         Dom.addClass(footerPane, "ActionInfoPane FooterBar");
 
         ab.register({
-            getIcon: function() {
+            getIcon: function () {
                 return "fa fa-trash";
             },
-            getTitle: function() {
+            getTitle: function () {
                 return Messages["column_selection_removeAll_caption"];
             },
-            isApplicable: function() {
+            isApplicable: function () {
                 return thiz._selectionPane && thiz._selectionPane._dt && thiz._selectionPane._dt.getItems() && thiz._selectionPane._dt.getItems().length > 0;
             },
-            run: function() {
+            run: function () {
                 thiz.reset();
                 thiz.fireSelectNoneActionEvent();
                 thiz.fireSelectionChangedEvent(true);
@@ -384,16 +384,16 @@ var DataTable = function() {
             }
         });
         ab.register({
-            getIcon: function() {
+            getIcon: function () {
                 return "fa fa-times";
             },
-            getTitle: function() {
+            getTitle: function () {
                 return Messages["close"];
             },
-            isApplicable: function() {
+            isApplicable: function () {
                 return true;
             },
-            run: function() {
+            run: function () {
                 thiz.setSelectionInfoVisible(false);
             }
         });
@@ -402,21 +402,21 @@ var DataTable = function() {
         Dom.addClass(bodyPane, "SelectionBodyPane");
         infoPane.appendChild(bodyPane);
 
-        selectionItemDataTable.column(new DataTable.PlainTextColumn("#", function(data, row, col) {
+        selectionItemDataTable.column(new DataTable.PlainTextColumn("#", function (data, row, col) {
             return (row +1);
         }).width("4em"));
-        selectionItemDataTable.column(new DataTable.PlainTextColumn("Item", function(data) {
+        selectionItemDataTable.column(new DataTable.PlainTextColumn("Item", function (data) {
             return thiz.sumarizerSelectionItem(data);
         }).width("1*"));
         var removeAction = {
             id: "removeItem", type: "fa fa-trash", title: "Remove",
-            isApplicable: function(tag) {
+            isApplicable: function (tag) {
                 return true;
             },
-            handler: function(item) {
+            handler: function (item) {
                 // console.log("Remove ", item);
                 var foundIndex = -1;
-                var cb = function(selectedsInPaginator, thiz) {
+                var cb = function (selectedsInPaginator, thiz) {
                     for (var index = 0; index < selectedsInPaginator.length; index++) {
                         if (thiz.comparer(selectedsInPaginator[index], item)) {
                             foundIndex = index;
@@ -429,10 +429,10 @@ var DataTable = function() {
                     if (thiz.isSelectAll()) {
                         Dom.removeClass(thiz.container, "SelectAll");
                         Dom.doOnChildRecursively(thiz.table, {
-                            eval: function(n) {
+                            eval: function (n) {
                                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "All");
                             }
-                        }, function(c) {
+                        }, function (c) {
                             c.checked = false;
                         });
                     }
@@ -445,7 +445,7 @@ var DataTable = function() {
                     thiz._selectionPane._actionBar.invalidate();
                 };
                 if (thiz._selectionPane._pg) {
-                    thiz._selectionPane._pg.getSelectedItems(function(items) {
+                    thiz._selectionPane._pg.getSelectedItems(function (items) {
                         cb(items, thiz);
                     });
                 } else {
@@ -464,16 +464,16 @@ var DataTable = function() {
         this._selectionPane._actionBar = ab;
         this._selectionPane._dt = selectionItemDataTable;
         this.setSelectionInfoVisible(false);
-        this._selectionPane._dt.setup(function() {
+        this._selectionPane._dt.setup(function () {
 
         });
 
         return this;
     };
-    DataTable.prototype.sumarizerSelectionItem = function(data) {
+    DataTable.prototype.sumarizerSelectionItem = function (data) {
         return Dom.htmlEncode(data);
     };
-    DataTable.prototype.setSelectionInfoVisible = function(visible) {
+    DataTable.prototype.setSelectionInfoVisible = function (visible) {
         if (!this._selectionPane) return;
         this._selectionPane.style.display = visible ? "block" : "none";
         if (visible) {
@@ -481,13 +481,13 @@ var DataTable = function() {
             this._selectionPane._actionBar.invalidate();
         }
     };
-    DataTable.prototype.setShowSelectionInfo = function(show) {
+    DataTable.prototype.setShowSelectionInfo = function (show) {
         this.showSelectionInfo = show;
     };
-    DataTable.prototype.disabledCheckBoxWhenCheckAll = function(disabled) {
+    DataTable.prototype.disabledCheckBoxWhenCheckAll = function (disabled) {
         this.disabledWhenCheckAll = disabled;
     };
-    DataTable.prototype.invalidateOverflowIndicators = function() {
+    DataTable.prototype.invalidateOverflowIndicators = function () {
         if (!this.leftOverflowIndicator) return;
 
         var overflowLeft = (this.container.scrollLeft != 0);
@@ -505,16 +505,16 @@ var DataTable = function() {
             Dom.removeClass(indicatorContainer, "DTOverflowRight");
         }
     };
-    DataTable.prototype.setHeight = function(height) {
+    DataTable.prototype.setHeight = function (height) {
     };
 
-    DataTable.prototype.setMinHeight = function(height) {
+    DataTable.prototype.setMinHeight = function (height) {
     };
 
-    DataTable.prototype.setHiddenHeader = function(isHidden) {
+    DataTable.prototype.setHiddenHeader = function (isHidden) {
     	this.hiddenHeader = isHidden;
     };
-    DataTable.prototype.fireSelectionChangedEvent = function(fromUserAction) {
+    DataTable.prototype.fireSelectionChangedEvent = function (fromUserAction) {
         for (var i = 0; i < this.listeners.length; i ++) {
             if (this.listeners[i].onSelectionChanged) this.listeners[i].onSelectionChanged(this, fromUserAction);
         }
@@ -522,34 +522,34 @@ var DataTable = function() {
             this._selectionPane._dt.setItems(this.getSelectedItems());
         }
     };
-    DataTable.prototype.fireCheckBoxChangedEvent = function(index, isChecked) {
+    DataTable.prototype.fireCheckBoxChangedEvent = function (index, isChecked) {
         for (var i = 0; i < this.listeners.length; i ++) {
             if (this.listeners[i].onCheckBoxChanged) this.listeners[i].onCheckBoxChanged(index, isChecked);
         }
     };
-    DataTable.prototype.fireAllCheckBoxChangedEvent = function(isChecked) {
+    DataTable.prototype.fireAllCheckBoxChangedEvent = function (isChecked) {
         for (var i = 0; i < this.listeners.length; i ++) {
             if (this.listeners[i].onAllCheckBoxChanged) this.listeners[i].onAllCheckBoxChanged(isChecked);
         }
     };
-    DataTable.prototype.fireSelectNoneActionEvent = function() {
+    DataTable.prototype.fireSelectNoneActionEvent = function () {
         for (var i = 0; i < this.listeners.length; i ++) {
             if (this.listeners[i].onSelectNoneAction) this.listeners[i].onSelectNoneAction();
         }
     };
-    DataTable.prototype.selectAll = function() {
+    DataTable.prototype.selectAll = function () {
         Dom.addClass(this.container, "SelectAll");
         this.selectCurrentPageItems(true);
         this.fireSelectionChangedEvent(true);
     };
-    DataTable.prototype.selectCurrentPageItems = function(selected) {
+    DataTable.prototype.selectCurrentPageItems = function (selected) {
         var all = this.isSelectAll();
         var thiz = this;
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item");
             }
-        }, function(c) {
+        }, function (c) {
             if (c.getAttribute("_isSelectable") == false || c.getAttribute("_isSelectable") == "false") {
                 c.disabled = true;
             } else {
@@ -561,16 +561,16 @@ var DataTable = function() {
         // this.fireSelectionChangedEvent();
     };
 
-    DataTable.prototype.selectItems = function(items, fromUserActions) {
+    DataTable.prototype.selectItems = function (items, fromUserActions) {
         var thiz = this;
         var allChecked = true;
         var checkAllElement = null;
 
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item");
             }
-        }, function(c) {
+        }, function (c) {
             var index = parseInt(c.getAttribute("data-index"), 10);
             var item = thiz.items[index];
             var itemChecked = contains(items, item, thiz.comparer);
@@ -582,10 +582,10 @@ var DataTable = function() {
         });
 
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "All");
             }
-        }, function(c) {
+        }, function (c) {
             if (!thiz.items || thiz.items.length == 0) {
                 allChecked = false;
                 c.disabled = true;
@@ -597,10 +597,10 @@ var DataTable = function() {
         });
 
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item");
             }
-        }, function(c) {
+        }, function (c) {
             if (c.getAttribute("_isSelectable") == false || c.getAttribute("_isSelectable") == "false") {
                 c.disabled = true;
             } else if (allChecked) {
@@ -614,22 +614,22 @@ var DataTable = function() {
 
         this.fireSelectionChangedEvent(fromUserActions);
     };
-    DataTable.prototype._updateCheckedRowIndicator = function() {
+    DataTable.prototype._updateCheckedRowIndicator = function () {
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item");
             }
-        }, function(c) {
+        }, function (c) {
             var tr = Dom.findParentByTagName(c, "tr");
             if (tr) {
                 Dom.toggleClass(tr, "DTCheckedItemRow", c.checked);
             }
         });
     };
-    DataTable.prototype.highlightItems = function(items, styleClass) {
+    DataTable.prototype.highlightItems = function (items, styleClass) {
         var thiz = this;
 
-        Dom.doOnAllChildren(this.body, function(tr) {
+        Dom.doOnAllChildren(this.body, function (tr) {
             var dataIndex = tr.getAttribute("data-index");
             if (!dataIndex) return;
 
@@ -644,10 +644,10 @@ var DataTable = function() {
             }
         });
     };
-    DataTable.prototype.removeHighlightItems = function(items, styleClass) {
+    DataTable.prototype.removeHighlightItems = function (items, styleClass) {
         var thiz = this;
 
-        Dom.doOnAllChildren(this.body, function(tr) {
+        Dom.doOnAllChildren(this.body, function (tr) {
             var dataIndex = tr.getAttribute("data-index");
             if (!dataIndex) return;
 
@@ -660,61 +660,61 @@ var DataTable = function() {
             }
         });
     };
-    DataTable.prototype.selectNone = function() {
+    DataTable.prototype.selectNone = function () {
         Dom.removeClass(this.container, "SelectAll");
         this.selectCurrentPageItems(false);
         this.fireSelectionChangedEvent();
         this.fireSelectNoneActionEvent();
     };
-    DataTable.prototype.isSelectAll = function() {
+    DataTable.prototype.isSelectAll = function () {
         return Dom.hasClass(this.container, "SelectAll");
     };
-    DataTable.prototype.reset = function() {
+    DataTable.prototype.reset = function () {
         this.selectNone();
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "All");
             }
-        }, function(c) {
+        }, function (c) {
             c.checked = false;
         });
     };
 
-    DataTable.prototype.getSelectionCount = function() {
+    DataTable.prototype.getSelectionCount = function () {
         if (this.isSelectAll()) return this.totalItems;
         return this.getSelectedItems().length;
     };
 
-    DataTable.prototype.column = function(c) {
+    DataTable.prototype.column = function (c) {
         this.columns.push(c);
         return this;
     };
-    DataTable.prototype.withItemComparer = function(comparer) {
+    DataTable.prototype.withItemComparer = function (comparer) {
         this.comparer = comparer;
         return this;
     };
-    DataTable.prototype.action = function(a, asSelectionHander) {
+    DataTable.prototype.action = function (a, asSelectionHander) {
         this.actions.push(a);
         if (asSelectionHander) {
             this.setDefaultSelectionHandler(handler);
         }
         return this;
     };
-    DataTable.prototype.selector = function(s, ex) {
+    DataTable.prototype.selector = function (s, ex) {
         this.withSelector = s;
         this.exclusive = ex || false;
         return this;
     };
-    DataTable.prototype.setDefaultSelectionHandler = function(handler) {
+    DataTable.prototype.setDefaultSelectionHandler = function (handler) {
         this.defaultSelectionHandler = handler;
         Dom.addClass(this.table, "WithSelectionHandler");
     };
 
-    DataTable.prototype.withColumnBuilder = function(builder) {
+    DataTable.prototype.withColumnBuilder = function (builder) {
         this.columnBuilder = builder;
         return this;
     };
-    DataTable.prototype.createColumnDefinitions = function() {
+    DataTable.prototype.createColumnDefinitions = function () {
         this.actualColumns = [];
 
         // add a selector column if required
@@ -741,14 +741,14 @@ var DataTable = function() {
             this.actualColumns.push(actionColum);
         }
     };
-    DataTable.prototype.setup = function(callback) {
+    DataTable.prototype.setup = function (callback) {
         this.actualColumns = [];
 
         this.createColumnDefinitions();
 
         if (this.isConfigurable && !this.columnBuilder) {
             var thiz = this;
-            $userService.getConfigParam("nv.amw", "hidden_columns_" + this.systemId, function(param) {
+            $userService.getConfigParam("nv.amw", "hidden_columns_" + this.systemId, function (param) {
                 if (param && param.smallValue) {
                     thiz.hiddenColumnIds = (param.smallValue == "-" ? "" : param.smallValue).split(",");
                 } else {
@@ -770,29 +770,29 @@ var DataTable = function() {
         return this;
     };
 
-    DataTable.prototype.systemId = function(id) {
+    DataTable.prototype.systemId = function (id) {
         this.systemId = id;
         return this;
     };
-    DataTable.prototype.configurable = function() {
+    DataTable.prototype.configurable = function () {
         this.isConfigurable = true;
         return this;
     };
-    DataTable.prototype.invalidateSizing = function() {
+    DataTable.prototype.invalidateSizing = function () {
     	var thiz = this;
     	if (!Dom.isElementExistedInDocument(this.container)) {
     	    return;
     	}
         var selected = this.getSelectedItems();
-    	this.setup(function() {
+    	this.setup(function () {
     		thiz._setItems(thiz.getItems(), false);
     		thiz.selectItems(selected);
     	});
     };
-    DataTable.prototype.supportZebraColor = function() {
+    DataTable.prototype.supportZebraColor = function () {
         return true;
     };
-    DataTable.prototype._init = function() {
+    DataTable.prototype._init = function () {
         var random = widget.random();
         this.tableId = "table" + random;
         this.headerId = "header" + random;
@@ -927,9 +927,9 @@ var DataTable = function() {
             Dom.addClass(this.columnSettingButton, "ColumnSetting");
             this.columnSettingButton.innerHTML = "<span><i class=\"fa fa-cog\"></i></span>";
             this.columnSettingButton.setAttribute("title", Messages["change_column_settings_title"]);
-            Dom.registerEvent(this.columnSettingButton, "click", function() {
+            Dom.registerEvent(this.columnSettingButton, "click", function () {
                 if (thiz.columnBuilder) {
-                    thiz.columnBuilder.setup(function() {
+                    thiz.columnBuilder.setup(function () {
                         thiz._init();
                         if (thiz.items) thiz.setItems(thiz.items);
                     });
@@ -947,7 +947,7 @@ var DataTable = function() {
         }
         Dom.registerEvent(this.header, "click", columnHeaderClickHandler, false);
     };
-    DataTable.prototype.isColumnVisible = function(column) {
+    DataTable.prototype.isColumnVisible = function (column) {
         if (this.columnBuilder) return true;
         if (!this.hiddenColumnIds) return true;
         for (var i = 0; i < this.hiddenColumnIds.length; i ++) {
@@ -956,14 +956,14 @@ var DataTable = function() {
 
         return true;
     };
-    DataTable.prototype.defaultColWidth = function(w) {
+    DataTable.prototype.defaultColWidth = function (w) {
     	this.defaultColWidth = w;
     	return this;
     };
-    DataTable.prototype.minColWidth = function() {
+    DataTable.prototype.minColWidth = function () {
         return 50;
     };
-    DataTable.prototype.setHiddenColumnIds = function(ids) {
+    DataTable.prototype.setHiddenColumnIds = function (ids) {
         var paramValue = "";
         for (var i = 0; i < ids.length; i ++) {
             if (paramValue) paramValue += ",";
@@ -972,17 +972,17 @@ var DataTable = function() {
         this.hiddenColumnIds = ids;
         if (!paramValue) paramValue = "-";
         var thiz = this;
-        $userService.updateConfigParam("nv.amw", "hidden_columns_" + this.systemId, paramValue, function() {
+        $userService.updateConfigParam("nv.amw", "hidden_columns_" + this.systemId, paramValue, function () {
             thiz._init();
             if (thiz.items) thiz.setItems(thiz.items);
         }, null, widget.LOADING);
     };
-    DataTable.prototype.showColumnSettingDialog = function() {
+    DataTable.prototype.showColumnSettingDialog = function () {
         var thiz = this;
         var builder = {
             title: "Column Settings",
             size: "mini",
-            buildContent: function(container) {
+            buildContent: function (container) {
                 container.innerHTML = "<strong>Visible columns:</strong>";
                 var div = document.createElement("div");
                 Dom.addClass(div, "ColumnSelectorContainer");
@@ -1011,7 +1011,7 @@ var DataTable = function() {
                 {
                     title: Messages["save"],
                     primary: true,
-                    run: function() {
+                    run: function () {
                         var hiddenIds = [];
                         for (var i = 0; i < this.checkboxContainer.childNodes.length; i ++) {
                             var row = this.checkboxContainer.childNodes[i];
@@ -1032,7 +1032,7 @@ var DataTable = function() {
                 {
                     title: Messages["cancel"],
                     isCloseHandler: true,
-                    run: function() {
+                    run: function () {
                         return true;
                     }
                 }
@@ -1041,7 +1041,7 @@ var DataTable = function() {
         new BuilderBasedDialog(builder).open();
     };
 
-    DataTable.prototype.getCalculatedHeight = function() {
+    DataTable.prototype.getCalculatedHeight = function () {
     	var headerHeight = this.table.getElementsByTagName("th")[0].offsetHeight;
         var bodyHeight = this.table.offsetHeight - headerHeight;
         var rowHeight = bodyHeight / (this.items ? this.items.length : 1);
@@ -1065,7 +1065,7 @@ var DataTable = function() {
         }
     };
 
-    DataTable.prototype.getHeightElement = function(element) {
+    DataTable.prototype.getHeightElement = function (element) {
         var xPosition = 0;
         var yPosition = 0;
         while (element) {
@@ -1079,7 +1079,7 @@ var DataTable = function() {
         };
     };
 
-    DataTable.prototype.getDefaultRowHeight = function() {
+    DataTable.prototype.getDefaultRowHeight = function () {
         var headerHeight = this.table.getElementsByTagName("th")[0].offsetHeight;
         var bodyHeight = this.table.offsetHeight - headerHeight;
         var rowHeight = 0;
@@ -1091,7 +1091,7 @@ var DataTable = function() {
 
         return rowHeight;
     };
-    DataTable.prototype.getPreferredPageSize = function(busy) {
+    DataTable.prototype.getPreferredPageSize = function (busy) {
         this.table.style.height = "auto";
         var headerHeight = Dom.getOffsetHeight(this.table.getElementsByTagName("th")[0]);
         var bodyHeight = Dom.getOffsetHeight(this.table) - headerHeight;
@@ -1104,12 +1104,12 @@ var DataTable = function() {
         return rows;
     };
 
-    DataTable.prototype.getItemHeight = function() {
+    DataTable.prototype.getItemHeight = function () {
         var rowHeight = this.getDefaultRowHeight();
         return rowHeight;
     };
 
-    DataTable.prototype.showBusy = function(busy) {
+    DataTable.prototype.showBusy = function (busy) {
         if (busy) {
             // Dom.addClass(this.container, "Busy");
             // Dom.addClass(this.container, "DataTableContainerBusy");
@@ -1121,11 +1121,11 @@ var DataTable = function() {
         }
     };
 
-    DataTable.prototype.getItems = function() {
+    DataTable.prototype.getItems = function () {
     	return this.items;
     };
 
-    DataTable.prototype.addItems = function(items) {
+    DataTable.prototype.addItems = function (items) {
     	var html = "";
         for (var i = 0; i < items.length; i ++) {
             var item = items[i];
@@ -1171,11 +1171,11 @@ var DataTable = function() {
 
         this.fireSelectionChangedEvent(false);
     };
-    DataTable.prototype.getClassOfRow = function(item) {
+    DataTable.prototype.getClassOfRow = function (item) {
         return "";
     };
 
-    DataTable.prototype.markedAsPaginated = function(paginated) {
+    DataTable.prototype.markedAsPaginated = function (paginated) {
         this.paginated = paginated;
         if (paginated) {
             Dom.addClass(this.container, "DataTableContainerPaginated");
@@ -1183,7 +1183,7 @@ var DataTable = function() {
             Dom.removeClass(this.container, "DataTableContainerPaginated");
         }
     };
-    DataTable.prototype._setItems = function(items, notify) {
+    DataTable.prototype._setItems = function (items, notify) {
     	var html = "";
         this.items = items || [];
         for (var i = 0; i < this.items.length; i ++) {
@@ -1257,27 +1257,27 @@ var DataTable = function() {
         	this.onItemsChanged(this.items);
         }
     };
-    DataTable.prototype.setItems = function(items, dontNotify) {
+    DataTable.prototype.setItems = function (items, dontNotify) {
         this._setItems(items, dontNotify ? false : true);
     };
-    DataTable.prototype.onItemsChanged = function(items) {
+    DataTable.prototype.onItemsChanged = function (items) {
     	if (this.itemsChangedListener) {
     		this.itemsChangedListener(items);
     		// console.log("Notify", items);
     	}
     };
-    DataTable.prototype.setItemsChangedListener = function(listener) {
+    DataTable.prototype.setItemsChangedListener = function (listener) {
     	this.itemsChangedListener = listener;
     	return this;
     };
-    DataTable.prototype.getSelectedItems = function() {
+    DataTable.prototype.getSelectedItems = function () {
         var selectedItems = [];
         var thiz = this;
         Dom.doOnChildRecursively(this.table, {
-            eval: function(n) {
+            eval: function (n) {
                 return Dom.hasClass(n, "DataTableCheck") && Dom.hasClass(n, "Item") && n.checked;
             }
-        }, function(c) {
+        }, function (c) {
             var index = parseInt(c.getAttribute("data-index"), 10);
             selectedItems.push(thiz.items[index]);
         });
@@ -1286,7 +1286,7 @@ var DataTable = function() {
     };
 
     // /// IOrderDisplay interface
-    DataTable.prototype.setOrder = function(order) {
+    DataTable.prototype.setOrder = function (order) {
         for (var i = 0; i < this.actualColumns.length; i ++) {
             var column = this.actualColumns[i];
             var th = document.getElementById(column.columnId);
@@ -1301,24 +1301,24 @@ var DataTable = function() {
         }
         this.currentOrder = order;
     };
-    DataTable.prototype.getOrder = function() {
+    DataTable.prototype.getOrder = function () {
         return this.currentOrder;
     };
 
-    DataTable.prototype.addOrderRequestListener = function(listener) {
+    DataTable.prototype.addOrderRequestListener = function (listener) {
         this.orderRequestListeners.push(listener);
     };
-    DataTable.prototype.addListener = function(listener) {
+    DataTable.prototype.addListener = function (listener) {
         this.listeners.push(listener);
     };
 
-    DataTable.findInstance = function(event) {
+    DataTable.findInstance = function (event) {
         var target = Dom.getTarget(event);
         return DataTable.findInstanceFromNode(target);
     };
-    DataTable.findInstanceFromNode = function(target) {
+    DataTable.findInstanceFromNode = function (target) {
         var table = Dom.findUpward(target, {
-            eval: function(n) {
+            eval: function (n) {
                 return n._dt;
             }
         });
@@ -1327,12 +1327,12 @@ var DataTable = function() {
 
         return table._dt;
     };
-    DataTable.getRowData = function(node) {
+    DataTable.getRowData = function (node) {
         var dataTable = DataTable.findInstanceFromNode(node);
         if (!dataTable) return null;
 
         var row = Dom.findUpward(node, {
-            eval: function(n) {
+            eval: function (n) {
                 return n.getAttribute && n.getAttribute("data-index");
             }
         });
@@ -1349,76 +1349,76 @@ var DataTable = function() {
     DataTable.SelectorColumn = SelectorColumn;
     DataTable.ActionColumn = ActionColumn;
 
-    function BaseColumn() {
+    function BaseColumn () {
     }
-    BaseColumn.prototype.sortable = function(propertyName) {
+    BaseColumn.prototype.sortable = function (propertyName) {
         this.propertyName = propertyName;
         return this;
     };
-    BaseColumn.prototype.hiddenByDefault = function() {
+    BaseColumn.prototype.hiddenByDefault = function () {
         this.defaultHidden = true;
         return this;
     };
-    BaseColumn.prototype.getContentTitle = function(data, row, col) {
+    BaseColumn.prototype.getContentTitle = function (data, row, col) {
         return "";
     };
-    BaseColumn.prototype.width = function(w) {
+    BaseColumn.prototype.width = function (w) {
         this.preferredWidth = "" + w;
         return this;
     };
-    BaseColumn.prototype.setSizing = function(sizing) {
+    BaseColumn.prototype.setSizing = function (sizing) {
         this.sizingPolicy = sizing;
         return this;
     };
-    BaseColumn.prototype.generateId = function(text) {
+    BaseColumn.prototype.generateId = function (text) {
         this.id = text.replace(/[^a-z0-9]+/gi, "_").toLowerCase();
     };
-    BaseColumn.prototype.getTitleInfo = function() {
+    BaseColumn.prototype.getTitleInfo = function () {
         return this.title ? this.title : "";
     };
     DataTable.BaseColumn = BaseColumn;
 
-    DataTable.PlainTextColumn = function(title, getter, clazz) {
+    DataTable.PlainTextColumn = function (title, getter, clazz) {
         this.title = title;
         this.headerClass = clazz;
         this.getter = getter;
         this.generateId(title);
     };
     DataTable.PlainTextColumn.prototype = new BaseColumn();
-    DataTable.PlainTextColumn.prototype.getTitleContentHtml = function() {
+    DataTable.PlainTextColumn.prototype.getTitleContentHtml = function () {
         return !this.useHtmlTitle() ? Dom.htmlEncode(this.title) : this.title;
     };
-    DataTable.PlainTextColumn.prototype.useHtmlTitle = function() {
+    DataTable.PlainTextColumn.prototype.useHtmlTitle = function () {
         return false;
     };
-    DataTable.PlainTextColumn.prototype.getContentTitle = function(data, row, col) {
+    DataTable.PlainTextColumn.prototype.getContentTitle = function (data, row, col) {
         return Dom.attrEncode(this.getter(data, row, col));
     };
-    DataTable.PlainTextColumn.prototype.getCellContentHtml = function(data, row, col) {
+    DataTable.PlainTextColumn.prototype.getCellContentHtml = function (data, row, col) {
         return Dom.htmlEncode(this.getter(data, row, col));
     };
 
-    DataTable.GenericColumn = function(title, renderer, clazz) {
+    DataTable.GenericColumn = function (title, renderer, clazz) {
         this.title = title;
         this.headerClass = clazz;
         this.renderer = renderer;
         this.generateId(title);
     };
     DataTable.GenericColumn.prototype = new BaseColumn();
-    DataTable.GenericColumn.prototype.useHtmlTitle = function() {
+    DataTable.GenericColumn.prototype.useHtmlTitle = function () {
         return false;
     };
-    DataTable.GenericColumn.prototype.getTitleContentHtml = function() {
+    DataTable.GenericColumn.prototype.getTitleContentHtml = function () {
         return !this.useHtmlTitle() ? Dom.htmlEncode(this.title) : this.title;
     };
-    DataTable.GenericColumn.prototype.getTitleContent = function(data, row, col) {
+    DataTable.GenericColumn.prototype.getTitleContent = function (data, row, col) {
         return Dom.htmlEncode(this.renderer(data, row, col));
     };
-    DataTable.GenericColumn.prototype.getCellContentHtml = function(data, row, col) {
+    DataTable.GenericColumn.prototype.getCellContentHtml = function (data, row, col) {
         return this.renderer(data, row, col);
     };
 
-    DataTable.LinkColumn = function(title, linkContentBuilder, linkHrefBuider, clazz) {
+    DataTable.LinkColumn = function (title, linkContentBuilder, linkHrefBuider, clazz) {
         this.title = title;
         this.headerClass = clazz;
         this.linkContentBuilder = linkContentBuilder;
@@ -1426,19 +1426,19 @@ var DataTable = function() {
         this.generateId(title);
     };
     DataTable.LinkColumn.prototype = new BaseColumn();
-    DataTable.LinkColumn.prototype.getTitleContentHtml = function() {
+    DataTable.LinkColumn.prototype.getTitleContentHtml = function () {
         return Dom.htmlEncode(this.title);
     };
-    DataTable.LinkColumn.prototype.getCellContentHtml = function(data, row, col) {
+    DataTable.LinkColumn.prototype.getCellContentHtml = function (data, row, col) {
         var href = this.linkHrefBuider(data, row, col);
         var content = Dom.htmlEncode(this.linkContentBuilder(data, row, col));
         return "<a href=\"" + href + "\" target=\"_blank\">" + content + "</a>";
     };
-    DataTable.LinkColumn.prototype.getContentTitle = function(data, row, col) {
+    DataTable.LinkColumn.prototype.getContentTitle = function (data, row, col) {
 	   var content = Dom.htmlEncode(this.linkContentBuilder(data, row, col));
 	   return content;
     };
-    DataTable.NVLinkColumn = function(title, fieldName, clazz) {
+    DataTable.NVLinkColumn = function (title, fieldName, clazz) {
         this.title = title;
         this.headerClass = clazz;
         this.fieldName = fieldName;
@@ -1446,23 +1446,23 @@ var DataTable = function() {
         this.generateId(fieldName);
     };
     DataTable.NVLinkColumn.prototype = new BaseColumn();
-    DataTable.NVLinkColumn.prototype.getTitleContentHtml = function() {
+    DataTable.NVLinkColumn.prototype.getTitleContentHtml = function () {
         return Dom.htmlEncode(this.title);
     };
-    DataTable.NVLinkColumn.prototype.getCellContentHtml = function(data, row, col) {
+    DataTable.NVLinkColumn.prototype.getCellContentHtml = function (data, row, col) {
         var link = getLinkFromProperty(this.fieldName, data);
         if (!link) return "";
         var content = Dom.htmlEncode(link.text);
         return "<a href=\"" + link.href + "\" target=\"_blank\">" + content + "</a>";
     };
-    DataTable.NVLinkColumn.prototype.getContentTitle = function(data, row, col) {
+    DataTable.NVLinkColumn.prototype.getContentTitle = function (data, row, col) {
         var link = getLinkFromProperty(this.fieldName, data);
         if (!link) return "";
         var content = Dom.htmlEncode(link.text);
         return content;
     };
 
-    DataTable.Action = function(title, type, handler) {
+    DataTable.Action = function (title, type, handler) {
         this.title = title;
         this.type = type;
         this.handler = handler;

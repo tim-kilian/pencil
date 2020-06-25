@@ -1,4 +1,4 @@
-function SamplePanel() {
+function SamplePanel () {
     BaseTemplatedWidget.call(this);
 
     this.link.innerHTML = "Changed content";

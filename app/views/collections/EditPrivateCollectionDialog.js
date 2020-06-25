@@ -1,25 +1,25 @@
-function EditPrivateCollectionDialog() {
+function EditPrivateCollectionDialog () {
     Dialog.call(this);
     this.title="Private Collection";
     this.subTitle = "Edit private collection properties";
     this.modified = false;
 
-    this.bind("change", function(event) {
+    this.bind("change", function (event) {
         this.modified = true;
     }, this.collectionName);
-    this.bind("change", function(event) {
+    this.bind("change", function (event) {
         this.modified = true;
     }, this.collectionDescription);
-    this.bind("change", function(event) {
+    this.bind("change", function (event) {
         this.modified = true;
     }, this.collectionAuthor);
-    this.bind("change", function(event) {
+    this.bind("change", function (event) {
         this.modified = true;
     }, this.collectionWeb);
 }
 __extend(Dialog, EditPrivateCollectionDialog);
 
-EditPrivateCollectionDialog.prototype.setup = function(options) {
+EditPrivateCollectionDialog.prototype.setup = function (options) {
     if (options && options.collection) {
         this.collection = options.collection;
     }
@@ -34,7 +34,7 @@ EditPrivateCollectionDialog.prototype.setup = function(options) {
 };
 
 
-EditPrivateCollectionDialog.prototype.invalidate = function() {
+EditPrivateCollectionDialog.prototype.invalidate = function () {
     if (this.collectionName.value == "") {
         Dialog.alert("Empty text box", "Please enter collection Name ", null);
         return false;
@@ -42,7 +42,7 @@ EditPrivateCollectionDialog.prototype.invalidate = function() {
     return true;
 };
 
-EditPrivateCollectionDialog.prototype.onFinish = function() {
+EditPrivateCollectionDialog.prototype.onFinish = function () {
     var thiz = this;
     thiz.collection.displayName = thiz.collectionName.value;
     thiz.collection.description = this.collectionDescription.value;
@@ -50,13 +50,13 @@ EditPrivateCollectionDialog.prototype.onFinish = function() {
     thiz.collection.infoUrl = thiz.collectionWeb.value;
     if (thiz.onDone) thiz.onDone(thiz.collection);
 };
-EditPrivateCollectionDialog.prototype.getDialogActions = function() {
+EditPrivateCollectionDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         {
             type: "accept", title: "Save",
             isCloseHandler: true,
-            run: function() {
+            run: function () {
                 if (!thiz.invalidate()) return false;
                 thiz.onFinish();
                 return true;
@@ -65,11 +65,11 @@ EditPrivateCollectionDialog.prototype.getDialogActions = function() {
         {
             type: "cancel", title: "Cancel",
             isCloseHandler: true,
-            run: function() {
+            run: function () {
                 if (thiz.modified) {
                     Dialog.confirm(
                         "Do you want to save your changes before closing?", null,
-                        "Save", function() {
+                        "Save", function () {
                             if (!thiz.invalidate()) return false;
                             thiz.onFinish();
                             return true;

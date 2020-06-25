@@ -1,22 +1,22 @@
-function PlainText(s) {
+function PlainText (s) {
     this.value = s;
 }
-PlainText.fromString = function(literal) {
+PlainText.fromString = function (literal) {
     return new PlainText(literal);
 };
-PlainText.prototype.toString = function() {
+PlainText.prototype.toString = function () {
     return this.value;
 };
-PlainText.prototype.toUpper = function() {
+PlainText.prototype.toUpper = function () {
     return new PlainText(this.value.toUpperCase());
 };
-PlainText.fromLoremIpsum = function(words) {
+PlainText.fromLoremIpsum = function (words) {
     return new PlainText(loremIpsumSentence2(words));
 };
 
 
 pencilSandbox.PlainText = {
-    newPlainText: function(s) {
+    newPlainText: function (s) {
         return new PlainText(s);
     }
 };

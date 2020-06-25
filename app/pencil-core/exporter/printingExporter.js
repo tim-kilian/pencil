@@ -1,4 +1,4 @@
-function PrintingExporter(pdfOutput) {
+function PrintingExporter (pdfOutput) {
     this.pdfOutput = pdfOutput;
     this.name = pdfOutput ? "Portable Document Format (PDF)" : "Print";
     this.id = pdfOutput ? "PDFExporter" : "PrintingExporter";
@@ -7,7 +7,7 @@ function PrintingExporter(pdfOutput) {
 PrintingExporter.HTML_FILE = "index.html";
 PrintingExporter.prototype = new BaseExporter();
 
-PrintingExporter.prototype.requireRasterizedData = function(options) {
+PrintingExporter.prototype.requireRasterizedData = function (options) {
     var templateId = options.templateId;
     if (!templateId) return false;
 
@@ -16,17 +16,17 @@ PrintingExporter.prototype.requireRasterizedData = function(options) {
 
     return (options && options.options && options.options.format == "rasterized");
 };
-PrintingExporter.prototype.getRasterizedPageDestination = function(baseDir) {
+PrintingExporter.prototype.getRasterizedPageDestination = function (baseDir) {
     this.tempDir = Local.createTempDir("printing");
     return this.tempDir.name;
 };
-PrintingExporter.prototype.supportTemplating = function() {
+PrintingExporter.prototype.supportTemplating = function () {
     return true;
 };
-PrintingExporter.prototype.getTemplates = function() {
+PrintingExporter.prototype.getTemplates = function () {
     return ExportTemplateManager.getTemplatesForType("Print");
 };
-PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, callback) {
+PrintingExporter.prototype.export = function (doc, options, targetFile, xmlFile, callback) {
     if (!this.tempDir) this.tempDir = Local.createTempDir("printing");
     var destDir = this.tempDir;
 
@@ -37,7 +37,7 @@ PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, 
 
     // copying support files
     var items = fs.readdirSync(template.dir);
-    items.forEach(function(item) {
+    items.forEach(function (item) {
         if (item == "Template.xml" || item == template.styleSheet) return;
 
         var file = path.join(template.dir, item);
@@ -78,7 +78,7 @@ PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, 
 
     var css = "svg { line-height: 1.428; }";
 
-    var exportJob = function() {
+    var exportJob = function () {
         var head = Dom.getSingle("/html:html/html:head", result);
         var style = result.createElement("style");
         style.setAttribute("type", "text/css");
@@ -113,7 +113,7 @@ PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, 
             }
         }
 
-        ipcRenderer.once(id, function(event, data) {
+        ipcRenderer.once(id, function (event, data) {
             if (!data.success) {
                 Dialog.error("Error: " + data.message);
             }
@@ -133,7 +133,7 @@ PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, 
     console.log(result.documentElement);
 
     if (fontFaces && fontFaces.length > 0) {
-        sharedUtil.buildEmbeddedFontFaceCSS(fontFaces, function(fontFaceCSS) {
+        sharedUtil.buildEmbeddedFontFaceCSS(fontFaces, function (fontFaceCSS) {
             css += "\n" + fontFaceCSS;
             exportJob();
         });
@@ -141,13 +141,13 @@ PrintingExporter.prototype.export = function(doc, options, targetFile, xmlFile, 
         exportJob();
     }
 };
-PrintingExporter.prototype.getWarnings = function() {
+PrintingExporter.prototype.getWarnings = function () {
     return null;
 };
-PrintingExporter.prototype.getOutputType = function() {
+PrintingExporter.prototype.getOutputType = function () {
     return this.pdfOutput ? BaseExporter.OUTPUT_TYPE_FILE : BaseExporter.OUTPUT_TYPE_NONE;
 };
-PrintingExporter.prototype.getOutputFileExtensions = function() {
+PrintingExporter.prototype.getOutputFileExtensions = function () {
     return [
         {
             title: "Portable Document Format (*.pdf)",

@@ -1,11 +1,11 @@
-function CollectionRepoBrowserView(collectionPanel, managerDialog, repo) {
+function CollectionRepoBrowserView (collectionPanel, managerDialog, repo) {
     BaseTemplatedWidget.call(this);
 
     this.collectionPanel = collectionPanel;
     this.managerDialog = managerDialog;
     this.repo = repo;
 
-    this.collectionRepeater.populator = function(collection, binding) {
+    this.collectionRepeater.populator = function (collection, binding) {
         binding.collectionTitle.innerHTML = Dom.htmlEncode(collection.displayName);
         binding.collectionDescription.innerHTML = Dom.htmlEncode(collection.description);
         binding.collectionAuthor.innerHTML = Dom.htmlEncode(collection.author);
@@ -25,7 +25,7 @@ function CollectionRepoBrowserView(collectionPanel, managerDialog, repo) {
         binding.buttonUninstall._role = "button-uninstall";
     };
 
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         var node = Dom.findUpwardForNodeWithData(event.target, "_role");
         if (!node) {
             return;
@@ -37,14 +37,14 @@ function CollectionRepoBrowserView(collectionPanel, managerDialog, repo) {
 __extend(BaseTemplatedWidget, CollectionRepoBrowserView);
 
 
-CollectionRepoBrowserView.prototype.setup = function() {
+CollectionRepoBrowserView.prototype.setup = function () {
     var thiz = this;
-    setTimeout(function() {
+    setTimeout(function () {
         thiz.loadCollectionList();
     }, 500);
 };
 
-CollectionRepoBrowserView.prototype.handleItemClick = function(control) {
+CollectionRepoBrowserView.prototype.handleItemClick = function (control) {
     var view = Dom.findUpward(control, (node) => {
         return Dom.hasClass(node, "CollectionView");
     });
@@ -98,13 +98,13 @@ CollectionRepoBrowserView.prototype.handleItemClick = function(control) {
     }
 };
 
-CollectionRepoBrowserView.prototype.loadCollectionList = function() {
+CollectionRepoBrowserView.prototype.loadCollectionList = function () {
     var thiz = this;
     CollectionRepository.loadCollections(this.repo.url)
         .then((repo) => {
             thiz.collectionRepeater.node().style.visibility = "hidden";
 
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 thiz.collectionRepeater.setItems(repo.collections);
                 thiz.collectionRepeater.node().style.visibility = "inherit";
             }, 10);

@@ -1,9 +1,9 @@
-function Controller(win) {
+function Controller (win) {
     this.doc = null;
     this.modified = false;
 }
 Controller.PAGES_SUBFOLDER_NAME = "pages";
-Controller.prototype._movePage = function(index, forward) {
+Controller.prototype._movePage = function (index, forward) {
     debug("Moving: " + [index, forward]);
     try {
         if (index < 0 || index >= this.doc.pages.length) return;
@@ -28,10 +28,10 @@ Controller.prototype._movePage = function(index, forward) {
         this.markDocumentModified();
 
         for (p in this.doc.pages) {
-            this._createPageView(this.doc.pages[p], function() {
+            this._createPageView(this.doc.pages[p], function () {
                 thiz._pageSetupCount ++;
                 if (thiz._pageSetupCount == thiz.doc.pages.length) {
-                    thiz._ensureAllBackgrounds(function() {});
+                    thiz._ensureAllBackgrounds(function () {});
                 }
             });
             this._setSelectedPageIndex(otherIndex);
@@ -40,7 +40,7 @@ Controller.prototype._movePage = function(index, forward) {
         Console.dumpError(e);
     }
 };
-Controller.prototype._findPageToEditIndex = function() {
+Controller.prototype._findPageToEditIndex = function () {
     for (var i = 0; i < this.doc.pages.length; i ++) {
         if (this._pageToEdit == this.doc.pages[i]) {
             return i;
@@ -49,50 +49,50 @@ Controller.prototype._findPageToEditIndex = function() {
     }
     return -1;
 };
-Controller.prototype.pageMoveRight = function() {
+Controller.prototype.pageMoveRight = function () {
     var pageIndex = this._findPageToEditIndex();
     if (pageIndex < 0) return;
     this._movePage(pageIndex, true);
 };
-Controller.prototype.pageMoveLeft = function() {
+Controller.prototype.pageMoveLeft = function () {
     var pageIndex = this._findPageToEditIndex();
     if (pageIndex < 0) return;
     this._movePage(pageIndex, false);
 };
-Controller.prototype.gotoPage = function(page) {
+Controller.prototype.gotoPage = function (page) {
     var tab = page._view.header;
     this.mainView.selectedTab = tab;
     this.tabScrollBox.ensureElementIsVisible(tab);
 };
-Controller.prototype.markDocumentModified = function() {
+Controller.prototype.markDocumentModified = function () {
     this.modified = true;
     this._setupTitle();
 };
-Controller.prototype.markDocumentSaved = function() {
+Controller.prototype.markDocumentSaved = function () {
     this.modified = false;
     this._setupTitle();
 };
-Controller.prototype._setupTitle = function() {
+Controller.prototype._setupTitle = function () {
     var path = this.filePath ? this.filePath : Util.getMessage("untitled.document");
     var title = this.modified ? (path + "*") : path;
 
     Pencil.setTitle(title);
 };
-Controller.prototype.hasDoc = function() {
+Controller.prototype.hasDoc = function () {
     return this.doc ? true : false;
 };
-Controller.prototype.getCurrentPage = function() {
+Controller.prototype.getCurrentPage = function () {
     if (!this.doc) throw Util.getMessage("no.active.document");
 
     return this.doc.pages[this.mainView.selectedIndex];
 };
-Controller.prototype.isBoundToFile = function() {
+Controller.prototype.isBoundToFile = function () {
     if (!this.doc) throw Util.getMessage("no.document.is.attached.to.this.controller");
 
     return this.filePath != null;
 };
 var SIZE_RE = /^([0-9]+)x([0-9]+)$/;
-Controller.prototype.parseSizeText = function(text) {
+Controller.prototype.parseSizeText = function (text) {
     if (!text.match(SIZE_RE)) {
         return null;
     }
@@ -101,7 +101,7 @@ Controller.prototype.parseSizeText = function(text) {
         height: parseInt(RegExp.$2, 10)
     };
 };
-Controller.prototype.newDocument = function() {
+Controller.prototype.newDocument = function () {
     if (this.modified) {
         if (!this._confirmAndSaveDocument()) return;
     }
@@ -129,7 +129,7 @@ Controller.prototype.newDocument = function() {
     this.modified = false;
     this._setupTitle();
 };
-Controller.prototype.duplicatePage = function() {
+Controller.prototype.duplicatePage = function () {
     var page = this.getCurrentPage();
 
     var name = page.properties.name;
@@ -155,7 +155,7 @@ Controller.prototype.duplicatePage = function() {
 
     this.markDocumentModified();
 };
-Controller.prototype.newPage = function() {
+Controller.prototype.newPage = function () {
     var returnValueHolder = {};
     var dialog = window.openDialog("chrome://pencil/content/pageDetailDialog.xul", "pageDetailDialog", "modal,centerscreen",
         null,
@@ -178,10 +178,10 @@ Controller.prototype.newPage = function() {
     this._setSelectedPageIndex(this.doc.pages.length - 1);
     this.markDocumentModified();
 };
-Controller.prototype.saveDocumentAs = function() {
+Controller.prototype.saveDocumentAs = function () {
     this.saveDocument(true);
 };
-Controller.prototype.saveDocument = function(saveAsArg) {
+Controller.prototype.saveDocument = function (saveAsArg) {
     var currentPath = this.filePath ? this.filePath : null;
     var saveAs = saveAsArg ? saveAsArg : false;
     try {
@@ -240,7 +240,7 @@ Controller.prototype.saveDocument = function(saveAsArg) {
 
     return true;
 };
-Controller.prototype.loadDocument = function(uri) {
+Controller.prototype.loadDocument = function (uri) {
     if (this.modified) {
         if (!this._confirmAndSaveDocument()) return;
     }
@@ -309,9 +309,9 @@ Controller.prototype.loadDocument = function(uri) {
 
     this._loadDocumentImpl(file, path);
 };
-Controller.prototype._loadDocumentImpl = function(file, path) {
+Controller.prototype._loadDocumentImpl = function (file, path) {
     var thiz = this;
-    var starter = function(listener) {
+    var starter = function (listener) {
         thiz._clearView();
         document.documentElement.setAttribute("wait-cursor", true);
 
@@ -326,15 +326,15 @@ Controller.prototype._loadDocumentImpl = function(file, path) {
         thiz._pageSetupCount = 0;
         var p = -1;
 
-        function loadPage() {
+        function loadPage () {
             p++;
             try {
     	        listener.onProgressUpdated(Util.getMessage("loading.page", thiz.doc.pages[p].properties.name), thiz._pageSetupCount + 1, thiz.doc.pages.length);
-        	    thiz._createPageView(thiz.doc.pages[p], function() {
+        	    thiz._createPageView(thiz.doc.pages[p], function () {
             	    thiz._pageSetupCount ++;
                 	if (thiz._pageSetupCount == thiz.doc.pages.length) {
                         listener.onProgressUpdated(Util.getMessage("loading.background"), thiz._pageSetupCount + 1, thiz.doc.pages.length);
-                    	thiz._ensureAllBackgrounds(function() {
+                    	thiz._ensureAllBackgrounds(function () {
                         	thiz._setSelectedPageIndex(0);
 
                             thiz.filePath = path;
@@ -361,21 +361,21 @@ Controller.prototype._loadDocumentImpl = function(file, path) {
     Util.beginProgressJob(Util.getMessage("loading.document"), starter);
 };
 // ---------------------- privates -----
-Controller.prototype._ensureAllBackgrounds = function(callback) {
+Controller.prototype._ensureAllBackgrounds = function (callback) {
     this._ensureBackground(0, callback);
 };
-Controller.prototype._ensureBackground = function(index, callback) {
+Controller.prototype._ensureBackground = function (index, callback) {
     if (index >= this.doc.pages.length) {
         if (callback) callback();
         return;
     }
     var page = this.doc.pages[index];
     var thiz = this;
-    page.ensureBackground(function() {
+    page.ensureBackground(function () {
         thiz._ensureBackground(index + 1, callback);
     });
 };
-Controller.prototype._updatePageFromView = function() {
+Controller.prototype._updatePageFromView = function () {
     if (!this.doc) throw Util.getMessage("no.active.document");
 
     for (p in this.doc.pages) {
@@ -385,10 +385,10 @@ Controller.prototype._updatePageFromView = function() {
         page.contentNode = drawingLayer;
     }
 };
-Controller.prototype._generateId = function() {
+Controller.prototype._generateId = function () {
     return (new Date().getTime()) + "_" + Math.round(Math.random() * 10000);
 };
-Controller.prototype._addPage = function(name, id, width, height, background, dimBackground, backgroundColor, transparentBackground, note) {
+Controller.prototype._addPage = function (name, id, width, height, background, dimBackground, backgroundColor, transparentBackground, note) {
     var page = new Page(this.doc);
     page.properties.name = name;
     page.properties.id = id;
@@ -413,11 +413,11 @@ Controller.prototype._addPage = function(name, id, width, height, background, di
     this.doc.addPage(page);
     page._doc = this.doc;
 
-    this._createPageView(page, function() {
+    this._createPageView(page, function () {
         page.ensureBackground();
     });
 };
-Controller.prototype._createPageView = function(page, callback) {
+Controller.prototype._createPageView = function (page, callback) {
     var tab = this.window.ownerDocument.createElementNS(PencilNamespaces.xul, "tab");
     this.mainViewHeader.appendChild(tab);
     tab._page = page;
@@ -440,7 +440,7 @@ Controller.prototype._createPageView = function(page, callback) {
     page._view = view;
     tabpanel._canvas = canvas;
 
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         Pencil.installEditors(canvas);
         Pencil.installXferHelpers(canvas);
         Pencil.installDragObservers(canvas);
@@ -452,7 +452,7 @@ Controller.prototype._createPageView = function(page, callback) {
         }
         canvas.careTaker.reset();
 
-        canvas.addEventListener("p:ContentModified", function(event) {
+        canvas.addEventListener("p:ContentModified", function (event) {
             page.rasterizeDataCache = null;
         }, false);
 
@@ -465,10 +465,10 @@ Controller.prototype._createPageView = function(page, callback) {
         if (callback) callback();
     }, 200);
 };
-Controller.prototype._setSelectedPageIndex = function(index) {
+Controller.prototype._setSelectedPageIndex = function (index) {
     this.mainView.selectedIndex = index;
 };
-Controller.prototype._clearView = function() {
+Controller.prototype._clearView = function () {
     if (this.doc) {
         for (p in this.doc.pages) {
             var page = this.doc.pages[p];
@@ -478,12 +478,12 @@ Controller.prototype._clearView = function() {
     Dom.empty(this.mainViewHeader);
     Dom.empty(this.mainViewPanel);
 };
-Controller.prototype._handleContextMenuShow = function(event) {
-    var tab = Dom.findTop(event.originalTarget, function(node) {
+Controller.prototype._handleContextMenuShow = function (event) {
+    var tab = Dom.findTop(event.originalTarget, function (node) {
         return node.localName == "tab";
     });
 
-    Dom.workOn("./xul:menuseparator", this.tabPopupMenu, function(sep) {
+    Dom.workOn("./xul:menuseparator", this.tabPopupMenu, function (sep) {
         sep.style.display = "";
     });
 
@@ -552,7 +552,7 @@ Controller.prototype._handleContextMenuShow = function(event) {
         child.style.display = "none";
     }
 };
-Controller.prototype._modifyPageProperties = function(page, data) {
+Controller.prototype._modifyPageProperties = function (page, data) {
     if (!page._view) return;
 
     page.properties.name = data.title;
@@ -588,7 +588,7 @@ Controller.prototype._modifyPageProperties = function(page, data) {
     page.rasterizeDataCache = null;
     this.markDocumentModified();
 };
-Controller.prototype._deletePage = function(page) {
+Controller.prototype._deletePage = function (page) {
     // find page in the list
     var currentIndex = this.mainView.selectedIndex;
     var index = -1;
@@ -624,7 +624,7 @@ Controller.prototype._deletePage = function(page) {
         this._setSelectedPageIndex(currentIndex - 1);
     }
 };
-Controller.prototype._confirmAndSaveDocument = function() {
+Controller.prototype._confirmAndSaveDocument = function () {
     var result = Util.confirmExtra(Util.getMessage("save.changes.to.document.before.closing"),
         Util.getMessage("changes.will.be.permanently.lost"),
         Util.getMessage("button.save.label"), Util.getMessage("button.discard.changes"), Util.getMessage("button.cancel.label"));
@@ -633,7 +633,7 @@ Controller.prototype._confirmAndSaveDocument = function() {
 
     return this.saveDocument();
 };
-Controller.prototype.editPageProperties = function(page) {
+Controller.prototype.editPageProperties = function (page) {
     if (!page) return;
     var returnValueHolder = {};
     var possibleBackgroundPages = [];
@@ -666,7 +666,7 @@ Controller.prototype.editPageProperties = function(page) {
         Console.dumpError(e);
     }
 };
-Controller.prototype.editPageNote = function(page) {
+Controller.prototype.editPageNote = function (page) {
     var returnValueHolder = {};
     var currentData = {value: page.properties.note ? page.properties.note : ""};
     var returnValueHolder = {};
@@ -679,7 +679,7 @@ Controller.prototype.editPageNote = function(page) {
         this.markDocumentModified();
     }
 };
-Controller.prototype.rasterizeDocument = function() {
+Controller.prototype.rasterizeDocument = function () {
     try {
         var currentDir = null;
         if (this.isBoundToFile()) {
@@ -703,8 +703,8 @@ Controller.prototype.rasterizeDocument = function() {
         debug("Selected folder: " + dir.path);
 
         var thiz = this;
-        var starter = function(listener) {
-            var rasterizeNext = function() {
+        var starter = function (listener) {
+            var rasterizeNext = function () {
                 try {
                     pageIndex ++;
                     if (pageIndex >= thiz.doc.pages.length) {
@@ -741,7 +741,7 @@ Controller.prototype.rasterizeDocument = function() {
                     var pagePath = dir.path;
                     debug("File path: " + pagePath);
 
-                    thiz._rasterizePage(page, pagePath, function() {
+                    thiz._rasterizePage(page, pagePath, function () {
                         window.setTimeout(rasterizeNext, 100);
                     });
                 } catch (e2) {
@@ -757,10 +757,10 @@ Controller.prototype.rasterizeDocument = function() {
         Console.dumpError(e, "stdout");
     }
 };
-Controller.prototype.printDocument = function() {
+Controller.prototype.printDocument = function () {
     this.exportDocument("PrintingExporter");
 };
-Controller.prototype.exportDocument = function(forcedExporterId) {
+Controller.prototype.exportDocument = function (forcedExporterId) {
     var data = {
         lastSelection: this.lastSelection ? this.lastSelection : null,
         forcedExporterId: forcedExporterId ? forcedExporterId : null
@@ -830,12 +830,12 @@ Controller.prototype.exportDocument = function(forcedExporterId) {
 
         var pageExtraInfos = {};
         if (requireRasterizedData) {
-            starter = function(listener) {
-                var rasterizeNext = function() {
+            starter = function (listener) {
+                var rasterizeNext = function () {
                     try {
                         pageIndex ++;
                         if (pageIndex >= pages.length) {
-                            thiz._exportDocumentToXML(pages, pageExtraInfos, destFile, data.selection, function() {
+                            thiz._exportDocumentToXML(pages, pageExtraInfos, destFile, data.selection, function () {
                                 listener.onTaskDone();
                                 Util.showStatusBarInfo(Util.getMessage("document.has.been.exported", destFile.path), true);
                                 debug("Document has been exported, location: " + destFile.path);
@@ -862,7 +862,7 @@ Controller.prototype.exportDocument = function(forcedExporterId) {
                         };
                         pageExtraInfos[page.properties.id] = pageExtraInfo;
 
-                        thiz._rasterizePage(page, pagePath, function() {
+                        thiz._rasterizePage(page, pagePath, function () {
                             window.setTimeout(rasterizeNext, 100);
                         }, new LinkingGeometryPreprocessor(pageExtraInfo));
                     } catch (e2) {
@@ -873,9 +873,9 @@ Controller.prototype.exportDocument = function(forcedExporterId) {
                 rasterizeNext();
             };
         } else {
-            starter = function(listener) {
+            starter = function (listener) {
                 try {
-                    thiz._exportDocumentToXML(pages, pageExtraInfos, destFile, data.selection, function() {
+                    thiz._exportDocumentToXML(pages, pageExtraInfos, destFile, data.selection, function () {
                         listener.onTaskDone();
                         if (destFile) {
                             Util.showStatusBarInfo("Document has been exported, location: " + destFile.path, true);
@@ -896,7 +896,7 @@ Controller.prototype.exportDocument = function(forcedExporterId) {
         Console.dumpError(e, "stdout");
     }
 };
-Controller.prototype._getPageLinks = function(page, pageExtraInfos, includeBackground) {
+Controller.prototype._getPageLinks = function (page, pageExtraInfos, includeBackground) {
     var bgLinks = [];
 
     if (page.properties.background && includeBackground) {
@@ -948,7 +948,7 @@ Controller.prototype._getPageLinks = function(page, pageExtraInfos, includeBackg
 
     return validLinks;
 };
-Controller.prototype.getFriendlyDocumentName = function() {
+Controller.prototype.getFriendlyDocumentName = function () {
     if (!this.isBoundToFile()) return "Untitled Document";
 
     var epFile = Components.classes["@mozilla.org/file/local;1"]
@@ -959,7 +959,7 @@ Controller.prototype.getFriendlyDocumentName = function() {
     name = name.replace(/\.ep$/, "").replace(/([^ A-Z])([A-Z]+)/g, "$1 $2");
     return name;
 };
-Controller.prototype._exportDocumentToXML = function(pages, pageExtraInfos, destFile, exportSelection, callback) {
+Controller.prototype._exportDocumentToXML = function (pages, pageExtraInfos, destFile, exportSelection, callback) {
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     var dom = document.implementation.createDocument(PencilNamespaces.p, "Document", null);
@@ -1088,7 +1088,7 @@ Controller.prototype._exportDocumentToXML = function(pages, pageExtraInfos, dest
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     try {
-        exporter.export(this.doc, exportSelection, destFile, xmlFile, function() {
+        exporter.export(this.doc, exportSelection, destFile, xmlFile, function () {
             debug("Finish exporting, DOC XML = " + xmlFile.path);
             // xmlFile.remove(true);
             callback();
@@ -1099,9 +1099,9 @@ Controller.prototype._exportDocumentToXML = function(pages, pageExtraInfos, dest
     }
 };
 
-Controller.prototype._populateLinkTargetsInNote = function(htmlNode) {
+Controller.prototype._populateLinkTargetsInNote = function (htmlNode) {
     var thiz = this;
-    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function (link) {
         var id = link.getAttribute("page-id");
         if (!id) {
             id = link.getAttribute("href").substring(4);
@@ -1114,7 +1114,7 @@ Controller.prototype._populateLinkTargetsInNote = function(htmlNode) {
         link.setAttribute("page-fid", page.properties.fid);
     });
 
-    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function (link) {
         var fid = link.getAttribute("page-fid");
         if (!fid) {
             fid = link.getAttribute("href").substring(5);
@@ -1126,7 +1126,7 @@ Controller.prototype._populateLinkTargetsInNote = function(htmlNode) {
         link.setAttribute("page-id", page.properties.id);
     });
 
-    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function (link) {
         var name = link.getAttribute("page-name");
         if (!name) {
             name = link.getAttribute("href").substring(6);
@@ -1139,7 +1139,7 @@ Controller.prototype._populateLinkTargetsInNote = function(htmlNode) {
     });
 };
 
-Controller.prototype.rasterizeCurrentPage = function() {
+Controller.prototype.rasterizeCurrentPage = function () {
     var page = this.getCurrentPage();
     if (!page) return;
 
@@ -1164,7 +1164,7 @@ Controller.prototype.rasterizeCurrentPage = function() {
 
     if (fp.show() == nsIFilePicker.returnCancel) return false;
     try {
-        this._rasterizePage(page, fp.file.path, function() {
+        this._rasterizePage(page, fp.file.path, function () {
             Util.showStatusBarInfo(Util.getMessage("page.has.been.exported", page.properties.name), true);
             // Util.info("Page '" + page.properties.name + "' has been exported", "Location: " + fp.file.path);
         });
@@ -1172,7 +1172,7 @@ Controller.prototype.rasterizeCurrentPage = function() {
         Console.dumpError(e);
     }
 };
-Controller.prototype._rasterizePage = function(page, path, callback, preprocessor) {
+Controller.prototype._rasterizePage = function (page, path, callback, preprocessor) {
     // create a new svg document
     var svg = document.createElementNS(PencilNamespaces.svg, "svg");
     svg.setAttribute("width", "" + page.properties.width + "px");
@@ -1195,7 +1195,7 @@ Controller.prototype._rasterizePage = function(page, path, callback, preprocesso
     Pencil.rasterizer.rasterizeDOM(svg, path, callback, preprocessor,
         (page.properties.transparentBackground == "false" && !page.properties.background) ? page.properties.backgroundColor : null);
 };
-Controller.prototype.rasterizeSelection = function() {
+Controller.prototype.rasterizeSelection = function () {
     var target = Pencil.getCurrentTarget();
     if (!target || !target.getGeometry) return;
 
@@ -1244,10 +1244,10 @@ Controller.prototype.rasterizeSelection = function() {
     }
     svg.appendChild(content);
 
-    Pencil.rasterizer.rasterizeDOM(svg, fp.file.path, function() {});
+    Pencil.rasterizer.rasterizeDOM(svg, fp.file.path, function () {});
 };
 
-Controller.prototype.sizeToContent = function(passedPage, askForPadding) {
+Controller.prototype.sizeToContent = function (passedPage, askForPadding) {
     var page = passedPage ? passedPage : this.getCurrentPage();
     var canvas = page._view.canvas;
     if (!canvas) return;
@@ -1266,7 +1266,7 @@ Controller.prototype.sizeToContent = function(passedPage, askForPadding) {
         page.properties.height = newSize.height;
     }
 };
-Controller.prototype.sizeToBestFit = function(passedPage) {
+Controller.prototype.sizeToBestFit = function (passedPage) {
     var page = passedPage ? passedPage : this.getCurrentPage();
     var canvas = page._view.canvas;
     if (!canvas) return;
@@ -1280,7 +1280,7 @@ Controller.prototype.sizeToBestFit = function(passedPage) {
     }
 };
 
-Controller.prototype._exportAsLayout = function() {
+Controller.prototype._exportAsLayout = function () {
     var page = this.getCurrentPage();
     var container = page._view.canvas.drawingLayer;
 
@@ -1289,7 +1289,7 @@ Controller.prototype._exportAsLayout = function() {
 
     var items = [];
 
-    Dom.workOn("//svg:g[@p:type='Shape']", container, function(g) {
+    Dom.workOn("//svg:g[@p:type='Shape']", container, function (g) {
         var dx = 0; // rect.left;
         var dy = 0; // rect.top;
 
@@ -1340,7 +1340,7 @@ Controller.prototype._exportAsLayout = function() {
     }
 
     var current = 0;
-    var done = function() {
+    var done = function () {
         var html = document.createElementNS(PencilNamespaces.html, "html");
 
         var body = document.createElementNS(PencilNamespaces.html, "body");
@@ -1390,7 +1390,7 @@ Controller.prototype._exportAsLayout = function() {
         Dom.serializeNodeToFile(html, dir, "");
     };
 
-    var next = function(listener) {
+    var next = function (listener) {
         if (current >= items.length) {
             done();
             listener.onTaskDone();
@@ -1438,7 +1438,7 @@ Controller.prototype._exportAsLayout = function() {
         }
         svg.appendChild(content);
 
-        Pencil.rasterizer.rasterizeDOM(svg, path, function() {
+        Pencil.rasterizer.rasterizeDOM(svg, path, function () {
             link.path = fileName;
             current ++;
             listener.onProgressUpdated("Rasterizing", current, items.length);
@@ -1448,10 +1448,10 @@ Controller.prototype._exportAsLayout = function() {
     Util.beginProgressJob("Exporting layout", next);
 };
 
-function LinkingGeometryPreprocessor(pageExtraInfo) {
+function LinkingGeometryPreprocessor (pageExtraInfo) {
     this.pageExtraInfo = pageExtraInfo;
 }
-LinkingGeometryPreprocessor.prototype.process = function(doc) {
+LinkingGeometryPreprocessor.prototype.process = function (doc) {
     var objects = Dom.getList(".//svg:g[@p:RelatedPage]", doc);
     objects.reverse();
     debug("Count: " + objects.length);

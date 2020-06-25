@@ -1,14 +1,14 @@
-function Rasterizer(controller) {
+function Rasterizer (controller) {
     this.controller = controller;
     this.getBackend().init();
 }
-Rasterizer.prototype.getImageDataFromUrl = function(url, callback) {
+Rasterizer.prototype.getImageDataFromUrl = function (url, callback) {
     this.win.document.body.innerHTML = "";
     var image = this.win.document.createElementNS(PencilNamespaces.html, "img");
 
     // pickup the image width & height
 
-    image.addEventListener("load", function(event) {
+    image.addEventListener("load", function (event) {
         try {
             callback(new ImageData(image.width, image.height, url));
         } catch (e) {
@@ -22,14 +22,14 @@ Rasterizer.prototype.getImageDataFromUrl = function(url, callback) {
 Rasterizer.ipcBasedBackend = {
     TIME_OUT: 10000,
     pendingWorkMap: {},
-    init: function() {
+    init: function () {
         ipcRenderer.send("render-init", {});
     },
-    rasterize: function(svgNode, width, height, scale, callback, parseLinks, options) {
+    rasterize: function (svgNode, width, height, scale, callback, parseLinks, options) {
         var id = Util.newUUID();
         scale = Rasterizer.getExportScale(scale);
 
-        ipcRenderer.once(id, function(event, data) {
+        ipcRenderer.once(id, function (event, data) {
             var work = Rasterizer.ipcBasedBackend.pendingWorkMap[id];
             if (!work) return;
 
@@ -52,7 +52,7 @@ Rasterizer.ipcBasedBackend = {
         ipcRenderer.send("render-request", {svg: xml, width: w, height: h, scale: scale, id: id, processLinks: parseLinks, options: options});
 
         var work = {};
-        work.timeoutId = window.setTimeout(function() {
+        work.timeoutId = window.setTimeout(function () {
             var work = Rasterizer.ipcBasedBackend.pendingWorkMap[id];
             if (!work) return;
             callback("");
@@ -66,12 +66,12 @@ Rasterizer.ipcBasedBackend = {
     }
 };
 Rasterizer.outProcessCanvasBasedBackend = {
-    init: function() {
+    init: function () {
         ipcRenderer.send("canvas-render-init", {});
     },
-    rasterize: function(svgNode, width, height, scale, callback, parseLinks) {
+    rasterize: function (svgNode, width, height, scale, callback, parseLinks) {
         var id = Util.newUUID();
-        ipcRenderer.once(id, function(event, data) {
+        ipcRenderer.once(id, function (event, data) {
             callback(parseLinks ? data : data.url);
         });
 
@@ -80,10 +80,10 @@ Rasterizer.outProcessCanvasBasedBackend = {
     }
 };
 Rasterizer.inProcessCanvasBasedBackend = {
-    init: function() {
+    init: function () {
         // the in-process rasterize requires basicly nothing to init :)
     },
-    rasterize: function(svgNode, width, height, s, callback) {
+    rasterize: function (svgNode, width, height, s, callback) {
         var images = svgNode.querySelectorAll("image");
         var totalImageLength = 0;
 
@@ -109,7 +109,7 @@ Rasterizer.inProcessCanvasBasedBackend = {
         }
 
         var index = -1;
-        function convertNext() {
+        function convertNext () {
             index ++;
             if (index >= tasks.length) {
                 onConversionDone();
@@ -123,7 +123,7 @@ Rasterizer.inProcessCanvasBasedBackend = {
             var mime = "image/jpeg";
             if (ext == ".png") mine = "image/png";
 
-            fs.readFile(sourcePath, function(error, bitmap) {
+            fs.readFile(sourcePath, function (error, bitmap) {
                 var url = "data:" + mime + ";base64," + new Buffer(bitmap).toString("base64");
 
                 image.setAttributeNS(PencilNamespaces.xlink, "href", url);
@@ -133,7 +133,7 @@ Rasterizer.inProcessCanvasBasedBackend = {
             });
         }
 
-        function onConversionDone() {
+        function onConversionDone () {
             // it looks like that the bigger images embedded, the longer time we need to wait for the image to be fully painted into the canvas
             var delay = Math.max(500, totalImageLength / 30000);
 
@@ -144,13 +144,13 @@ Rasterizer.inProcessCanvasBasedBackend = {
 
             var img = new Image();
 
-            img.onload = function() {
+            img.onload = function () {
                 ctx.save();
                 ctx.scale(s, s);
                 ctx.drawImage(img, 0, 0);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                setTimeout(function() {
+                setTimeout(function () {
                     callback(canvas.toDataURL());
                     ctx.restore();
                     img.onload = null;
@@ -167,21 +167,21 @@ Rasterizer.inProcessCanvasBasedBackend = {
     }
 };
 
-Rasterizer.prototype.getBackend = function() {
+Rasterizer.prototype.getBackend = function () {
     // TODO: options or condition?
     return Rasterizer.ipcBasedBackend;
     // return Rasterizer.outProcessCanvasBasedBackend;
 };
-Rasterizer.prototype.rasterizeSVGNodeToUrl = function(svg, callback, scale) {
+Rasterizer.prototype.rasterizeSVGNodeToUrl = function (svg, callback, scale) {
     var s = (typeof (scale) == "undefined") ? 1 : scale;
     this.getBackend().rasterize(svg, parseFloat(svg.getAttribute("width")), parseFloat(svg.getAttribute("height")), s, callback);
 };
 
-Rasterizer.prototype.rasterizePageToUrl = function(page, callback, scale, parseLinks, options) {
+Rasterizer.prototype.rasterizePageToUrl = function (page, callback, scale, parseLinks, options) {
     var svg = this.controller.getPageSVG(page);
     var thiz = this;
     var s = Rasterizer.getExportScale(scale);
-    var f = function() {
+    var f = function () {
         svg.setAttribute("page", page.name);
         var m = Pencil.controller.getDocumentPageMargin() || 0;
         var w = page.width;
@@ -203,7 +203,7 @@ Rasterizer.prototype.rasterizePageToUrl = function(page, callback, scale, parseL
     };
 
     if (page.backgroundPage) {
-        thiz.getPageBitmapFileWithScale(page.backgroundPage, scale, null, function(filePath) {
+        thiz.getPageBitmapFileWithScale(page.backgroundPage, scale, null, function (filePath) {
             var image = svg.ownerDocument.createElementNS(PencilNamespaces.svg, "image");
             image.setAttribute("x", "0");
             image.setAttribute("y", "0");
@@ -238,10 +238,10 @@ Rasterizer.prototype.rasterizePageToUrl = function(page, callback, scale, parseL
         f();
     }
 };
-Rasterizer.prototype.getPageBitmapFile = function(page, callback) {
+Rasterizer.prototype.getPageBitmapFile = function (page, callback) {
     this.getPageBitmapFileWithScale(page, 1, null, callback);
 };
-Rasterizer.prototype.getPageBitmapFileWithScale = function(page, scale, configuredFilePath, callback) {
+Rasterizer.prototype.getPageBitmapFileWithScale = function (page, scale, configuredFilePath, callback) {
     var key = "@" + scale;
     if (page.bitmapCache && page.bitmapCache[key]) {
         var existingFilePath = page.bitmapCache[key];
@@ -253,7 +253,7 @@ Rasterizer.prototype.getPageBitmapFileWithScale = function(page, scale, configur
         callback(existingFilePath);
     } else {
         var filePath = configuredFilePath || tmp.fileSync({postfix: ".png"}).name;
-        this.rasterizePageToFile(page, filePath, function(filePath) {
+        this.rasterizePageToFile(page, filePath, function (filePath) {
             if (!page.bitmapCache) page.bitmapCache = {};
             page.bitmapCache[key] = filePath;
             callback(filePath);
@@ -262,17 +262,17 @@ Rasterizer.prototype.getPageBitmapFileWithScale = function(page, scale, configur
 };
 
 
-Rasterizer.prototype.postBitmapGeneratingTask = function(page, scale, configuredFilePath, callback) {
+Rasterizer.prototype.postBitmapGeneratingTask = function (page, scale, configuredFilePath, callback) {
     if (!this.generatingTaskQueue) this.generatingTaskQueue = new QueueHandler(100);
-    this.generatingTaskQueue.submit(function(__callback) {
-        this.getPageBitmapFileWithScale(page, scale, configuredFilePath, function(filePath) {
+    this.generatingTaskQueue.submit(function (__callback) {
+        this.getPageBitmapFileWithScale(page, scale, configuredFilePath, function (filePath) {
             if (callback) callback(filePath);
             __callback();
         });
     }.bind(this));
 };
-Rasterizer.prototype.rasterizePageToFile = function(page, filePath, callback, scale, parseLinks, options) {
-    this.rasterizePageToUrl(page, function(data) {
+Rasterizer.prototype.rasterizePageToFile = function (page, filePath, callback, scale, parseLinks, options) {
+    this.rasterizePageToUrl(page, function (data) {
         var dataURI = parseLinks ? data.url : data;
 
         var actualPath = filePath ? filePath : tmp.fileSync().name;
@@ -281,13 +281,13 @@ Rasterizer.prototype.rasterizePageToFile = function(page, filePath, callback, sc
         if (base64Data.startsWith(prefix)) base64Data = base64Data.substring(prefix.length);
 
         var buffer = new Buffer(base64Data, "base64");
-        fs.writeFile(actualPath, buffer, "utf8", function(err) {
+        fs.writeFile(actualPath, buffer, "utf8", function (err) {
             console.log("Finish rasterizing page: ", page.name, actualPath);
             callback(parseLinks ? {actualPath: actualPath, objectsWithLinking: data.objectsWithLinking} : actualPath, err);
         });
     }, scale, parseLinks, options);
 };
-Rasterizer.getExportScale = function(inputScale) {
+Rasterizer.getExportScale = function (inputScale) {
     if (typeof(inputScale) == "number") return inputScale;
 
     var configScale = Config.get(Config.EXPORT_DEFAULT_SCALE, 1.0);
@@ -298,7 +298,7 @@ Rasterizer.getExportScale = function(inputScale) {
         return isNaN(configScale) ? 1 : configScale;
     }
 };
-Rasterizer.prototype.rasterizeSelectionToFile = function(target, filePath, callback, scale, options) {
+Rasterizer.prototype.rasterizeSelectionToFile = function (target, filePath, callback, scale, options) {
     var geo = target.getGeometry();
     if (!geo) {
         // Util.showStatusBarWarning(Util.getMessage("the.selected.objects.cannot.be.exported"), true);
@@ -338,7 +338,7 @@ Rasterizer.prototype.rasterizeSelectionToFile = function(target, filePath, callb
 
     var thiz = this;
     var s = Rasterizer.getExportScale(scale);
-    thiz.getBackend().rasterize(svg, w, h, s, function(data) {
+    thiz.getBackend().rasterize(svg, w, h, s, function (data) {
         var dataURI = data;
 
         var actualPath = filePath ? filePath : tmp.fileSync().name;
@@ -347,13 +347,13 @@ Rasterizer.prototype.rasterizeSelectionToFile = function(target, filePath, callb
         if (base64Data.startsWith(prefix)) base64Data = base64Data.substring(prefix.length);
 
         var buffer = new Buffer(base64Data, "base64");
-        fs.writeFile(actualPath, buffer, {}, function(err) {
+        fs.writeFile(actualPath, buffer, {}, function (err) {
             callback(actualPath, err);
         });
     }, false, options);
 };
 
-Rasterizer.prototype._prepareWindowForRasterization = function(backgroundColor) {
+Rasterizer.prototype._prepareWindowForRasterization = function (backgroundColor) {
     var h = 0;
     var w = 0;
     if (this._width && this._height) {
@@ -401,7 +401,7 @@ Rasterizer.prototype._prepareWindowForRasterization = function(backgroundColor) 
     };
 };
 
-Rasterizer.prototype.rasterizeWindowToUrl = function(callback) {
+Rasterizer.prototype.rasterizeWindowToUrl = function (callback) {
     debug("Rasterizing window to URL");
     canvas = this._prepareWindowForRasterization();
     var dataURL = canvas.canvas.toDataURL("image/png", "");
@@ -417,7 +417,7 @@ Rasterizer.prototype.rasterizeWindowToUrl = function(callback) {
     };
     callback(data);
 };
-Rasterizer.prototype.cleanup = function() {
+Rasterizer.prototype.cleanup = function () {
     if (this.lastTempFile) {
         // debug("deleting: " + this.lastTempFile.path);
         try {
@@ -428,7 +428,7 @@ Rasterizer.prototype.cleanup = function() {
         }
     }
 };
-Rasterizer.prototype._saveNodeToTempFileAndLoad = function(svgNode, loadCallback) {
+Rasterizer.prototype._saveNodeToTempFileAndLoad = function (svgNode, loadCallback) {
     // this.cleanup();
     //
     // this.lastTempFile = Local.newTempFile("raster", "svg");
@@ -458,19 +458,19 @@ Rasterizer.prototype._saveNodeToTempFileAndLoad = function(svgNode, loadCallback
 
     if (loadCallback) loadCallback();
 };
-Rasterizer.prototype.rasterizeDOMToUrl = function(svgNode, callback) {
-    this.rasterizeSVGNodeToUrl(svgNode, function(url) {
+Rasterizer.prototype.rasterizeDOMToUrl = function (svgNode, callback) {
+    this.rasterizeSVGNodeToUrl(svgNode, function (url) {
         callback({url: url});
     });
 };
-Rasterizer.prototype.rasterizeDOMToUrl_old = function(svgNode, callback) {
+Rasterizer.prototype.rasterizeDOMToUrl_old = function (svgNode, callback) {
     debug("Rasterizing DOM to URL");
     try {
         this._width = svgNode.width.baseVal.value;
         this._height = svgNode.height.baseVal.value;
 
         var thiz = this;
-        this._saveNodeToTempFileAndLoad(svgNode, function() {
+        this._saveNodeToTempFileAndLoad(svgNode, function () {
             try {
                 thiz.rasterizeWindowToUrl(callback);
             } catch (e) {
@@ -481,14 +481,14 @@ Rasterizer.prototype.rasterizeDOMToUrl_old = function(svgNode, callback) {
         Console.dumpError(e);
     }
 };
-Rasterizer.prototype.rasterizeDOM = function(svgNode, filePath, callback, preprocessor, backgroundColor) {
+Rasterizer.prototype.rasterizeDOM = function (svgNode, filePath, callback, preprocessor, backgroundColor) {
     debug("Rasterizing DOM");
     this._width = svgNode.width.baseVal.value;
     this._height = svgNode.height.baseVal.value;
     this._backgroundColor = null;
 
     var thiz = this;
-    this._saveNodeToTempFileAndLoad(svgNode, function() {
+    this._saveNodeToTempFileAndLoad(svgNode, function () {
         try {
             thiz.rasterizeWindow(filePath, callback, preprocessor, backgroundColor);
         } catch (e) {
@@ -497,7 +497,7 @@ Rasterizer.prototype.rasterizeDOM = function(svgNode, filePath, callback, prepro
     });
 };
 
-Rasterizer.prototype.rasterizeWindow = function(filePath, callback, preprocessor, backgroundColor) {
+Rasterizer.prototype.rasterizeWindow = function (filePath, callback, preprocessor, backgroundColor) {
     debug("Rasterizing window");
     if (preprocessor && preprocessor.process) {
         debug("Preprocessing document with " + preprocessor);
@@ -509,7 +509,7 @@ Rasterizer.prototype.rasterizeWindow = function(filePath, callback, preprocessor
     callback();
 };
 
-Rasterizer.prototype.saveURI = function(url, file) {
+Rasterizer.prototype.saveURI = function (url, file) {
     uri = Components.classes["@mozilla.org/network/standard-url;1"].
         createInstance(Components.interfaces.nsIURI);
     uri.spec = url;
@@ -527,32 +527,32 @@ Rasterizer.prototype.saveURI = function(url, file) {
     // persist.cancelSave();
 };
 
-function PersistProgressListener(callback) {
+function PersistProgressListener (callback) {
     this.init();
     this.callback = callback ? callback : null;
 }
 
 PersistProgressListener.prototype = {
-    QueryInterface: function(aIID) {
+    QueryInterface: function (aIID) {
         if (aIID.equals(Components.interfaces.nsIWebProgressListener)) {
             return this;
         }
         throw Components.results.NS_NOINTERFACE;
     },
-    init: function() {},
-    destroy: function() {},
+    init: function () {},
+    destroy: function () {},
     // nsIWebProgressListener
-    onProgressChange: function(aWebProgress, aRequest,
+    onProgressChange: function (aWebProgress, aRequest,
         aCurSelfProgress, aMaxSelfProgress,
         aCurTotalProgress, aMaxTotalProgress) {},
-    onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+    onStateChange: function (aWebProgress, aRequest, aStateFlags, aStatus) {
         if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
             if (this.callback) {
                 this.callback();
             }
         }
     },
-    onLocationChange: function(aWebProgress, aRequest, aLocation) {},
-    onStatusChange: function(aWebProgress, aRequest, aStatus, aMessage) {},
-    onSecurityChange: function(aWebProgress, aRequest, aState) {}
+    onLocationChange: function (aWebProgress, aRequest, aLocation) {},
+    onStatusChange: function (aWebProgress, aRequest, aStatus, aMessage) {},
+    onSecurityChange: function (aWebProgress, aRequest, aState) {}
 };

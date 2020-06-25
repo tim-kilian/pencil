@@ -1,8 +1,8 @@
-function Geometry() {
+function Geometry () {
     this.ctm = null;
     this.dim = null;
 }
-Geometry.prototype.clone = function(svg) {
+Geometry.prototype.clone = function (svg) {
     var geo = new Geometry();
     if (this.dim == null) {
         geo.dim = null;

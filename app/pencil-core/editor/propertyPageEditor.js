@@ -1,16 +1,16 @@
-function PropertyPageEditor() {
+function PropertyPageEditor () {
 }
 
-PropertyPageEditor.prototype.install = function(canvas) {
+PropertyPageEditor.prototype.install = function (canvas) {
     this.canvas = canvas;
     this.canvas.propertyPageEditor = this;
     this.dialogShown = false;
 };
-PropertyPageEditor.prototype.onDialogShown = function() {
+PropertyPageEditor.prototype.onDialogShown = function () {
     this.dialogShown = true;
     this.attach(this._nextTargetObject);
 };
-PropertyPageEditor.prototype.showAndAttach = function(targetObject) {
+PropertyPageEditor.prototype.showAndAttach = function (targetObject) {
     if (!this.dialogShown) {
         this._nextTargetObject = targetObject;
         this.propertyWindow = window.openDialog("chrome://pencil/content/propertyDialog.xul", "propertyEditor" + Util.getInstanceToken(), "chrome,dialog,alwaysRaised,dependent", this);
@@ -18,7 +18,7 @@ PropertyPageEditor.prototype.showAndAttach = function(targetObject) {
         this.attach(targetObject);
     }
 };
-PropertyPageEditor.prototype.attach = function(targetObject) {
+PropertyPageEditor.prototype.attach = function (targetObject) {
     if (!this.propertyWindow) return;
     try {
         this.dettach();
@@ -29,7 +29,7 @@ PropertyPageEditor.prototype.attach = function(targetObject) {
     }
 };
 PropertyPageEditor.SMALL_EDITOR_TYPES = ["pfonteditor", "paligneditor", "pstrokeeditor", "pplaintexteditor", "pshadowstyleeditor", "penumeditor"];
-PropertyPageEditor.prototype.invalidateData = function(targetObject) {
+PropertyPageEditor.prototype.invalidateData = function (targetObject) {
     var definedGroups = this.targetObject.getPropertyGroups();
 
     var strippedGroups = [];
@@ -71,13 +71,13 @@ PropertyPageEditor.prototype.invalidateData = function(targetObject) {
     this.groups = strippedGroups;
     this.properties = this.targetObject.getProperties();
 };
-PropertyPageEditor.prototype.invalidate = function() {
+PropertyPageEditor.prototype.invalidate = function () {
     if (this.propertyWindow) {
         this.invalidateData();
         this.propertyWindow.setup();
     }
 };
-PropertyPageEditor.prototype.dettach = function() {
+PropertyPageEditor.prototype.dettach = function () {
     try {
         this.targetObject = null;
     } catch (e) {}
@@ -88,18 +88,18 @@ PropertyPageEditor.prototype.dettach = function() {
 
 
 // @begin interface to PropertyDialog.js
-PropertyPageEditor.prototype.getPropertyValue = function(name) {
+PropertyPageEditor.prototype.getPropertyValue = function (name) {
     return this.targetObject.getProperty(name);
 };
-PropertyPageEditor.prototype.setPropertyValue = function(name, value) {
+PropertyPageEditor.prototype.setPropertyValue = function (name, value) {
     this.targetObject.setProperty(name, value);
     if (this.targetObject.updateHandle) this.targetObject.updateHandle();
 };
 
-PropertyPageEditor.prototype.getTargetObjectName = function() {
+PropertyPageEditor.prototype.getTargetObjectName = function () {
     return this.targetObject.getName();
 };
-PropertyPageEditor.prototype.usingQuickMode = function() {
+PropertyPageEditor.prototype.usingQuickMode = function () {
     return false;
 };
 

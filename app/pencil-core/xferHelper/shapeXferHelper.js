@@ -1,14 +1,14 @@
-function ShapeXferHelper(canvas) {
+function ShapeXferHelper (canvas) {
     this.canvas = canvas;
 
     this.type = ShapeXferHelper.MIME_TYPE;
 }
 ShapeXferHelper.MIME_TYPE = "pencil/shape";
 
-ShapeXferHelper.prototype.toString = function() {
+ShapeXferHelper.prototype.toString = function () {
     return "ShapeXferHelper: " + ShapeXferHelper.MIME_TYPE;
 };
-ShapeXferHelper.prototype.handleData = function(dom) {
+ShapeXferHelper.prototype.handleData = function (dom) {
     // validate
     var shape = Dom.getSingle("/svg:g[@p:type='Shape' or @p:type='Group']", dom);
 
@@ -32,7 +32,7 @@ ShapeXferHelper.prototype.handleData = function(dom) {
         var dy = Math.round(Math.random() * 50);
         dy = dy - (dy % grid.h);
     }
-    this.canvas.run(function() {
+    this.canvas.run(function () {
         this.canvas.drawingLayer.appendChild(shape);
         this.canvas.selectShape(shape);
 

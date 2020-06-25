@@ -1,4 +1,4 @@
-function ChildPageListMenu(page, onDone) {
+function ChildPageListMenu (page, onDone) {
     Menu.call(this);
     this.page = page;
     this.onDone = onDone;
@@ -7,20 +7,20 @@ function ChildPageListMenu(page, onDone) {
 
 __extend(Menu, ChildPageListMenu);
 
-ChildPageListMenu.prototype.getTemplatePath = function() {
+ChildPageListMenu.prototype.getTemplatePath = function () {
     return this.getTemplatePrefix() + "menus/Menu.xhtml";
 };
-ChildPageListMenu.prototype.setup = function() {
+ChildPageListMenu.prototype.setup = function () {
     var thiz = this;
 
-    function createSubCommand(page) {
+    function createSubCommand (page) {
         var key = "open" + page.name +"page";
         var items = {};
         items["key"] = key;
         items["item"] = {
             key: key,
             label: page.name,
-            run: function() {
+            run: function () {
                 // thiz.onDone(page);
                 ApplicationPane._instance.activatePage(page);
             }
@@ -28,12 +28,12 @@ ChildPageListMenu.prototype.setup = function() {
         return items;
     }
 
-    function createSubItems(page, subItems) {
+    function createSubItems (page, subItems) {
         var key = "open" + page.name +"page";
         var items = {"key": key, "item": {
             key: key,
             label: page.name,
-            run: function() {
+            run: function () {
                 ApplicationPane._instance.activatePage(page);
                 // thiz.onDone(page);
             },
@@ -43,7 +43,7 @@ ChildPageListMenu.prototype.setup = function() {
         return items;
     }
 
-    function createChildMenu(page, subMenu) {
+    function createChildMenu (page, subMenu) {
         for (var i = 0; i < page.children.length; i++) {
             var childPage = page.children[i];
 

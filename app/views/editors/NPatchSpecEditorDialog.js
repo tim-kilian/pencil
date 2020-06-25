@@ -1,4 +1,4 @@
-function NPatchSpecEditorDialog() {
+function NPatchSpecEditorDialog () {
     Dialog.call(this);
     this.title = "Edit N-Patch Specification";
     this.subTitle = "";
@@ -8,7 +8,7 @@ function NPatchSpecEditorDialog() {
     this.bind("mouseup", this.handleGlobalMouseUp, document);
     this.bind("mousemove", this.handleGlobalMouseMove, document);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         console.log(this.useDarkBackgroundCheckbox.checked);
         this.container.setAttribute("dark", this.useDarkBackgroundCheckbox.checked);
     }, this.useDarkBackgroundCheckbox);
@@ -17,10 +17,10 @@ __extend(Dialog, NPatchSpecEditorDialog);
 
 NPatchSpecEditorDialog.MIN_SIZE = 5;
 
-NPatchSpecEditorDialog.prototype.onShown = function() {
+NPatchSpecEditorDialog.prototype.onShown = function () {
 };
 
-NPatchSpecEditorDialog.prototype.addCell = function(from, to, isX) {
+NPatchSpecEditorDialog.prototype.addCell = function (from, to, isX) {
     var owner = isX ? this.xCellContainer : this.yCellContainer;
     var holder = {};
     var div = Dom.newDOMElement({
@@ -49,7 +49,7 @@ NPatchSpecEditorDialog.prototype.addCell = function(from, to, isX) {
 
     return div;
 };
-NPatchSpecEditorDialog.prototype.handleGlobalMouseDown = function(event) {
+NPatchSpecEditorDialog.prototype.handleGlobalMouseDown = function (event) {
     var cell = Dom.findParentWithClass(event.target, "Cell");
     var indicator = Dom.findParentWithClass(event.target, "Indicator");
     if (indicator) return;
@@ -101,17 +101,17 @@ NPatchSpecEditorDialog.prototype.handleGlobalMouseDown = function(event) {
         if (child._data.from >= cell._data.to) this.held.maxEnd = Math.min(this.held.maxEnd, child._data.from);
     }
 };
-NPatchSpecEditorDialog.prototype.handleGlobalMouseUp = function(event) {
+NPatchSpecEditorDialog.prototype.handleGlobalMouseUp = function (event) {
     if (!this.held) return;
     if (event.button == 2) {
         var cell = this.held.cell;
-        Dialog.confirm("Do you want to remove this scalable area?", null, "Delete", function() {
+        Dialog.confirm("Do you want to remove this scalable area?", null, "Delete", function () {
             cell.parentNode.removeChild(cell);
         });
     }
     this.held = null;
 };
-NPatchSpecEditorDialog.prototype.handleGlobalMouseMove = function(event) {
+NPatchSpecEditorDialog.prototype.handleGlobalMouseMove = function (event) {
     if (!this.held || this.held.button != 0) return;
     var horizontal = this.held.cell.parentNode == this.xCellContainer;
     var delta = Math.round((horizontal ? (event.clientX - this.held.ox) : (event.clientY - this.held.oy)) * this.r);
@@ -136,7 +136,7 @@ NPatchSpecEditorDialog.prototype.handleGlobalMouseMove = function(event) {
 
     this.invalidateCellPosition(this.held.cell);
 };
-NPatchSpecEditorDialog.prototype.invalidateCellPosition = function(cell) {
+NPatchSpecEditorDialog.prototype.invalidateCellPosition = function (cell) {
     var a = Math.floor(cell._data.from / this.r);
     var b = Math.floor(cell._data.to / this.r);
     var s = b - a;
@@ -160,7 +160,7 @@ NPatchSpecEditorDialog.prototype.invalidateCellPosition = function(cell) {
     }
 };
 
-NPatchSpecEditorDialog.prototype.setup = function(options) {
+NPatchSpecEditorDialog.prototype.setup = function (options) {
     this.options = options || {};
     var minSize = 10 * Util.em();
     var maxW = window.innerWidth - 6 * Util.em();
@@ -184,7 +184,7 @@ NPatchSpecEditorDialog.prototype.setup = function(options) {
     }
 };
 
-NPatchSpecEditorDialog.prototype.setZoom = function(r) {
+NPatchSpecEditorDialog.prototype.setZoom = function (r) {
     this.r = r;
     var w = Math.round(this.options.imageData.w / r);
     var h = Math.round(this.options.imageData.h / r);
@@ -193,7 +193,7 @@ NPatchSpecEditorDialog.prototype.setZoom = function(r) {
     this.image.style.height = h + "px";
 };
 
-NPatchSpecEditorDialog.prototype.buildResultImageData = function() {
+NPatchSpecEditorDialog.prototype.buildResultImageData = function () {
     var xCells = [];
     for (var child of this.xCellContainer.childNodes) {
         if (!child._data) continue;
@@ -209,11 +209,11 @@ NPatchSpecEditorDialog.prototype.buildResultImageData = function() {
     console.log("returning", result);
     return result;
 };
-NPatchSpecEditorDialog.prototype.getDialogActions = function() {
+NPatchSpecEditorDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL,
         {type: "accept", title: "Apply",
-            run: function() {
+            run: function () {
                 if (this.options.onDone) this.options.onDone(this.buildResultImageData());
                 return true;
             }

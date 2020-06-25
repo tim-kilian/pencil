@@ -1,4 +1,4 @@
-function EpgzHandler(controller) {
+function EpgzHandler (controller) {
     FileHandler.call(this);
     this.controller = controller;
     this.name = "Pencil Document (GZip Compressed)";
@@ -8,14 +8,14 @@ function EpgzHandler(controller) {
 __extend(FileHandler, EpgzHandler);
 
 EpgzHandler.EXT = ".epgz";
-EpgzHandler.prototype.loadDocument = function(filePath) {
+EpgzHandler.prototype.loadDocument = function (filePath) {
     const zlib = require("zlib");
     const tarfs = require("tar-fs");
 
     var thiz = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var wrappedRejectCalled = false;
-        var wrappedReject = function(error) {
+        var wrappedReject = function (error) {
             if (wrappedRejectCalled) return;
             wrappedRejectCalled = true;
             console.log(error);
@@ -27,11 +27,11 @@ EpgzHandler.prototype.loadDocument = function(filePath) {
 
                 Dialog.confirm("File loading error", "There was an error that prevented your document from being fully loaded. The document file seems to be corrupted.\n" +
                 "Do you want Pencil to try loading the document anyway?",
-                "Yes, try anyway", function() {
+                "Yes, try anyway", function () {
                     ApplicationPane._instance.busy();
                     thiz.parseDocument(filePath, resolve);
                 },
-                "Cancel", function() {
+                "Cancel", function () {
                     ApplicationPane._instance.busy();
                     reject(error);
                 });
@@ -43,21 +43,21 @@ EpgzHandler.prototype.loadDocument = function(filePath) {
             .on("error", wrappedReject)
             .pipe(tarfs.extract(Pencil.documentHandler.tempDir.name, {readable: true, writable: true})
                 .on("error", wrappedReject)
-                .on("finish", function() {
+                .on("finish", function () {
                     console.log("Successfully extracted.");
                     thiz.parseDocument(filePath, resolve);
                 }));
     });
 };
 
-EpgzHandler.prototype.saveDocument = function(documentPath) {
+EpgzHandler.prototype.saveDocument = function (documentPath) {
     var thiz = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var path = null;
         var targz = require("tar.gz");
         var tarOptions = {
             fromBase: true,
-            readerFilter: function(one, two, three) {
+            readerFilter: function (one, two, three) {
                 var p = one && one.path ? one.path : null;
                 if (one && one.size === 0) {
                     // console.log("Empty file found: ", p);

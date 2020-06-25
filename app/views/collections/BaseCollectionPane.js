@@ -1,8 +1,8 @@
-function BaseCollectionPane() {
+function BaseCollectionPane () {
     BaseTemplatedWidget.call(this);
     var thiz = this;
 
-    this.bind("contextmenu", function(event) {
+    this.bind("contextmenu", function (event) {
         var collectionNode = Dom.findUpwardForNodeWithData(event.target, "_collection");
         if (!collectionNode) return;
 
@@ -11,25 +11,25 @@ function BaseCollectionPane() {
         this.handleCollectionContextMenu(collection, event);
     }, this.selectorPane);
 
-    this.selectorPane.addEventListener("click", function(event) {
-        var item = Dom.findUpward(Dom.getTarget(event), function(n) {
+    this.selectorPane.addEventListener("click", function (event) {
+        var item = Dom.findUpward(Dom.getTarget(event), function (n) {
             return n._collection;
         });
 
         if (!item) return;
-        Dom.doOnAllChildren(thiz.selectorPane, function(n) {
+        Dom.doOnAllChildren(thiz.selectorPane, function (n) {
             if (n.setAttribute) n.setAttribute("active", n == item);
         });
         thiz.openCollection(item._collection);
     }, false);
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         thiz.searchInput.value = "";
         thiz.searchInput.focus();
         thiz.filterCollections();
     }, this.clearTextButton);
 
-    this.shapeListContainer.addEventListener("dragstart", function(event) {
+    this.shapeListContainer.addEventListener("dragstart", function (event) {
         nsDragAndDrop.dragStart(event);
         var n = Dom.findUpwardForNodeWithData(Dom.getTarget(event), "_def");
         var def = n._def;
@@ -41,24 +41,24 @@ function BaseCollectionPane() {
     this.dndImage = new Image();
     this.dndImage.src = "css/bullet.png";
 
-    var searchShapesFunction = function() {
+    var searchShapesFunction = function () {
         this.searchTimeout = null;
         this.filterCollections();
     }.bind(this);
 
-    this.bind("keyup", function(event) {
+    this.bind("keyup", function (event) {
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
         }
         this.searchTimeout = setTimeout(searchShapesFunction, 200);
     }, this.searchInput);
 
-    var ensureVisibleShapeIconsFunction = function() {
+    var ensureVisibleShapeIconsFunction = function () {
         this.revealTimeout = null;
         this.ensureVisibleShapeIcons();
     }.bind(this);
 
-    this.bind("scroll", function() {
+    this.bind("scroll", function () {
         if (this.revealTimeout) {
             clearTimeout(this.revealTimeout);
         }
@@ -68,7 +68,7 @@ function BaseCollectionPane() {
     UICommandManager.register({
         key: "searchFocusCommand",
         shortcut: "Ctrl+F",
-        run: function() {
+        run: function () {
             thiz.searchInput.focus();
             thiz.searchInput.select();
         }
@@ -77,7 +77,7 @@ function BaseCollectionPane() {
     UICommandManager.register({
         key: "reloadAllCollectionCommand",
         shortcut: "Shift+F5",
-        run: function() {
+        run: function () {
             CollectionManager.loadStencils("notify");
         }
     });
@@ -85,7 +85,7 @@ function BaseCollectionPane() {
     UICommandManager.register({
         key: "reloadDeveloperCollectionCommand",
         shortcut: "F5",
-        run: function() {
+        run: function () {
             CollectionManager.reloadDeveloperStencil("notify");
         }
     });
@@ -104,28 +104,28 @@ BaseCollectionPane.ICON_MAP = {
     "Evolus.Windows7": "web"
 };
 
-BaseCollectionPane.prototype.getTemplatePath = function() {
+BaseCollectionPane.prototype.getTemplatePath = function () {
     return this.getTemplatePrefix() + "collections/BaseCollectionPane.xhtml";
 };
 
-BaseCollectionPane.prototype.getTitle = function() {
+BaseCollectionPane.prototype.getTitle = function () {
     return "Shapes";
 };
 
-BaseCollectionPane.prototype.getIconName = function() {
+BaseCollectionPane.prototype.getIconName = function () {
     return "layers";
 };
 
-BaseCollectionPane.prototype.getCollectionIcon = function(collection) {
+BaseCollectionPane.prototype.getCollectionIcon = function (collection) {
     return collection.icon || BaseCollectionPane.ICON_MAP[collection.id] || "border_all";
 };
-BaseCollectionPane.prototype.onSizeChanged = function() {
+BaseCollectionPane.prototype.onSizeChanged = function () {
     if (!this.loaded) {
         setTimeout(this.reload.bind(this), 300);
     }
     this.updateLayoutSize();
 };
-BaseCollectionPane.prototype.reload = function(selectedCollectionId) {
+BaseCollectionPane.prototype.reload = function (selectedCollectionId) {
     if (this.node().offsetWidth <= 0) return;
     Dom.empty(this.selectorPane);
 
@@ -196,7 +196,7 @@ BaseCollectionPane.prototype.reload = function(selectedCollectionId) {
     if (foundNode) lastNode = foundNode;
 
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         for (var i = 0; i < thiz.selectorPane.childNodes.length; i ++) {
             var item = thiz.selectorPane.childNodes[i];
             var inner = item.firstChild.firstChild;
@@ -211,7 +211,7 @@ BaseCollectionPane.prototype.reload = function(selectedCollectionId) {
     }, 10);
 
     if (lastNode) {
-        Dom.doOnAllChildren(this.selectorPane, function(n) {
+        Dom.doOnAllChildren(this.selectorPane, function (n) {
             if (n.setAttribute) n.setAttribute("active", n == lastNode);
         });
 
@@ -221,7 +221,7 @@ BaseCollectionPane.prototype.reload = function(selectedCollectionId) {
 
     this.loaded = true;
 };
-BaseCollectionPane.prototype.filterCollections = function() {
+BaseCollectionPane.prototype.filterCollections = function () {
     var filter = this.searchInput.value;
     this.clearTextButton.style.display = filter != null && filter.length > 0 ? "block" : "none";
     var collectionNodes = Dom.getList(".//*[@class='Item']", this.selectorPane);
@@ -260,7 +260,7 @@ BaseCollectionPane.prototype.filterCollections = function() {
     if (hasLast) {
         this.openCollection(this.last);
     } else if (firstNode != null) {
-        Dom.doOnAllChildren(this.selectorPane, function(n) {
+        Dom.doOnAllChildren(this.selectorPane, function (n) {
             if (n.setAttribute) n.setAttribute("active", n == firstNode);
         });
         this.openCollection(firstNode._collection);
@@ -273,7 +273,7 @@ BaseCollectionPane.prototype.filterCollections = function() {
         this.settingButton.style.visibility = "hidden";
     }
 };
-BaseCollectionPane.prototype.ensureVisibleShapeIcons = function() {
+BaseCollectionPane.prototype.ensureVisibleShapeIcons = function () {
     var pr = this.shapeListContainer.getBoundingClientRect();
     // console.log("PR:", pr);
     for (var i = 0; i < this.shapeList.childNodes.length; i ++) {
@@ -288,7 +288,7 @@ BaseCollectionPane.prototype.ensureVisibleShapeIcons = function() {
         }
     }
 };
-BaseCollectionPane.prototype.updateLayoutSize = function() {
+BaseCollectionPane.prototype.updateLayoutSize = function () {
     if (!this.last || !this.last.customLayout) return;
 
     this.layoutOriginalSize = {
@@ -303,7 +303,7 @@ BaseCollectionPane.prototype.updateLayoutSize = function() {
     this.collectionLayoutContainer.style.height = H + "px";
     this.collectionLayoutContainer.firstChild.style.zoom = r;
 };
-BaseCollectionPane.prototype.openCollection = function(collection) {
+BaseCollectionPane.prototype.openCollection = function (collection) {
     Dom.empty(this.shapeList);
     Dom.empty(this.collectionLayoutContainer);
     this.collectionIcon.innerHTML = this.getCollectionIcon(collection);
@@ -325,7 +325,7 @@ BaseCollectionPane.prototype.openCollection = function(collection) {
 
         var hasMatched = false;
 
-        Dom.workOn(".//*[@sc-ref]", this.collectionLayoutContainer, function(n) {
+        Dom.workOn(".//*[@sc-ref]", this.collectionLayoutContainer, function (n) {
             var scName = n.getAttribute("sc-ref");
             var sc = collection.getShortcutByDisplayName(collection.id + ":" + scName);
             n._def = sc;
@@ -341,7 +341,7 @@ BaseCollectionPane.prototype.openCollection = function(collection) {
                 n.removeAttribute("matched");
             }
         });
-        Dom.workOn(".//*[@ref]", this.collectionLayoutContainer, function(n) {
+        Dom.workOn(".//*[@ref]", this.collectionLayoutContainer, function (n) {
             var defId = n.getAttribute("ref");
             var def = CollectionManager.shapeDefinition.locateDefinition(defId);
             n._def = def;
@@ -356,7 +356,7 @@ BaseCollectionPane.prototype.openCollection = function(collection) {
                 n.removeAttribute("matched");
             }
         });
-        Dom.workOn(".//*[@pr-ref]", this.collectionLayoutContainer, function(n) {
+        Dom.workOn(".//*[@pr-ref]", this.collectionLayoutContainer, function (n) {
             if (!collection.builtinPrivateCollection || !collection.builtinPrivateCollection.map) return;
             var defId = n.getAttribute("pr-ref");
             var def = collection.builtinPrivateCollection.map[defId];
@@ -374,7 +374,7 @@ BaseCollectionPane.prototype.openCollection = function(collection) {
         if (!hasMatched && collection._filteredShapes) {
             this.collectionLayoutContainer.style.display = "none";
         } else {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 thiz.updateLayoutSize();
                 thiz.collectionLayoutContainer.style.visibility = "inherit";
             }, 10);
@@ -444,17 +444,17 @@ BaseCollectionPane.prototype.openCollection = function(collection) {
     this.ensureVisibleShapeIcons();
 
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.ensureSelectedCollectionVisible(collection);
     }, 10);
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.ensureVisibleShapeIcons();
     }, 200);
 
     this.updateLayoutSize();
 };
 
-BaseCollectionPane.prototype.ensureSelectedCollectionVisible = function(collection) {
+BaseCollectionPane.prototype.ensureSelectedCollectionVisible = function (collection) {
     if (!collection) return;
     var position = 0;
     var height = 0;
@@ -469,25 +469,25 @@ BaseCollectionPane.prototype.ensureSelectedCollectionVisible = function(collecti
     }
     this.collectionScrollView.ensuareVisible(position, position + height);
 };
-BaseCollectionPane.prototype.initialize = function() {
+BaseCollectionPane.prototype.initialize = function () {
 };
-BaseCollectionPane.prototype.handleCollectionContextMenu = function(collection, event) {
+BaseCollectionPane.prototype.handleCollectionContextMenu = function (collection, event) {
 };
-BaseCollectionPane.prototype.addDefDataToDataTransfer = function(def, event) {
+BaseCollectionPane.prototype.addDefDataToDataTransfer = function (def, event) {
 };
-BaseCollectionPane.prototype.getCollections = function() {
+BaseCollectionPane.prototype.getCollections = function () {
     return [];
 };
-BaseCollectionPane.prototype.isShowCollection = function(collection) {
+BaseCollectionPane.prototype.isShowCollection = function (collection) {
     return true;
 };
-BaseCollectionPane.prototype.getLastUsedCollection = function() {
+BaseCollectionPane.prototype.getLastUsedCollection = function () {
     return null;
 };
-BaseCollectionPane.prototype.setLastUsedCollection = function(collection) {
+BaseCollectionPane.prototype.setLastUsedCollection = function (collection) {
 };
-BaseCollectionPane.prototype.reloadDeveloperCollections = function() {
-    Dom.doOnAllChildren(this.selectorPane, function(n) {
+BaseCollectionPane.prototype.reloadDeveloperCollections = function () {
+    Dom.doOnAllChildren(this.selectorPane, function (n) {
         if (!n._collection || !n._collection.developerStencil) return;
         var reloadedCollection = CollectionManager.findCollection(n._collection.id);
         if (!reloadedCollection) n.style.display = "none";

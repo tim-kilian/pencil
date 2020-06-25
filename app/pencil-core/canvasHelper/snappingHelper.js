@@ -1,4 +1,4 @@
-function SnappingHelper(canvas) {
+function SnappingHelper (canvas) {
     this.canvas = canvas;
     if (Config.get("object.snapping.enabled") == null) {
         Config.set("object.snapping.enabled", true);
@@ -7,13 +7,13 @@ function SnappingHelper(canvas) {
 
     // var this = new SnappingHelper
 }
-SnappingHelper.prototype.isGridSnappingEnabled = function() {
+SnappingHelper.prototype.isGridSnappingEnabled = function () {
     return Config.get("edit.snap.grid") == true;
 };
-SnappingHelper.prototype.isSnappingEnabled = function() {
+SnappingHelper.prototype.isSnappingEnabled = function () {
     return true;
 };
-SnappingHelper.prototype.init = function() {
+SnappingHelper.prototype.init = function () {
     if (this.initialized) return;
 
     this.snappingGuideLayer = document.createElementNS(PencilNamespaces.svg, "svg:g");
@@ -45,25 +45,25 @@ SnappingHelper.prototype.init = function() {
     this.initialized = true;
     this.rebuildSnappingGuide();
 };
-SnappingHelper.prototype.clearSnappingGuide = function() {
+SnappingHelper.prototype.clearSnappingGuide = function () {
     this.clearSnappingGuideX();
     this.clearSnappingGuideY();
 };
-SnappingHelper.prototype.clearSnappingGuideX = function() {
+SnappingHelper.prototype.clearSnappingGuideX = function () {
     if (!this.isSnappingEnabled()) return;
     if (!this._snappingGuideContainerXEmpty) {
         this._snappingGuideContainerXEmpty = true;
         Dom.empty(this.snappingGuideContainerX);
     }
 };
-SnappingHelper.prototype.clearSnappingGuideY = function() {
+SnappingHelper.prototype.clearSnappingGuideY = function () {
     if (!this.isSnappingEnabled()) return;
     if (!this._snappingGuideContainerYEmpty) {
         this._snappingGuideContainerYEmpty = true;
         Dom.empty(this.snappingGuideContainerY);
     }
 };
-SnappingHelper.prototype.updateSnappingDataFromBackground = function(page, remove) {
+SnappingHelper.prototype.updateSnappingDataFromBackground = function (page, remove) {
     this.rebuildSnappingGuide();
     if (remove) {
         return;
@@ -79,11 +79,11 @@ SnappingHelper.prototype.updateSnappingDataFromBackground = function(page, remov
         }
     }
 };
-SnappingHelper.prototype.rebuildSnappingGuide = function() {
+SnappingHelper.prototype.rebuildSnappingGuide = function () {
     if (!this.isSnappingEnabled()) return;
     var thiz = this;
     this.snappingGuide = { };
-    Dom.workOn("./svg:g[@p:type]", this.canvas.drawingLayer, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.canvas.drawingLayer, function (node) {
         try {
             var c = thiz.canvas.createControllerFor(node);
             if (c.getSnappingGuide) {
@@ -129,7 +129,7 @@ SnappingHelper.prototype.rebuildSnappingGuide = function() {
 
     this.sortData();
 };
-SnappingHelper.prototype.updateSnappingGuide = function(controller, remove) {
+SnappingHelper.prototype.updateSnappingGuide = function (controller, remove) {
     if (!this.isSnappingEnabled()) return;
     var dirty = false;
     if (!remove) {
@@ -147,7 +147,7 @@ SnappingHelper.prototype.updateSnappingGuide = function(controller, remove) {
         this.sortData();
     }
 };
-SnappingHelper.prototype.sortData = function() {
+SnappingHelper.prototype.sortData = function () {
     var x = [];
     var y = [];
     for (var id in this.snappingGuide) {
@@ -161,7 +161,7 @@ SnappingHelper.prototype.sortData = function() {
     this.snappedX = false;
     this.snappedY = false;
 };
-SnappingHelper.prototype.findSnapping = function(drawX, drawY, ghost, snap, shift, grid) {
+SnappingHelper.prototype.findSnapping = function (drawX, drawY, ghost, snap, shift, grid) {
     if (!this.isSnappingEnabled()) return;
     try {
         if (drawX && !grid) {
@@ -260,7 +260,7 @@ SnappingHelper.prototype.findSnapping = function(drawX, drawY, ghost, snap, shif
 
     return null;
 };
-SnappingHelper.prototype.sort = function(d) {
+SnappingHelper.prototype.sort = function (d) {
     for (var i = 0; i < d.length - 1; i++) {
         for (var j = i + 1; j < d.length; j++) {
             if (d[j].pos < d[i].pos) {
@@ -272,7 +272,7 @@ SnappingHelper.prototype.sort = function(d) {
     }
     return d;
 };
-SnappingHelper.prototype.allowSnapping = function(v, x) {
+SnappingHelper.prototype.allowSnapping = function (v, x) {
     if (x.applyTo) {
         for (var i = 0; i < x.applyTo.length; i++) {
             if (v.type == x.applyTo[i]) {
@@ -283,7 +283,7 @@ SnappingHelper.prototype.allowSnapping = function(v, x) {
 
     return false;
 };
-SnappingHelper.prototype.findSnappingImpl = function(controller, ghost, snap, grid) {
+SnappingHelper.prototype.findSnappingImpl = function (controller, ghost, snap, grid) {
     try {
         var c = !ghost ? controller.getSnappingGuide() : ghost;
         var currentControllerId = controller.id;
@@ -374,10 +374,10 @@ SnappingHelper.prototype.findSnappingImpl = function(controller, ghost, snap, gr
         // }
 
         return {
-            verticals: verticals.sort(function(a, b) {
+            verticals: verticals.sort(function (a, b) {
                 return Math.abs(a.dx) - Math.abs(b.dx);
             }),
-            horizontals: horizontals.sort(function(a, b) {
+            horizontals: horizontals.sort(function (a, b) {
                 return Math.abs(a.dy) - Math.abs(b.dy);
             }),
             bestVertical: bestV,

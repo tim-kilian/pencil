@@ -5,7 +5,7 @@ PrivateCollectionManager.privateShapeDef.shapeDefMap = {};
 PrivateCollectionManager.privateShapeDef.collections = [];
 PrivateCollectionManager.privateShapeDef.builtinCollections = [];
 
-PrivateCollectionManager.loadPrivateCollections = function() {
+PrivateCollectionManager.loadPrivateCollections = function () {
     try {
         var privateCollectionXmlLocation = path.join(PrivateCollectionManager.getPrivateCollectionDirectory(), "PrivateCollection.xml");
 
@@ -22,7 +22,7 @@ PrivateCollectionManager.loadPrivateCollections = function() {
             PrivateCollectionManager.privateShapeDef.collections = [];
             var dom = dom.documentElement;
             var parser = new PrivateShapeDefParser();
-            Dom.workOn("./p:Collection", dom, function(node) {
+            Dom.workOn("./p:Collection", dom, function (node) {
                 PrivateCollectionManager.addShapeCollection(parser.parseNode(node), true);
             });
         }
@@ -31,7 +31,7 @@ PrivateCollectionManager.loadPrivateCollections = function() {
     }
 };
 
-PrivateCollectionManager.savePrivateCollections = function() {
+PrivateCollectionManager.savePrivateCollections = function () {
     try {
         debug("saving private collections...");
         var xml = PrivateCollectionManager.getCollectionsExportedXML(PrivateCollectionManager.privateShapeDef.collections);
@@ -43,7 +43,7 @@ PrivateCollectionManager.savePrivateCollections = function() {
     }
 };
 
-PrivateCollectionManager.addShapeCollection = function(collection, dontUpdate) {
+PrivateCollectionManager.addShapeCollection = function (collection, dontUpdate) {
     // collection.collapsed = CollectionManager.isCollectionCollapsed(collection);
     PrivateCollectionManager.privateShapeDef.collections.push(collection);
     for (var item in collection.shapeDefs) {
@@ -57,7 +57,7 @@ PrivateCollectionManager.addShapeCollection = function(collection, dontUpdate) {
         // PrivateCollectionManager.openCollectionPane(collection);
     }
 };
-PrivateCollectionManager.getPrivateCollectionFile = function() {
+PrivateCollectionManager.getPrivateCollectionFile = function () {
     var privateDir = PrivateCollectionManager.getPrivateCollectionDirectory();
     try {
         fs.statSync(privateDir);
@@ -66,14 +66,14 @@ PrivateCollectionManager.getPrivateCollectionFile = function() {
     }
     return path.join(PrivateCollectionManager.getPrivateCollectionDirectory(), "PrivateCollection.xml");
 };
-PrivateCollectionManager.getPrivateCollectionDirectory = function() {
+PrivateCollectionManager.getPrivateCollectionDirectory = function () {
     return Config.getDataFilePath(Config.PRIVATE_STENCILS_DIR_NAME);
 };
 
-PrivateCollectionManager.locateShapeDefinition = function(defId) {
+PrivateCollectionManager.locateShapeDefinition = function (defId) {
     return PrivateCollectionManager.privateShapeDef.shapeDefMap[defId];
 };
-PrivateCollectionManager.addShapeToCollection = function(collection, shapeDef, dontUpdate) {
+PrivateCollectionManager.addShapeToCollection = function (collection, shapeDef, dontUpdate) {
     shapeDef.collection = collection;
     collection.shapeDefs.push(shapeDef);
     PrivateCollectionManager.privateShapeDef.shapeDefMap[shapeDef.id] = shapeDef;
@@ -82,7 +82,7 @@ PrivateCollectionManager.addShapeToCollection = function(collection, shapeDef, d
         PrivateCollectionManager.reloadCollectionPane(collection.id);
     }
 };
-PrivateCollectionManager.reloadCollectionPane = function(collectionId) {
+PrivateCollectionManager.reloadCollectionPane = function (collectionId) {
     Pencil.privateCollectionPane.loaded = false;
     if (collectionId) {
         Pencil.privateCollectionPane.openCollectionPane(collectionId);
@@ -91,10 +91,10 @@ PrivateCollectionManager.reloadCollectionPane = function(collectionId) {
     }
 };
 
-PrivateCollectionManager.deleteShape = function(collection, shapeDef) {
+PrivateCollectionManager.deleteShape = function (collection, shapeDef) {
     Dialog.confirm("Are you sure you want to delete '" + shapeDef.displayName + "'?",
         "Warning: deleting a shape makes shapes created by that shape uneditable.",
-        "OK", function() {
+        "OK", function () {
             for (var i = 0; i < PrivateCollectionManager.privateShapeDef.collections.length; i++) {
                 if (PrivateCollectionManager.privateShapeDef.collections[i].id == collection.id) {
                     PrivateCollectionManager.privateShapeDef.collections[i].deleteShape(shapeDef);
@@ -103,13 +103,13 @@ PrivateCollectionManager.deleteShape = function(collection, shapeDef) {
                     return;
                 }
             }
-        }, "Cancel", function() {});
+        }, "Cancel", function () {});
 };
-PrivateCollectionManager.deleteCollection = function(collection) {
+PrivateCollectionManager.deleteCollection = function (collection) {
     Dialog.confirm("Are you sure you want to delete '" + collection.displayName + "'?",
         "Warning: deleting a collection makes shapes created by that collection uneditable.",
-        "OK", function() {
-            window.setTimeout(function() {
+        "OK", function () {
+            window.setTimeout(function () {
                 ApplicationPane._instance.busy();
             }, 10);
             for (var i = 0; i < PrivateCollectionManager.privateShapeDef.collections.length; i++) {
@@ -117,24 +117,24 @@ PrivateCollectionManager.deleteCollection = function(collection) {
                     PrivateCollectionManager.privateShapeDef.collections.splice(i, 1);
                     PrivateCollectionManager.savePrivateCollections();
                     PrivateCollectionManager.reloadCollectionPane();
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         ApplicationPane._instance.unbusy();
                     }, 10);
                     return;
                 }
             }
-        }, "Cancel", function() {});
+        }, "Cancel", function () {});
 };
-PrivateCollectionManager.deleteAllCollection = function() {
+PrivateCollectionManager.deleteAllCollection = function () {
     Dialog.confirm("Are you sure you want to delete all private collections?",
         "Warning: deleting a collection makes shapes created by that collection uneditable.",
-        "OK", function() {
+        "OK", function () {
             PrivateCollectionManager.privateShapeDef.collections = [];
             PrivateCollectionManager.savePrivateCollections();
             PrivateCollectionManager.reloadCollectionPane();
-        }, "Cancel", function() {});
+        }, "Cancel", function () {});
 };
-PrivateCollectionManager.getCollectionsExportedXML = function(collections) {
+PrivateCollectionManager.getCollectionsExportedXML = function (collections) {
     var xml = "<?xml version=\"1.0\"?>\n" +
                 "<p:Collections xmlns=\"http://www.w3.org/2000/svg\"\n" +
                   "\txmlns:xul=\"http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul\"\n" +
@@ -152,7 +152,7 @@ PrivateCollectionManager.getCollectionsExportedXML = function(collections) {
     return xml;
 };
 
-PrivateCollectionManager.exportCollection = function(collection) {
+PrivateCollectionManager.exportCollection = function (collection) {
     try {
         debug("exporting collection " + collection.displayName);
         var fileName = collection.displayName + ".zip";
@@ -164,7 +164,7 @@ PrivateCollectionManager.exportCollection = function(collection) {
             filters: [
                 {name: "Pencil Documents", extensions: ["zip"]}
             ]
-        }, function(filePath) {
+        }, function (filePath) {
             if (!filePath) return;
             ApplicationPane._instance.busy();
             var tempDir = tmp.dirSync({keep: false, unsafeCleanup: true});
@@ -175,7 +175,7 @@ PrivateCollectionManager.exportCollection = function(collection) {
                 var archiver = require("archiver");
                 var archive = archiver("zip");
                 var output = fs.createWriteStream(filePath);
-                output.on("close", function() {
+                output.on("close", function () {
                     ApplicationPane._instance.unbusy();
                     Dialog.alert("Collection has been exported.");
                     tempDir.removeCallback();
@@ -191,7 +191,7 @@ PrivateCollectionManager.exportCollection = function(collection) {
         Console.dumpError(e);
     }
 };
-PrivateCollectionManager.importNewCollection = function() {
+PrivateCollectionManager.importNewCollection = function () {
     var files = dialog.showOpenDialog({
         title: "Install from",
         defaultPath: Config.get("privateCollection.install.recentlyDirPath", null) || os.homedir(),
@@ -199,7 +199,7 @@ PrivateCollectionManager.importNewCollection = function() {
             {name: "Pencil Collection Archives (*.epc; *.zip)", extensions: ["zip", "epc"]}
         ]
 
-    }, function(filenames) {
+    }, function (filenames) {
         if (!filenames || filenames.length <= 0) return;
         var file = {
             path: filenames[0],
@@ -209,7 +209,7 @@ PrivateCollectionManager.importNewCollection = function() {
         PrivateCollectionManager.installCollectionFromFile(file);
     });
 };
-PrivateCollectionManager.parseSingleCollectionFile = function(definitionFile) {
+PrivateCollectionManager.parseSingleCollectionFile = function (definitionFile) {
     var collection = null;
 
     var fileContents = fs.readFileSync(definitionFile, ShapeDefCollectionParser.CHARSET);
@@ -218,14 +218,14 @@ PrivateCollectionManager.parseSingleCollectionFile = function(definitionFile) {
     if (dom != null) {
         var dom = dom.documentElement;
         var parser = new PrivateShapeDefParser();
-        Dom.workOn("./p:Collection", dom, function(node) {
+        Dom.workOn("./p:Collection", dom, function (node) {
             collection = parser.parseNode(node);
         });
     }
 
     return collection;
 };
-PrivateCollectionManager.installCollectionFromFile = function(file) {
+PrivateCollectionManager.installCollectionFromFile = function (file) {
     ApplicationPane._instance.busy();
     var filePath = file.path;
     var fileName = file.name.replace(/\.[^\.]+$/, "") + "_" + Math.ceil(Math.random() * 1000) + "_" + (new Date().getTime());
@@ -237,7 +237,7 @@ PrivateCollectionManager.installCollectionFromFile = function(file) {
     var admZip = require("adm-zip");
 
     var zip = new admZip(filePath);
-    zip.extractAllToAsync(targetDir, true, function(err) {
+    zip.extractAllToAsync(targetDir, true, function (err) {
         if (err) {
             ApplicationPane._instance.unbusy();
             Dialog.error("Error installing collection.");
@@ -261,11 +261,11 @@ PrivateCollectionManager.installCollectionFromFile = function(file) {
 
                     Dialog.confirm("Are you sure you want to install the unsigned collection: " + collection.displayName + "?",
                         "Since a collection may contain execution code that could harm your machine. It is hightly recommanded that you should only install collections from authors whom you trust.",
-                        "Install", function() {
+                        "Install", function () {
                             // CollectionManager.setCollectionCollapsed(collection, false);
                             PrivateCollectionManager.addShapeCollection(collection);
                             tempDir.removeCallback();
-                        }, "Cancel", function() {
+                        }, "Cancel", function () {
                             tempDir.removeCallback();
                         }
                     );
@@ -339,9 +339,9 @@ PrivateCollectionManager.installCollectionFromFile = function(file) {
 
     // fs.createReadStream(filePath).pipe(extractor);
 };
-PrivateCollectionManager.setLastUsedCollection = function(collection) {
+PrivateCollectionManager.setLastUsedCollection = function (collection) {
     Config.set("PrivateCollection.lastUsedCollection.id", collection.id);
 };
-PrivateCollectionManager.getLastUsedCollection = function() {
+PrivateCollectionManager.getLastUsedCollection = function () {
     return Config.get("PrivateCollection.lastUsedCollection.id");
 };

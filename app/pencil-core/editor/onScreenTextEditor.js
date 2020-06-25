@@ -1,4 +1,4 @@
-function OnScreenTextEditor() {
+function OnScreenTextEditor () {
     this.svgElement = null;
     this.canvas = null;
 }
@@ -7,7 +7,7 @@ OnScreenTextEditor.configDoc = Dom.loadSystemXml("chrome://pencil/content/editor
 OnScreenTextEditor._initialized = false;
 OnScreenTextEditor._activeEditor = null;
 
-OnScreenTextEditor.initialize = function(canvas) {
+OnScreenTextEditor.initialize = function (canvas) {
     if (OnScreenTextEditor._initialized) return;
 
 
@@ -27,25 +27,25 @@ OnScreenTextEditor.initialize = function(canvas) {
     OnScreenTextEditor.singleTextEditor._editor = "plainText";
     OnScreenTextEditor.multiTextEditor._editor = "plainText";
 
-    OnScreenTextEditor.addEditorEvent("keypress", function(event) {
+    OnScreenTextEditor.addEditorEvent("keypress", function (event) {
         event.cancelBubble = true;
         if (OnScreenTextEditor._activeEditor) OnScreenTextEditor._activeEditor.handleKeyPress(event);
     });
-    OnScreenTextEditor.addEditorEvent("dblclick", function(event) {
+    OnScreenTextEditor.addEditorEvent("dblclick", function (event) {
         event.cancelBubble = true;
     });
-    OnScreenTextEditor.addEditorEvent("click", function(event) {
+    OnScreenTextEditor.addEditorEvent("click", function (event) {
         event.cancelBubble = true;
         event.preventDefault();
     });
-    OnScreenTextEditor.addEditorEvent("blur", function(event) {
+    OnScreenTextEditor.addEditorEvent("blur", function (event) {
     	if (OnScreenTextEditor._activeEditor) OnScreenTextEditor._activeEditor.handleTextBlur(event);
     });
-    OnScreenTextEditor.addEditorEvent("focus", function(event) {
+    OnScreenTextEditor.addEditorEvent("focus", function (event) {
     	if (OnScreenTextEditor._activeEditor) OnScreenTextEditor._activeEditor._focused = true;
     });
 };
-OnScreenTextEditor.prototype.install = function(canvas) {
+OnScreenTextEditor.prototype.install = function (canvas) {
     try {
         OnScreenTextEditor._ensureSupportElements();
     } catch (e) {
@@ -60,14 +60,14 @@ OnScreenTextEditor.prototype.install = function(canvas) {
 
     var thiz = this;
 
-    this.canvas.addEventListener("p:ShapeInserted", function(ev) {
+    this.canvas.addEventListener("p:ShapeInserted", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:ShapeInserted", arguments.callee, false);
             return;
         }
         thiz.handleShapeDoubleClicked(ev);
     }, false);
-    this.canvas.addEventListener("p:ShapeDoubleClicked", function(ev) {
+    this.canvas.addEventListener("p:ShapeDoubleClicked", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:ShapeDoubleClicked", arguments.callee, false);
             return;
@@ -75,7 +75,7 @@ OnScreenTextEditor.prototype.install = function(canvas) {
         thiz.handleShapeDoubleClicked(ev);
     }, false);
 
-    this.canvas.addEventListener("p:TextEditingRequested", function(ev) {
+    this.canvas.addEventListener("p:TextEditingRequested", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:TextEditingRequested", arguments.callee, false);
             return;
@@ -83,22 +83,22 @@ OnScreenTextEditor.prototype.install = function(canvas) {
         thiz.handleShapeDoubleClicked(ev);
     }, false);
 };
-OnScreenTextEditor.addEditorEvent = function(name, handler) {
+OnScreenTextEditor.addEditorEvent = function (name, handler) {
     OnScreenTextEditor.singleTextEditor.addEventListener(name, handler, false);
     OnScreenTextEditor.multiTextEditor.addEventListener(name, handler, false);
 };
-OnScreenTextEditor.prototype.attach = function(targetObject) {
+OnScreenTextEditor.prototype.attach = function (targetObject) {
 };
-OnScreenTextEditor.prototype.invalidate = function() {
+OnScreenTextEditor.prototype.invalidate = function () {
 };
-OnScreenTextEditor.prototype.nextTool = function() {
+OnScreenTextEditor.prototype.nextTool = function () {
     // just ignore this, since this editor implements only one tool set
 };
 
-OnScreenTextEditor.prototype.dettach = function() {
+OnScreenTextEditor.prototype.dettach = function () {
 };
 
-OnScreenTextEditor.prototype.handleShapeDoubleClicked = function(event) {
+OnScreenTextEditor.prototype.handleShapeDoubleClicked = function (event) {
     this.currentTarget = event.controller;
     if (Util.isXul6OrLater()) {
         this.currentTarget = event.detail.controller;
@@ -127,7 +127,7 @@ OnScreenTextEditor.prototype.handleShapeDoubleClicked = function(event) {
     } else {
     }
 };
-OnScreenTextEditor.prototype._setupEditor = function() {
+OnScreenTextEditor.prototype._setupEditor = function () {
     var geo = this.canvas.getZoomedGeo(this.currentTarget);
     // Svg.ensureCTM(this.svgElement, geo.ctm);
     this.geo = geo;
@@ -215,21 +215,21 @@ OnScreenTextEditor.prototype._setupEditor = function() {
     OnScreenTextEditor._activeEditor = this;
 
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.textEditor.select();
         thiz.textEditor.focus();
     }, 10);
 };
-OnScreenTextEditor.prototype.handleTextBlur = function(event) {
+OnScreenTextEditor.prototype.handleTextBlur = function (event) {
     this._focused = false;
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
         if (!that._focused) {
             that.commitChange(event);
         }
     }, 100);
 };
-OnScreenTextEditor.prototype.handleKeyPress = function(event) {
+OnScreenTextEditor.prototype.handleKeyPress = function (event) {
     if (event.keyCode == event.DOM_VK_RETURN && !event.shiftKey && !event.accelKey && !event.ctrlKey) {
         this.commitChange(event);
     } else if (event.keyCode == event.DOM_VK_ESCAPE) {
@@ -238,7 +238,7 @@ OnScreenTextEditor.prototype.handleKeyPress = function(event) {
         event.preventDefault();
     }
 };
-OnScreenTextEditor.prototype.commitChange = function(event) {
+OnScreenTextEditor.prototype.commitChange = function (event) {
     if (!this._lastTarget || !this.textEditingInfo) return;
     this.textEditingInfo.target.style.visibility = this._cachedVisibility;
     try {
@@ -251,7 +251,7 @@ OnScreenTextEditor.prototype.commitChange = function(event) {
         this.canvas.focus();
     }
 };
-OnScreenTextEditor.prototype.cancelChange = function() {
+OnScreenTextEditor.prototype.cancelChange = function () {
     if (!this.textEditingInfo) return;
     OnScreenTextEditor.htmlDiv.style.display = "none";
     this.textEditingInfo.target.style.visibility = this._cachedVisibility;

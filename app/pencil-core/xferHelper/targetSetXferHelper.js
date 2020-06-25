@@ -1,14 +1,14 @@
-function TargetSetXferHelper(canvas) {
+function TargetSetXferHelper (canvas) {
     this.canvas = canvas;
 
     this.type = TargetSetXferHelper.MIME_TYPE;
 }
 TargetSetXferHelper.MIME_TYPE = "pencil/target-set";
 
-TargetSetXferHelper.prototype.toString = function() {
+TargetSetXferHelper.prototype.toString = function () {
     return "ShapeXferHelper: " + TargetSetXferHelper.MIME_TYPE;
 };
-TargetSetXferHelper.prototype.handleData = function(dom) {
+TargetSetXferHelper.prototype.handleData = function (dom) {
     // validate
     var shapes = Dom.getList("/svg:*/svg:g[@p:type]", dom);
 
@@ -26,7 +26,7 @@ TargetSetXferHelper.prototype.handleData = function(dom) {
     var dy = Math.round(Math.random() * 50);
     dy = dy - (dy % grid.h);
 
-    this.canvas.run( function() {
+    this.canvas.run( function () {
         for (i in shapes) {
             shape = this.canvas.ownerDocument.importNode(shapes[i], true);
             Dom.renewId(shape);

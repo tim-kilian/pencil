@@ -1,10 +1,10 @@
-function HandleEditor() {
+function HandleEditor () {
     this.svgElement = null;
     this.canvas = null;
 }
 HandleEditor.ANCHOR_SIZE = 6;
 HandleEditor.configDoc = Dom.loadSystemXml("pencil-core/editor/handleEditor.config.xml");
-HandleEditor.prototype.install = function(canvas) {
+HandleEditor.prototype.install = function (canvas) {
     this.canvas = canvas;
     this.canvas.onScreenEditors.push(this);
     this.svgElement = canvas.ownerDocument.importNode(Dom.getSingle("/p:Config/svg:g", HandleEditor.configDoc), true);
@@ -21,21 +21,21 @@ HandleEditor.prototype.install = function(canvas) {
 
     // registering event on the outmost item to have better UI interation
     var outmostItem = this.svgElement.ownerDocument.documentElement;
-    outmostItem.addEventListener("mousedown", function(ev) {
+    outmostItem.addEventListener("mousedown", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousedown", arguments.callee, false);
             return;
         }
         thiz.handleMouseDown(ev);
     }, false);
-    outmostItem.addEventListener("mouseup", function(ev) {
+    outmostItem.addEventListener("mouseup", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mouseup", arguments.callee, false);
             return;
         }
         thiz.handleMouseUp(ev);
     }, false);
-    outmostItem.addEventListener("mousemove", function(ev) {
+    outmostItem.addEventListener("mousemove", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousemove", arguments.callee, false);
             return;
@@ -43,7 +43,7 @@ HandleEditor.prototype.install = function(canvas) {
         thiz.handleMouseMove(ev);
     }, false);
 };
-HandleEditor.prototype.attach = function(targetObject) {
+HandleEditor.prototype.attach = function (targetObject) {
     if (!targetObject) return;
     if (targetObject.constructor != Shape) {
         this.dettach();
@@ -58,17 +58,17 @@ HandleEditor.prototype.attach = function(targetObject) {
     this.svgElement.style.visibility = "visible";
     this.setupHandles();
 };
-HandleEditor.prototype.invalidate = function() {
+HandleEditor.prototype.invalidate = function () {
     if (!this.targetObject) return;
     var currentTarget = this.targetObject;
     this.dettach();
     this.attach(currentTarget);
 };
-HandleEditor.prototype.nextTool = function() {
+HandleEditor.prototype.nextTool = function () {
     // just ignore this, since this editor implements only one tool set
 };
 
-HandleEditor.prototype.dettach = function() {
+HandleEditor.prototype.dettach = function () {
     if (!this.targetObject) return;
 
     // this.focusedHandleName = null;
@@ -77,20 +77,20 @@ HandleEditor.prototype.dettach = function() {
     this.svgElement.style.visibility = "hidden";
 };
 
-HandleEditor.prototype.setEditorGeometry = function(geo) {
+HandleEditor.prototype.setEditorGeometry = function (geo) {
     // transformation
     Svg.ensureCTM(this.svgElement, geo.ctm);
     this.geo = geo;
 };
-HandleEditor.prototype.findHandle = function(element) {
+HandleEditor.prototype.findHandle = function (element) {
     var thiz = this;
-    var handle = Dom.findUpward(element, function(node) {
+    var handle = Dom.findUpward(element, function (node) {
         return node._isHandle && (node._editor == thiz);
     });
 
     return handle;
 };
-HandleEditor.prototype.handleMouseDown = function(event) {
+HandleEditor.prototype.handleMouseDown = function (event) {
     this.lastMatchedOutlet = null;
     this.currentHandle = this.findHandle(event.originalTarget);
 
@@ -115,7 +115,7 @@ HandleEditor.prototype.handleMouseDown = function(event) {
         debug("matching outlets: " + this.currentMatchingOutlets.length);
     }
 };
-HandleEditor.prototype.handleMouseUp = function(event) {
+HandleEditor.prototype.handleMouseUp = function (event) {
     try {
         if (this.currentHandle && this.targetObject) {
             // commiting the change
@@ -152,7 +152,7 @@ HandleEditor.prototype.handleMouseUp = function(event) {
         this.currentHandle = null;
     }
 };
-HandleEditor.prototype.handleKeyPressEvent = function(event) {
+HandleEditor.prototype.handleKeyPressEvent = function (event) {
     if (!this.focusedHandleName ||
         (event.keyCode != DOM_VK_UP &&
         event.keyCode != DOM_VK_DOWN &&
@@ -162,7 +162,7 @@ HandleEditor.prototype.handleKeyPressEvent = function(event) {
 
     var thiz = this;
     var focusedHandle = null;
-    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function(handle) {
+    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function (handle) {
         if (handle._def && handle._def.name == thiz.focusedHandleName) {
             focusedHandle = handle;
         }
@@ -171,7 +171,7 @@ HandleEditor.prototype.handleKeyPressEvent = function(event) {
     if (!focusedHandle) return;
 
     var fakeEvent = {
-        preventDefault: function() {
+        preventDefault: function () {
             event.preventDefault();
         },
         fake: true,
@@ -198,7 +198,7 @@ HandleEditor.prototype.handleKeyPressEvent = function(event) {
 
     return true;
 };
-HandleEditor.prototype.handleMouseMove = function(event) {
+HandleEditor.prototype.handleMouseMove = function (event) {
     if (!this.currentHandle) return;
     event.preventDefault();
 
@@ -208,7 +208,7 @@ HandleEditor.prototype.handleMouseMove = function(event) {
 
     this.handleMoveTo(event.clientX, event.clientY, event);
 };
-HandleEditor.prototype.handleMoveTo = function(x, y, event) {
+HandleEditor.prototype.handleMoveTo = function (x, y, event) {
     var handle = this.currentHandle;
 
     var uPoint1 = Svg.vectorInCTM(new Point(this.oX, this.oY), this.geo.ctm);
@@ -287,11 +287,11 @@ HandleEditor.prototype.handleMoveTo = function(x, y, event) {
         this.lastMatchedOutlet = null;
     }
 };
-HandleEditor.prototype.getPropertyConstraints = function(handle) {
+HandleEditor.prototype.getPropertyConstraints = function (handle) {
     if (!this.currentHandle) return {};
     return this.getPropertyConstraintsFromDef(this.currentHandle._def);
 };
-HandleEditor.prototype.getPropertyConstraintsFromDef = function(def) {
+HandleEditor.prototype.getPropertyConstraintsFromDef = function (def) {
     if (!def) return {};
 
     this.targetObject.prepareExpressionEvaluation();
@@ -310,9 +310,9 @@ HandleEditor.prototype.getPropertyConstraintsFromDef = function(def) {
     };
 };
 
-HandleEditor.prototype.invalidateFocusedHandle = function() {
+HandleEditor.prototype.invalidateFocusedHandle = function () {
     var thiz = this;
-    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function(handle) {
+    Dom.workOn("./svg:rect[@p:name='Handle']", this.svgElement, function (handle) {
         if (handle._def && handle._def.name == thiz.focusedHandleName) {
             handle.setAttributeNS(PencilNamespaces.p, "p:focused", true);
         } else {
@@ -320,7 +320,7 @@ HandleEditor.prototype.invalidateFocusedHandle = function() {
         }
     });
 };
-HandleEditor.prototype.createHandle = function(def, value) {
+HandleEditor.prototype.createHandle = function (def, value) {
     var p = value;
     if (!p) return;
 
@@ -356,7 +356,7 @@ HandleEditor.prototype.createHandle = function(def, value) {
         Console.dumpError(e, "stdout");
     }
 };
-HandleEditor.prototype.setupHandles = function() {
+HandleEditor.prototype.setupHandles = function () {
     // remove all handles
     while (this.svgElement.lastChild._isHandle) this.svgElement.removeChild(this.svgElement.lastChild);
 

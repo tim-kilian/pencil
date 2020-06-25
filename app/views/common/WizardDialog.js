@@ -1,4 +1,4 @@
-function WizardDialog() {
+function WizardDialog () {
     Dialog.call(this);
     Dom.addClass(this.wizardContent, "WizardContent");
     this.wizardPanes = [];
@@ -10,11 +10,11 @@ function WizardDialog() {
     }
 }
 __extend(Dialog, WizardDialog);
-WizardDialog.prototype.setup = function(options) {
+WizardDialog.prototype.setup = function (options) {
     if (this.setupUI) this.setupUI(options);
     this.invalidateWizardPane();
 };
-WizardDialog.prototype.invalidateWizardPane = function() {
+WizardDialog.prototype.invalidateWizardPane = function () {
     this.activeWizardPane(this.wizardPanes[0]);
     this.nextable = false;
     if (this.wizardPanes.length > 1) {
@@ -22,15 +22,15 @@ WizardDialog.prototype.invalidateWizardPane = function() {
     }
     this.invalidateElements();
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.ensureSizing();
     }, 100);
 };
-WizardDialog.prototype.addWizardPane = function(node) {
+WizardDialog.prototype.addWizardPane = function (node) {
     Dom.addClass(node, "WizardPane");
     this.wizardPanes.push(node);
 };
-WizardDialog.prototype.activeWizardPane = function(pane) {
+WizardDialog.prototype.activeWizardPane = function (pane) {
     this.activePane = pane;
     for (var i = 0; i < this.wizardPanes.length; i ++) {
         var p = this.wizardPanes[i];
@@ -42,7 +42,7 @@ WizardDialog.prototype.activeWizardPane = function(pane) {
     }
     Dom.emitEvent("e:WizardPaneChange", this.node());
 };
-WizardDialog.prototype.onBack = function() {
+WizardDialog.prototype.onBack = function () {
     if (!this.invalidateSelection()) return;
     var index = this.wizardPanes.indexOf(this.activePane);
     index --;
@@ -53,7 +53,7 @@ WizardDialog.prototype.onBack = function() {
     this.invalidateElements();
     this.onSelectionChanged(this.activePane);
 };
-WizardDialog.prototype.onNext = function() {
+WizardDialog.prototype.onNext = function () {
     if (!this.invalidateSelection()) return;
     var index = this.wizardPanes.indexOf(this.activePane);
     index ++;
@@ -67,24 +67,24 @@ WizardDialog.prototype.onNext = function() {
     this.invalidateElements();
     this.onSelectionChanged(this.activePane);
 };
-WizardDialog.prototype.onFinish = function() {
+WizardDialog.prototype.onFinish = function () {
 };
-WizardDialog.prototype.invalidateSelection = function() {
+WizardDialog.prototype.invalidateSelection = function () {
     return true;
 };
 
-WizardDialog.prototype.invalidateFinish = function() {
+WizardDialog.prototype.invalidateFinish = function () {
     return true;
 };
-WizardDialog.prototype.onSelectionChanged = function(activePane) {
+WizardDialog.prototype.onSelectionChanged = function (activePane) {
 };
-WizardDialog.prototype.getDialogActions = function() {
+WizardDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         Dialog.ACTION_CANCEL,
         {type: "accept",
             title: this.nextable ? "Next" : "Finish",
-            run: function() {
+            run: function () {
                 if (this.nextable) {
                     this.onNext();
                     return false;
@@ -97,17 +97,17 @@ WizardDialog.prototype.getDialogActions = function() {
             }.bind(this)
         },
         {type: "extra1", title: "Back", order: 5,
-            run: function() {
+            run: function () {
                 this.onBack();
                 return false;
             }.bind(this),
-            isApplicable: function() {
+            isApplicable: function () {
                 return this.wizardPanes && this.activePane != this.wizardPanes[0];
             }.bind(this)
         }
     ];
 };
-WizardDialog.prototype.ensureSizing = function() {
+WizardDialog.prototype.ensureSizing = function () {
     var w = Dom.getOffsetWidth(this.node()) - 2;
     var h = 0;
 

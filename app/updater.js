@@ -2,9 +2,9 @@ const {BrowserWindow} = require("electron");
 const os = require("os");
 const {autoUpdater} = require("electron-updater");
 
-function AppUpdater() {
+function AppUpdater () {
 }
-AppUpdater.prototype.checkForUpdates = function() {
+AppUpdater.prototype.checkForUpdates = function () {
     if (isDev()) {
         return;
     }
@@ -25,7 +25,7 @@ AppUpdater.prototype.checkForUpdates = function() {
     console.log("checking for update");
 };
 
-function notify(title, message) {
+function notify (title, message) {
     const windows = BrowserWindow.getAllWindows();
     if (windows.length == 0) {
         return;
@@ -35,7 +35,7 @@ function notify(title, message) {
     console.log(message);
 }
 
-function isDev() {
+function isDev () {
     return process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath);
 }
 

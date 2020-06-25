@@ -1,10 +1,10 @@
-function SharedFontEditor() {
+function SharedFontEditor () {
     this.target = null;
     this.font = null;
 }
 SharedFontEditor.PROPERTY_NAME = "textFont";
 
-SharedFontEditor.prototype.setup = function() {
+SharedFontEditor.prototype.setup = function () {
     // grab control references
     this.fontList = document.getElementById("fontlist");
     this.pixelFontSize = document.getElementById("fontsize");
@@ -14,18 +14,18 @@ SharedFontEditor.prototype.setup = function() {
     this.strikeButton = document.getElementById("edStrikeButton");*/
 
     var thiz = this;
-    this.fontList.addEventListener("change", function(event) {
+    this.fontList.addEventListener("change", function (event) {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.font.family = thiz.fontList.value;
         thiz._applyValue();
     }, false);
 
-    this.pixelFontSize.addEventListener("input", function(event) {
+    this.pixelFontSize.addEventListener("input", function (event) {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.font.size = thiz.pixelFontSize.value + "px";
         thiz._applyValue();
     }, false);
-    this.pixelFontSize.addEventListener("keyup", function(event) {
+    this.pixelFontSize.addEventListener("keyup", function (event) {
         if (event.keyCode == 13 || event.keyCode == 10) {
             if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
             thiz.font.size = thiz.pixelFontSize.value + "px";
@@ -33,25 +33,25 @@ SharedFontEditor.prototype.setup = function() {
         }
     }, false);
 
-    this.boldButton.addEventListener("click", function(event) {
+    this.boldButton.addEventListener("click", function (event) {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.font.weight = thiz.boldButton.checked ? "bold" : "normal";
         thiz._applyValue();
     }, false);
 
-    this.italicButton.addEventListener("click", function(event) {
+    this.italicButton.addEventListener("click", function (event) {
         if (!thiz.target || !thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.font.style = thiz.italicButton.checked ? "italic" : "normal";
         thiz._applyValue();
     }, false);
 };
-SharedFontEditor.prototype._applyValue = function() {
+SharedFontEditor.prototype._applyValue = function () {
     var thiz = this;
-    Pencil.activeCanvas.run(function() {
+    Pencil.activeCanvas.run(function () {
         this.setProperty(SharedFontEditor.PROPERTY_NAME, thiz.font);
     }, this.target, Util.getMessage("action.apply.properties.value"));
 };
-SharedFontEditor.prototype.attach = function(target) {
+SharedFontEditor.prototype.attach = function (target) {
     this.target = target;
     this.font = target.getProperty(SharedFontEditor.PROPERTY_NAME, "any");
     if (!this.font) {
@@ -89,7 +89,7 @@ SharedFontEditor.prototype.attach = function(target) {
     /* this.underlineButton.checked = (this.font.decor == "underline");
     this.strikeButton.checked = (this.font.decor == "strikethrough");*/
 };
-SharedFontEditor.prototype.detach = function() {
+SharedFontEditor.prototype.detach = function () {
     this.fontList.disabled = true;
     this.pixelFontSize.disabled = true;
     this.boldButton.disabled = true;
@@ -100,7 +100,7 @@ SharedFontEditor.prototype.detach = function() {
     this.target = null;
     this.font = null;
 };
-SharedFontEditor.prototype.invalidate = function() {
+SharedFontEditor.prototype.invalidate = function () {
     if (!this.target) {
         this.detach();
     } else {

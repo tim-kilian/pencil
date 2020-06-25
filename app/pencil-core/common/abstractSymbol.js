@@ -2,7 +2,7 @@
 // License: GPL/MPL
 // $Id$
 
-function AbstractSymbol() {
+function AbstractSymbol () {
     this.namespace = null;
     this.id = null;
     this.displayName = null;

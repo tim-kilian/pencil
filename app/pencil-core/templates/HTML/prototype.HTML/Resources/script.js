@@ -1,4 +1,4 @@
-function scaleMap(page, r) {
+function scaleMap (page, r) {
     var map = page.querySelector("map");
     var container = page.querySelector(".ImageContainer > .Links");
     if (!container) {
@@ -9,10 +9,10 @@ function scaleMap(page, r) {
         container.innerHTML = "";
     }
 
-    map.querySelectorAll("area").forEach(function(area) {
+    map.querySelectorAll("area").forEach(function (area) {
         var original = area._originalCoords || area.getAttribute("coords");
         area._originalCoords = original;
-        var coords = original.split(/\,/).map(function(v) {
+        var coords = original.split(/\,/).map(function (v) {
             return Math.round(parseFloat(v) / r);
         });
 
@@ -28,14 +28,14 @@ function scaleMap(page, r) {
     });
 }
 
-function fitImages() {
+function fitImages () {
     var pages = document.querySelectorAll("body > div.Page");
     var W = 0;
     var H = 0;
 
     var activePage = null;
 
-    pages.forEach(function(page) {
+    pages.forEach(function (page) {
         if (page.offsetWidth == 0 || page.offsetHeight == 0) return;
 
         W = page.offsetWidth - 30;
@@ -44,7 +44,7 @@ function fitImages() {
     });
 
     if (activePage && window.lastActivePage != activePage) {
-        document.querySelectorAll(".TOC > div").forEach(function(item) {
+        document.querySelectorAll(".TOC > div").forEach(function (item) {
             var matched = item.classList.contains("Page_" + activePage.id);
             if (matched) {
                 item.classList.add("Focused");
@@ -60,7 +60,7 @@ function fitImages() {
         if (window.lastSize && window.lastSize.W == W && window.lastSize.H == H) return;
 
         var imgs = document.querySelectorAll("body > div.Page img");
-        imgs.forEach(function(img) {
+        imgs.forEach(function (img) {
             var r = Math.max(img.naturalWidth / W, img.naturalHeight / H);
 
             if (r < 1) r = 1;
@@ -82,11 +82,11 @@ function fitImages() {
         window.lastSize = {W: W, H: H};
     }
 }
-function checkActivePage() {
+function checkActivePage () {
     var pages = document.querySelectorAll("body > div.Page");
     var found = false;
     var firstPage = null;
-    pages.forEach(function(page) {
+    pages.forEach(function (page) {
         if (!firstPage) firstPage = page;
         if (page.offsetWidth != 0 && page.offsetHeight != 0) found = true;
     });
@@ -97,7 +97,7 @@ function checkActivePage() {
     }
 }
 
-function workingThreadFunction() {
+function workingThreadFunction () {
     try {
         try {
             fitImages();
@@ -118,13 +118,13 @@ function workingThreadFunction() {
 
 
 var idleTimeout = null;
-function handleMouseMove() {
+function handleMouseMove () {
     if (!document.body.classList.contains("Active")) {
         document.body.classList.add("Active");
     }
 
     if (idleTimeout) window.clearTimeout(idleTimeout);
-    idleTimeout = window.setTimeout(function() {
+    idleTimeout = window.setTimeout(function () {
         document.body.classList.remove("Active");
         idleTimeout = null;
     }, 400);
@@ -134,9 +134,9 @@ var THUMB_WIDTH = 250;
 var THUMB_HEIGHT = 160;
 var THUMB_DISPLAY_SIZE = 160;
 
-function buildThumbnail(url, callback) {
+function buildThumbnail (url, callback) {
     var image = new Image();
-    image.onload = function() {
+    image.onload = function () {
         var canvas = document.createElement("canvas");
         var ctx = canvas.getContext("2d");
 
@@ -153,11 +153,11 @@ function buildThumbnail(url, callback) {
     image.src = url;
 }
 
-function generateTOC() {
+function generateTOC () {
     var toc = document.createElement("div");
     toc.setAttribute("class", "TOC");
     var pages = document.querySelectorAll("body > div.Page");
-    pages.forEach(function(page) {
+    pages.forEach(function (page) {
         var title = page.querySelector("h2");
         var img = page.querySelector(".ImageContainer img");
 
@@ -179,7 +179,7 @@ function generateTOC() {
 
         toc.appendChild(item);
 
-        buildThumbnail(img.src, function(dataUrl, w, h) {
+        buildThumbnail(img.src, function (dataUrl, w, h) {
             var r = Math.max(w / THUMB_DISPLAY_SIZE, h / THUMB_DISPLAY_SIZE);
             var w = w / r; var h = h / r;
 
@@ -193,7 +193,7 @@ function generateTOC() {
     document.body.appendChild(toc);
 }
 
-function boot() {
+function boot () {
     document.addEventListener("mousemove", handleMouseMove);
     var style = document.createElement("link");
     style.setAttribute("rel", "stylesheet");

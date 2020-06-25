@@ -1,4 +1,4 @@
-function ImageEditorDialog() {
+function ImageEditorDialog () {
     this.grabWidth = true;
     this.grabHeight = true;
     Dialog.call(this);
@@ -14,7 +14,7 @@ function ImageEditorDialog() {
 }
 __extend(Dialog, ImageEditorDialog);
 
-ImageEditorDialog.prototype.__init = function() {
+ImageEditorDialog.prototype.__init = function () {
     Dom.addClass(this.dialogFrame, "EditImageDialog");
     this.bind("mousedown", this.handleSelectionMouseDown, this.drawingScollPane);
     this.bind("mouseup", this.handleSelectionMouseUp, document);
@@ -22,10 +22,10 @@ ImageEditorDialog.prototype.__init = function() {
 
     this.selectionCanvasCtx = this.selectionCanvas.getContext("2d");
 };
-ImageEditorDialog.prototype.__initTools = function() {
+ImageEditorDialog.prototype.__initTools = function () {
     var thiz = this;
 
-    this.toolbarContainer.childNodes.forEach(function(node) {
+    this.toolbarContainer.childNodes.forEach(function (node) {
         if (node.__widget && node.__widget instanceof BaseTemplatedWidget && node.__widget.setup) {
             node.__widget.setup(thiz.getImageSource());
         }
@@ -33,7 +33,7 @@ ImageEditorDialog.prototype.__initTools = function() {
 
     var nodes = this.toolbarContainer.querySelectorAll(".PopupToggler");
     for (var i = 0; i < nodes.length; i++) {
-        nodes[i].addEventListener("click", function(event) {
+        nodes[i].addEventListener("click", function (event) {
             var toggler = Dom.findParentWithClass(event.target, "PopupToggler");
             var popup = toggler.parentNode.querySelector(".PopupContainer").__widget;
             if (!popup.isVisible()) {
@@ -42,37 +42,37 @@ ImageEditorDialog.prototype.__initTools = function() {
             }
         });
 
-        nodes[i].parentNode.querySelector(".PopupContainer").__widget.onHide = function() {
+        nodes[i].parentNode.querySelector(".PopupContainer").__widget.onHide = function () {
             thiz._endRepeatableImageAction();
         };
     }
 
-    function registerSeekInputListener(ctx, input, seeker, callback, inputValueToCallbackFn, fromSeekerToInputValueFn) {
+    function registerSeekInputListener (ctx, input, seeker, callback, inputValueToCallbackFn, fromSeekerToInputValueFn) {
         if (typeof(inputValueToCallbackFn) != "function") {
-            inputValueToCallbackFn = function(value) {
+            inputValueToCallbackFn = function (value) {
                 return parseInt(value, 10) / 100;
             };
         }
         if (typeof(fromSeekerToInputValueFn) != "function") {
-            fromSeekerToInputValueFn = function(value) {
+            fromSeekerToInputValueFn = function (value) {
                 return value;
             };
         }
-        input.addEventListener("keypress", function(event) {
+        input.addEventListener("keypress", function (event) {
             if (event.keyCode != DOM_VK_RETURN) return;
             event.cancelBubble = true;
 
             callback.call(ctx, inputValueToCallbackFn(this.value));
         });
 
-        seeker.addEventListener("input", function(event) {
+        seeker.addEventListener("input", function (event) {
             input.value = fromSeekerToInputValueFn(this.value);
         });
-        seeker.addEventListener("change", function(event) {
+        seeker.addEventListener("change", function (event) {
             callback.call(ctx, inputValueToCallbackFn(fromSeekerToInputValueFn(this.value)));
         });
     }
-    function parse_11RangeValue(value) {
+    function parse_11RangeValue (value) {
         var decimal = parseInt(value, 10);
         if (decimal < 0) decimal = 0;
         if (decimal > 200) decimal = 200;
@@ -81,42 +81,42 @@ ImageEditorDialog.prototype.__initTools = function() {
 
     registerSeekInputListener(this, this.zoomPercentInput, this.zoomSeeker, this.zoom);
 
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.busy();
         this.editingImage.autocrop();
-        this.invalidateImage(function() {
+        this.invalidateImage(function () {
             this.zoom(1);
         });
     }, this.autoCropButton);
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.registerSelectionRangeListener(this.confirmCrop);
         this.activeNode(this.cropButton, true);
     }, this.cropButton);
 
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.busy();
         this.editingImage.flip(true, false);
         this.invalidateImage();
     }, this.hFlipButton);
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.busy();
         this.editingImage.flip(false, true);
         this.invalidateImage();
     }, this.vFlipButton);
 
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.busy();
         this.editingImage.greyscale();
         this.invalidateImage();
     }, this.greyscaleButton);
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         this.busy();
         this.editingImage.invert();
         this.invalidateImage();
     }, this.invertButton);
 
-    function registerInputCommandListener(ctx, input, callback) {
-        input.addEventListener("keypress", function(event) {
+    function registerInputCommandListener (ctx, input, callback) {
+        input.addEventListener("keypress", function (event) {
             if (event.keyCode != DOM_VK_RETURN) return;
             event.cancelBubble = true;
 
@@ -127,8 +127,8 @@ ImageEditorDialog.prototype.__initTools = function() {
     registerInputCommandListener(this, this.blurRadInput, this.blur);
     registerInputCommandListener(this, this.gaussianRadInput, this.confirmGaussian);
 
-    function registerFocusInputListener(holder, input) {
-        holder.addEventListener("click", function(event) {
+    function registerFocusInputListener (holder, input) {
+        holder.addEventListener("click", function (event) {
             input.focus();
             input.select();
         });
@@ -137,29 +137,29 @@ ImageEditorDialog.prototype.__initTools = function() {
     registerFocusInputListener(this.blurButton, this.blurRadInput);
     registerFocusInputListener(this.gaussianButton, this.gaussianRadInput);
 };
-ImageEditorDialog.prototype.registerSelectionRangeListener = function(listener) {
+ImageEditorDialog.prototype.registerSelectionRangeListener = function (listener) {
     this.selectionRangeListener = listener;
 };
 
-ImageEditorDialog.prototype.activeNode = function(node, isActive) {
+ImageEditorDialog.prototype.activeNode = function (node, isActive) {
     if (isActive) node.setAttribute("active", true);
     else node.removeAttribute("active");
 };
 
-ImageEditorDialog.prototype.getDialogActions = function() {
+ImageEditorDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL,
         {type: "accept", title: "Apply",
-            run: function() {
+            run: function () {
                 var refId = this.getRefId();
                 var resRefs = refId ? Pencil.controller.getResourceReferences(refId) : null;
                 if (resRefs && resRefs.total > 1) {
                     var that = this;
                     Dialog.confirm("There are " + resRefs.total + " references have been associated with this image",
                         "What would you like to do?",
-                        "Update This", function() {
+                        "Update This", function () {
                             that.save(resRefs);
-                        }, "Cancel", null, "Update All", function() {
+                        }, "Cancel", null, "Update All", function () {
                             that.save(resRefs, true);
                         });
                 } else {
@@ -172,20 +172,20 @@ ImageEditorDialog.prototype.getDialogActions = function() {
     ];
 };
 
-ImageEditorDialog.prototype.save = function(resRefs, updateAllRefs) {
+ImageEditorDialog.prototype.save = function (resRefs, updateAllRefs) {
     var refId = this.getRefId();
     if (!refId || !this.editingImage) {
         if (this.options.onDone) this.options.onDone(this.options.imageData);
         this.close();
     } else {
         var that = this;
-        this.editingImage.getBuffer(jimp.AUTO, function(err, data) {
+        this.editingImage.getBuffer(jimp.AUTO, function (err, data) {
             if (err) throw err;
             that.doSave(refId, data, resRefs, updateAllRefs);
         });
     }
 };
-ImageEditorDialog.prototype.doSave = function(refId, buffer, resRefs, updateAllRefs) {
+ImageEditorDialog.prototype.doSave = function (refId, buffer, resRefs, updateAllRefs) {
     updateAllRefs = updateAllRefs || !resRefs || resRefs.total === 1;
 
     var filePath;
@@ -225,12 +225,12 @@ ImageEditorDialog.prototype.doSave = function(refId, buffer, resRefs, updateAllR
     this.close();
 };
 
-ImageEditorDialog.prototype.getRefId = function() {
+ImageEditorDialog.prototype.getRefId = function () {
     var src = this.options && this.options.imageData ? this.options.imageData.data : null;
     return src ? ImageData.refStringToId(src) : null;
 };
 
-ImageEditorDialog.prototype._getImageSize = function() {
+ImageEditorDialog.prototype._getImageSize = function () {
     var w = this.editingImage && this.editingImage.bitmap ? this.editingImage.bitmap.width : this.options.imageData.w;
     var h = this.editingImage && this.editingImage.bitmap ? this.editingImage.bitmap.height : this.options.imageData.h;
 
@@ -240,7 +240,7 @@ ImageEditorDialog.prototype._getImageSize = function() {
     };
 };
 
-ImageEditorDialog.prototype._getDisplaySize = function() {
+ImageEditorDialog.prototype._getDisplaySize = function () {
     var size = this._getImageSize();
 
     return {
@@ -248,7 +248,7 @@ ImageEditorDialog.prototype._getDisplaySize = function() {
         h: Math.round(size.h * this.zoomRatio)
     };
 };
-ImageEditorDialog.prototype._invalidateDisplaySize = function() {
+ImageEditorDialog.prototype._invalidateDisplaySize = function () {
     var size = this._getDisplaySize();
 
     var padding = 1 * Util.em();
@@ -258,21 +258,21 @@ ImageEditorDialog.prototype._invalidateDisplaySize = function() {
 };
 
 
-ImageEditorDialog.prototype.setup = function(options, callback) {
+ImageEditorDialog.prototype.setup = function (options, callback) {
     this.options = options || {};
     this.currentRange = null;
     var thiz = this;
-    this.setupEditSpace(function() {
+    this.setupEditSpace(function () {
         thiz.invalidateImage(callback);
     });
 };
 
-ImageEditorDialog.prototype.setupEditSpace = function(callback) {
+ImageEditorDialog.prototype.setupEditSpace = function (callback) {
     var src = this.options.imageData.data;
     var refId = this.getRefId();
     if (refId) src = Pencil.controller.refIdToFilePath(refId);
     var that = this;
-    jimp.read(src, function(err, image) {
+    jimp.read(src, function (err, image) {
         if (err) throw err;
 
         that.editingImage = image;
@@ -283,14 +283,14 @@ ImageEditorDialog.prototype.setupEditSpace = function(callback) {
     });
 };
 
-ImageEditorDialog.prototype.invalidateImage = function(onDoneCallback) {
+ImageEditorDialog.prototype.invalidateImage = function (onDoneCallback) {
     this._invalidateUI();
     if (this.editingImage) {
         var that = this;
-        this.editingImage.getBuffer(jimp.AUTO, function(err, data) {
+        this.editingImage.getBuffer(jimp.AUTO, function (err, data) {
             console.log(that.editingImage);
         });
-        this.editingImage.getBase64(jimp.AUTO, function(err, data) {
+        this.editingImage.getBase64(jimp.AUTO, function (err, data) {
             if (!data) return;
             that.image.src = data;
             that.options.imageData.w = this.bitmap.width;
@@ -306,26 +306,26 @@ ImageEditorDialog.prototype.invalidateImage = function(onDoneCallback) {
         if (typeof(onDoneCallback) == "function") onDoneCallback.call(this);
     }
 };
-ImageEditorDialog.prototype._invalidateUI = function() {
+ImageEditorDialog.prototype._invalidateUI = function () {
     this.drawSelectingRect();
     this._invalidateDisplaySize();
 };
-ImageEditorDialog.prototype.zoom = function(r) {
+ImageEditorDialog.prototype.zoom = function (r) {
     this.zoomRatio = r;
     this._invalidateUI();
 };
 
-ImageEditorDialog._cloneWithAlpha = function(source, callback) {
-    new jimp(source.bitmap.width + 10, source.bitmap.height + 10, 0xffffff00, function(error, image) {
+ImageEditorDialog._cloneWithAlpha = function (source, callback) {
+    new jimp(source.bitmap.width + 10, source.bitmap.height + 10, 0xffffff00, function (error, image) {
         console.log("new image alpha", image.hasAlpha());
-        image.composite(source, 0, 0, function() {
+        image.composite(source, 0, 0, function () {
             console.log("  > after composite", image.hasAlpha());
             callback(image);
         });
     });
 };
 
-ImageEditorDialog.prototype._beginRepeatableImageAction = function(callback) {
+ImageEditorDialog.prototype._beginRepeatableImageAction = function (callback) {
     this.__backupImage = this.editingImage.clone();
     if (!this.currentRange) {
         this._targetImage = this.editingImage;
@@ -334,10 +334,10 @@ ImageEditorDialog.prototype._beginRepeatableImageAction = function(callback) {
         this._targetImage = this.editingImage.clone();
         console.log("Alpha after clone: ", this._targetImage.hasAlpha());
         var thiz = this;
-        this._targetImage.crop(this.currentRange.x, this.currentRange.y, this.currentRange.width, this.currentRange.height, function() {
+        this._targetImage.crop(this.currentRange.x, this.currentRange.y, this.currentRange.width, this.currentRange.height, function () {
             thiz._targetImage.bitmap.data[3] = 0xfe;
             if (!thiz._targetImage.hasAlpha()) {
-                ImageEditorDialog._cloneWithAlpha(thiz._targetImage, function(newImage) {
+                ImageEditorDialog._cloneWithAlpha(thiz._targetImage, function (newImage) {
                     thiz._targetImage = newImage;
                     if (callback) callback();
                 });
@@ -347,65 +347,65 @@ ImageEditorDialog.prototype._beginRepeatableImageAction = function(callback) {
         });
     }
 };
-ImageEditorDialog.prototype._endRepeatableImageAction = function(callback) {
+ImageEditorDialog.prototype._endRepeatableImageAction = function (callback) {
     this._targetImage = null;
 };
 
 
-ImageEditorDialog.prototype._performActionOnSelection = function(performer, callback) {
+ImageEditorDialog.prototype._performActionOnSelection = function (performer, callback) {
     var target = (this._targetImage || this.editingImage).clone();
     var thiz = this;
     if (!this.currentRange) {
-        performer(target, function() {
+        performer(target, function () {
             thiz.editingImage = target;
             thiz.invalidateImage(callback);
         });
     } else {
-        performer(target, function() {
+        performer(target, function () {
             // merge the result back
-            thiz.editingImage.blit(target, thiz.currentRange.x, thiz.currentRange.y, function() {
+            thiz.editingImage.blit(target, thiz.currentRange.x, thiz.currentRange.y, function () {
                 thiz.invalidateImage(callback);
             });
         });
     }
 };
 
-ImageEditorDialog.prototype.getImageSource = function() {
+ImageEditorDialog.prototype.getImageSource = function () {
     var thiz = this;
 
     if (!this.__imageSource) {
         this.__imageSource = {
-            start: function(callback) {
+            start: function (callback) {
                 thiz._beginRepeatableImageAction(callback);
             },
 
-            get: function() {
+            get: function () {
                 return thiz._targetImage;
             },
 
-            set: function(image, options, callback) {
+            set: function (image, options, callback) {
                 console.log("options", options);
                 if (!thiz.currentRange || options.replace) {
                     thiz.editingImage = image;
                     thiz.currentRange = null;
                     thiz.invalidateImage(callback);
                 } else {
-                    thiz.editingImage.blit(image, thiz.currentRange.x, thiz.currentRange.y, function() {
+                    thiz.editingImage.blit(image, thiz.currentRange.x, thiz.currentRange.y, function () {
                         thiz.invalidateImage(callback);
                     });
                 }
             },
 
-            rollback: function(callback) {
+            rollback: function (callback) {
                 thiz.editingImage = thiz.__backupImage;
                 thiz._endRepeatableImageAction();
-                thiz.invalidateImage(function() {
+                thiz.invalidateImage(function () {
                     thiz.__backupImage = null;
                     callback();
                 });
             },
 
-            commit: function(callback) {
+            commit: function (callback) {
                 thiz._endRepeatableImageAction();
                 thiz.__backupImage = null;
             }
@@ -415,57 +415,57 @@ ImageEditorDialog.prototype.getImageSource = function() {
     return this.__imageSource;
 };
 
-ImageEditorDialog.prototype.rotate = function(val) {
+ImageEditorDialog.prototype.rotate = function (val) {
     this.busy();
     var degree = parseInt(val, 10);
     var that = this;
 
     this._performActionOnSelection(
-        function(image, callback) {
+        function (image, callback) {
             image.rotate(degree, that.keepSizeCheckbox.checked ? jimp.RESIZE_BICUBIC : false, callback);
         },
-        function() {
+        function () {
             that.invalidateImage();
         }
     );
 };
 
-ImageEditorDialog.prototype.blur = function(val) {
+ImageEditorDialog.prototype.blur = function (val) {
     this.busy();
     val = parseInt(val, 10);
     var that = this;
 
     this._performActionOnSelection(
-        function(image, callback) {
+        function (image, callback) {
             image.blur(val, callback);
         },
-        function() {
-            that.invalidateImage(function() {
+        function () {
+            that.invalidateImage(function () {
                 that.blurRadInput.value = "1";
             });
         }
     );
 };
 
-ImageEditorDialog.prototype.confirmGaussian = function(val) {
+ImageEditorDialog.prototype.confirmGaussian = function (val) {
     var that = this;
     Dialog.confirm("This operation probably takes a long time to complete. Continue?", null,
-        "Yes", function() {
+        "Yes", function () {
             that.gaussian(val);
         }, "No");
 };
-ImageEditorDialog.prototype.gaussian = function(val) {
+ImageEditorDialog.prototype.gaussian = function (val) {
     this.busy();
     val = parseInt(val, 10);
     // Make sure the busy indicator is shown before executing gaussian blur
     var that = this;
-    setTimeout(function() {
+    setTimeout(function () {
         that._performActionOnSelection(
-            function(image, callback) {
+            function (image, callback) {
                 image.gaussian(val, callback);
             },
-            function() {
-                that.invalidateImage(function() {
+            function () {
+                that.invalidateImage(function () {
                     that.gaussianRadInput.value = "1";
                 });
             }
@@ -473,16 +473,16 @@ ImageEditorDialog.prototype.gaussian = function(val) {
     }, 500);
 };
 
-ImageEditorDialog.prototype.confirmCrop = function() {
+ImageEditorDialog.prototype.confirmCrop = function () {
     if (!this.currentRange) return;
     var that = this;
     Dialog.confirm("Crop to the selected region?", null,
-        "Crop", function() {
+        "Crop", function () {
             that.crop();
         }, "Cancel");
     this.activeNode(this.cropButton, false);
 };
-ImageEditorDialog.prototype.crop = function() {
+ImageEditorDialog.prototype.crop = function () {
     if (!this.currentRange) return;
 
     this.busy();
@@ -491,14 +491,14 @@ ImageEditorDialog.prototype.crop = function() {
     var w = this.currentRange.width / this.zoomRatio;
     var h = this.currentRange.height / this.zoomRatio;
     var that = this;
-    this.editingImage.crop(x, y, w, h, function() {
-        that.invalidateImage(function() {
+    this.editingImage.crop(x, y, w, h, function () {
+        that.invalidateImage(function () {
             this.zoom(1);
         });
     });
 };
 
-ImageEditorDialog.prototype.getEventLocation = function(event, withoutZoom) {
+ImageEditorDialog.prototype.getEventLocation = function (event, withoutZoom) {
     var rect = this.drawingContainer.getBoundingClientRect();
     var x = Math.round((event.clientX - rect.left) / this.zoomRatio);
     var y = Math.round((event.clientY - rect.top) / this.zoomRatio);
@@ -508,7 +508,7 @@ ImageEditorDialog.prototype.getEventLocation = function(event, withoutZoom) {
         y: y
     };
 };
-ImageEditorDialog.prototype._validateSelectionRange = function() {
+ImageEditorDialog.prototype._validateSelectionRange = function () {
     if (this.currentRange == null) return;
     if (this.currentRange.x < 0) {
         this.currentRange.width += this.currentRange.x;
@@ -528,7 +528,7 @@ ImageEditorDialog.prototype._validateSelectionRange = function() {
         this.currentRange.height -= dh;
     }
 };
-ImageEditorDialog.prototype.handleSelectionMouseDown = function(event) {
+ImageEditorDialog.prototype.handleSelectionMouseDown = function (event) {
     Dom.cancelEvent(event);
     if (event.target.parentNode == this.selectionBox && this.currentRange) {
         this.currentRangeHandle = event.target;
@@ -561,12 +561,12 @@ ImageEditorDialog.prototype.handleSelectionMouseDown = function(event) {
 
     this._validateSelectionRange();
 };
-ImageEditorDialog._getNumberAttr = function(node, name) {
+ImageEditorDialog._getNumberAttr = function (node, name) {
     var attr = node.getAttribute(name);
     if (!attr) return 0;
     return parseFloat(attr);
 };
-ImageEditorDialog.prototype.handleSelectionHandleMove = function(event) {
+ImageEditorDialog.prototype.handleSelectionHandleMove = function (event) {
     if (!this.lastMouseDownLocation) return;
     var end = this.getEventLocation(event);
     var dx = end.x - this.lastMouseDownLocation.x;
@@ -582,7 +582,7 @@ ImageEditorDialog.prototype.handleSelectionHandleMove = function(event) {
     this._validateSelectionRange();
     this.drawSelectingRect();
 };
-ImageEditorDialog.prototype.handleSelectionMouseMove = function(event) {
+ImageEditorDialog.prototype.handleSelectionMouseMove = function (event) {
     if (this.currentRange && this.currentRangeHandle) {
         Dom.cancelEvent(event);
         this.handleSelectionHandleMove(event);
@@ -617,7 +617,7 @@ ImageEditorDialog.prototype.handleSelectionMouseMove = function(event) {
     this._validateSelectionRange();
     this.drawSelectingRect();
 };
-ImageEditorDialog.prototype.handleSelectionMouseUp = function(event) {
+ImageEditorDialog.prototype.handleSelectionMouseUp = function (event) {
     this.lastMouseDownLocation = null;
     this.currentRangeHandle = null;
     if (this.selectionRangeListener) {
@@ -629,7 +629,7 @@ ImageEditorDialog.prototype.handleSelectionMouseUp = function(event) {
     this.drawSelectingRect();
 };
 
-ImageEditorDialog.prototype.drawSelectingRect = function() {
+ImageEditorDialog.prototype.drawSelectingRect = function () {
     if (!this.currentRange) {
         this.selectionBox.style.display = "none";
         return;
@@ -641,35 +641,35 @@ ImageEditorDialog.prototype.drawSelectingRect = function() {
     this.selectionBox.style.height = Math.round(this.currentRange.height * this.zoomRatio) + "px";
 };
 
-ImageEditorDialog.prototype.showBusyIndicator = function() {
+ImageEditorDialog.prototype.showBusyIndicator = function () {
     this.currentBusyOverlay = document.createElement("div");
     this.currentBusyOverlay.className = "BusyOverlay";
     this.currentBusyOverlay.innerHTML = "<div class=\"Loader\"></div>";
 
     this.dialogFrame.appendChild(this.currentBusyOverlay);
 };
-ImageEditorDialog.prototype.hideBusyIndicator = function() {
+ImageEditorDialog.prototype.hideBusyIndicator = function () {
     if (this.currentBusyOverlay) {
         if (this.currentBusyOverlay.parentNode) this.currentBusyOverlay.parentNode.removeChild(this.currentBusyOverlay);
         this.currentBusyOverlay = null;
     }
 };
-ImageEditorDialog.prototype.busy = function() {
+ImageEditorDialog.prototype.busy = function () {
     if (!this.busyCount || this.busyCount < 0) this.busyCount = 0;
     this.busyCount++;
     if (this.busyCount == 1) this.showBusyIndicator();
 };
-ImageEditorDialog.prototype.unbusy = function() {
+ImageEditorDialog.prototype.unbusy = function () {
     if (this.busyCount > 0) this.busyCount --;
     if (this.busyCount == 0) this.hideBusyIndicator();
 };
 
 
-Pencil.bootzxxx = function(event) {
+Pencil.bootzxxx = function (event) {
     var dialog = new ImageEditorDialog();
     dialog.open({
         imageData: {data: "/home/dgthanhan/Pictures/Archive/Selection_081.png"},
-        onDone: function(newImageData) {
+        onDone: function (newImageData) {
         }
     });
 };

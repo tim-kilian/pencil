@@ -1,4 +1,4 @@
-Pencil.behaviors.Attr = function(name, value, ns) {
+Pencil.behaviors.Attr = function (name, value, ns) {
     if (value != null) {
         if (ns) this.setAttributeNS(ns, name, value);
         else this.setAttribute(name, value);
@@ -7,32 +7,32 @@ Pencil.behaviors.Attr = function(name, value, ns) {
         else this.removeAttribute(name);
     }
 };
-Pencil.behaviors.Box = function(box) {
+Pencil.behaviors.Box = function (box) {
     Svg.setWidth(this, box.w);
     Svg.setHeight(this, box.h);
 };
-Pencil.behaviors.Bound = function(bound) {
+Pencil.behaviors.Bound = function (bound) {
     this.setAttribute("x", bound.x);
     this.setAttribute("y", bound.y);
     this.setAttribute("width", bound.w);
     this.setAttribute("height", bound.h);
 };
-Pencil.behaviors.Radius = function(rx, ry) {
+Pencil.behaviors.Radius = function (rx, ry) {
     this.setAttribute("rx", rx);
     this.setAttribute("ry", typeof(ry) != "undefined" ? ry : rx);
 };
-Pencil.behaviors.StopColor = function(color) {
+Pencil.behaviors.StopColor = function (color) {
     Svg.setStyle(this, "stop-color", color.toRGBString());
     Svg.setStyle(this, "stop-opacity", color.a);
 };
-Pencil.behaviors.Offset = function(offset) {
+Pencil.behaviors.Offset = function (offset) {
     this.setAttribute("offset", offset);
 };
-Pencil.behaviors.Fill = function(color) {
+Pencil.behaviors.Fill = function (color) {
     Svg.setStyle(this, "fill", color.toRGBString());
     Svg.setStyle(this, "fill-opacity", color.a);
 };
-Pencil.behaviors.Color = function(color) {
+Pencil.behaviors.Color = function (color) {
     if (this.localName == "text") {
 	    Svg.setStyle(this, "fill", color.toRGBString());
 	    Svg.setStyle(this, "fill-opacity", color.a);
@@ -40,11 +40,11 @@ Pencil.behaviors.Color = function(color) {
 	    Svg.setStyle(this, "color", color ? color.toRGBAString() : null);
     }
 };
-Pencil.behaviors.StrokeColor = function(color) {
+Pencil.behaviors.StrokeColor = function (color) {
     Svg.setStyle(this, "stroke", color.toRGBString());
     Svg.setStyle(this, "stroke-opacity", color.a);
 };
-Pencil.behaviors.StrokeStyle = function(strokeStyle) {
+Pencil.behaviors.StrokeStyle = function (strokeStyle) {
     Svg.setStyle(this, "stroke-width", strokeStyle.w);
     if (strokeStyle.array) {
         Svg.setStyle(this, "stroke-dasharray", strokeStyle.array);
@@ -52,13 +52,13 @@ Pencil.behaviors.StrokeStyle = function(strokeStyle) {
         Svg.removeStyle(this, "stroke-dasharray");
     }
 };
-Pencil.behaviors.Visibility = function(bool) {
+Pencil.behaviors.Visibility = function (bool) {
     var value = bool;
     if (bool && bool.constructor == Bool) value = bool.value;
     Svg.setStyle(this, "visibility", value ? "visible" : "hidden");
     Svg.setStyle(this, "display", value ? null : "none");
 };
-Pencil.behaviors.ApplyFilter = function(bool) {
+Pencil.behaviors.ApplyFilter = function (bool) {
     var value = bool;
     if (bool && bool.constructor == Bool) value = bool.value;
     if (value) {
@@ -72,14 +72,14 @@ Pencil.behaviors.ApplyFilter = function(bool) {
     }
 };
 
-Pencil.behaviors.CustomStyle = function(name, value) {
+Pencil.behaviors.CustomStyle = function (name, value) {
     Svg.setStyle(this, name, value);
 };
-Pencil.behaviors.InnerText = function(text) {
+Pencil.behaviors.InnerText = function (text) {
     Dom.empty(this);
     this.appendChild(this.ownerDocument.createTextNode(text));
 };
-Pencil.behaviors._createUnderline = function(text) {
+Pencil.behaviors._createUnderline = function (text) {
     var id = text.getAttribute("id") + "_underline";
     var underline = text.ownerDocument.getElementById(id);
     if (!underline) {
@@ -91,7 +91,7 @@ Pencil.behaviors._createUnderline = function(text) {
 
     return underline;
 };
-Pencil.behaviors.AccelFor = function(textName, font, color, textContent) {
+Pencil.behaviors.AccelFor = function (textName, font, color, textContent) {
     try {
         var text = Pencil.findObjectByName(F._target, textName);
         var index = textContent.value.indexOf("&");
@@ -115,7 +115,7 @@ Pencil.behaviors.AccelFor = function(textName, font, color, textContent) {
         Console.dumpError(e, "stdout");
     }
 };
-Pencil.behaviors.Font = function(font) {
+Pencil.behaviors.Font = function (font) {
     Svg.setStyle(this, "font-family", font.family);
     Svg.setStyle(this, "font-size", font.size);
     Svg.setStyle(this, "font-weight", font.weight);
@@ -123,7 +123,7 @@ Pencil.behaviors.Font = function(font) {
     Svg.setStyle(this, "text-decoration", font.decor);
     Svg.setStyle(this, "line-height", font.lineHeight > 0 ? font.lineHeight : null);
 };
-Pencil.behaviors.BoxFit = function(bound, align) {
+Pencil.behaviors.BoxFit = function (bound, align) {
     try {
         var isText = (this.localName == "text");
         if (isText) {
@@ -147,66 +147,66 @@ Pencil.behaviors.BoxFit = function(bound, align) {
     } catch (e) {
     }
 };
-Pencil.behaviors.D = function(dLiteral) {
+Pencil.behaviors.D = function (dLiteral) {
     var s = typeof(dLiteral) == "string" ? dLiteral : (dLiteral.join ? dLiteral.join(" ") : "");
     this.setAttribute("d", s);
 };
-Pencil.behaviors.Scale = function(x, y) {
+Pencil.behaviors.Scale = function (x, y) {
     this.setAttribute("transform", "scale(" + [x, y] + ")");
 };
-Pencil.behaviors.Transform = function(s) {
+Pencil.behaviors.Transform = function (s) {
     var t = s.join ? s.join(" ") : s;
     this.setAttribute("transform", t);
 };
 // D objects
 Pencil.behaviors.D._lastX = 0;
 Pencil.behaviors.D._lastY = 0;
-Pencil.behaviors.D._setLastLocation = function(x, y) {
+Pencil.behaviors.D._setLastLocation = function (x, y) {
     Pencil.behaviors.D._lastX = x;
     Pencil.behaviors.D._lastY = y;
 };
 
-function M(x, y) {
+function M (x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "M " + x + " " + y;
 }
-function L(x, y) {
+function L (x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "L " + x + " " + y;
 }
-function C(x1, y1, x2, y2, x, y) {
+function C (x1, y1, x2, y2, x, y) {
     Pencil.behaviors.D._setLastLocation(x2, y2);
     return "C " + x1 + " " + y1 + " " + x2 + " " + y2 + " " + x + " " + y;
 }
-function c(x1, y1, x2, y2, x, y) {
+function c (x1, y1, x2, y2, x, y) {
     Pencil.behaviors.D._setLastLocation(x2, y2);
     return "c " + x1 + " " + y1 + " " + x2 + " " + y2 + " " + x + " " + y;
 }
-function S(x2, y2, x, y) {
+function S (x2, y2, x, y) {
     Pencil.behaviors.D._setLastLocation(x2, y2);
     return "S " + x2 + " " + y2 + " " + x + " " + y;
 }
-function s(x2, y2, x, y) {
+function s (x2, y2, x, y) {
     Pencil.behaviors.D._setLastLocation(x2, y2);
     return "s " + x2 + " " + y2 + " " + x + " " + y;
 }
-function Q(x1, y1, x, y) {
+function Q (x1, y1, x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "Q " + x1 + " " + y1 + " " + x + " " + y;
 }
-function q(x1, y1, x, y) {
+function q (x1, y1, x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "q " + x1 + " " + y1 + " " + x + " " + y;
 }
-function T(x, y) {
+function T (x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "T " + x + " " + y;
 }
-function a(rx, ry, f1, f2, f3, x, y) {
+function a (rx, ry, f1, f2, f3, x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "a " + rx + " " + ry + " " + f1 + " " + f2 + " " + f3 + " " + x + " " + y;
 }
-function A(rx, ry, f1, f2, f3, x, y) {
+function A (rx, ry, f1, f2, f3, x, y) {
     Pencil.behaviors.D._setLastLocation(x, y);
     return "A " + rx + " " + ry + " " + f1 + " " + f2 + " " + f3 + " " + x + " " + y;
 }
@@ -219,7 +219,7 @@ const ROTATED_ANGLE = 10;
 const SKETCHY_ANGLE = 4;
 const SKETCHY_ANGLE_LEN_REF = 50;
 
-function skline(x1, y1, x2, y2, d, noMove) {
+function skline (x1, y1, x2, y2, d, noMove) {
     var result = [];
     if (!noMove) result.push(M(x1, y1));
 
@@ -234,7 +234,7 @@ function skline(x1, y1, x2, y2, d, noMove) {
 }
 
 
-function sk(x1, y1, x2, y2, d, noMove) {
+function sk (x1, y1, x2, y2, d, noMove) {
     var result = [];
     if (!noMove) result.push(M(x1, y1));
 
@@ -259,7 +259,7 @@ function sk(x1, y1, x2, y2, d, noMove) {
     return result.join(" ");
 }
 
-function sk_old(x1, y1, x2, y2, d, noMove) {
+function sk_old (x1, y1, x2, y2, d, noMove) {
     var delta = (Math.random() - 1) * DEFAULT_SKETCHY_OVERSHOOT;
 
     var a = Math.PI * (180 - ROTATED_ANGLE + (Math.random() * ROTATED_ANGLE)) / 180;
@@ -307,16 +307,16 @@ function sk_old(x1, y1, x2, y2, d, noMove) {
 
     return result.join(" ");
 }
-function skTo(x, y, d) {
+function skTo (x, y, d) {
     return sk(Pencil.behaviors.D._lastX, Pencil.behaviors.D._lastY, x, y,
         d ? d : DEFAULT_SKETCHY_SEG_SIZE, "noMove");
 }
-function sklineTo(x, y, d) {
+function sklineTo (x, y, d) {
     return skline(Pencil.behaviors.D._lastX, Pencil.behaviors.D._lastY, x, y,
         d ? d : DEFAULT_SKETCHY_SEG_SIZE, "noMove");
 }
 
-function getCalendarDate(dateStr, dayIndex, startWeekBySunday) {
+function getCalendarDate (dateStr, dayIndex, startWeekBySunday) {
     var date = new Date(dateStr);
     if (date == "Invalid Date") date = new Date();
     var month = date.getMonth();
@@ -338,25 +338,25 @@ pencilSandbox.z = z;
 
 Util.importSandboxFunctions(sk, skTo);
 
-function rotate(a) {
+function rotate (a) {
     return "rotate(" + a + ")";
 }
-function translate(x, y) {
+function translate (x, y) {
     return "translate(" + [x, y] + ")";
 }
-function scale(x, y) {
+function scale (x, y) {
     return "scale(" + [x, y] + ")";
 }
-function skewX(a) {
+function skewX (a) {
     return "skewX(" + a + ")";
 }
-function skewY(a) {
+function skewY (a) {
     return "skewY(" + a + ")";
 }
 
 Util.importSandboxFunctions(rotate, translate, scale, skewX, skewY);
 
-Pencil.behaviors.TextContent = function(text, stripAccel, keepExistingRootElement) {
+Pencil.behaviors.TextContent = function (text, stripAccel, keepExistingRootElement) {
     var isText = (this.localName == "text");
 
     if (isText) {
@@ -368,7 +368,7 @@ Pencil.behaviors.TextContent = function(text, stripAccel, keepExistingRootElemen
             var content = (text.constructor == RichText) ? text.html : text.value;
             content = content.replace(/[\r\n]+/gi, "").replace(/<br[^>]*>/gi, "\n").replace(/<[^>]+>/gi, "");
             var thiz = this;
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 Dom.empty(thiz);
                 thiz.appendChild(thiz.ownerDocument.createTextNode(content));
             }, 1);
@@ -391,14 +391,14 @@ Pencil.behaviors.TextContent = function(text, stripAccel, keepExistingRootElemen
         }
     }
 };
-Pencil.behaviors.PlainTextContent = function(text, bound, alignment) {
+Pencil.behaviors.PlainTextContent = function (text, bound, alignment) {
     var domContent = F.buildTextWrapDomContent(F._target, text.value, bound.w, alignment);
     Dom.empty(this);
     this.appendChild(domContent);
 
     Pencil.behaviors.BoxFit.apply(this, [bound, alignment]);
 };
-Pencil.behaviors.RichTextContent = function(text, bound, alignment) {
+Pencil.behaviors.RichTextContent = function (text, bound, alignment) {
     var renderer = new SVGHTMLRenderer();
 
     renderer.importDefaultStyleFromNode(this);
@@ -414,19 +414,19 @@ Pencil.behaviors.RichTextContent = function(text, bound, alignment) {
         height: bound.h
     });
 };
-Pencil.behaviors.DomContent = function(xmlText) {
+Pencil.behaviors.DomContent = function (xmlText) {
     Dom.empty(this);
 
     var domNode = xmlText.nodeType ? xmlText : Dom.parseToNode(xmlText.value, this.ownerDocument);
 
     if (domNode) this.appendChild(domNode);
 };
-Pencil.behaviors.AttachmentContent = function(attachment) {
+Pencil.behaviors.AttachmentContent = function (attachment) {
     Dom.empty(this);
 
     if (!attachment.defId) return;
 
-    var canvas = Dom.findUpward(this, function(node) {
+    var canvas = Dom.findUpward(this, function (node) {
         return node.namespaceURI == PencilNamespaces.xul && node.localName == "pcanvas";
     });
 
@@ -452,12 +452,12 @@ Pencil.behaviors.AttachmentContent = function(attachment) {
         this.appendChild(g);
     }
 };
-Pencil.behaviors.RichTextFit = function(width) {
+Pencil.behaviors.RichTextFit = function (width) {
     Svg.setWidth(this, width);
     Svg.setHeight(this, 900);
     Svg.setHeight(this, Math.ceil(this.firstChild.scrollHeight));
 };
-Pencil.behaviors.Image = function(imageData) {
+Pencil.behaviors.Image = function (imageData) {
     var url = imageData.w > 0 ? (ImageData.refStringToUrl(imageData.data) || imageData.data) : "";
     this.setAttributeNS(PencilNamespaces.xlink, "xlink:href", url);
     Svg.setWidth(this, imageData.w);
@@ -465,20 +465,20 @@ Pencil.behaviors.Image = function(imageData) {
 };
 Pencil.behaviors.Image._offScreenSupport = true;
 
-Pencil.behaviors.EllipseFit = function(box) {
+Pencil.behaviors.EllipseFit = function (box) {
     this.setAttribute("cx", box.w / 2);
     this.setAttribute("cy", box.h / 2);
     this.setAttribute("rx", box.w / 2);
     this.setAttribute("ry", box.h / 2);
 };
-Pencil.behaviors.Property = function(name, value) {
+Pencil.behaviors.Property = function (name, value) {
     this[name] = value;
 };
-Pencil.behaviors.Call = function(name, args) {
+Pencil.behaviors.Call = function (name, args) {
     var f = this[name];
     f.apply(this, args);
 };
-Pencil.behaviors.Width = function(width) {
+Pencil.behaviors.Width = function (width) {
     if (this.namespaceURI == PencilNamespaces.xul) {
         this.setAttribute("width", width);
         this.width = width;
@@ -488,7 +488,7 @@ Pencil.behaviors.Width = function(width) {
 
     Svg.setStyle(this, "width", "" + width + "px");
 };
-Pencil.behaviors.Height = function(height) {
+Pencil.behaviors.Height = function (height) {
     if (this.namespaceURI == PencilNamespaces.xul) {
         this.setAttribute("height", height);
         this.height = height;
@@ -498,27 +498,27 @@ Pencil.behaviors.Height = function(height) {
 
     Svg.setStyle(this, "height", "" + height + "px");
 };
-Pencil.behaviors.Value = function(value, parseAccessKey) {
+Pencil.behaviors.Value = function (value, parseAccessKey) {
     var label = parseAccessKey ? F.stripAccessKey(value) : value;
     this.setAttribute("value", label);
     this.value = label;
 
     this.setAttribute("accesskey", parseAccessKey ? F.getAccessKey(value) : "");
 };
-Pencil.behaviors.Label = function(value, parseAccessKey) {
+Pencil.behaviors.Label = function (value, parseAccessKey) {
     var label = parseAccessKey ? F.stripAccessKey(value) : value;
     this.setAttribute("label", label);
 
     this.setAttribute("accesskey", parseAccessKey ? F.getAccessKey(value) : "");
 };
-Pencil.behaviors.Disabled = function(disabled) {
+Pencil.behaviors.Disabled = function (disabled) {
     this.setAttribute("disabled", disabled ? true : false);
     this.disabled = disabled ? true : false;
 };
 
-Pencil.behaviors.MaintainGlobalDef = function(id, contentFragement) {
+Pencil.behaviors.MaintainGlobalDef = function (id, contentFragement) {
     debug("MaintainGlobalDef");
-    var pcanvas = Dom.findUpward(this, function(node) {
+    var pcanvas = Dom.findUpward(this, function (node) {
         return (node.localName == "pcanvas") && node.drawingLayer;
     });
 
@@ -551,7 +551,7 @@ Pencil.behaviors.MaintainGlobalDef = function(id, contentFragement) {
 
 /* n-Patch supports */
 
-function imageNodeForPatch(patch, x, y, w, h) {
+function imageNodeForPatch (patch, x, y, w, h) {
     return {
         "_name": "image",
         "_uri": PencilNamespaces.svg,
@@ -571,7 +571,7 @@ function imageNodeForPatch(patch, x, y, w, h) {
  * @param dim
  * @returns the dom fragement
  */
-function buildNPatchDomFragment(np, dim) {
+function buildNPatchDomFragment (np, dim) {
     var n = np.patches.length;
     if (n == 0) return null;
     var m = np.patches[0].length;
@@ -629,17 +629,17 @@ function buildNPatchDomFragment(np, dim) {
     return Dom.newDOMFragment(specs);
 }
 
-function getNPatchBound(np, dim) {
+function getNPatchBound (np, dim) {
     return new Bound(np.p1.x, np.p1.y, dim.w - np.p1.x - (np.w - np.p2.x), dim.h - np.p1.y - (np.h - np.p2.y));
 }
 
 Util.importSandboxFunctions(buildNPatchDomFragment, imageNodeForPatch, getNPatchBound);
 
-Pencil.behaviors.NPatchDomContent = function(nPatch, dim) {
+Pencil.behaviors.NPatchDomContent = function (nPatch, dim) {
     Dom.empty(this);
     this.appendChild(buildNPatchDomFragment(nPatch, dim));
 };
-Pencil.behaviors.NPatchDomContentFromImage = function(imageData, dim, xAnchorMaps, yAnchorMaps) {
+Pencil.behaviors.NPatchDomContentFromImage = function (imageData, dim, xAnchorMaps, yAnchorMaps) {
     // sorting
     var xCells = imageData.xCells;
     var yCells = imageData.yCells;
@@ -669,7 +669,7 @@ Pencil.behaviors.NPatchDomContentFromImage = function(imageData, dim, xAnchorMap
     xCells.push({from: imageData.w, to: imageData.w + 1}); // sentinel, fake cell
     yCells.push({from: imageData.h, to: imageData.h + 1}); // sentinel, fake cell
 
-    var order = function(a, b) {
+    var order = function (a, b) {
         return a.from - b.from;
     };
     xCells.sort(order);

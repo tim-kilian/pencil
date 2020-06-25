@@ -1,8 +1,8 @@
-function ComboManager() {
+function ComboManager () {
     BaseTemplatedWidget.call(this);
     this.button = this.node();
     this.renderer = ComboManager.DEFAULT_RENDERER;
-    this.bind("click", function() {
+    this.bind("click", function () {
         if (this.popup.isVisible()) {
             if (thiz.selectingIndex) {
                 thiz.selectItem(thiz.items[thiz.selectingIndex], true);
@@ -18,18 +18,18 @@ function ComboManager() {
     this.bind("keydown", this.handleKeyDown, this.button);
     this.bind("keypress", this.handleKeyPress, this.button);
     this.bind("click", this.onItemClick, this.list);
-    this.bind("p:PopupShown", function() {
+    this.bind("p:PopupShown", function () {
         thiz.ensureSelectedItemVisible();
     }, this.popup);
-    this.bind("p:PopupHidden", function() {
+    this.bind("p:PopupHidden", function () {
         this.button.removeAttribute("active");
         this.popup.popupContainer.scrollTop = 0;
         Dom.emitEvent("p:PopupClosed", this.node(), {});
         // this.popup.removePopup();
         // this.popup.popupContainer.scrollTop = 0;
     }, this.popup);
-    this.popup.shouldCloseOnBlur = function(event) {
-        var found = Dom.findUpward(event.target, function(node) {
+    this.popup.shouldCloseOnBlur = function (event) {
+        var found = Dom.findUpward(event.target, function (node) {
             return node == thiz.button;
         });
         return !found;
@@ -37,20 +37,20 @@ function ComboManager() {
     this.popup.setPopupClass("ComboManagerPopup");
 }
 
-ComboManager.DEFAULT_RENDERER = function(item) {
+ComboManager.DEFAULT_RENDERER = function (item) {
     return "" + item;
 };
 
 __extend(BaseTemplatedWidget, ComboManager);
 
-ComboManager.prototype.onItemClick = function(event) {
+ComboManager.prototype.onItemClick = function (event) {
     var item = Dom.findUpwardForData(event.target, "_data");
     if (typeof(item) == "undefined") return;
 
     this.selectItem(item, true);
 };
-ComboManager.prototype.ensureSelectedItemVisible = function() {
-    var comparer = this.comparer || function(a, b) {
+ComboManager.prototype.ensureSelectedItemVisible = function () {
+    var comparer = this.comparer || function (a, b) {
         return a == b;
     };
     for (var i = 0; i < this.list.childNodes.length; i ++) {
@@ -65,7 +65,7 @@ ComboManager.prototype.ensureSelectedItemVisible = function() {
         }
     }
 };
-ComboManager.prototype.scrollTo = function(index) {
+ComboManager.prototype.scrollTo = function (index) {
     var node = this.list.childNodes[index];
     var oT = Dom.getOffsetTop(node);
     var oH = node.offsetHeight;
@@ -78,7 +78,7 @@ ComboManager.prototype.scrollTo = function(index) {
         this.popup.popupContainer.scrollTop = Math.max(0, this.popup.popupContainer.scrollTop + (oT + oH - pT - pH));
     }
 };
-ComboManager.prototype.setItems = function(items) {
+ComboManager.prototype.setItems = function (items) {
     var first = null;
     this.items = items;
     this.list.innerHTML = "";
@@ -112,8 +112,8 @@ ComboManager.prototype.setItems = function(items) {
     if (items.length > 0) this.selectItem(first);
 };
 
-ComboManager.prototype.selectItem = function(item, fromUserAction, whenMatched) {
-    var comparer = this.comparer || function(a, b) {
+ComboManager.prototype.selectItem = function (item, fromUserAction, whenMatched) {
+    var comparer = this.comparer || function (a, b) {
         return a == b;
     };
 
@@ -165,17 +165,17 @@ ComboManager.prototype.selectItem = function(item, fromUserAction, whenMatched) 
     return matched;
 };
 
-ComboManager.prototype.getSelectedItem = function() {
+ComboManager.prototype.getSelectedItem = function () {
     return this.selectedItem;
 };
-ComboManager.prototype.setDisabled = function(disabled) {
+ComboManager.prototype.setDisabled = function (disabled) {
     if (disabled == true) {
         this.button.setAttribute("disabled", "true");
     } else {
         this.button.removeAttribute("disabled");
     }
 };
-ComboManager.prototype.handleKeyDown = function(event) {
+ComboManager.prototype.handleKeyDown = function (event) {
     if (event.keyCode == DOM_VK_UP || event.keyCode == DOM_VK_DOWN) {
         if (this.selectedNode) {
             this.selectedNode.removeAttribute("selected");
@@ -198,7 +198,7 @@ ComboManager.prototype.handleKeyDown = function(event) {
         this.scrollTo(this.selectingIndex);
     }
 };
-ComboManager.prototype.handleKeyPress = function(event) {
+ComboManager.prototype.handleKeyPress = function (event) {
     var keyCode = event.keyCode;
     if (
         (keyCode > 47 && keyCode < 58) ||

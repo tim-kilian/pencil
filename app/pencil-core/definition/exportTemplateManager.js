@@ -9,21 +9,21 @@ ExportTemplateManager.SUPPORTED_TYPES_NAMES = {
     "ODT": Util.getMessage("templates.for.exporting.to.text.documents")
 };
 
-ExportTemplateManager.addTemplate = function(template, type) {
+ExportTemplateManager.addTemplate = function (template, type) {
     if (!ExportTemplateManager.templates[type]) {
         ExportTemplateManager.templates[type] = [];
     }
     ExportTemplateManager.templates[type].push(template);
     ExportTemplateManager.templateMap[template.id] = template;
 };
-ExportTemplateManager.getTemplatesForType = function(type) {
+ExportTemplateManager.getTemplatesForType = function (type) {
     return ExportTemplateManager.templates[type];
 };
-ExportTemplateManager.getTemplateById = function(templateId) {
+ExportTemplateManager.getTemplateById = function (templateId) {
     return ExportTemplateManager.templateMap[templateId];
 };
 
-ExportTemplateManager.loadTemplatesIn = function(templateDir) {
+ExportTemplateManager.loadTemplatesIn = function (templateDir) {
     try {
         for (var i in ExportTemplateManager.SUPPORTED_TYPES) {
             var type = ExportTemplateManager.SUPPORTED_TYPES[i];
@@ -35,7 +35,7 @@ ExportTemplateManager.loadTemplatesIn = function(templateDir) {
     }
 };
 
-ExportTemplateManager.loadUserDefinedTemplates = function() {
+ExportTemplateManager.loadUserDefinedTemplates = function () {
     try {
         var templateDir = ExportTemplateManager.getUserTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
@@ -44,10 +44,10 @@ ExportTemplateManager.loadUserDefinedTemplates = function() {
     }
 };
 
-ExportTemplateManager.getUserTemplateDirectory = function() {
+ExportTemplateManager.getUserTemplateDirectory = function () {
     return Config.getDataFilePath("exportTemplates");
 };
-ExportTemplateManager.loadSystemWideDefinedTemplates = function() {
+ExportTemplateManager.loadSystemWideDefinedTemplates = function () {
     try {
         var templateDir = ExportTemplateManager.getSystemWideTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
@@ -55,7 +55,7 @@ ExportTemplateManager.loadSystemWideDefinedTemplates = function() {
         Console.dumpError(e);
     }
 };
-ExportTemplateManager.getSystemWideTemplateDirectory = function() {
+ExportTemplateManager.getSystemWideTemplateDirectory = function () {
     var properties = Components.classes["@mozilla.org/file/directory_service;1"]
         .getService(Components.interfaces.nsIProperties);
 
@@ -65,7 +65,7 @@ ExportTemplateManager.getSystemWideTemplateDirectory = function() {
 
     return templateDir;
 };
-ExportTemplateManager.loadDefaultTemplates = function() {
+ExportTemplateManager.loadDefaultTemplates = function () {
     try {
         var templateDir = ExportTemplateManager.getDefaultTemplateDirectory();
         ExportTemplateManager.loadTemplatesIn(templateDir);
@@ -73,17 +73,17 @@ ExportTemplateManager.loadDefaultTemplates = function() {
         Console.dumpError(e);
     }
 };
-ExportTemplateManager.getDefaultTemplateDirectory = function() {
+ExportTemplateManager.getDefaultTemplateDirectory = function () {
     return getStaticFilePath("pencil-core/templates");
 };
-ExportTemplateManager._loadUserDefinedTemplatesIn = function(templateDir, type) {
+ExportTemplateManager._loadUserDefinedTemplatesIn = function (templateDir, type) {
     // loading all templates
     try {
         var stat = fs.statSync(templateDir);
         if (!stat.isDirectory()) return;
 
         var entries = fs.readdirSync(templateDir);
-        entries.forEach(function(dir) {
+        entries.forEach(function (dir) {
             var dirPath = path.join(templateDir, dir);
             stat = fs.statSync(dirPath);
             if (!stat.isDirectory()) return;
@@ -99,7 +99,7 @@ ExportTemplateManager._loadUserDefinedTemplatesIn = function(templateDir, type) 
     }
 };
 
-ExportTemplateManager.loadTemplates = function() {
+ExportTemplateManager.loadTemplates = function () {
     ExportTemplateManager.templates = {};
     ExportTemplateManager.templateMap = {};
 
@@ -117,7 +117,7 @@ ExportTemplateManager.loadTemplates = function() {
     }
     ExportTemplateManager.loadDefaultTemplates();
 };
-ExportTemplateManager.installNewTemplate = function(type, callback) {
+ExportTemplateManager.installNewTemplate = function (type, callback) {
     // var nsIFilePicker = Components.interfaces.nsIFilePicker;
     // var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     // fp.init(window, Util.getMessage("filepicker.open.document"), nsIFilePicker.modeOpen);
@@ -133,13 +133,13 @@ ExportTemplateManager.installNewTemplate = function(type, callback) {
         filters: [
             {name: "Template files", extensions: ["epxt", "zip"]}
         ]
-    }, function(filenames) {
+    }, function (filenames) {
         if (!filenames || filenames.length <= 0) return;
         Config.set("template.install.recentlyDirPath", path.dirname(filenames[0]));
         ExportTemplateManager.installTemplateFromFile(filenames, type, callback);
     });
 };
-ExportTemplateManager.installTemplateFromFile = function(file, type, callback) {
+ExportTemplateManager.installTemplateFromFile = function (file, type, callback) {
     console.log("begin install template, from file : " + file);
     var readStream = fs.createReadStream(file.toString());
     var targetDir = ExportTemplateManager.getUserTemplateDirectory().toString();
@@ -149,13 +149,13 @@ ExportTemplateManager.installTemplateFromFile = function(file, type, callback) {
     targetDir = targetDir.concat("/" + fileName.replace(/\.[^\.]+$/, "") + "_" + Math.ceil(Math.random() * 1000) + "_" + (new Date().getTime()));
     readStream
         .pipe(unzip.Extract({path: targetDir}))
-        .on("entry", function(entry) {
+        .on("entry", function (entry) {
             var stat = fs.statSync(targetDir);
             if (!stat || !stat.isDirectory()) {
                 fs.mkdirSync(targetDir);
             }
         })
-        .on("close", function() {
+        .on("close", function () {
             try {
                 var template = ExportTemplate.parse(targetDir);
 
@@ -247,7 +247,7 @@ ExportTemplateManager.installTemplateFromFile = function(file, type, callback) {
     //     extractedDir.remove(true);
     // }
 };
-ExportTemplateManager.uninstallTemplate = function(template) {
+ExportTemplateManager.uninstallTemplate = function (template) {
     try {
         debug("About to remove: " + template.dir);
         // template.dir.remove(true);

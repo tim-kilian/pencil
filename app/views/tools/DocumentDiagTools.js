@@ -1,18 +1,18 @@
-function DocumentDiagTools() {
+function DocumentDiagTools () {
 
 }
 
-DocumentDiagTools.checkMissingResources = function() {
-    Pencil.controller.doc.pages.forEach(function(page) {
+DocumentDiagTools.checkMissingResources = function () {
+    Pencil.controller.doc.pages.forEach(function (page) {
         ApplicationPane._instance.activatePage(page);
         var svg = page.canvas.svg;
         console.log("Page: " + page.name);
-        Dom.workOn(".//svg:g[@p:type='Shape']", svg, function(shapeNode) {
+        Dom.workOn(".//svg:g[@p:type='Shape']", svg, function (shapeNode) {
             var symbolName = Svg.getSymbolName(shapeNode);
             var eNameNode = Dom.getSingle("./p:metadata/p:property[name='elementName']", shapeNode);
             var eName = eNameNode ? eNameNode.textContent : null;
 
-            Dom.workOn("./p:metadata/p:property", shapeNode, function(propNode) {
+            Dom.workOn("./p:metadata/p:property", shapeNode, function (propNode) {
                 var name = propNode.getAttribute("name");
                 var n = name.toLowerCase();
                 if (n.indexOf("imagedata") < 0) return;

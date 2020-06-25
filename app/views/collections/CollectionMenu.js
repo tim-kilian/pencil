@@ -1,4 +1,4 @@
-function CollectionMenu(collection, collectionPane) {
+function CollectionMenu (collection, collectionPane) {
     Menu.call(this);
     this.collection = collection;
     this.setup();
@@ -6,52 +6,52 @@ function CollectionMenu(collection, collectionPane) {
 }
 __extend(Menu, CollectionMenu);
 
-CollectionMenu.prototype.getTemplatePath = function() {
+CollectionMenu.prototype.getTemplatePath = function () {
     return this.getTemplatePrefix() + "menus/Menu.xhtml";
 };
 
-CollectionMenu.prototype.setup = function() {
+CollectionMenu.prototype.setup = function () {
     var thiz = this;
     if (thiz.collection.propertyGroups.length > 0) {
         this.register({
-            getLabel: function() {
+            getLabel: function () {
                 return "Collection setting...";
             },
             icon: "tune",
-            isValid: function() {
+            isValid: function () {
                 return thiz.collection.propertyGroups;
             },
-            run: function() {
+            run: function () {
                 var propertiesSettingDialog = new CollectionSettingDialog(thiz.collection);
                 propertiesSettingDialog.open();
             }
         });
     }
     this.register({
-        getLabel: function() {
+        getLabel: function () {
             return "Hide";
         },
         icon: "visibility_off",
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             thiz.collectionPane.setVisibleCollection(thiz.collection, false);
         }
     });
     this.register({
-        getLabel: function() {
+        getLabel: function () {
             return "Uninstall";
         },
         icon: "delete",
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.collection.userDefined;
         },
-        run: function() {
+        run: function () {
             Dialog.confirm(
                 "Are you sure you want to uninstall this collection?",
                 "Uninstalling will remove this collection completely from Pencil. Shapes created from this collection will no longer be editable.",
-                "Yes, Uninstall", function() {
+                "Yes, Uninstall", function () {
                     CollectionManager.uninstallCollection(thiz.collection);
                     thiz.collectionPane.reload();
                 },
@@ -60,13 +60,13 @@ CollectionMenu.prototype.setup = function() {
         }
     });
     this.register({
-        getLabel: function() {
+        getLabel: function () {
             return "About '" + thiz.collection.displayName + "'...";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             this.aboutdg = new AboutCollectionDialog(thiz.collection);
             this.aboutdg.open();
         }
@@ -77,7 +77,7 @@ CollectionMenu.prototype.setup = function() {
     this.register({
         label: "Go to",
         type: "SubMenu",
-        getSubItems: function() {
+        getSubItems: function () {
             var items = [];
             var collections = CollectionManager.shapeDefinition.collections;
             for (var i = 0; i < collections.length; i ++) {
@@ -85,7 +85,7 @@ CollectionMenu.prototype.setup = function() {
                 items.push({
                     label: collection.displayName,
                     collection: collection,
-                    run: function() {
+                    run: function () {
                         console.log("goto:", collection);
                         thiz.collectionPane.setVisibleCollection(this.collection, true);
                         thiz.hideMenu();
@@ -97,11 +97,11 @@ CollectionMenu.prototype.setup = function() {
     });
 
     this.register({
-        getLabel: function() {
+        getLabel: function () {
             return "Manage Collections...";
         },
         icon: "settings",
-        run: function() {
+        run: function () {
             new CollectionManagementDialog(thiz.collectionPane).open();
         }
     });

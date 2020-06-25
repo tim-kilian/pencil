@@ -1,4 +1,4 @@
-function ConsoleOutputDialog(acceptActionLabel) {
+function ConsoleOutputDialog (acceptActionLabel) {
     this.grabWidth = true;
     this.widthMargin = 30 * Util.em();
     this.grabHeight = true;
@@ -9,10 +9,10 @@ function ConsoleOutputDialog(acceptActionLabel) {
 }
 __extend(Dialog, ConsoleOutputDialog);
 
-ConsoleOutputDialog.prototype.setup = function() {
+ConsoleOutputDialog.prototype.setup = function () {
 };
 
-ConsoleOutputDialog.prototype.append = function(message, type, important) {
+ConsoleOutputDialog.prototype.append = function (message, type, important) {
     var div = document.createElement("div");
     if (important) Dom.addClass(div, "Important");
     div.appendChild(document.createTextNode(message));
@@ -22,7 +22,7 @@ ConsoleOutputDialog.prototype.append = function(message, type, important) {
     this.output.scrollTop = this.output.scrollHeight;
 };
 
-ConsoleOutputDialog.prototype.getDialogActions = function() {
+ConsoleOutputDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL
     ];

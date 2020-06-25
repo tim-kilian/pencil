@@ -1,10 +1,10 @@
-function Walker() {
+function Walker () {
     this.segments = [];
     this.currentSegment = null;
     this.i = -1;
 }
 
-Walker.prototype.step = function(alpha) {
+Walker.prototype.step = function (alpha) {
     this.i ++;
     if (!this.currentSegment || this.currentSegment.alpha != alpha) {
         this.currentSegment = {
@@ -21,12 +21,12 @@ Walker.prototype.step = function(alpha) {
 
 var NinePatch = {};
 
-function Point(x, y) {
+function Point (x, y) {
     this.x = x;
     this.y = y;
 }
 
-NinePatch.start = function(imageUrl) {
+NinePatch.start = function (imageUrl) {
 /*
     var container = document.getElementById("imageContainer");
     container.innerHTML = "";
@@ -41,7 +41,7 @@ NinePatch.start = function(imageUrl) {
     NinePatch.createPatches(image);
 };
 
-function handleImageLoad() {
+function handleImageLoad () {
     var image = getSourceImageContainer().firstChild;
     var path = document.getElementById("path");
     var html = "<strong>Path:</strong><br/>";
@@ -51,7 +51,7 @@ function handleImageLoad() {
     NinePatch.createPatches(image);
 }
 
-NinePatch.createPatches = function(image) {
+NinePatch.createPatches = function (image) {
     var w = image.width;
     var h = image.height;
 
@@ -178,7 +178,7 @@ NinePatch.createPatches = function(image) {
     textarea.focus();
 };
 
-function getPixel(imageData, x, y) {
+function getPixel (imageData, x, y) {
     var base = (x + y * imageData.width) * 4;
     return {
         r: imageData.data[base],
@@ -188,7 +188,7 @@ function getPixel(imageData, x, y) {
     };
 }
 
-function createPatch(srcImage, p1, p2, scaleX, scaleY) {
+function createPatch (srcImage, p1, p2, scaleX, scaleY) {
     var canvas = document.getElementById("canvas");
     var w = p2.x - p1.x;
     var h = p2.y - p1.y;
@@ -202,7 +202,7 @@ function createPatch(srcImage, p1, p2, scaleX, scaleY) {
     var data = canvas.toDataURL("image/png");
     appendResult(data, w, h, scaleX, scaleY);
 }
-function appendResult(data, w, h, scaleX, scaleY) {
+function appendResult (data, w, h, scaleX, scaleY) {
     var result= document.getElementById("parsedImageContainer");
     var img = document.createElement("img");
 
@@ -221,7 +221,7 @@ function appendResult(data, w, h, scaleX, scaleY) {
     NinePatch.currentRow.push(patch);
 }
 
-function browse() {
+function browse () {
     var nsIFilePicker = Components.interfaces.nsIFilePicker;
     var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
     fp.init(window, "Open .9.png", nsIFilePicker.modeOpen);
@@ -241,11 +241,11 @@ function browse() {
     image.src = url.spec + "?time=" + new Date().getTime();
 }
 
-function getSourceImageContainer() {
+function getSourceImageContainer () {
     return document.getElementById("imageContainer");
 }
 
-function test() {
+function test () {
     var cases = [
         ["#off", "#on"],
         ["disabled", null],
@@ -253,7 +253,7 @@ function test() {
         ["holo_dark.png", "holo_light.png"]
     ];
 
-    function gen(i) {
+    function gen (i) {
         var b = cases[i];
         var result = [];
         if (i == cases.length - 1) {
@@ -274,7 +274,7 @@ function test() {
     return gen(0);
 }
 
-function name(x) {
+function name (x) {
     if (x) return "_" + x;
     return "";
 }

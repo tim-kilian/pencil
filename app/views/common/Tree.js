@@ -1,11 +1,11 @@
-var Tree = function() {
-    function treeClickHandler(event) {
+var Tree = function () {
+    function treeClickHandler (event) {
         var target = Dom.getTarget(event);
-        var chevron = Dom.findUpward(target, function(n) {
+        var chevron = Dom.findUpward(target, function (n) {
             return Dom.hasClass(n, "Chevron");
         });
 
-        var itemObject = Dom.findUpward(target, function(n) {
+        var itemObject = Dom.findUpward(target, function (n) {
             return n._item;
         });
 
@@ -13,7 +13,7 @@ var Tree = function() {
 
         // check for click on leaf, wth?
         if (itemObject) {
-            var treeContainer = Dom.findUpward(target, function(n) {
+            var treeContainer = Dom.findUpward(target, function (n) {
                 return n._tree;
             });
 
@@ -55,7 +55,7 @@ var Tree = function() {
             return;
         }
 
-        var treeContainer = Dom.findUpward(target, function(n) {
+        var treeContainer = Dom.findUpward(target, function (n) {
             return n._tree;
         });
 
@@ -81,12 +81,12 @@ var Tree = function() {
         }
     }
 
-    function treeCheckBoxListener(event) {
+    function treeCheckBoxListener (event) {
         var target = Dom.getTarget(event);
         if (!target || !Dom.hasClass(target, "Checkbox") || target.nodeName.toLowerCase() != "input") return;
         if (target.disabled) return;
 
-        var treeContainer = Dom.findUpward(target, function(n) {
+        var treeContainer = Dom.findUpward(target, function (n) {
             return n._tree;
         });
 
@@ -102,7 +102,7 @@ var Tree = function() {
         Dom.emitEvent("blur", treeContainer, {});
     }
 
-    function setItemsCheckedRecursivelyFromNodes(nodes, checked) {
+    function setItemsCheckedRecursivelyFromNodes (nodes, checked) {
         for ( var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             node.childNodes[0].childNodes[1].checked = checked;
@@ -112,11 +112,11 @@ var Tree = function() {
             }
         }
     }
-    function getChildrenContainerFromItemNode(itemNode) {
+    function getChildrenContainerFromItemNode (itemNode) {
         return itemNode.childNodes[1];
     }
 
-    function setExpandedClasses(itemNode, expanded) {
+    function setExpandedClasses (itemNode, expanded) {
         Dom.removeClass(itemNode, expanded ? "Collapsed" : "Expanded");
         Dom.addClass(itemNode, !expanded ? "Collapsed" : "Expanded");
 
@@ -127,7 +127,7 @@ var Tree = function() {
         Dom.addClass(itemNode._childContainerElement, !expanded ? "CollapsedChildren" : "ExpandedChildren");
     }
 
-    function Tree() {
+    function Tree () {
         BaseWidget.call(this);
         this.container = this.node();
 
@@ -138,7 +138,7 @@ var Tree = function() {
     }
     __extend(BaseTemplatedWidget, Tree);
 
-    Tree.prototype.setup = function(source, renderer, options) {
+    Tree.prototype.setup = function (source, renderer, options) {
         this.source = source;
         this.renderer = renderer;
         this.options = options || {};
@@ -146,11 +146,11 @@ var Tree = function() {
         this.onInitializing = true;
         this.init();
     };
-    Tree.prototype.same = function(a, b) {
+    Tree.prototype.same = function (a, b) {
         if (this.options.same) return this.options.same(a, b);
         return a == b;
     };
-    Tree.prototype.init = function(__callback) {
+    Tree.prototype.init = function (__callback) {
         Dom.addClass(this.container, "Tree");
         if (this.options.checkable) {
             Dom.addClass(this.container, "CheckableTree");
@@ -166,12 +166,12 @@ var Tree = function() {
         this.uniqueName = "tree" + widget.random();
 
         var thiz = this;
-        this.loadChildren(null, div, function() {
+        this.loadChildren(null, div, function () {
             if (thiz.options.expandedAll) {
-                thiz.walk(function(item, node) {
+                thiz.walk(function (item, node) {
                     thiz.ensureNodeExpanded(node);
                     return true;
-                }, null, function() {
+                }, null, function () {
                     var rootNodes = thiz.rootChildrenContainer.childNodes;
                     var hasChild = false;
                     for ( var i = 0; i < rootNodes.length; i++) {
@@ -194,12 +194,12 @@ var Tree = function() {
             if (__callback) __callback();
         });
     };
-    Tree.prototype.refresh = function(__callback) {
+    Tree.prototype.refresh = function (__callback) {
         var checkedItems = this.getCheckedItemsSync();
         var selectedItem = this.getSelectedItem();
 
         this.container.innerHTML = "";
-        this.init(function() {
+        this.init(function () {
             this.setSelectedItem(selectedItem);
             this.setCheckedItems(checkedItems);
             if (__callback) __callback();
@@ -207,7 +207,7 @@ var Tree = function() {
     };
 
 
-    Tree.prototype.rebuildItemNodeUI = function(oldItemNode, item) {
+    Tree.prototype.rebuildItemNodeUI = function (oldItemNode, item) {
         var itemNode = this.buildItemNode(item);
         itemNode._item = item;
         var expanded = Dom.hasClass(oldItemNode, "Expanded");
@@ -235,11 +235,11 @@ var Tree = function() {
     };
     */
 
-    Tree.prototype.loadChildren = function(parentItem, childrenContainer, callback) {
+    Tree.prototype.loadChildren = function (parentItem, childrenContainer, callback) {
         Dom.addClass(childrenContainer, "Loading");
         var thiz = this;
 
-        this.source(parentItem, function(children) {
+        this.source(parentItem, function (children) {
             childrenContainer.innerHTML = "";
             if (!children) children = [];
             for ( var i = 0; i < children.length; i++) {
@@ -270,17 +270,17 @@ var Tree = function() {
         });
     };
 
-    function appendArray(source, dest) {
+    function appendArray (source, dest) {
         for ( var i = 0; i < source.length; i++) {
             dest.push(source[i]);
         }
     }
-    Tree.prototype.walk = function(visitor, tryRemaining, doneCallback) {
+    Tree.prototype.walk = function (visitor, tryRemaining, doneCallback) {
         var queue = [];
         appendArray(this.rootChildrenContainer.childNodes, queue);
 
         var thiz = this;
-        var next = function() {
+        var next = function () {
             if (queue.length <= 0) {
                 if (doneCallback) doneCallback();
                 return;
@@ -297,7 +297,7 @@ var Tree = function() {
                 appendArray(childContainer.childNodes, queue);
                 next();
             } else {
-                thiz.loadChildren(item, childContainer, function() {
+                thiz.loadChildren(item, childContainer, function () {
                     node.childLoaded = true;
                     appendArray(childContainer.childNodes, queue);
                     next();
@@ -308,14 +308,14 @@ var Tree = function() {
         next();
     };
 
-    Tree.prototype.setNodeAsChecked = function(itemNode, checked) {
+    Tree.prototype.setNodeAsChecked = function (itemNode, checked) {
         var checkbox = itemNode.childNodes[0].childNodes[1];
         checkbox.checked = checked;
     };
-    Tree.prototype.setExpandedClasses = function(itemNode) {
+    Tree.prototype.setExpandedClasses = function (itemNode) {
         setExpandedClasses(itemNode, true);
     };
-    Tree.prototype.ensureNodeExpanded = function(itemNode) {
+    Tree.prototype.ensureNodeExpanded = function (itemNode) {
         var p = Dom.findUpwardForNodeWithData(itemNode.parentNode, "_item");
         while (p) {
             setExpandedClasses(p, true);
@@ -323,11 +323,11 @@ var Tree = function() {
         }
     };
 
-    Tree.prototype.setCheckedItems = function(items) {
+    Tree.prototype.setCheckedItems = function (items) {
         var remaining = items.slice(0);
         var thiz = this;
 
-        this.walk(function(item, node) {
+        this.walk(function (item, node) {
             var checkable = !thiz.options.isItemCheckable || thiz.options.isItemCheckable(item);
             var match = null;
             var index = -1;
@@ -355,13 +355,13 @@ var Tree = function() {
         });
     };
 
-    Tree.prototype.getCheckedItems = function(callback) {
+    Tree.prototype.getCheckedItems = function (callback) {
         var checkedItems = [];
         var queue = [];
         appendArray(this.rootChildrenContainer.childNodes, queue);
 
         var thiz = this;
-        var next = function() {
+        var next = function () {
             if (queue.length <= 0) return;
             var node = queue.shift();
             var item = node._item;
@@ -377,7 +377,7 @@ var Tree = function() {
         next();
         if (callback) callback(checkedItems);
     };
-    Tree.prototype.getCheckedItemsFromNodes = function(nodes) {
+    Tree.prototype.getCheckedItemsFromNodes = function (nodes) {
         var checkedItems = [];
         for ( var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
@@ -391,11 +391,11 @@ var Tree = function() {
 
         return checkedItems;
     };
-    Tree.prototype.getCheckedItemsSync = function() {
+    Tree.prototype.getCheckedItemsSync = function () {
         return this.getCheckedItemsFromNodes(this.rootChildrenContainer.childNodes);
     };
 
-    Tree.prototype.buildItemNode = function(item) {
+    Tree.prototype.buildItemNode = function (item) {
         var thiz = this;
         var id = "item" + widget.random();
         var className = "ItemText";
@@ -491,20 +491,20 @@ var Tree = function() {
         return itemNode;
     };
 
-    Tree.prototype.setOnItemClickListener = function(listener) {
+    Tree.prototype.setOnItemClickListener = function (listener) {
         this.listener = listener;
         return this;
     };
 
-    Tree.prototype.findParentItem = function(contextNode) {
+    Tree.prototype.findParentItem = function (contextNode) {
         var thiz = this;
-        var node = Dom.findUpward(contextNode, function(n) {
+        var node = Dom.findUpward(contextNode, function (n) {
             return n._item || n == thiz.container;
         });
 
         if (!node || !node._item) return null;
 
-        node = Dom.findUpward(node.parentNode, function(n) {
+        node = Dom.findUpward(node.parentNode, function (n) {
             return n._item || n == thiz.container;
         });
 
@@ -512,10 +512,10 @@ var Tree = function() {
         return null;
     };
 
-    Tree.prototype.setSelectedItem = function(selectedItem) {
+    Tree.prototype.setSelectedItem = function (selectedItem) {
         var list = this.container.getElementsByClassName("ItemText");
         for ( var i = 0; i < list.length; i++) {
-            var itemObject = Dom.findUpward(list[i], function(n) {
+            var itemObject = Dom.findUpward(list[i], function (n) {
                 return n._item;
             });
 
@@ -533,14 +533,14 @@ var Tree = function() {
         this.emitChangeEvent();
     };
 
-    Tree.prototype.emitChangeEvent = function() {
+    Tree.prototype.emitChangeEvent = function () {
         Dom.emitEvent("p:SelectionChanged", this.container, {});
     };
 
-    Tree.prototype.getSelectedItem = function() {
+    Tree.prototype.getSelectedItem = function () {
         var list = this.container.getElementsByClassName("ItemText");
         for ( var i = 0; i < list.length; i++) {
-            var itemObject = Dom.findUpward(list[i], function(n) {
+            var itemObject = Dom.findUpward(list[i], function (n) {
                 return n._item;
             });
 
@@ -554,10 +554,10 @@ var Tree = function() {
         return null;
     };
 
-    Tree.prototype.refreshItemDisplay = function(validate, all) {
+    Tree.prototype.refreshItemDisplay = function (validate, all) {
         var list = this.container.getElementsByClassName("ItemText");
         for ( var i = 0; i < list.length; i++) {
-            var itemObject = Dom.findUpward(list[i], function(n) {
+            var itemObject = Dom.findUpward(list[i], function (n) {
                 return n._item;
             });
 
@@ -565,7 +565,7 @@ var Tree = function() {
             var item = itemObject._item;
             if (!validate(item)) continue;
             var label = Dom.findChild(list[i], {
-                eval: function(n) {
+                eval: function (n) {
                     return Dom.isTag(n, "label");
                 }
             });

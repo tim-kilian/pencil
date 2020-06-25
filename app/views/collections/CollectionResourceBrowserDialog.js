@@ -1,4 +1,4 @@
-function CollectionResourceBrowserDialog(collection, options) {
+function CollectionResourceBrowserDialog (collection, options) {
     Dialog.call(this);
     this.collection = collection;
 
@@ -11,13 +11,13 @@ function CollectionResourceBrowserDialog(collection, options) {
     this.title = this.collection.displayName + " Resource Selection";
     this.subTitle = "Select resource provided by collection";
 
-    this.prefixCombo.renderer = function(item) {
+    this.prefixCombo.renderer = function (item) {
         return item.name;
     };
 
     this.prefixCombo.setItems(this.prefixes);
 
-    this.collectionCombo.renderer = function(item) {
+    this.collectionCombo.renderer = function (item) {
         return item.displayName;
     };
     var availableCollections = collection.RESOURCE_LIST ? [collection] : [];
@@ -50,12 +50,12 @@ function CollectionResourceBrowserDialog(collection, options) {
 
     this.searchTimeout = null;
     var thiz = this;
-    this.bind("input", function() {
+    this.bind("input", function () {
         if (this.searchTimeout) {
             window.clearTimeout(this.searchTimeout);
             this.searchTimeout = null;
         }
-        this.searchTimeout = window.setTimeout(function() {
+        this.searchTimeout = window.setTimeout(function () {
             thiz.search();
         }, 500);
     }, this.filterInput);
@@ -65,12 +65,12 @@ function CollectionResourceBrowserDialog(collection, options) {
     this.bind("p:ItemSelected", this.search, this.prefixCombo);
     this.bind("p:ItemSelected", this.changeCollection, this.collectionCombo);
 
-    var ensureVisibleItemsContentFunction = function() {
+    var ensureVisibleItemsContentFunction = function () {
         this.revealTimeout = null;
         this.ensureVisibleItemsContent();
     }.bind(this);
 
-    this.bind("scroll", function() {
+    this.bind("scroll", function () {
         if (this.revealTimeout) {
             clearTimeout(this.revealTimeout);
         }
@@ -103,12 +103,12 @@ CollectionResourceBrowserDialog.RETURN_DOMCONTENT= "Document";
 
 CollectionResourceBrowserDialog.optionCache = {};
 
-CollectionResourceBrowserDialog.prototype.getDialogActions = function() {
+CollectionResourceBrowserDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL,
         {
             type: "accept", title: "Select",
-            run: function() {
+            run: function () {
                 if (this.selectedView) this.returnDataInSelectedView();
                 return false;
             }
@@ -116,12 +116,12 @@ CollectionResourceBrowserDialog.prototype.getDialogActions = function() {
     ];
 };
 
-CollectionResourceBrowserDialog.prototype.onShown = function() {
+CollectionResourceBrowserDialog.prototype.onShown = function () {
     this.filterInput.focus();
     this.filterInput.select();
     this.search();
 };
-CollectionResourceBrowserDialog.prototype.invalidatePrefixList = function() {
+CollectionResourceBrowserDialog.prototype.invalidatePrefixList = function () {
     var collection = this.collectionCombo.getSelectedItem();
     var prefixes = [];
     if (collection.id == this.collection.id) {
@@ -136,12 +136,12 @@ CollectionResourceBrowserDialog.prototype.invalidatePrefixList = function() {
 
     this.prefixCombo.setItems(prefixes);
 };
-CollectionResourceBrowserDialog.prototype.changeCollection = function() {
+CollectionResourceBrowserDialog.prototype.changeCollection = function () {
     this.invalidatePrefixList();
     this.focusResult = true;
     this.search();
 };
-CollectionResourceBrowserDialog.prototype.search = function() {
+CollectionResourceBrowserDialog.prototype.search = function () {
     this.searchTimeout = null;
     var keyword = this.filterInput.value.trim();
     var items = [];
@@ -161,7 +161,7 @@ CollectionResourceBrowserDialog.prototype.search = function() {
     }
 
     this.getMatchingResources(dirPath, this.prefix || "", keyword)
-        .then(function(matched) {
+        .then(function (matched) {
             Dom.empty(this.resultContainer);
             var count = 0;
             var previousview = null;
@@ -194,16 +194,16 @@ CollectionResourceBrowserDialog.prototype.search = function() {
 
             this.ensureVisibleItemsContent();
         }.bind(this))
-        .catch(function(err) {
+        .catch(function (err) {
             console.error(err);
         });
 };
-CollectionResourceBrowserDialog.prototype.handleListFocus = function(e) {
+CollectionResourceBrowserDialog.prototype.handleListFocus = function (e) {
     var view = Dom.findUpwardForNodeWithData(e.target, "_data");
     if (!view) return;
     this.selectedView = view;
 };
-CollectionResourceBrowserDialog.prototype.returnData = function(data) {
+CollectionResourceBrowserDialog.prototype.returnData = function (data) {
     var collection = this.collectionCombo.getSelectedItem();
 
     if (this.returnType == CollectionResourceBrowserDialog.RETURN_IMAGEDATA) {
@@ -232,11 +232,11 @@ CollectionResourceBrowserDialog.prototype.returnData = function(data) {
         });
     }
 };
-CollectionResourceBrowserDialog.prototype.returnDataInSelectedView = function() {
+CollectionResourceBrowserDialog.prototype.returnDataInSelectedView = function () {
     if (!this.selectedView || !this.selectedView._data) return;
     this.returnData(this.selectedView._data);
 };
-CollectionResourceBrowserDialog.prototype.handleFilterKeyDown = function(e) {
+CollectionResourceBrowserDialog.prototype.handleFilterKeyDown = function (e) {
     if (e.keyCode == DOM_VK_ENTER || e.keyCode == DOM_VK_RETURN) {
         if (this.searchTimeout) {
             this.focusResult = true;
@@ -248,7 +248,7 @@ CollectionResourceBrowserDialog.prototype.handleFilterKeyDown = function(e) {
         e.preventDefault();
     }
 };
-CollectionResourceBrowserDialog.prototype.handleListKeyDown = function(e) {
+CollectionResourceBrowserDialog.prototype.handleListKeyDown = function (e) {
     var view = Dom.findUpwardForNodeWithData(e.target, "_data");
     if (!view) return;
 
@@ -286,20 +286,20 @@ CollectionResourceBrowserDialog.prototype.handleListKeyDown = function(e) {
         this.returnData(view._data);
     }
 };
-CollectionResourceBrowserDialog.prototype.getMatchingResources = function(dirPath, relativePath, keyword) {
-    return new Promise(function(resolve, reject) {
+CollectionResourceBrowserDialog.prototype.getMatchingResources = function (dirPath, relativePath, keyword) {
+    return new Promise(function (resolve, reject) {
         var items = [];
         var pending = [{
             abs: dirPath,
             rel: relativePath
         }];
-        var next = function() {
+        var next = function () {
             if (pending.length == 0) {
                 resolve(items);
                 return;
             }
             var current = pending.shift();
-            fs.readdir(current.abs, "utf8", function(err, files) {
+            fs.readdir(current.abs, "utf8", function (err, files) {
                 if (err) {
                     reject(err);
                     return;
@@ -335,7 +335,7 @@ CollectionResourceBrowserDialog.prototype.getMatchingResources = function(dirPat
     });
 };
 
-CollectionResourceBrowserDialog.handleSVGObjectLoaded = function(e) {
+CollectionResourceBrowserDialog.handleSVGObjectLoaded = function (e) {
     var object = event.target;
     if (!object.parentNode || !object.parentNode.showing) return;
 
@@ -345,13 +345,13 @@ CollectionResourceBrowserDialog.handleSVGObjectLoaded = function(e) {
     svg.setAttribute("viewBox", "0 0 " + w + " " + h);
     object.parentNode._data.size = new Dimension(Math.round(parseFloat(w)), Math.round(parseFloat(h)));
 };
-CollectionResourceBrowserDialog.handleImageLoaded = function(e) {
+CollectionResourceBrowserDialog.handleImageLoaded = function (e) {
     var image = event.target;
     if (!image.parentNode || !image.parentNode.showing) return;
 
     image.parentNode._data.size = new Dimension(image.naturalWidth, image.naturalHeight);
 };
-CollectionResourceBrowserDialog.prototype.showItem = function(item, shouldShow) {
+CollectionResourceBrowserDialog.prototype.showItem = function (item, shouldShow) {
     if (item.showing == shouldShow) return;
 
     item.innerHTML = "";
@@ -390,7 +390,7 @@ CollectionResourceBrowserDialog.prototype.showItem = function(item, shouldShow) 
 
     item.showing = shouldShow;
 };
-CollectionResourceBrowserDialog.prototype.ensureVisibleItemsContent = function() {
+CollectionResourceBrowserDialog.prototype.ensureVisibleItemsContent = function () {
     var pr = this.resultContainerWrapper.getBoundingClientRect();
     for (var i = 0; i < this.resultContainer.childNodes.length; i ++) {
         var node = this.resultContainer.childNodes[i];
@@ -402,13 +402,13 @@ CollectionResourceBrowserDialog.prototype.ensureVisibleItemsContent = function()
     }
 };
 CollectionResourceBrowserDialog.SVG_IMAGE_DATA_PREFIX = "data:image/svg+xml;utf8,";
-CollectionResourceBrowserDialog.prototype.handleItemDblClick = function(e) {
+CollectionResourceBrowserDialog.prototype.handleItemDblClick = function (e) {
     var data = Dom.findUpwardForData(e.target, "_data");
     if (!data) return;
 
     this.returnData(data);
 };
 
-CollectionResourceBrowserDialog.open = function(collection, options, callback) {
+CollectionResourceBrowserDialog.open = function (collection, options, callback) {
     new CollectionResourceBrowserDialog(collection, options).callback(callback).open();
 };

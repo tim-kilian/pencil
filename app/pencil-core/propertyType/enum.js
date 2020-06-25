@@ -1,10 +1,10 @@
-function Enum(value) {
+function Enum (value) {
     this.value = value ? value : null;
 }
-Enum.fromString = function(literal) {
+Enum.fromString = function (literal) {
     return new Enum(literal);
 };
-Enum.getValuesFromMeta = function(meta) {
+Enum.getValuesFromMeta = function (meta) {
     var literals = pEval(meta.enumValues, {});
 
     var values = [];
@@ -17,7 +17,7 @@ Enum.getValuesFromMeta = function(meta) {
 
     return values;
 };
-Enum.getValues = function(def) {
+Enum.getValues = function (def) {
     try {
         // return from cache, if any
         if (def._enumValues_parsed) return def._enumValues_parsed;
@@ -32,15 +32,15 @@ Enum.getValues = function(def) {
         return [];
     }
 };
-Enum.prototype.equals = function(other) {
+Enum.prototype.equals = function (other) {
     return this.value == other.value;
 };
-Enum.prototype.toString = function() {
+Enum.prototype.toString = function () {
     return "" + this.value;
 };
 
 pencilSandbox.Enum = {
-    newEnum: function(v) {
+    newEnum: function (v) {
         return new Enum(v);
     }
 };

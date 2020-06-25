@@ -1,5 +1,5 @@
 const path = require("path");
-function init() {
+function init () {
     const ipcRenderer = require("electron").ipcRenderer;
     const fs = require("fs");
     const sharedUtil = require("./pencil-core/common/shared-util");
@@ -7,18 +7,18 @@ function init() {
 
     var combinedCSS = "";
 
-    function QueueHandler() {
+    function QueueHandler () {
         this.tasks = [];
     }
 
-    QueueHandler.prototype.submit = function(task) {
+    QueueHandler.prototype.submit = function (task) {
         this.tasks.push(task);
 
         if (this.tasks.length == 1) this.start();
     };
 
-    QueueHandler.prototype.start = function(task) {
-        var next = function() {
+    QueueHandler.prototype.start = function (task) {
+        var next = function () {
             if (this.tasks.length <= 0) return;
             var task = this.tasks.pop();
             task(next);
@@ -27,7 +27,7 @@ function init() {
         next();
     };
 
-    function getList(xpath, node) {
+    function getList (xpath, node) {
         var doc = node.ownerDocument ? node.ownerDocument : node;
         var xpathResult = doc.evaluate(xpath, node, PencilNamespaces.resolve, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
         var nodes = [];
@@ -44,7 +44,7 @@ function init() {
     var parser = new DOMParser();
     var serializer = new XMLSerializer();
 
-    function rasterize(svgNode, width, height, s, processLinks, callback) {
+    function rasterize (svgNode, width, height, s, processLinks, callback) {
         var images = svgNode.querySelectorAll("image");
         var totalImageLength = 0;
         var objectsWithLinking = [];
@@ -78,7 +78,7 @@ function init() {
         }
 
         var index = -1;
-        function convertNext() {
+        function convertNext () {
             index ++;
             if (index >= tasks.length) {
                 onConversionDone();
@@ -92,7 +92,7 @@ function init() {
             var mime = "image/jpeg";
             if (ext == ".png") mine = "image/png";
 
-            fs.readFile(sourcePath, function(error, bitmap) {
+            fs.readFile(sourcePath, function (error, bitmap) {
                 var url = "data:" + mime + ";base64," + new Buffer(bitmap).toString("base64");
 
                 image.setAttributeNS(xlink, "href", url);
@@ -102,7 +102,7 @@ function init() {
             });
         }
 
-        function postProcess() {
+        function postProcess () {
             // parse for linking location on this page
             console.log("processLinks", processLinks);
             if (processLinks) {
@@ -142,7 +142,7 @@ function init() {
             }
         }
 
-        function onConversionDone() {
+        function onConversionDone () {
             // it looks like that the bigger images embedded, the longer time we need to wait for the image to be fully painted into the canvas
             var cssDelay = combinedCSS ? combinedCSS.length / 120 : 0;
             var delay = Math.max(1000, totalImageLength / 30000 + cssDelay);
@@ -160,13 +160,13 @@ function init() {
             var img = document.createElement("img");
             document.body.appendChild(img);
 
-            img.onload = function() {
+            img.onload = function () {
                 ctx.save();
                 ctx.scale(s, s);
                 ctx.drawImage(img, 0, 0);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                setTimeout(function() {
+                setTimeout(function () {
                     postProcess();
                     callback(canvas.toDataURL(), objectsWithLinking);
                     ctx.restore();
@@ -183,19 +183,19 @@ function init() {
         convertNext();
     }
 
-    function createRenderTask(event, data) {
-        return function(__callback) {
+    function createRenderTask (event, data) {
+        return function (__callback) {
             // parse the SVG back into DOM
             var xml = data.svg;
             var css = "svg { line-height: 1.428; }";
             if (combinedCSS) css += "\n" + combinedCSS;
 
-            xml = xml.replace(/^(<svg[^>\/]+>)/i, function(all, one) {
+            xml = xml.replace(/^(<svg[^>\/]+>)/i, function (all, one) {
                 return one + "<style type=\"text/css\">\n" + css + "</style>";
             });
 
             var svgNode = parser.parseFromString(xml, "text/xml");
-            rasterize(svgNode, data.width, data.height, data.scale, data.processLinks, function(dataURL, objectsWithLinking) {
+            rasterize(svgNode, data.width, data.height, data.scale, data.processLinks, function (dataURL, objectsWithLinking) {
                 console.log("RASTER: Returning render result for " + data.id);
                 ipcRenderer.send("canvas-render-response", {url: dataURL, id: data.id, objectsWithLinking: objectsWithLinking});
                 __callback();
@@ -204,15 +204,15 @@ function init() {
     }
 
 
-    ipcRenderer.on("canvas-render-request", function(event, data) {
+    ipcRenderer.on("canvas-render-request", function (event, data) {
         queueHandler.submit(createRenderTask(event, data));
     });
 
 
-    ipcRenderer.on("font-loading-request", function(event, data) {
+    ipcRenderer.on("font-loading-request", function (event, data) {
         // creating combinedCSS
         combinedCSS = "";
-        sharedUtil.buildEmbeddedFontFaceCSS(data.faces, function(css) {
+        sharedUtil.buildEmbeddedFontFaceCSS(data.faces, function (css) {
             combinedCSS = css;
             ipcRenderer.send("font-loading-response", data);
         });

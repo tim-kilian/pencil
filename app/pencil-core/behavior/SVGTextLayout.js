@@ -1,4 +1,4 @@
-function SVGHTMLRenderer() {
+function SVGHTMLRenderer () {
     this.defaultBlockHandler = SVGHTMLRenderer.HANDLERS.div;
     this.defaultStyle = {
         fontFamily: "Arial, sans-serif",
@@ -14,11 +14,11 @@ function SVGHTMLRenderer() {
 
     SVGHTMLRenderer.prepare();
 }
-SVGHTMLRenderer.prototype.isInline = function(node) {
+SVGHTMLRenderer.prototype.isInline = function (node) {
     var display = node.ownerDocument.defaultView.getComputedStyle(node).display;
     return (display == "inline" || display == "inline-block");
 };
-SVGHTMLRenderer.prototype.layout = function(nodes, view, outmost) {
+SVGHTMLRenderer.prototype.layout = function (nodes, view, outmost) {
     var layouts = [];
     var inlines = [];
     for (var i = 0; i < nodes.length; i ++) {
@@ -78,7 +78,7 @@ SVGHTMLRenderer.prototype.layout = function(nodes, view, outmost) {
     }
     return layouts;
 };
-SVGHTMLRenderer.prototype.createInlineLayout = function(nodes, view) {
+SVGHTMLRenderer.prototype.createInlineLayout = function (nodes, view) {
     var layout = new SVGTextLayout(view.width);
     var hAlign = 0;
     if (nodes.length > 0) {
@@ -101,11 +101,11 @@ SVGHTMLRenderer.prototype.createInlineLayout = function(nodes, view) {
     layout.appendNodeList(nodes);
     return [layout];
 };
-SVGHTMLRenderer.prototype.getHandler = function(nodeName) {
+SVGHTMLRenderer.prototype.getHandler = function (nodeName) {
     return SVGHTMLRenderer.HANDLERS[nodeName];
 };
 
-SVGHTMLRenderer.COMMON_HEADING_HANDLER = function(node, view, preceedingLayouts) {
+SVGHTMLRenderer.COMMON_HEADING_HANDLER = function (node, view, preceedingLayouts) {
     var margin = SVGTextLayout.measure(node, "xxx", this.defaultStyle).h;
 
     var contentView = {
@@ -119,7 +119,7 @@ SVGHTMLRenderer.COMMON_HEADING_HANDLER = function(node, view, preceedingLayouts)
     blank.marginBottom = margin;
     return layouts ? (layouts.concat([blank])) : [blank];
 };
-SVGHTMLRenderer._findBottom = function(layouts, defaultValue, marginTop) {
+SVGHTMLRenderer._findBottom = function (layouts, defaultValue, marginTop) {
     if (!layouts || layouts.length <= 0) return defaultValue;
     var bottom = null;
     for (var layout of layouts) {
@@ -129,7 +129,7 @@ SVGHTMLRenderer._findBottom = function(layouts, defaultValue, marginTop) {
 
     return bottom;
 };
-SVGHTMLRenderer.LIST_HANDLER = function(node, view) {
+SVGHTMLRenderer.LIST_HANDLER = function (node, view) {
     var parentComputedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
     var marginTop = parseFloat(parentComputedStyle.marginTop);
     var marginBottom = parseFloat(parentComputedStyle.marginBottom);
@@ -185,7 +185,7 @@ SVGHTMLRenderer.LIST_HANDLER = function(node, view) {
                 var circle = (listStyleType == "circle");
                 layouts.push({
                     x: view.x + size.w * 2, y: bottom + (size.h - bulletSize) / 2, height: bulletSize,
-                    renderInto: function(container) {
+                    renderInto: function (container) {
                         var rect = container.ownerDocument.createElementNS(PencilNamespaces.svg, "rect");
                         rect.setAttribute("x", this.x);
                         rect.setAttribute("y", this.y);
@@ -210,7 +210,7 @@ SVGHTMLRenderer.LIST_HANDLER = function(node, view) {
 };
 
 SVGHTMLRenderer.HANDLERS = {
-    div: function(node, view) {
+    div: function (node, view) {
         return this.layout(node.childNodes, view);
     },
     p: SVGHTMLRenderer.COMMON_HEADING_HANDLER,
@@ -220,7 +220,7 @@ SVGHTMLRenderer.HANDLERS = {
     h4: SVGHTMLRenderer.COMMON_HEADING_HANDLER,
     h5: SVGHTMLRenderer.COMMON_HEADING_HANDLER,
     h6: SVGHTMLRenderer.COMMON_HEADING_HANDLER,
-    blockquote: function(node, view, preceedingLayouts) {
+    blockquote: function (node, view, preceedingLayouts) {
         var size = SVGTextLayout.measure(node, "x", this.defaultStyle);
 
         var contentView = {
@@ -239,13 +239,13 @@ SVGHTMLRenderer.HANDLERS = {
     },
     ul: SVGHTMLRenderer.LIST_HANDLER,
     ol: SVGHTMLRenderer.LIST_HANDLER,
-    hr: function(node, view, preceedingLayouts) {
+    hr: function (node, view, preceedingLayouts) {
         var size = SVGTextLayout.measure(node, "x", this.defaultStyle);
         var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
         return [
             {
                 x: view.x, y: SVGHTMLRenderer._findBottom(preceedingLayouts, view.y, size.h / 2), height: 1, marginBottom: size.h / 2,
-                renderInto: function(container) {
+                renderInto: function (container) {
                     var rect = container.ownerDocument.createElementNS(PencilNamespaces.svg, "rect");
                     rect.setAttribute("x", this.x);
                     rect.setAttribute("y", this.y);
@@ -263,13 +263,13 @@ SVGHTMLRenderer.HANDLERS = {
 SVGHTMLRenderer.STYLE_NAME_MAP = {
     fill: "color"
 };
-SVGHTMLRenderer.prototype.importDefaultStyleFromNode = function(node) {
+SVGHTMLRenderer.prototype.importDefaultStyleFromNode = function (node) {
     for (var name in this.defaultStyle) {
         var value = node.style[name];
         if (value) this.defaultStyle[SVGHTMLRenderer.STYLE_NAME_MAP[name] || name] = value;
     }
 };
-SVGHTMLRenderer.prototype.renderHTML = function(html, container, view) {
+SVGHTMLRenderer.prototype.renderHTML = function (html, container, view) {
     var doc = container.ownerDocument;
     if (!doc.body) doc = document;
     var div = doc.createElementNS(PencilNamespaces.html, "div");
@@ -290,7 +290,7 @@ SVGHTMLRenderer.prototype.renderHTML = function(html, container, view) {
 
     div.parentNode.removeChild(div);
 };
-SVGHTMLRenderer.prototype.render = function(nodes, container, view) {
+SVGHTMLRenderer.prototype.render = function (nodes, container, view) {
     Dom.empty(container);
     var layouts = this.layout(nodes, view);
     if (!layouts || layouts.length == 0) return;
@@ -311,7 +311,7 @@ SVGHTMLRenderer.prototype.render = function(nodes, container, view) {
     }
 };
 
-SVGHTMLRenderer.prepare = function() {
+SVGHTMLRenderer.prepare = function () {
     if (SVGHTMLRenderer.svg) return;
     SVGHTMLRenderer.svg = document.createElementNS(PencilNamespaces.svg, "svg");
     SVGHTMLRenderer.svg.setAttribute("version", "1.0");
@@ -325,19 +325,19 @@ SVGHTMLRenderer.prepare = function() {
     document.body.appendChild(SVGHTMLRenderer.svg);
     SVGTextLayout.prepare(SVGHTMLRenderer.svg);
 };
-SVGHTMLRenderer.cleanup = function() {
+SVGHTMLRenderer.cleanup = function () {
     SVGTextLayout.cleanup();
 };
 
-function BlankLayout(x, y, width, height) {
+function BlankLayout (x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
 }
-BlankLayout.prototype.renderInto = function() {};
+BlankLayout.prototype.renderInto = function () {};
 
-function SVGTextLayout(width) {
+function SVGTextLayout (width) {
     this.rows = [];
     this.extraDirectStyles = ["backgroundColor"];
     this.styleNameMap = {
@@ -347,24 +347,24 @@ function SVGTextLayout(width) {
     this.currentRow = null;
     this.width = width || Number.MAX_VALUE;
 }
-SVGTextLayout.prepare = function(svg) {
+SVGTextLayout.prepare = function (svg) {
     SVGTextLayout.textNode = svg.ownerDocument.createElementNS(PencilNamespaces.svg, "text");
     svg.appendChild(SVGTextLayout.textNode);
 
     SVGTextLayout.tspan = svg.ownerDocument.createElementNS(PencilNamespaces.svg, "tspan");
     SVGTextLayout.textNode.appendChild(SVGTextLayout.tspan);
 };
-SVGTextLayout.cleanup = function() {
+SVGTextLayout.cleanup = function () {
     if (!SVGTextLayout.textNode) return;
     SVGTextLayout.textNode.parentNode.removeChild(SVGTextLayout.textNode);
 };
 
-SVGTextLayout.prototype.newLine = function(shift) {
+SVGTextLayout.prototype.newLine = function (shift) {
     var top = 0;
     if (this.currentRow) top = this.currentRow.y + this.currentRow.height + (shift || 0);
     this._createNewRow(top);
 };
-SVGTextLayout.prototype._createNewRow = function(top) {
+SVGTextLayout.prototype._createNewRow = function (top) {
     this.currentRow = {
         y: top,
         x: 0,
@@ -376,7 +376,7 @@ SVGTextLayout.prototype._createNewRow = function(top) {
     };
     this.rows.push(this.currentRow);
 };
-SVGTextLayout.measure = function(node, text, defaultStyle) {
+SVGTextLayout.measure = function (node, text, defaultStyle) {
     var computedStyle = node.ownerDocument.defaultView.getComputedStyle(node);
     for (var styleName in defaultStyle) {
         var value = computedStyle[styleName] || defaultStyle[styleName];
@@ -396,7 +396,7 @@ SVGTextLayout.measure = function(node, text, defaultStyle) {
         h: box.height
     };
 };
-SVGTextLayout.prototype.add = function(text, styles, respectNewlinesAndSpaces) {
+SVGTextLayout.prototype.add = function (text, styles, respectNewlinesAndSpaces) {
     if (!respectNewlinesAndSpaces) {
         text = text.replace(/[ \r\n]{2,}$/, " ");
         if (text.match(/^[ ]+$/)) return;
@@ -485,13 +485,13 @@ SVGTextLayout.prototype.add = function(text, styles, respectNewlinesAndSpaces) {
     }
 };
 Object.defineProperty(SVGTextLayout.prototype, "height", {
-    get: function() {
+    get: function () {
         if (!this.rows || this.rows.length == 0) return 0;
         var last = this.rows[this.rows.length - 1];
         return last.y + last.height;
     }
 });
-SVGTextLayout.prototype._appendSegment = function(text, styles, bbox, adjustedLineHeight) {
+SVGTextLayout.prototype._appendSegment = function (text, styles, bbox, adjustedLineHeight) {
     var h = bbox.height;
     var dy = bbox.y;
     if (adjustedLineHeight > 0) {
@@ -513,7 +513,7 @@ SVGTextLayout.prototype._appendSegment = function(text, styles, bbox, adjustedLi
     this.currentRow.baselineShift = Math.max(this.currentRow.baselineShift, 0 - segment.dy);
 };
 
-SVGTextLayout.prototype.renderInto = function(container) {
+SVGTextLayout.prototype.renderInto = function (container) {
     var x = this.x;
     var y = this.y;
     var hAlign = this.hAlign || 0;
@@ -560,7 +560,7 @@ SVGTextLayout.prototype.renderInto = function(container) {
     }
     container.appendChild(text);
 };
-SVGTextLayout.prototype.addHTML = function(html) {
+SVGTextLayout.prototype.addHTML = function (html) {
     var div = document.createElement("div");
     for (var name in this.defaultStyle) {
         var value = this.defaultStyle[name];
@@ -576,7 +576,7 @@ SVGTextLayout.prototype.addHTML = function(html) {
     div.parentNode.removeChild(div);
 };
 
-SVGTextLayout.prototype.appendNodeList = function(nodes) {
+SVGTextLayout.prototype.appendNodeList = function (nodes) {
     var computedStyle = null;
     var isBlock = false;
 
@@ -619,7 +619,7 @@ SVGTextLayout.prototype.appendNodeList = function(nodes) {
         }
     }
 };
-SVGTextLayout.prototype._addDomContentxxxx = function(contentNode) {
+SVGTextLayout.prototype._addDomContentxxxx = function (contentNode) {
     var computedStyle = contentNode.ownerDocument.defaultView.getComputedStyle(contentNode);
     var isBlock = computedStyle.display == "block";
     if (isBlock && this.currentRow && this.currentRow.segments.length > 0) {

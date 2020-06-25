@@ -1,10 +1,10 @@
-function StencilCollectionDetailDialog(acceptActionLabel) {
+function StencilCollectionDetailDialog (acceptActionLabel) {
     Dialog.call(this);
     this.title = "Stencil Collection Details";
     this.acceptActionLabel = acceptActionLabel;
 
 
-    this.bind("e:TabChange", function() {
+    this.bind("e:TabChange", function () {
         if (this.settingTabPane.getActiveTabPane() == this.scriptTab) {
             if (this.scriptEditor) return;
 
@@ -19,7 +19,7 @@ function StencilCollectionDetailDialog(acceptActionLabel) {
 
 
             var thiz = this;
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 thiz.scriptEditor.focus();
                 thiz.scriptEditor.setCursor(0);
             }, 100);
@@ -31,7 +31,7 @@ function StencilCollectionDetailDialog(acceptActionLabel) {
 }
 __extend(Dialog, StencilCollectionDetailDialog);
 
-StencilCollectionDetailDialog.prototype.handleSetBrowseEvent = function(event) {
+StencilCollectionDetailDialog.prototype.handleSetBrowseEvent = function (event) {
     var targetInputName = event.target ? event.target.getAttribute("target") : null;
     if (!targetInputName) return;
 
@@ -43,7 +43,7 @@ StencilCollectionDetailDialog.prototype.handleSetBrowseEvent = function(event) {
         title: "Select Resource Directory",
         defaultPath: defaultPath,
         properties: ["openDirectory"]
-    }, function(filenames) {
+    }, function (filenames) {
         if (!filenames || filenames.length <= 0) return;
         var selectedPath = filenames[0];
         if (Pencil.controller.documentPath) {
@@ -59,7 +59,7 @@ StencilCollectionDetailDialog.prototype.handleSetBrowseEvent = function(event) {
         }
     });
 };
-StencilCollectionDetailDialog.prototype.setup = function(options) {
+StencilCollectionDetailDialog.prototype.setup = function (options) {
     options = options || {};
     this.originalOptions = options;
     this.doc = options.doc || Pencil.controller.doc;
@@ -92,7 +92,7 @@ StencilCollectionDetailDialog.prototype.setup = function(options) {
         }
     }
 };
-StencilCollectionDetailDialog.prototype.save = function() {
+StencilCollectionDetailDialog.prototype.save = function () {
     var options = {};
 
     if (this.originalOptions) {
@@ -129,16 +129,16 @@ StencilCollectionDetailDialog.prototype.save = function() {
     }
 };
 
-StencilCollectionDetailDialog.prototype.toggleLargeScriptView = function() {
+StencilCollectionDetailDialog.prototype.toggleLargeScriptView = function () {
     var large = this.largeScriptViewCheckbox.checked;
     this.scriptTab.setAttribute("large", large);
     this.settingTabPane.ensureSizing();
     this.invalidatePosition();
 };
 
-StencilCollectionDetailDialog.prototype.getDialogActions = function() {
+StencilCollectionDetailDialog.prototype.getDialogActions = function () {
     return [
-        {type: "accept", title: this.acceptActionLabel || "Save", run: function() {
+        {type: "accept", title: this.acceptActionLabel || "Save", run: function () {
             return this.save();
         }},
         Dialog.ACTION_CANCEL

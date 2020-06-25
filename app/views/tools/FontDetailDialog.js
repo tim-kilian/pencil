@@ -1,4 +1,4 @@
-function FontDetailDialog() {
+function FontDetailDialog () {
     Dialog.call(this);
     this.title = "Font Detail";
 
@@ -8,7 +8,7 @@ function FontDetailDialog() {
 
 __extend(Dialog, FontDetailDialog);
 
-FontDetailDialog.prototype.setup = function(options) {
+FontDetailDialog.prototype.setup = function (options) {
     this.options = options || {};
 
     this.inputs = {};
@@ -56,7 +56,7 @@ FontDetailDialog.prototype.setup = function(options) {
         this.variantBox.appendChild(hbox);
     }
 };
-FontDetailDialog.prototype.handleFileInputChange = function(event) {
+FontDetailDialog.prototype.handleFileInputChange = function (event) {
     var input = event.target;
 
     if (input.value) {
@@ -65,12 +65,12 @@ FontDetailDialog.prototype.handleFileInputChange = function(event) {
         input.removeAttribute("haspath");
     }
 };
-FontDetailDialog.prototype.getDialogActions = function() {
+FontDetailDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         {
             type: "accept", title: "Install",
-            run: function() {
+            run: function () {
                 var fontName = this.fontNameInput.value;
                 if (!fontName) {
                     Dialog.error("Font name is invalid.", "Please enter a font name.");
@@ -116,7 +116,7 @@ FontDetailDialog.prototype.getDialogActions = function() {
         },
         {
             type: "extra", title: "Batch File Select...",
-            run: function() {
+            run: function () {
                 dialog.showOpenDialog(remote.getCurrentWindow(), {
                     title: "Select Font Files",
                     defaultPath: Config.get("document.open.recentlyDirPath", null) || os.homedir(),
@@ -124,7 +124,7 @@ FontDetailDialog.prototype.getDialogActions = function() {
                         {name: "Fonts", extensions: ["ttf", "otf", "woff"]}
                     ],
                     properties: ["multiSelections"]
-                }, function(filePaths) {
+                }, function (filePaths) {
                     if (!filePaths || filePaths.length <= 0) return;
                     Config.set("document.open.recentlyDirPath", path.dirname(filePaths[0]));
                     this.handleMultipleFileSelection(filePaths);
@@ -134,7 +134,7 @@ FontDetailDialog.prototype.getDialogActions = function() {
         Dialog.ACTION_CANCEL
     ];
 };
-FontDetailDialog.prototype.setPathToInput = function(input, filePath) {
+FontDetailDialog.prototype.setPathToInput = function (input, filePath) {
     input._filePath = filePath;
     input.value = filePath ? path.basename(filePath) : "";
     if (input.value) {
@@ -143,7 +143,7 @@ FontDetailDialog.prototype.setPathToInput = function(input, filePath) {
         input.removeAttribute("haspath");
     }
 };
-FontDetailDialog.prototype.handleClick = function(event) {
+FontDetailDialog.prototype.handleClick = function (event) {
     var button = event.target;
     if (!button.className || button.className.indexOf("BrowseButton") < 0) return;
 
@@ -154,7 +154,7 @@ FontDetailDialog.prototype.handleClick = function(event) {
         filters: [
             {name: "Fonts", extensions: ["ttf", "otf", "woff"]}
         ]
-    }, function(filePaths) {
+    }, function (filePaths) {
         if (!filePaths || filePaths.length <= 0) {
             this.setPathToInput(input, "");
         } else {
@@ -163,7 +163,7 @@ FontDetailDialog.prototype.handleClick = function(event) {
         }
     }.bind(this));
 };
-FontDetailDialog.prototype.handleMultipleFileSelection = function(filePaths) {
+FontDetailDialog.prototype.handleMultipleFileSelection = function (filePaths) {
     for (var filePath of filePaths) {
         var guessedVariant = this.guessVariantName(filePath);
         console.log(filePath + " -> " + guessedVariant);
@@ -184,7 +184,7 @@ FontDetailDialog.WEIGHT_NAME_ALIASES = [
     {name: "bold", aliases: ["bold"]},
     {name: "black", aliases: ["black", "heavy"]}
 ];
-FontDetailDialog.prototype.guessVariantName = function(filePath) {
+FontDetailDialog.prototype.guessVariantName = function (filePath) {
     var name = path.basename(filePath).toLowerCase();
     var weight = "regular";
     var style = "";

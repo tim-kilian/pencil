@@ -1,4 +1,4 @@
-function PageMenu(pageListView, page) {
+function PageMenu (pageListView, page) {
     Menu.call(this);
     this.pageListView = pageListView;
     this.page = page;
@@ -7,27 +7,27 @@ function PageMenu(pageListView, page) {
 __extend(Menu, PageMenu);
 
 
-PageMenu.prototype.getTemplatePath = function() {
+PageMenu.prototype.getTemplatePath = function () {
     return this.getTemplatePrefix() + "menus/Menu.xhtml";
 };
 
-PageMenu.prototype.setup = function() {
+PageMenu.prototype.setup = function () {
     var thiz = this;
 
     this.register({
         key: "PageNewPage",
         icon: "add",
-        getLabel: function() {
+        getLabel: function () {
             return thiz.page ? "New Child Page..." : "New Page...";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             var dialog = new PageDetailDialog();
             dialog.open({
                 parentpage: thiz.page,
-                onDone: function(page) {
+                onDone: function (page) {
                     if (!page) return;
                     thiz.pageListView.activatePage(page);
                 }
@@ -40,18 +40,18 @@ PageMenu.prototype.setup = function() {
     this.register({
         key: "PageDuplicate",
         icon: "content_copy",
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page;
         },
-        getLabel: function() {
+        getLabel: function () {
             return "Duplicate";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
-            var onDone = function() {
-                return function(page) {
+        run: function () {
+            var onDone = function () {
+                return function (page) {
                     thiz.pageListView.activatePage(page);
                 };
             };
@@ -61,19 +61,19 @@ PageMenu.prototype.setup = function() {
     this.register({
         key: "PageDelete",
         icon: "remove",
-        getLabel: function() {
+        getLabel: function () {
             return "Delete";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page;
         },
-        run: function() {
+        run: function () {
             Dialog.confirm(
                 "Are you sure you really want to delete this page?", null,
-                "Delete", function() {
+                "Delete", function () {
                     var page = Pencil.controller.deletePage(thiz.page);
                     if (page) {
                         thiz.pageListView.activatePage(page);
@@ -88,16 +88,16 @@ PageMenu.prototype.setup = function() {
     this.register({
         key: "PageMoveLeft",
         icon: "keyboard_arrow_left",
-        getLabel: function() {
+        getLabel: function () {
             return "Move Left";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page && Pencil.controller.checkLeftRight(thiz.page, "left");
         },
-        run: function() {
+        run: function () {
             Pencil.controller.movePage(thiz.page, "left");
         }
     });
@@ -105,36 +105,36 @@ PageMenu.prototype.setup = function() {
     this.register({
         key: "PageMoveRight",
         icon: "keyboard_arrow_right",
-        getLabel: function() {
+        getLabel: function () {
             return "Move Right";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page && Pencil.controller.checkLeftRight(thiz.page, "right");
         },
-        run: function() {
+        run: function () {
             Pencil.controller.movePage(thiz.page, "right");
         }
     });
-    function createSubCommand(page) {
+    function createSubCommand (page) {
         var key = "open" + page.name +"page";
         var items = {"key": key, "item": {
             key: key,
             label: page.name,
-            run: function() {
+            run: function () {
                 thiz.pageListView.activatePage(page);
             }
         }};
         return items;
     }
-    function createSubItems(page, subItems) {
+    function createSubItems (page, subItems) {
         var key = "open" + page.name +"page";
         var items = {"key": key, "item": {
             key: key,
             label: page.name,
-            run: function() {
+            run: function () {
                 thiz.pageListView.activatePage(page);
             },
             type: "SubMenu",
@@ -142,7 +142,7 @@ PageMenu.prototype.setup = function() {
         }};
         return items;
     }
-    function createChildMenu(page, items) {
+    function createChildMenu (page, items) {
         for (var i = 0; i < page.children.length; i++) {
             var childPage = page.children[i];
             var item;
@@ -176,10 +176,10 @@ PageMenu.prototype.setup = function() {
 
     this.register({
         key: "PageGotoNode",
-        getLabel: function() {
+        getLabel: function () {
             return "Goto";
         },
-        isEnabled: function() {
+        isEnabled: function () {
             return check;
         },
         type: "SubMenu",
@@ -188,7 +188,7 @@ PageMenu.prototype.setup = function() {
 
     this.separator();
 
-    UICommandManager.getCommand("exportPageAsPNGButton").isEnabled = function() {
+    UICommandManager.getCommand("exportPageAsPNGButton").isEnabled = function () {
         return thiz.page;
     };
     UICommandManager.getCommand("exportPageAsPNGButton").page = thiz.page;
@@ -197,7 +197,7 @@ PageMenu.prototype.setup = function() {
     this.register({
         key: "copyPageBitmapCommand",
         label: "Copy Page Bitmap",
-        run: function() {
+        run: function () {
             Pencil.controller.copyPageBitmap(thiz.page);
         },
         shortcut: "Ctrl+Shift+C"
@@ -207,20 +207,20 @@ PageMenu.prototype.setup = function() {
 
     this.register({
         key: "PageEditPageNode",
-        getLabel: function() {
+        getLabel: function () {
             return "Edit Page Note...";
         },
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page;
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             var dialog = new EditPageNoteDialog();
             dialog.open({
                 defaultPage: thiz.page,
-                onDone: function(editor) {
+                onDone: function (editor) {
                     console.log("Complete note");
                     thiz.page.note = editor;
                 }
@@ -229,21 +229,21 @@ PageMenu.prototype.setup = function() {
     });
     this.register({
         key: "PageProperties",
-        isEnabled: function() {
+        isEnabled: function () {
             return thiz.page;
         },
-        getLabel: function() {
+        getLabel: function () {
             return "Properties...";
         },
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             var dialog = new PageDetailDialog();
             dialog.title = "Edit Page Properties";
             dialog.open({
                 defaultPage: thiz.page,
-                onDone: function(page) {
+                onDone: function (page) {
                 }
             });
         }

@@ -1,9 +1,9 @@
 var WebUtil = {
-    get: function(url, onComplete, rq) {
+    get: function (url, onComplete, rq) {
         try {
             var req = new XMLHttpRequest();
 
-            req.onreadystatechange = function(aEvt) {
+            req.onreadystatechange = function (aEvt) {
                 if (req.readyState == 4) {
                     // debug("url: " + url);
                     // debug(req.status);
@@ -23,10 +23,10 @@ var WebUtil = {
         }
     },
 
-    getMetadata: function(url, onComplete, rq) {
+    getMetadata: function (url, onComplete, rq) {
         try {
             var req = new XMLHttpRequest();
-            req.onreadystatechange = function(aEvt) {
+            req.onreadystatechange = function (aEvt) {
                 if (req.readyState == 4) {
                     var size = req.getResponseHeader("Content-Length");
                     onComplete(size);

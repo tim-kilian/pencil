@@ -1,4 +1,4 @@
-function TargetSet(canvas, targets) {
+function TargetSet (canvas, targets) {
     this.canvas = canvas;
     this.targets = targets;
     this.targetIds = [];
@@ -45,10 +45,10 @@ function TargetSet(canvas, targets) {
     }
     this.propertyGroup = propertyGroup;
 }
-TargetSet.prototype.isFor = function(svg) {
+TargetSet.prototype.isFor = function (svg) {
     return false;
 };
-TargetSet.prototype.getProperties = function() {
+TargetSet.prototype.getProperties = function () {
     var properties = {};
     for (var p in this.propertyGroup.properties) {
         var name = this.propertyGroup.properties[p].name;
@@ -57,19 +57,19 @@ TargetSet.prototype.getProperties = function() {
 
     return properties;
 };
-TargetSet.prototype.setInitialPropertyValues = function() {
+TargetSet.prototype.setInitialPropertyValues = function () {
 };
-TargetSet.prototype.applyBehaviorForProperty = function(name) {
+TargetSet.prototype.applyBehaviorForProperty = function (name) {
 };
-TargetSet.prototype.getPropertyGroups = function() {
+TargetSet.prototype.getPropertyGroups = function () {
     return [this.propertyGroup];
 };
-TargetSet.prototype.setProperty = function(name, value) {
+TargetSet.prototype.setProperty = function (name, value) {
     for (t in this.targets) {
         this.targets[t].setProperty(name, value);
     }
 };
-TargetSet.prototype.getProperty = function(name, any) {
+TargetSet.prototype.getProperty = function (name, any) {
     if (name == "box") return null;
     var firstValue = this.targets[0].getProperty(name);
 
@@ -94,15 +94,15 @@ TargetSet.prototype.getProperty = function(name, any) {
     //
     // return same ? firstValue : null;
 };
-TargetSet.prototype.locatePropertyNode = function(name) {
+TargetSet.prototype.locatePropertyNode = function (name) {
     return null;
 };
-TargetSet.prototype.storeProperty = function(name, value) {
+TargetSet.prototype.storeProperty = function (name, value) {
 };
-TargetSet.prototype.getGeometry = function() {
+TargetSet.prototype.getGeometry = function () {
     return null;
 };
-TargetSet.prototype.getBoundingRect = function() {
+TargetSet.prototype.getBoundingRect = function () {
     if (this.targets.length <= 0) return null;
     var rect = this.targets[0].getBoundingRect();
     for (var i = 1; i < this.targets.length; i ++) {
@@ -118,47 +118,47 @@ TargetSet.prototype.getBoundingRect = function() {
     }
     return rect;
 };
-TargetSet.prototype.setGeometry = function(geo) {
+TargetSet.prototype.setGeometry = function (geo) {
 };
 
-TargetSet.prototype.moveBy = function(x, y, zoomAware) {
+TargetSet.prototype.moveBy = function (x, y, zoomAware) {
     for (i in this.targets) this.targets[i].moveBy(x, y, true);
 };
 
-TargetSet.prototype.containsControllerId = function(id) {
+TargetSet.prototype.containsControllerId = function (id) {
     return this.targetIds.indexOf(id) >= 0;
 };
 
-TargetSet.prototype.setPositionSnapshot = function() {
+TargetSet.prototype.setPositionSnapshot = function () {
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
-TargetSet.prototype.moveFromSnapshot = function(dx, dy) {
+TargetSet.prototype.moveFromSnapshot = function (dx, dy) {
     this.moveBy(dx - this._pSnapshot.lastDX, dy - this._pSnapshot.lastDY);
     this._pSnapshot.lastDX = dx;
     this._pSnapshot.lastDY = dy;
 };
-TargetSet.prototype.clearPositionSnapshot = function() {
+TargetSet.prototype.clearPositionSnapshot = function () {
     this._pSnapshot = {lastDX: 0, lastDY: 0};
 };
 
-TargetSet.prototype.getName = function() {
+TargetSet.prototype.getName = function () {
     return "Multiple objects";
 };
-TargetSet.prototype.deleteTarget = function() {
+TargetSet.prototype.deleteTarget = function () {
     for (var t in this.targets) {
         this.canvas.snappingHelper.updateSnappingGuide(t, true);
     }
     for (i in this.targets) this.targets[i].deleteTarget();
 };
 
-function compareRectX(a, b) {
+function compareRectX (a, b) {
     var rectA = a.getBoundingRect();
     var rectB = b.getBoundingRect();
 
     return (rectA.x - rectB.x);
 }
 
-TargetSet.prototype.makeSameHorizontalSpace = function() {
+TargetSet.prototype.makeSameHorizontalSpace = function () {
     var minX = Number.MAX_VALUE;
     var maxX = 0;
     var nObjects = 0;
@@ -206,14 +206,14 @@ TargetSet.prototype.makeSameHorizontalSpace = function() {
     }
 };
 
-function compareRectY(a, b) {
+function compareRectY (a, b) {
     var rectA = a.getBoundingRect();
     var rectB = b.getBoundingRect();
 
     return (rectA.y - rectB.y);
 }
 
-TargetSet.prototype.makeSameVerticalSpace = function() {
+TargetSet.prototype.makeSameVerticalSpace = function () {
     var minY = Number.MAX_VALUE;
     var maxY = 0;
     var nObjects = 0;
@@ -261,7 +261,7 @@ TargetSet.prototype.makeSameVerticalSpace = function() {
     }
 };
 
-TargetSet.prototype.alignLeft = function() {
+TargetSet.prototype.alignLeft = function () {
     var mostTarget = null;
     var most = Number.MAX_VALUE;
     for (var i in this.targets) {
@@ -285,7 +285,7 @@ TargetSet.prototype.alignLeft = function() {
 };
 
 
-TargetSet.prototype.alignTop = function() {
+TargetSet.prototype.alignTop = function () {
     var mostTarget = null;
     var most = Number.MAX_VALUE;
     for (var i in this.targets) {
@@ -309,7 +309,7 @@ TargetSet.prototype.alignTop = function() {
 };
 
 
-TargetSet.prototype.alignCenter = function() {
+TargetSet.prototype.alignCenter = function () {
     var most = Number.MAX_VALUE;
     var farest = 0 - Number.MAX_VALUE;
 
@@ -334,7 +334,7 @@ TargetSet.prototype.alignCenter = function() {
     }
 };
 
-TargetSet.prototype.alignMiddle = function() {
+TargetSet.prototype.alignMiddle = function () {
     var most = Number.MAX_VALUE;
     var farest = 0 - Number.MAX_VALUE;
 
@@ -359,7 +359,7 @@ TargetSet.prototype.alignMiddle = function() {
     }
 };
 
-TargetSet.prototype.alignRight = function() {
+TargetSet.prototype.alignRight = function () {
     var farestTarget = null;
     var farest = 0 - Number.MAX_VALUE;
 
@@ -384,7 +384,7 @@ TargetSet.prototype.alignRight = function() {
 };
 
 
-TargetSet.prototype.alignBottom = function() {
+TargetSet.prototype.alignBottom = function () {
     var farestTarget = null;
     var farest = 0 - Number.MAX_VALUE;
 
@@ -407,7 +407,7 @@ TargetSet.prototype.alignBottom = function() {
         this.canvas.snappingHelper.updateSnappingGuide(this.targets[t]);
     }
 };
-TargetSet.prototype.makeSameWidth = function() {
+TargetSet.prototype.makeSameWidth = function () {
     var mostTarget = null;
     var most = Number.MIN_VALUE;
     for (var i in this.targets) {
@@ -433,7 +433,7 @@ TargetSet.prototype.makeSameWidth = function() {
         this.canvas.snappingHelper.updateSnappingGuide(this.targets[t]);
     }
 };
-TargetSet.prototype.makeSameHeight = function() {
+TargetSet.prototype.makeSameHeight = function () {
     var mostTarget = null;
     var most = Number.MIN_VALUE;
     for (var i in this.targets) {
@@ -460,7 +460,7 @@ TargetSet.prototype.makeSameHeight = function() {
     }
 };
 
-TargetSet.prototype.makeSameMinWidth = function() {
+TargetSet.prototype.makeSameMinWidth = function () {
     var mostTarget = null;
     var most = Number.MAX_VALUE;
     for (var i in this.targets) {
@@ -486,7 +486,7 @@ TargetSet.prototype.makeSameMinWidth = function() {
         this.canvas.snappingHelper.updateSnappingGuide(this.targets[t]);
     }
 };
-TargetSet.prototype.makeSameMinHeight = function() {
+TargetSet.prototype.makeSameMinHeight = function () {
     var mostTarget = null;
     var most = Number.MAX_VALUE;
     for (var i in this.targets) {
@@ -514,19 +514,19 @@ TargetSet.prototype.makeSameMinHeight = function() {
 };
 
 
-TargetSet.prototype.bringForward = function() {
+TargetSet.prototype.bringForward = function () {
     for (i in this.targets) this.targets[i].bringForward();
 };
-TargetSet.prototype.bringToFront = function() {
+TargetSet.prototype.bringToFront = function () {
     for (i in this.targets) this.targets[i].bringToFront();
 };
-TargetSet.prototype.sendBackward = function() {
+TargetSet.prototype.sendBackward = function () {
     for (i in this.targets) this.targets[i].sendBackward();
 };
-TargetSet.prototype.sendToBack = function() {
+TargetSet.prototype.sendToBack = function () {
     for (i in this.targets) this.targets[i].sendToBack();
 };
-TargetSet.prototype.createTransferableData = function() {
+TargetSet.prototype.createTransferableData = function () {
     var node = this.canvas.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
     for (i in this.targets) node.appendChild(this.targets[i].createTransferableData().dataNode);
 
@@ -535,17 +535,17 @@ TargetSet.prototype.createTransferableData = function() {
         dataNode: node
     };
 };
-TargetSet.prototype.lock = function() {
+TargetSet.prototype.lock = function () {
     for (i in this.targets) if (this.targets[i].lock) this.targets[i].lock();
 };
-TargetSet.prototype.markAsMoving = function(moving) {
+TargetSet.prototype.markAsMoving = function (moving) {
     for (i in this.targets) this.targets[i].markAsMoving(moving);
 };
 
-TargetSet.prototype.getAttachContainer = function() {
+TargetSet.prototype.getAttachContainer = function () {
     return this._container;
 };
-TargetSet.prototype.getAttachSlots = function() {
+TargetSet.prototype.getAttachSlots = function () {
     var r = [];
     if (this._container) {
         var props = this._container.getPropertyGroups();
@@ -560,7 +560,7 @@ TargetSet.prototype.getAttachSlots = function() {
     }
     return r;
 };
-TargetSet.prototype.supportAttach = function() {
+TargetSet.prototype.supportAttach = function () {
     if (this.targets.length != 2) return false;
 
     var found = 0;
@@ -593,17 +593,17 @@ TargetSet.prototype.supportAttach = function() {
     return this._container != null && this._container._target.constructor != Group;
 };
 
-TargetSet.prototype.invalidateInboundConnections = function() {
+TargetSet.prototype.invalidateInboundConnections = function () {
     for (t in this.targets) {
         this.targets[t].invalidateInboundConnections();
     }
 };
-TargetSet.prototype.invalidateOutboundConnections = function() {
+TargetSet.prototype.invalidateOutboundConnections = function () {
     for (t in this.targets) {
         this.targets[t].invalidateOutboundConnections();
     }
 };
-TargetSet.prototype.getSnappingGuide = function() {
+TargetSet.prototype.getSnappingGuide = function () {
     var vertical = [];
     var horizontal = [];
 

@@ -1,10 +1,10 @@
-function BooleanEditor(def, value, target) {
+function BooleanEditor (def, value, target) {
     this.def = def;
     this.value = value;
     this.target = target;
 }
 
-BooleanEditor.prototype.createMenuItem = function(doc) {
+BooleanEditor.prototype.createMenuItem = function (doc) {
     var item = doc.createElementNS(PencilNamespaces.xul, "menuitem");
     item.setAttribute("type", "checkbox");
     item.setAttribute("label", this.def.displayName);
@@ -15,7 +15,7 @@ BooleanEditor.prototype.createMenuItem = function(doc) {
     }
 
     var thiz = this;
-    item.addEventListener("command", function() {
+    item.addEventListener("command", function () {
         var bool = Bool.fromString(item.getAttribute("checked"));
         thiz.target.setProperty(thiz.def.name, bool);
     }, false);
@@ -25,13 +25,13 @@ BooleanEditor.prototype.createMenuItem = function(doc) {
 OnMenuEditor.registerTypeEditor(Bool, BooleanEditor);
 
 
-function EnumEditor(def, value, target) {
+function EnumEditor (def, value, target) {
     this.def = def;
     this.value = value;
     this.target = target;
 }
 
-EnumEditor.prototype.createMenuItem = function(doc) {
+EnumEditor.prototype.createMenuItem = function (doc) {
     var menu = doc.createElementNS(PencilNamespaces.xul, "menu");
     menu.setAttribute("label", this.def.displayName);
 
@@ -54,7 +54,7 @@ EnumEditor.prototype.createMenuItem = function(doc) {
     }
 
     var thiz = this;
-    popup.addEventListener("command", function(event) {
+    popup.addEventListener("command", function (event) {
         if (event.originalTarget._isEnumEditor) {
             thiz.target.setProperty(thiz.def.name, event.originalTarget._value);
         }

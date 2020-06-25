@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = function () {
     const path = require("path");
     const fs = require("fs");
 
@@ -13,7 +13,7 @@ module.exports = function() {
         ".wotf2": "woff2"
     };
 
-    function filePathToURL(filePath, options) {
+    function filePathToURL (filePath, options) {
         filePath = path.resolve(filePath).replace(/\\/g, "/");
 
         if (!filePath.match(/^\/.+$/)) {
@@ -23,7 +23,7 @@ module.exports = function() {
         return "file://" + encodeURI(filePath);
     }
 
-    function buildEmbeddedFontFaceCSS(faces, callback) {
+    function buildEmbeddedFontFaceCSS (faces, callback) {
         // creating combinedCSS
         var combinedCSS = "";
         if (!faces) {
@@ -32,7 +32,7 @@ module.exports = function() {
         }
 
         var index = -1;
-        function next() {
+        function next () {
             index ++;
             if (index >= faces.length) {
                 callback(combinedCSS);
@@ -42,7 +42,7 @@ module.exports = function() {
 
             var installedFace = faces[index];
 
-            fs.readFile(installedFace.filePath, function(error, bytes) {
+            fs.readFile(installedFace.filePath, function (error, bytes) {
                 var ext = path.extname(installedFace.filePath).toLowerCase();
                 var mime = MIME_MAP[ext];
                 if (!mime) {
@@ -66,7 +66,7 @@ module.exports = function() {
         next();
     }
 
-    function buildFontFaceCSS(faces) {
+    function buildFontFaceCSS (faces) {
         if (!faces) return "";
 
         var combinedCSS = "";

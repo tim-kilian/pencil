@@ -1,4 +1,4 @@
-function SettingDialog() {
+function SettingDialog () {
     Dialog.call(this);
     this.title = "Settings";
 
@@ -17,8 +17,8 @@ function SettingDialog() {
         "view.useCompactLayout": this.useCompactLayout
     };
 
-    this.bind("click", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("click", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("configName");
         });
         if (!node) return;
@@ -30,8 +30,8 @@ function SettingDialog() {
         }
     }, this.settingTabPane);
 
-    this.bind("input", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("input", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("configName");
         });
         if (!node) return;
@@ -48,8 +48,8 @@ function SettingDialog() {
         this.setPreferenceItems();
     }, this.textboxGridSize);
 
-    this.bind("change", function(event) {
-        var node = Dom.findUpward(event.target, function(n) {
+    this.bind("change", function (event) {
+        var node = Dom.findUpward(event.target, function (n) {
             return n.getAttribute && n.getAttribute("configName");
         });
         if (!node) return;
@@ -72,26 +72,26 @@ function SettingDialog() {
             Config.set(configName, node.value);
             this.setPreferenceItems();
             if (configName == "view.uiTextScale") {
-                widget.reloadDesktopFont().then(function() {});
+                widget.reloadDesktopFont().then(function () {});
             }
         }
 
         ApplicationPane._instance.invalidateUIForConfig();
     }, this.settingTabPane);
 
-    this.bind("input", function(event) {
+    this.bind("input", function (event) {
         this.setPreferenceItems();
     }, this.preferenceNameInput);
 
     var thiz = this;
-    this.comboGridStyle.addEventListener("p:ItemSelected", function(event) {
+    this.comboGridStyle.addEventListener("p:ItemSelected", function (event) {
         var gridStyle = thiz.comboGridStyle.getSelectedItem();
         thiz.updateConfigAndInvalidateUI("edit.gridStyle", gridStyle);
     }, false);
 }
 __extend(Dialog, SettingDialog);
 
-SettingDialog.prototype.updateConfigAndInvalidateUI = function(configName, value) {
+SettingDialog.prototype.updateConfigAndInvalidateUI = function (configName, value) {
     Config.set(configName, value);
     if (this.configElements[configName]) {
         var checkBox = this.configElements[configName];
@@ -124,7 +124,7 @@ SettingDialog.prototype.updateConfigAndInvalidateUI = function(configName, value
     this.setPreferenceItems();
 };
 
-SettingDialog.prototype.setup = function() {
+SettingDialog.prototype.setup = function () {
     this.checkboxEnableGrid.checked = Config.get("grid.enabled");
     this.snapToGrid.checked = Config.get("edit.snap.grid");
     this.enableSnapping.checked = Config.get("object.snapping.enabled");
@@ -212,30 +212,30 @@ SettingDialog.prototype.setup = function() {
     this.initializePreferenceTable();
 };
 
-SettingDialog.prototype.initializePreferenceTable = function() {
-    this.preferenceTable.column(new DataTable.PlainTextColumn("Preference Name", function(data) {
+SettingDialog.prototype.initializePreferenceTable = function () {
+    this.preferenceTable.column(new DataTable.PlainTextColumn("Preference Name", function (data) {
         return data.name;
     }).width("1*"));
-    this.preferenceTable.column(new DataTable.PlainTextColumn("Status", function(data) {
+    this.preferenceTable.column(new DataTable.PlainTextColumn("Status", function (data) {
         return data.status;
     }).width("7em"));
-    this.preferenceTable.column(new DataTable.PlainTextColumn("Type", function(data) {
+    this.preferenceTable.column(new DataTable.PlainTextColumn("Type", function (data) {
         return data.type;
     }).width("7em"));
-    this.preferenceTable.column(new DataTable.PlainTextColumn("Value", function(data) {
+    this.preferenceTable.column(new DataTable.PlainTextColumn("Value", function (data) {
         return data.value;
     }).width("15em"));
 
     this.preferenceTable.selector(false);
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.preferenceTable.setup();
         thiz.preferenceTable.setDefaultSelectionHandler({
-            run: function(data) {
+            run: function (data) {
                 if (data.type == "boolean") {
                     thiz.updateConfigAndInvalidateUI(data.name, !data.value);
                 } else {
-                    Dialog.prompt(data.name, data.value, "OK", function(value) {
+                    Dialog.prompt(data.name, data.value, "OK", function (value) {
                         data.value = value;
                         var result = value;
                         if (data.type != "string") {
@@ -281,7 +281,7 @@ SettingDialog.prototype.initializePreferenceTable = function() {
     }, 200);
 };
 
-SettingDialog.prototype.setPreferenceItems = function() {
+SettingDialog.prototype.setPreferenceItems = function () {
     var items = [];
     Config._load();
     var query = this.preferenceNameInput.value;
@@ -299,7 +299,7 @@ SettingDialog.prototype.setPreferenceItems = function() {
     this.preferenceTable.setItems(items);
 };
 
-SettingDialog.prototype.getDialogActions = function() {
+SettingDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CLOSE
     ];

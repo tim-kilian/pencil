@@ -1,4 +1,4 @@
-var ColorDropper = function() {
+var ColorDropper = function () {
     var active = false;
     var dropper = null;
     var colorCallback = null;
@@ -10,7 +10,7 @@ var ColorDropper = function() {
             .QueryInterface(Components.interfaces.mozIColorZilla);
     } catch (e) {}
 
-    function stop() {
+    function stop () {
 	    active = false;
 	    if (currentPanel) {
 	        currentPanel.openPopupAtScreen(lastPanelX, lastPanelY, false);
@@ -25,19 +25,19 @@ var ColorDropper = function() {
         }
     }
 
-    function getRValue(color) {
+    function getRValue (color) {
 	    return color & 0xff;
     }
 
-    function getGValue(color) {
+    function getGValue (color) {
 	    return (color >> 8) & 0xff;
     }
 
-    function getBValue(color) {
+    function getBValue (color) {
 	    return (color >> 16) & 0xff;
     }
 
-    var clickHandler = function(event) {
+    var clickHandler = function (event) {
         if (!active || !dropper || !colorCallback) {
             if (active) {
                 stop();
@@ -67,10 +67,10 @@ var ColorDropper = function() {
     }
 
     return {
-        begin: function(callback, node) {
+        begin: function (callback, node) {
             colorCallback = callback;
 
-            currentPanel = Dom.findUpward(node, function(n) {
+            currentPanel = Dom.findUpward(node, function (n) {
                 return n.localName == "panel" && n.namespaceURI == PencilNamespaces.xul;
             });
 
@@ -87,7 +87,7 @@ var ColorDropper = function() {
 
             active = true;
         },
-        isAvailable: function() {
+        isAvailable: function () {
             return dropper != null;
         }
     };

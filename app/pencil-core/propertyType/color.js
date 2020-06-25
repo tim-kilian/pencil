@@ -1,4 +1,4 @@
-function Color() {
+function Color () {
     this.r = 0;
     this.g = 0;
     this.b = 0;
@@ -10,7 +10,7 @@ Color.REG_EX_RGB = /^rgb\(([0-9]+)\,[ ]*([0-9]+)\,[ ]*([0-9]+)\)$/i;
 Color.REG_EX_RGBA = /^rgba\(([0-9]+)\,[ ]*([0-9]+)\,[ ]*([0-9]+)\,[ ]*([0-9\.]+)\)$/i;
 Color.hexdig = "0123456789ABCDEF";
 
-Color.fromString = function(literal) {
+Color.fromString = function (literal) {
     var color = new Color();
     if (!literal) literal = "#ffffffff";
 
@@ -48,7 +48,7 @@ Color.fromString = function(literal) {
 
     return color;
 };
-Color.fromHSV = function(h, s, v) {
+Color.fromHSV = function (h, s, v) {
     var rgb = Color.HSV2RGB({hue: h, saturation: s, value: v});
     var color = new Color();
 
@@ -59,20 +59,20 @@ Color.fromHSV = function(h, s, v) {
 
     return color;
 };
-Color.Dec2Hex = function(d) {
+Color.Dec2Hex = function (d) {
     return Color.hexdig.charAt((d-(d%16))/16)+Color.hexdig.charAt(d%16);
 };
-Color.Hex2Dec = function(h) {
+Color.Hex2Dec = function (h) {
     return parseInt(h, 16);
 };
 
-Color.RGB2Hex = function(r, g, b) {
+Color.RGB2Hex = function (r, g, b) {
     return Color.Dec2Hex(r) + Color.Dec2Hex(g) + Color.Dec2Hex(b);
 };
 
 // RGB2HSV and HSV2RGB are based on Color Match Remix [http://color.twysted.net/]
 // which is based on or copied from ColorMatch 5K [http://colormatch.dk/]
-Color.HSV2RGB = function(hsv) {
+Color.HSV2RGB = function (hsv) {
     var rgb = { };
     if (hsv.saturation == 0) {
         rgb.r = rgb.g = rgb.b = Math.round(hsv.value * 2.55);
@@ -100,14 +100,14 @@ Color.HSV2RGB = function(hsv) {
     return rgb;
 };
 
-Color.min3 = function(a, b, c) {
+Color.min3 = function (a, b, c) {
     return (a<b)?((a<c)?a:c):((b<c)?b:c);
 };
-Color.max3 = function(a, b, c) {
+Color.max3 = function (a, b, c) {
     return (a>b)?((a>c)?a:c):((b>c)?b:c);
 };
 
-Color.RGB2HSV = function(rgb) {
+Color.RGB2HSV = function (rgb) {
     var hsv = { };
     var max=Color.max3(rgb.r, rgb.g, rgb.b);
     var dif=max-Color.min3(rgb.r, rgb.g, rgb.b);
@@ -122,16 +122,16 @@ Color.RGB2HSV = function(rgb) {
     hsv.saturation=Math.round(hsv.saturation);
     return hsv;
 };
-Color.prototype.toString = function() {
+Color.prototype.toString = function () {
     return this.toRGBString() + Color.Dec2Hex(Math.min(255, Math.round(this.a * 255)));
 };
-Color.prototype.toRGBString = function() {
+Color.prototype.toRGBString = function () {
     return "#" + Color.Dec2Hex(this.r) + Color.Dec2Hex(this.g) + Color.Dec2Hex(this.b);
 };
-Color.prototype.toRGBAString = function() {
+Color.prototype.toRGBAString = function () {
     return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + (Math.round(this.a * 100) / 100) + ")";
 };
-Color.prototype.shaded = function(percent) {
+Color.prototype.shaded = function (percent) {
     var hsv = Color.RGB2HSV(this);
     hsv.value = Math.max(Math.min(hsv.value * (1 - percent), 100), 0);
 
@@ -146,7 +146,7 @@ Color.prototype.shaded = function(percent) {
     color.a = this.a;
     return color;
 };
-Color.prototype.hollowed = function(percent) {
+Color.prototype.hollowed = function (percent) {
     var color = new Color();
     color.r = this.r;
     color.g = this.g;
@@ -155,7 +155,7 @@ Color.prototype.hollowed = function(percent) {
     color.a = Math.max(Math.min(this.a * (1 - percent), 1), 0);
     return color;
 };
-Color.prototype.inverse = function() {
+Color.prototype.inverse = function () {
     var color = new Color();
 
     color.r = 255 - this.r;
@@ -165,10 +165,10 @@ Color.prototype.inverse = function() {
 
     return color;
 };
-Color.prototype.getHSV = function() {
+Color.prototype.getHSV = function () {
     return Color.RGB2HSV(this); // h: 0..259, s: 0..100, v: 0..100
 };
-Color.prototype.transparent = function() {
+Color.prototype.transparent = function () {
     var color = new Color();
     color.r = this.r;
     color.g = this.g;
@@ -178,7 +178,7 @@ Color.prototype.transparent = function() {
     return color;
 };
 
-Color.prototype.generateTransformTo = function(other) {
+Color.prototype.generateTransformTo = function (other) {
     if (!other) return null;
     var hsv0 = Color.RGB2HSV(this);
     var hsv1 = Color.RGB2HSV(other);
@@ -202,7 +202,7 @@ Color.prototype.generateTransformTo = function(other) {
 
     return null;
 };
-Color.prototype.getDiff = function(other) {
+Color.prototype.getDiff = function (other) {
     if (!other) return 1;
     var hsv0 = Color.RGB2HSV(this);
     var hsv1 = Color.RGB2HSV(other);
@@ -214,7 +214,7 @@ Color.prototype.getDiff = function(other) {
 };
 
 pencilSandbox.Color = {
-    newColor: function() {
+    newColor: function () {
         return new Color();
     }
 };

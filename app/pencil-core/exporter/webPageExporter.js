@@ -1,4 +1,4 @@
-function WebPageExporter() {
+function WebPageExporter () {
     this.name = Util.getMessage("single.web.page");
     this.id = "WebPageExporter";
     this.linkingSupported = true;
@@ -8,16 +8,16 @@ WebPageExporter.HTML_FILE = "index.html";
 
 WebPageExporter.prototype = new BaseRasterizedExporter();
 
-WebPageExporter.prototype.getRasterizedPageDestination = function(baseDir) {
+WebPageExporter.prototype.getRasterizedPageDestination = function (baseDir) {
     return path.join(baseDir, WebPageExporter.RASTERIZED_SUBDIR);
 };
-WebPageExporter.prototype.supportTemplating = function() {
+WebPageExporter.prototype.supportTemplating = function () {
     return true;
 };
-WebPageExporter.prototype.getTemplates = function() {
+WebPageExporter.prototype.getTemplates = function () {
     return ExportTemplateManager.getTemplatesForType("HTML");
 };
-WebPageExporter.prototype.getWarnings = function() {
+WebPageExporter.prototype.getWarnings = function () {
     var templates = this.getTemplates();
     if (templates && templates.length > 0) return null;
 
@@ -25,7 +25,7 @@ WebPageExporter.prototype.getWarnings = function() {
 };
 
 
-WebPageExporter.prototype.export = function(doc, options, destDir, xmlFile, callback) {
+WebPageExporter.prototype.export = function (doc, options, destDir, xmlFile, callback) {
     debug("destDir: " + destDir);
 
     var templateId = options.templateId;
@@ -35,7 +35,7 @@ WebPageExporter.prototype.export = function(doc, options, destDir, xmlFile, call
 
     // copying support files
     var items = fs.readdirSync(template.dir);
-    items.forEach(function(item) {
+    items.forEach(function (item) {
         if (item == "Template.xml" || item == template.styleSheet) return;
 
         var file = path.join(template.dir, item);

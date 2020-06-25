@@ -1,28 +1,28 @@
-function FlavourSet(flavours) {
+function FlavourSet (flavours) {
     this.flavours = flavours || [];
 }
 
-FlavourSet.prototype.appendFlavour = function(f) {
+FlavourSet.prototype.appendFlavour = function (f) {
     this.flavours.push(f);
 };
 
 var nsDragAndDrop = {
-    setData(key, value) {
+    setData (key, value) {
         this.dragData[key] = value;
     },
 
-    getData(key) {
+    getData (key) {
         return this.dragData ? this.dragData[key] : null;
     },
 
-    dragStart: function(event) {
+    dragStart: function (event) {
         this.dragData = {};
     },
 
-    dragOver: function(event, observer) {
+    dragOver: function (event, observer) {
     },
 
-    dragEnter: function(event, observer) {
+    dragEnter: function (event, observer) {
         if (!event.dataTransfer) return false;
 
         // gives the observer the ability to actively tell that it accepts the drag, bybass type-based checking below
@@ -43,17 +43,17 @@ var nsDragAndDrop = {
         return false;
     },
 
-    dragExit: function(event, observer) {
+    dragExit: function (event, observer) {
         if (observer.onDragExit) observer.onDragExit(event);
     },
 
-    dragOver: function(event, observer) {
+    dragOver: function (event, observer) {
         if (observer.onDragOver) observer.onDragOver(event);
         event.preventDefault();
         event.dataTransfer.dropEffect = "copy";
     },
 
-    drop: function(event, observer) {
+    drop: function (event, observer) {
         if (!observer.onDrop) return;
 
         if (observer.getSupportedFlavours) {

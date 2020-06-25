@@ -1,10 +1,10 @@
-function PromptDialog() {
+function PromptDialog () {
     Dialog.call(this);
     this.title = "Enter value";
 }
 __extend(Dialog, PromptDialog);
 
-PromptDialog.prototype.setup = function(options) {
+PromptDialog.prototype.setup = function (options) {
     if (options.defaultValue != undefined) {
         this.valueInput.value = options.defaultValue;
     }
@@ -21,22 +21,22 @@ PromptDialog.prototype.setup = function(options) {
 
     this.callback = options.callback;
 
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         this.valueInput.focus();
         this.valueInput.select();
     }.bind(this), 200);
 };
-PromptDialog.prototype.getDialogActions = function() {
+PromptDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         {type: "cancel", title: "Cancel",
-            run: function() {
+            run: function () {
                 if (thiz.callback) thiz.callback(null);
                 return true;
             }
         },
         {type: "accept", title: "OK",
-            run: function() {
+            run: function () {
                 if (thiz.callback) thiz.callback(thiz.valueInput.value);
                 return true;
             }

@@ -1,4 +1,4 @@
-function StencilCollectionBuilder(controller) {
+function StencilCollectionBuilder (controller) {
     this.controller = controller;
 }
 
@@ -556,11 +556,11 @@ collection.browseResource = function (setNames, type, returnType, callback) {
 StencilCollectionBuilder.SUBDIR_BITMAPS = "bitmaps";
 StencilCollectionBuilder.SUBDIR_VECTORS = "vectors";
 
-StencilCollectionBuilder.prototype.getPageMargin = function() {
+StencilCollectionBuilder.prototype.getPageMargin = function () {
     var pageMargin = Pencil.controller.getDocumentPageMargin();
     return pageMargin || 0;
 };
-StencilCollectionBuilder.prototype.toCollectionReadyImageData = function(imageData, name, isVectorHint, source) {
+StencilCollectionBuilder.prototype.toCollectionReadyImageData = function (imageData, name, isVectorHint, source) {
     var value = ImageData.fromString(imageData.toString());
     if (value.data && value.data.match(/^ref:\/\//)) {
         var id = ImageData.refStringToId(value.data);
@@ -588,7 +588,7 @@ StencilCollectionBuilder.prototype.toCollectionReadyImageData = function(imageDa
     }
     return value;
 };
-StencilCollectionBuilder.getCurrentDocumentOptions = function() {
+StencilCollectionBuilder.getCurrentDocumentOptions = function () {
     var json = Pencil.controller.doc.properties.stencilBuilderOptions;
     if (json) {
         try {
@@ -600,26 +600,26 @@ StencilCollectionBuilder.getCurrentDocumentOptions = function() {
 
     return null;
 };
-StencilCollectionBuilder.prototype.setCurrentDocumentOptions = function(options) {
+StencilCollectionBuilder.prototype.setCurrentDocumentOptions = function (options) {
     options.pageMargin = Config.get(Config.DEV_PAGE_MARGIN_SIZE);
     Pencil.controller.doc.properties.stencilBuilderOptions = JSON.stringify(options);
 
     window.globalEventBus && window.globalEventBus.broadcast("doc-options-change", {});
 };
-StencilCollectionBuilder.prototype.removeCurrentDocumentOptions = function(options) {
+StencilCollectionBuilder.prototype.removeCurrentDocumentOptions = function (options) {
     if (StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection()) {
         Dialog.confirm(
             "Are you sure you want to remove the configuration and stop using this document as a stencil collection?", null,
-            "Yes, remove configuration", function() {
+            "Yes, remove configuration", function () {
                 delete Pencil.controller.doc.properties.stencilBuilderOptions;
                 window.globalEventBus && window.globalEventBus.broadcast("doc-options-change", {});
             },
-            "Cancel", function() {
+            "Cancel", function () {
             }
         );
     }
 };
-StencilCollectionBuilder.prototype.makeDefaultOptions = function() {
+StencilCollectionBuilder.prototype.makeDefaultOptions = function () {
     options = options || {};
     var defaultDocName = Pencil.controller.getDocumentName().replace(/\*/g, "").trim();
     var systemUsername = os.userInfo().username;
@@ -636,20 +636,20 @@ StencilCollectionBuilder.prototype.makeDefaultOptions = function() {
 
     return options;
 };
-StencilCollectionBuilder.prototype.configure = function() {
+StencilCollectionBuilder.prototype.configure = function () {
     var thiz = this;
     var currentOptions = StencilCollectionBuilder.getCurrentDocumentOptions();
-    new StencilCollectionDetailDialog().callback(function(options) {
+    new StencilCollectionDetailDialog().callback(function (options) {
         thiz.setCurrentDocumentOptions(options);
         if (Pencil.controller.documentPath) {
             Pencil.documentHandler.saveDocument();
         }
     }).open(currentOptions);
 };
-StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection = function() {
+StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection = function () {
     return Pencil.controller.doc && Pencil.controller.doc.properties && Pencil.controller.doc.properties.stencilBuilderOptions;
 };
-StencilCollectionBuilder.prototype.buildShapeTest = function(pageId, callback) {
+StencilCollectionBuilder.prototype.buildShapeTest = function (pageId, callback) {
     this.cleanupShapeTest();
     var options = StencilCollectionBuilder.getCurrentDocumentOptions() || this.makeDefaultOptions();
 
@@ -663,7 +663,7 @@ StencilCollectionBuilder.prototype.buildShapeTest = function(pageId, callback) {
 
     this.buildImpl(options, callback);
 };
-StencilCollectionBuilder.prototype.cleanupShapeTest = function() {
+StencilCollectionBuilder.prototype.cleanupShapeTest = function () {
     if (this.tempOutputDir) {
         try {
             this.tempOutputDir.removeCallback();
@@ -674,18 +674,18 @@ StencilCollectionBuilder.prototype.cleanupShapeTest = function() {
     }
 };
 
-StencilCollectionBuilder.cleanup = function() {
+StencilCollectionBuilder.cleanup = function () {
     StencilCollectionBuilder.activeCollectionInfo = null;
 };
-StencilCollectionBuilder.prototype.build = function() {
+StencilCollectionBuilder.prototype.build = function () {
     var thiz = this;
-    function next(options, outputPath) {
+    function next (options, outputPath) {
         if (options) {
             options.outputPath = outputPath;
             thiz.setCurrentDocumentOptions(options);
             thiz.buildImpl(options);
         } else {
-            new StencilCollectionDetailDialog("Build").callback(function(options) {
+            new StencilCollectionDetailDialog("Build").callback(function (options) {
                 options.outputPath = outputPath;
                 thiz.setCurrentDocumentOptions(options);
                 thiz.buildImpl(options);
@@ -703,7 +703,7 @@ StencilCollectionBuilder.prototype.build = function() {
             title: "Select Output Directory",
             defaultPath: (currentOptions && currentOptions.outputPath && fs.existsSync(currentOptions.outputPath)) ? currentOptions.outputPath : os.homedir(),
             properties: ["openDirectory"]
-        }, function(filenames) {
+        }, function (filenames) {
             if (!filenames || filenames.length <= 0) return;
             var selectedPath = filenames[0];
 
@@ -713,7 +713,7 @@ StencilCollectionBuilder.prototype.build = function() {
         next(currentOptions, currentOptions.outputPath);
     }
 };
-StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCallback) {
+StencilCollectionBuilder.prototype.buildImpl = function (options, onBuildDoneCallback) {
     if (!options) {
         options = this.makeDefaultOptions();
     }
@@ -792,7 +792,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
 
     var embeddableFontFaces = [];
 
-    var finalize = function() {
+    var finalize = function () {
         var resourceList = [];
 
         // processing resources
@@ -823,7 +823,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
                 if (!fs.existsSync(destPath)) {
                     fs.mkdirSync(destPath);
                     var files = fs.readdirSync(sourcePath);
-                    files.forEach(function(file) {
+                    files.forEach(function (file) {
                         var curSource = path.join(sourcePath, file);
                         if (fs.lstatSync(curSource).isDirectory()) {
                             copyFolderRecursiveSync(curSource, destPath);
@@ -866,7 +866,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
             var fontsDirName = "fonts";
             var fontsDir = null;
 
-            embeddableFontFaces.forEach(function(f) {
+            embeddableFontFaces.forEach(function (f) {
                 var font = FontLoader.instance.userRepo.getFont(f);
                 if (!font || !font.variants || font.variants.length <= 0) return;
 
@@ -890,7 +890,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
                     fs.mkdirSync(fontDir);
                 }
 
-                font.variants.forEach(function(variant) {
+                font.variants.forEach(function (variant) {
                     var variantName = FontRepository.findVariantName(variant.weight, variant.style);
 
                     var fileName = path.basename(variant.filePath);
@@ -909,8 +909,8 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
 
         // console.log("Private collection\n", privateCollection.toXMLDom());
 
-        this.saveResultDom(dom, privateCollection, dir, options, function() {
-            var showDone = function() {
+        this.saveResultDom(dom, privateCollection, dir, options, function () {
+            var showDone = function () {
                 Pencil.controller.doc._lastUsedStencilOutputPath = options.outputPath;
 
                 thiz.progressListener.onTaskDone();
@@ -923,16 +923,16 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
                     if (onBuildDoneCallback) onBuildDoneCallback();
                 } else {
                     CollectionManager.reloadActiveBuilderCollection(false);
-                    NotificationPopup.show("Stencil collection '" + options.displayName + "' was successfully built.\n\Builder stencil was also reloaded.", "View", function() {
+                    NotificationPopup.show("Stencil collection '" + options.displayName + "' was successfully built.\n\Builder stencil was also reloaded.", "View", function () {
                         shell.openItem(options.outputPath);
                     });
                 }
             };
 
             if (layoutPage) {
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     ApplicationPane._instance.activatePage(layoutPage);
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         thiz.generateCollectionLayout(options.id, dir, layoutPage, showDone);
                     }, 500);
                 }, 500);
@@ -944,7 +944,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
 
     var nonStencilPages = [];
 
-    var done = function() {
+    var done = function () {
         var globalPropertyMap = {};
 
         // append global propert fragment
@@ -965,7 +965,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
         }
 
         // re-fill shape's property fragment
-        Dom.workOn("/p:Shapes/p:Shape", dom, function(shapeDefNode) {
+        Dom.workOn("/p:Shapes/p:Shape", dom, function (shapeDefNode) {
             if (shapeDefNode._propertyFragmentSpec && shapeDefNode._propertyFragmentSpec.length > 0) {
                 // generalizing global properties
                 for (var spec of shapeDefNode._propertyFragmentSpec) {
@@ -1002,7 +1002,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
             }
         });
 
-        this.processShortcuts(nonStencilPages, dom, dir, options, globalPropertySpecs, globalPropertyMap, privateCollection, function() {
+        this.processShortcuts(nonStencilPages, dom, dir, options, globalPropertySpecs, globalPropertyMap, privateCollection, function () {
             finalize();
         });
     }.bind(this);
@@ -1024,7 +1024,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
     }
 
 
-    var next = function() {
+    var next = function () {
         index ++;
         if (index >= pages.length) {
             done();
@@ -1100,7 +1100,7 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
 
             var hasContribution = false;
 
-            Dom.workOn(".//svg:g[@p:type='Shape']", svg, function(shapeNode) {
+            Dom.workOn(".//svg:g[@p:type='Shape']", svg, function (shapeNode) {
                 var c = page.canvas.createControllerFor(shapeNode);
 
                 if (!c.performAction) return;
@@ -1262,8 +1262,8 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
                 var header = "";
                 var definedProp = {};
                 var definedBound = {};
-                function replaceReference(expression, snap) {
-                    var expression = expression.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+                function replaceReference (expression, snap) {
+                    var expression = expression.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                         var name = "__prop_" + one;
                         if (!definedProp[one]) {
                             header += "var " + name + " = this.getProperty(\"" + one + "\");\n";
@@ -1329,13 +1329,13 @@ StencilCollectionBuilder.prototype.buildImpl = function(options, onBuildDoneCall
         }
     }.bind(this); // END OF PAGE PROCESSING
 
-    Util.beginProgressJob("Building collection...", function(listener) {
+    Util.beginProgressJob("Building collection...", function (listener) {
         thiz.progressListener = listener;
         next();
     });
 };
 
-StencilCollectionBuilder.prototype.saveResultDom = function(dom, privateCollection, dir, options, callback) {
+StencilCollectionBuilder.prototype.saveResultDom = function (dom, privateCollection, dir, options, callback) {
     var xsltDOM = Dom.parseDocument(
         `<xsl:stylesheet version="1.0"
  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -1364,7 +1364,7 @@ StencilCollectionBuilder.prototype.saveResultDom = function(dom, privateCollecti
     if (callback) callback();
 };
 
-StencilCollectionBuilder.prototype.isShortcutPage = function(page, options) {
+StencilCollectionBuilder.prototype.isShortcutPage = function (page, options) {
     if (options.shortcutPageIds) {
         return options.shortcutPageIds.indexOf(page.id) >= 0;
     } else {
@@ -1372,15 +1372,15 @@ StencilCollectionBuilder.prototype.isShortcutPage = function(page, options) {
     }
 };
 
-StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, options, globalPropertySpecs, globalPropertyMap, privateCollection, callback) {
+StencilCollectionBuilder.prototype.processShortcuts = function (pages, dom, dir, options, globalPropertySpecs, globalPropertyMap, privateCollection, callback) {
     var thiz = this;
-    this.saveResultDom(dom, null, dir, options, function() {
+    this.saveResultDom(dom, null, dir, options, function () {
         // parse the resulted collection
         var collection = options.testMode ? new ShapeDefCollectionParser().parseURL(path.join(dir, "Definition.xml")) : CollectionManager.reloadActiveBuilderCollection();
         var shortcutSpecs = [];
         var symbolNameMap = {};
 
-        Util.workOnListAsync(pages, function(page, index, __callback) {
+        Util.workOnListAsync(pages, function (page, index, __callback) {
             thiz.progressListener.onProgressUpdated(`Processing shortcuts in '${page.name}...'`, index, pages.length);
             ApplicationPane._instance.activatePage(page);
             var svg = page.canvas.drawingLayer;
@@ -1388,7 +1388,7 @@ StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, 
             var defIdPrefix = collection.id + ":";
             var shapeNodes = Dom.getList("./svg:g[@p:type='Shape']", svg);
 
-            Util.workOnListAsync(shapeNodes, function(shapeNode, index, __callback) {
+            Util.workOnListAsync(shapeNodes, function (shapeNode, index, __callback) {
                 thiz.progressListener.onProgressUpdated(`Processing shortcuts in '${page.name}...'`, index, shapeNodes.length);
                 var defId = page.canvas.getType(shapeNode);
                 var def = null;
@@ -1522,7 +1522,7 @@ StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, 
 
                 var fileName = spec.displayName.replace(/[^a-z0-9\\-]+/gi, "").toLowerCase() + ".png";
                 var targetPath = path.join(thiz.iconDir, fileName);
-                Pencil.rasterizer.rasterizeSelectionToFile(shape, targetPath, function(p, error) {
+                Pencil.rasterizer.rasterizeSelectionToFile(shape, targetPath, function (p, error) {
                     if (!error) {
                         spec.icon = "icons/" + fileName;
                     }
@@ -1534,10 +1534,10 @@ StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, 
                     shortcutSpecs.push(spec);
                     __callback();
                 });
-            }, function() {
+            }, function () {
                 var groupNodes = Dom.getList("./svg:g[@p:type='Group']", svg);
 
-                Util.workOnListAsync(groupNodes, function(groupNode, index, __callback) {
+                Util.workOnListAsync(groupNodes, function (groupNode, index, __callback) {
                     thiz.progressListener.onProgressUpdated(`Processing private shapes in '${page.name}...'`, index, groupNodes.length);
                     var symbolName = Svg.getSymbolName(groupNode);
                     if (!symbolName) {
@@ -1553,7 +1553,7 @@ StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, 
                     var fakeDom = Controller.parser.parseFromString("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
                     fakeDom.documentElement.appendChild(svg);
 
-                    Pencil.controller.prepareForEmbedding(fakeDom, function() {
+                    Pencil.controller.prepareForEmbedding(fakeDom, function () {
                         fakeDom.documentElement.removeChild(svg);
                         var shapeDef = new PrivateShapeDef();
                         shapeDef.displayName = symbolName;
@@ -1565,14 +1565,14 @@ StencilCollectionBuilder.prototype.processShortcuts = function(pages, dom, dir, 
                     });
                 }, __callback);
             });
-        }, function() {
+        }, function () {
             var fragment = Dom.newDOMFragment(shortcutSpecs, dom);
             dom.documentElement.appendChild(fragment);
             if (callback) callback();
         });
     });
 };
-StencilCollectionBuilder.prototype.generateCollectionLayout = function(collectionId, dir, page, callback) {
+StencilCollectionBuilder.prototype.generateCollectionLayout = function (collectionId, dir, page, callback) {
     var container = page.canvas.drawingLayer;
     var pageMargin = StencilCollectionBuilder.INSTANCE.getPageMargin();
 
@@ -1583,7 +1583,7 @@ StencilCollectionBuilder.prototype.generateCollectionLayout = function(collectio
 
     const IMAGE_FILE = "layout_image.png";
 
-    Dom.workOn("./svg:g[@p:type='Shape']", container, function(g) {
+    Dom.workOn("./svg:g[@p:type='Shape']", container, function (g) {
         var dx = 0; // rect.left;
         var dy = 0; // rect.top;
 
@@ -1631,7 +1631,7 @@ StencilCollectionBuilder.prototype.generateCollectionLayout = function(collectio
     });
 
     var privateShapeItems = [];
-    Dom.workOn("./svg:g[@p:type='Group']", container, function(g) {
+    Dom.workOn("./svg:g[@p:type='Group']", container, function (g) {
         var defId = g.getAttributeNS(PencilNamespaces.p, "private-def-id");
         if (!defId) return;
 
@@ -1682,7 +1682,7 @@ StencilCollectionBuilder.prototype.generateCollectionLayout = function(collectio
 
     var current = 0;
     var thiz = this;
-    var done = function() {
+    var done = function () {
         var html = document.createElementNS(PencilNamespaces.html, "html");
 
         var body = document.createElementNS(PencilNamespaces.html, "body");
@@ -1728,17 +1728,17 @@ StencilCollectionBuilder.prototype.generateCollectionLayout = function(collectio
 
 
     var outputImage = path.join(dir, IMAGE_FILE);
-    Pencil.rasterizer.rasterizePageToFile(page, outputImage, function(p, error) {
+    Pencil.rasterizer.rasterizePageToFile(page, outputImage, function (p, error) {
         done();
     });
 };
-StencilCollectionBuilder.prototype.generatePrivateShapeDef = function(target, callback) {
+StencilCollectionBuilder.prototype.generatePrivateShapeDef = function (target, callback) {
     var svg = target.svg.cloneNode(true);
 
     var fakeDom = Controller.parser.parseFromString("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
     fakeDom.documentElement.appendChild(svg);
 
-    Pencil.controller.prepareForEmbedding(fakeDom, function() {
+    Pencil.controller.prepareForEmbedding(fakeDom, function () {
         fakeDom.documentElement.removeChild(svg);
 
         var shapeDef = new PrivateShapeDef();
@@ -1746,13 +1746,13 @@ StencilCollectionBuilder.prototype.generatePrivateShapeDef = function(target, ca
         shapeDef.content = svg;
         shapeDef.id = ("PrivateShapeDef_" + shapeDef.displayName).replace(/\s+/g, "_").toLowerCase();
 
-        Util.generateIcon(target, 64, 64, 2, null, function(icondata) {
+        Util.generateIcon(target, 64, 64, 2, null, function (icondata) {
             shapeDef.iconData = icondata;
             callback(shapeDef);
         });
     });
 };
-StencilCollectionBuilder.prototype.deploy = function(callback) {
+StencilCollectionBuilder.prototype.deploy = function (callback) {
     var currentOptions = StencilCollectionBuilder.getCurrentDocumentOptions();
     if (!currentOptions || !currentOptions.outputPath || !fs.existsSync(currentOptions.outputPath)) {
         Dialog.error("No build available.");
@@ -1762,15 +1762,15 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
     var consoleOutputDialog = new ConsoleOutputDialog();
     consoleOutputDialog.open();
 
-    function appendOutput(message, important) {
+    function appendOutput (message, important) {
         consoleOutputDialog.append(message, "message", important);
     }
 
-    function appendError(message, important) {
+    function appendError (message, important) {
         consoleOutputDialog.append(message, "error", important);
     }
 
-    function exec(cmd, args, cwd, callback) {
+    function exec (cmd, args, cwd, callback) {
         var childProcess = spawn(cmd, args,
             {
                 cwd: cwd
@@ -1784,14 +1784,14 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
             appendError(data.toString());
         });
 
-        childProcess.on("close", function(code) {
+        childProcess.on("close", function (code) {
             callback(code == 0);
         });
     }
 
-    function execCommandList(list, callback) {
+    function execCommandList (list, callback) {
         var index = -1;
-        (function next() {
+        (function next () {
             index ++;
             if (index >= list.length) {
                 callback(true);
@@ -1802,7 +1802,7 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
             if (spec.message) {
                 appendOutput(spec.message, true);
             }
-            exec(spec.cmd, spec.args, spec.cwd, function(successful) {
+            exec(spec.cmd, spec.args, spec.cwd, function (successful) {
                 if (successful) {
                     next();
                 } else {
@@ -1834,9 +1834,9 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
         {cmd: "/usr/bin/ls", args: ["-alh", collectionSubDirPath], cwd: currentOptions.outputPath}
     ];
 
-    function updateCollectionNode(filePath, callback) {
+    function updateCollectionNode (filePath, callback) {
         var fs = require("fs");
-        fs.readFile(filePath, "utf8", function(err, data) {
+        fs.readFile(filePath, "utf8", function (err, data) {
             if (err) {
                 callback(false, err);
                 return;
@@ -1851,7 +1851,7 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
                 dom.documentElement.appendChild(collectionNode);
             }
 
-            function attr(name, value) {
+            function attr (name, value) {
                 var node = dom.createElementNS(PencilNamespaces.p, name);
                 node.appendChild(dom.createTextNode(value));
                 collectionNode.appendChild(node);
@@ -1893,8 +1893,8 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
         });
     }
 
-    execCommandList(commands, function(successful, failedCommand) {
-        updateCollectionNode(repoXMLFilePath, function(successful, error) {
+    execCommandList(commands, function (successful, failedCommand) {
+        updateCollectionNode(repoXMLFilePath, function (successful, error) {
             if (!successful) {
                 console.error(error);
                 return;
@@ -1906,7 +1906,7 @@ StencilCollectionBuilder.prototype.deploy = function(callback) {
                 {cmd: "/usr/bin/git", args: ["push"], cwd: repoDirPath}
             ];
 
-            execCommandList(commands, function(successful, failedCommand) {
+            execCommandList(commands, function (successful, failedCommand) {
                 appendOutput("Done.", true);
             });
         });

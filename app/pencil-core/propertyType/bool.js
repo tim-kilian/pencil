@@ -1,20 +1,20 @@
-function Bool(value) {
+function Bool (value) {
     this.value = value ? true : false;
 }
-Bool.fromString = function(literal) {
+Bool.fromString = function (literal) {
     var bool = new Bool(literal == "true");
     return bool;
 };
 
-Bool.prototype.toString = function() {
+Bool.prototype.toString = function () {
     return "" + this.value;
 };
-Bool.prototype.negative = function() {
+Bool.prototype.negative = function () {
     return new Bool(!this.value);
 };
 
 pencilSandbox.Bool = {
-    newBool: function(v) {
+    newBool: function (v) {
         return new Bool(v);
     }
 };

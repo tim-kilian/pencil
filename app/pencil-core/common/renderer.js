@@ -1,7 +1,7 @@
 // @background, @electron-specific
 //      dispite the name, this is a background module and is not intended to be used in renderer processes
 
-module.exports = function() {
+module.exports = function () {
     const ipcMain = require("electron").ipcMain;
     const tmp = require("tmp");
     const fs = require("fs");
@@ -20,7 +20,7 @@ module.exports = function() {
     var queueHandler = new QueueHandler(100);
 
     var extraJS = (
-        function resolve(prefix) {
+        function resolve (prefix) {
             return {
                 p: "http://www.evolus.vn/Namespace/Pencil",
                 svg: "http://www.w3.org/2000/svg"
@@ -28,7 +28,7 @@ module.exports = function() {
         }
     ).toString() + "\n" +
     (
-        function getList(xpath, node) {
+        function getList (xpath, node) {
             var doc = node.ownerDocument ? node.ownerDocument : node;
             var xpathResult = doc.evaluate(xpath, node, resolve, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
             var nodes = [];
@@ -43,7 +43,7 @@ module.exports = function() {
 
     ).toString() + "\n" +
     (
-        function postProcess() {
+        function postProcess () {
             var objects = getList("//svg:g[@p:RelatedPage]", document);
             objects.reverse();
             window.objectsWithLinking = [];
@@ -69,10 +69,10 @@ module.exports = function() {
         }
     ).toString();
 
-    function createRenderTask(event, data) {
-        return function(__callback) {
+    function createRenderTask (event, data) {
+        return function (__callback) {
             // Save the svg
-            tmp.file({prefix: "render-", postfix: ".xhtml"}, function(err, path, fd, cleanupCallback) {
+            tmp.file({prefix: "render-", postfix: ".xhtml"}, function (err, path, fd, cleanupCallback) {
                 if (err) throw err;
 
                 var svg = data.svg;
@@ -131,7 +131,7 @@ module.exports = function() {
 
                 var capturePendingTaskId = null;
 
-                currentRenderHandler = function(renderedEvent, renderedData) {
+                currentRenderHandler = function (renderedEvent, renderedData) {
                     capturePendingTaskId = null;
                     if (data.options && data.options.linksOnly) {
                         cleanupCallback();
@@ -139,7 +139,7 @@ module.exports = function() {
                         event.sender.send(data.id, {url: "", objectsWithLinking: renderedData.objectsWithLinking});
                         __callback();
                     } else {
-                        rendererWindow.capturePage(function(nativeImage) {
+                        rendererWindow.capturePage(function (nativeImage) {
                             var dataURL = nativeImage.toDataURL();
 
                             cleanupCallback();
@@ -155,7 +155,7 @@ module.exports = function() {
 
     var initialized = false;
 
-    function init() {
+    function init () {
         if (rendererWindow) {
             try {
                 rendererWindow.destroy();
@@ -183,17 +183,17 @@ module.exports = function() {
         queueHandler.tasks = [];
 
         if (!initialized) {
-            ipcMain.on("render-request", function(event, data) {
+            ipcMain.on("render-request", function (event, data) {
                 queueHandler.submit(createRenderTask(event, data));
             });
 
-            ipcMain.on("render-rendered", function(event, data) {
-                setTimeout(function() {
+            ipcMain.on("render-rendered", function (event, data) {
+                setTimeout(function () {
                     if (currentRenderHandler) currentRenderHandler(event, data);
                 }, 100);
             });
 
-            ipcMain.on("font-loading-request", function(event, data) {
+            ipcMain.on("font-loading-request", function (event, data) {
                 fontFaceCSS = sharedUtil.buildFontFaceCSS(data.faces);
                 event.sender.send(data.id, {});
             });
@@ -205,7 +205,7 @@ module.exports = function() {
 
         initialized = true;
     }
-    function initOutProcessCanvasBasedRenderer() {
+    function initOutProcessCanvasBasedRenderer () {
         var canvasWindow = new BrowserWindow({x: 0, y: 0, enableLargerThanScreen: true, show: false, autoHideMenuBar: true, webPreferences: {webSecurity: false, defaultEncoding: "UTF-8"}});
         var url = "file://" + app.getAppPath() + "/renderer.xhtml";
         canvasWindow.loadURL(url);
@@ -222,33 +222,33 @@ module.exports = function() {
         }
         // canvasWindow.show();
 
-        ipcMain.on("canvas-render-request", function(event, data) {
+        ipcMain.on("canvas-render-request", function (event, data) {
             console.log("RASTER: Forwarding render request for " + data.id);
             canvasWindow.webContents.send("canvas-render-request", data);
         });
-        ipcMain.on("canvas-render-response", function(event, data) {
+        ipcMain.on("canvas-render-response", function (event, data) {
             console.log("RASTER: Forwarding render result for " + data.id);
             global.mainWindow.webContents.send(data.id, {url: data.url, objectsWithLinking: data.objectsWithLinking});
         });
 
-        ipcMain.on("font-loading-request", function(event, data) {
+        ipcMain.on("font-loading-request", function (event, data) {
             canvasWindow.webContents.send("font-loading-request", data);
         });
-        ipcMain.on("font-loading-response", function(event, data) {
+        ipcMain.on("font-loading-response", function (event, data) {
             global.mainWindow.webContents.send(data.id, data);
         });
 
         console.log("OUT-PROCESS CANVAS RENDERER started.");
     }
 
-    function start() {
-        ipcMain.once("render-init", function(event, data) {
+    function start () {
+        ipcMain.once("render-init", function (event, data) {
             init();
         });
-        ipcMain.on("render-restart", function(event, data) {
+        ipcMain.on("render-restart", function (event, data) {
             init();
         });
-        ipcMain.once("canvas-render-init", function(event, data) {
+        ipcMain.once("canvas-render-init", function (event, data) {
             initOutProcessCanvasBasedRenderer();
         });
     }

@@ -1,7 +1,7 @@
 // @background, @electron-specific
 //      this is the printing support running in the main thread. The implementation opens hidden browser windows to print and to export content to pdf
 
-module.exports = function() {
+module.exports = function () {
     const ipcMain = require("electron").ipcMain;
     const tmp = require("tmp");
     const fs = require("fs");
@@ -16,11 +16,11 @@ module.exports = function() {
     var browserWindow = null;
     var currentPrintingCallback = null;
 
-    function createPrintingTask(event, data) {
-        return function(__callback) {
+    function createPrintingTask (event, data) {
+        return function (__callback) {
             browserWindow.loadURL(data.fileURL);
 
-            currentPrintingCallback = function() {
+            currentPrintingCallback = function () {
                 var options = {
                     printBackground: true
                 };
@@ -38,7 +38,7 @@ module.exports = function() {
                     //         }
                     //     }
                     // });
-                    browserWindow.webContents.printToPDF(options, function(error, pdfBuffer) {
+                    browserWindow.webContents.printToPDF(options, function (error, pdfBuffer) {
                         if (error) {
                             try {
                                 global.mainWindow.webContents.send(data.id, {success: false, message: error.message});
@@ -49,7 +49,7 @@ module.exports = function() {
                             return;
                         }
 
-                        fs.writeFile(data.targetFilePath, pdfBuffer, function(error) {
+                        fs.writeFile(data.targetFilePath, pdfBuffer, function (error) {
                             try {
                                 if (error) {
                                     global.mainWindow.webContents.send(data.id, {success: false, message: error.message});
@@ -64,7 +64,7 @@ module.exports = function() {
                     });
                 } else {
                     global.mainWindow.webContents.send(data.id, {success: true});
-                    browserWindow.webContents.print(options, function() {
+                    browserWindow.webContents.print(options, function () {
                         __callback();
                     });
                 }
@@ -72,9 +72,9 @@ module.exports = function() {
         };
     }
 
-    function init() {
+    function init () {
         browserWindow = new BrowserWindow({width: 800, height: 600, enableLargerThanScreen: true, show: false, autoHideMenuBar: true, webPreferences: {webSecurity: false, defaultEncoding: "UTF-8"}});
-        browserWindow.webContents.on("did-finish-load", function() {
+        browserWindow.webContents.on("did-finish-load", function () {
             if (!currentPrintingCallback) return;
             currentPrintingCallback();
             currentPrintingCallback = null;
@@ -82,13 +82,13 @@ module.exports = function() {
 
         // browserWindow.show();
 
-        ipcMain.on("printer-request", function(event, data) {
+        ipcMain.on("printer-request", function (event, data) {
             queueHandler.submit(createPrintingTask(event, data));
         });
         console.log("Background web-printer started.");
     }
 
-    function start() {
+    function start () {
         init();
     }
 

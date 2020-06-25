@@ -1,4 +1,4 @@
-function ApplicationPane() {
+function ApplicationPane () {
     BaseTemplatedWidget.call(this);
     this.busyCount = 0;
     Pencil.boot();
@@ -18,13 +18,13 @@ function ApplicationPane() {
 
     // this.toolBarSrollView.setWheelAllow(false);
 
-    this.bind("focusout", function(ev) {
+    this.bind("focusout", function (ev) {
         if (ev.target) {
             this.toolBarSrollView.setWheelAllow(true);
         }
     }, this.toolBarSrollView.node());
 
-    this.bind("focusin", function(ev) {
+    this.bind("focusin", function (ev) {
         if (ev.target) {
             this.toolBarSrollView.setWheelAllow(false);
         }
@@ -32,7 +32,7 @@ function ApplicationPane() {
 
     var thiz = this;
     this.mainMenu = new MainMenu(this.menuIcon);
-    this.bind("click", function(event) {
+    this.bind("click", function (event) {
         if (thiz.mainMenu.isVisible()) {
             thiz.mainMenu.hide();
             return;
@@ -43,20 +43,20 @@ function ApplicationPane() {
     this.bind("p:DocumentChanged", this.onDocumentChanged, this.node());
     window.globalEventBus.listen("doc-options-change", this.onDocumentOptionsChanged.bind(this));
 
-    this.bind("p:PageInfoChanged", function(event) {
+    this.bind("p:PageInfoChanged", function (event) {
         this.pageListView.handlePageInfoChangedEvent(event);
     });
-    this.bind("p:ControllerStatusChanged", function(event) {
+    this.bind("p:ControllerStatusChanged", function (event) {
         this.invalidateUIForControllerStatus();
     });
-    this.bind("p:ZoomChanged", function(event) {
+    this.bind("p:ZoomChanged", function (event) {
         this.invalidateZoom();
     });
 
     var lastOverflowX = null;
     var lastOverflowY = null;
 
-    var overflowChecker = function() {
+    var overflowChecker = function () {
         var pane = thiz.activeCanvas ? thiz.activeCanvas._scrollPane : null;
         if (!pane) {
             window.setTimeout(overflowChecker, 100);
@@ -85,19 +85,19 @@ function ApplicationPane() {
 
     // preventing drag and drop
 
-    document.addEventListener("dragover", function(event) {
+    document.addEventListener("dragover", function (event) {
         event.preventDefault();
         return false;
     }, false);
 
-    document.addEventListener("drop", function(event) {
+    document.addEventListener("drop", function (event) {
         event.preventDefault();
         return false;
     }, false);
 
     ApplicationPane._instance = this;
 
-    this.bind("dblclick", function(event) {
+    this.bind("dblclick", function (event) {
         if (event.target.nodeName == "input") {
             event.target.select();
         }
@@ -107,7 +107,7 @@ function ApplicationPane() {
     FontLoader.instance.loadFonts();
 }
 __extend(BaseTemplatedWidget, ApplicationPane);
-ApplicationPane.prototype.onAttached = function() {
+ApplicationPane.prototype.onAttached = function () {
     var thiz = this;
     this.invalidateUIForConfig();
     this.showStartupPane();
@@ -126,13 +126,13 @@ ApplicationPane.prototype.onAttached = function() {
     //     });
     // }, 100);
 };
-ApplicationPane.prototype.invalidateUIForConfig = function() {
+ApplicationPane.prototype.invalidateUIForConfig = function () {
     debug("BOOT: invalidating UI using configuration");
     var useCompactLayout = Config.get("view.useCompactLayout", false);
     document.body.setAttribute("compact-layout", useCompactLayout);
     this.toolBarSrollView.invalidate();
 };
-ApplicationPane.prototype.invalidateUIForControllerStatus = function() {
+ApplicationPane.prototype.invalidateUIForControllerStatus = function () {
     if (this.controller.doc) {
         document.title = this.controller.getDocumentName() + " - Pencil";
         this.pageListView.node().style.display = "inline-block";
@@ -142,10 +142,10 @@ ApplicationPane.prototype.invalidateUIForControllerStatus = function() {
         document.title = "Pencil";
     }
 };
-ApplicationPane.prototype.getCanvasContainer = function() {
+ApplicationPane.prototype.getCanvasContainer = function () {
     return this.contentBody;
 };
-ApplicationPane.prototype.createCanvas = function() {
+ApplicationPane.prototype.createCanvas = function () {
     var w = 400;
     var h = 400;
 
@@ -171,11 +171,11 @@ ApplicationPane.prototype.createCanvas = function() {
     var canvas = null;
 
 
-    scrollPane.addEventListener("mousedown", function(e) {
+    scrollPane.addEventListener("mousedown", function (e) {
         scrollPane._mouseDownAt = e.timeStamp;
     });
 
-    scrollPane.addEventListener("mouseup", function(e) {
+    scrollPane.addEventListener("mouseup", function (e) {
         if (!scrollPane._mouseDownAt || (e.timeStamp - scrollPane._mouseDownAt) > 150) return;
         if (!Dom.findParentWithClass(e.target, "CanvasWrapper")) {
             if (!canvas.isSelectingRange) canvas.selectNone();
@@ -194,7 +194,7 @@ ApplicationPane.prototype.createCanvas = function() {
 
     stencilToolbar.canvas = canvas;
 
-    canvas.element.addEventListener("p:SizeChanged", function() {
+    canvas.element.addEventListener("p:SizeChanged", function () {
         var w = Math.ceil(canvas.width * canvas.zoom);
         var h = Math.ceil(canvas.height * canvas.zoom);
         container.style.width = w + "px";
@@ -204,7 +204,7 @@ ApplicationPane.prototype.createCanvas = function() {
     }, false);
     return canvas;
 };
-ApplicationPane.prototype.onDocumentChanged = function() {
+ApplicationPane.prototype.onDocumentChanged = function () {
     this.pageListView.currentPage = this.controller.activePage;
     if (this.pageListView.currentPage != null && this.pageListView.currentPage.canvas != null) {
         this.pageListView.currentPage.canvas._sayTargetChanged();
@@ -213,14 +213,14 @@ ApplicationPane.prototype.onDocumentChanged = function() {
 
     this.onDocumentOptionsChanged();
 };
-ApplicationPane.prototype.onDocumentOptionsChanged = function() {
+ApplicationPane.prototype.onDocumentOptionsChanged = function () {
     this.getCanvasContainer().setAttribute("stencil-dev-mode", StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection() ? true : false);
 };
 
-ApplicationPane.prototype.activatePage = function(page) {
+ApplicationPane.prototype.activatePage = function (page) {
     this.pageListView.activatePage(page);
 };
-ApplicationPane.prototype.testSave = function() {
+ApplicationPane.prototype.testSave = function () {
     this.documentHandler.newDocument();
     var options = {
         name: "Sample page",
@@ -237,7 +237,7 @@ ApplicationPane.prototype.testSave = function() {
 
     this.controller.serializePage(page, page.tempFilePath);
 };
-ApplicationPane.prototype.setActiveCanvas = function(canvas) {
+ApplicationPane.prototype.setActiveCanvas = function (canvas) {
     if (this.activeCanvas && this.activeCanvas != canvas) {
         this.activeCanvas._cachedState = this.activeCanvas.getCanvasState();
     }
@@ -265,10 +265,10 @@ ApplicationPane.prototype.setActiveCanvas = function(canvas) {
         canvas: canvas
     });
 };
-ApplicationPane.prototype.invalidateZoom = function() {
+ApplicationPane.prototype.invalidateZoom = function () {
     this.zoomToolbar.setAttribute("label", Pencil.activeCanvas ? (Math.round(Pencil.activeCanvas.zoom * 100) + "%") : "100%");
 };
-ApplicationPane.prototype.showStartupPane = function() {
+ApplicationPane.prototype.showStartupPane = function () {
     debug("BOOT: Showing startup pane...");
     Pencil.documentHandler.preDocument = null;
     if (Pencil.controller.activePage) {
@@ -282,14 +282,14 @@ ApplicationPane.prototype.showStartupPane = function() {
     debug("BOOT:   >> Done");
 };
 const NO_CONTENT_VALUE = 22;
-ApplicationPane.prototype.getNoContentValue = function() {
+ApplicationPane.prototype.getNoContentValue = function () {
     var compact = Config.get("view.useCompactLayout", false);
     return compact ? 0 : NO_CONTENT_VALUE;
 };
-ApplicationPane.prototype.getCanvasToolbarHeight = function() {
+ApplicationPane.prototype.getCanvasToolbarHeight = function () {
     return StencilCollectionBuilder.isDocumentConfiguredAsStencilCollection() ? Math.round(3 * Util.em()) : 0;
 };
-ApplicationPane.prototype.getPreferredCanvasSize = function() {
+ApplicationPane.prototype.getPreferredCanvasSize = function () {
     var toolbarPadding = this.getCanvasToolbarHeight();
 
     return {
@@ -297,40 +297,40 @@ ApplicationPane.prototype.getPreferredCanvasSize = function() {
         h: Math.round(this.contentBody.offsetHeight - 2 * Pencil._getCanvasPadding()) - this.getNoContentValue() - toolbarPadding
     };
 };
-ApplicationPane.prototype.getBestFitSize = function() {
+ApplicationPane.prototype.getBestFitSize = function () {
     var zoom = Pencil.activeCanvas ? (1 / Pencil.activeCanvas.zoom) : 1;
     var toolbarPadding = this.getCanvasToolbarHeight();
 
     return [zoom * (this.contentBody.offsetWidth - 2 * Pencil._getCanvasPadding() - this.getNoContentValue()),
         zoom * (this.contentBody.offsetHeight - 2 * Pencil._getCanvasPadding() - this.getNoContentValue() - toolbarPadding)].join("x");
 };
-ApplicationPane.prototype.getBestFitSizeObject = function() {
+ApplicationPane.prototype.getBestFitSizeObject = function () {
     var zoom = Pencil.activeCanvas ? (1 / Pencil.activeCanvas.zoom) : 1;
     var toolbarPadding = this.getCanvasToolbarHeight();
     return {width: zoom * (this.contentBody.offsetWidth - 2 * Pencil._getCanvasPadding() - this.getNoContentValue()), height: zoom * (this.contentBody.offsetHeight - 2 * Pencil._getCanvasPadding() - this.getNoContentValue() - toolbarPadding)};
 };
-ApplicationPane.prototype.showBusyIndicator = function() {
+ApplicationPane.prototype.showBusyIndicator = function () {
     this.currentBusyOverlay = document.createElement("div");
     document.body.appendChild(this.currentBusyOverlay);
     this.currentBusyOverlay.style.cssText = "position: absolute; z-index:1000; top: 0px; left: 0px; right: 0px; bottom: 0px; cursor: wait;";
 };
-ApplicationPane.prototype.hideBusyIndicator = function() {
+ApplicationPane.prototype.hideBusyIndicator = function () {
     if (this.currentBusyOverlay) {
         if (this.currentBusyOverlay.parentNode) this.currentBusyOverlay.parentNode.removeChild(this.currentBusyOverlay);
         this.currentBusyOverlay = null;
     }
 };
-ApplicationPane.prototype.busy = function() {
+ApplicationPane.prototype.busy = function () {
     this.busyCount ++;
     if (this.busyCount == 1) this.showBusyIndicator();
 };
 
-ApplicationPane.prototype.unbusy = function() {
+ApplicationPane.prototype.unbusy = function () {
     if (this.busyCount > 0) this.busyCount --;
     if (this.busyCount == 0) this.hideBusyIndicator();
 };
-ApplicationPane.prototype.unbusyAfter = function(callback) {
-    return function() {
+ApplicationPane.prototype.unbusyAfter = function (callback) {
+    return function () {
         try {
             callback.apply(this, arguments);
         } finally {
@@ -338,12 +338,12 @@ ApplicationPane.prototype.unbusyAfter = function(callback) {
         }
     };
 };
-ApplicationPane.prototype.invalidatePropertyEditor = function() {
+ApplicationPane.prototype.invalidatePropertyEditor = function () {
     if (!Pencil.activeCanvas.currentController) {
         this.sharedPropertyEditor.detach();
     }
 };
-ApplicationPane.prototype.toggleFullscreen = function() {
+ApplicationPane.prototype.toggleFullscreen = function () {
     var browserWindow = remote.getCurrentWindow();
     var fullscreen = !browserWindow.isFullScreen();
     if (fullscreen) {
@@ -353,7 +353,7 @@ ApplicationPane.prototype.toggleFullscreen = function() {
     browserWindow.setFullScreen(fullscreen);
     this.validateFullScreen();
 };
-ApplicationPane.prototype.validateFullScreen = function() {
+ApplicationPane.prototype.validateFullScreen = function () {
     var browserWindow = remote.getCurrentWindow();
     var fullscreen = browserWindow.isFullScreen();
     Dom.toggleClass(document.body, "Fullscreen", fullscreen);
@@ -363,7 +363,7 @@ ApplicationPane.prototype.validateFullScreen = function() {
         if (this.shouldRestoreSidePane) this.leftSidePane.openLast();
     }
 };
-ApplicationPane.prototype.toggleLeftPane = function() {
+ApplicationPane.prototype.toggleLeftPane = function () {
     if (this.leftSidePane.isOpen()) {
         this.leftSidePane.collapseAll();
     } else {
@@ -371,6 +371,6 @@ ApplicationPane.prototype.toggleLeftPane = function() {
     }
 };
 
-ApplicationPane.prototype.setContentVisible = function(visible) {
+ApplicationPane.prototype.setContentVisible = function (visible) {
     this.contentBody.style.visibility = visible ? "visible" : "hidden";
 };

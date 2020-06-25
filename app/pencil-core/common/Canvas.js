@@ -1,4 +1,4 @@
-function Canvas(element, options, containerScrollPane) {
+function Canvas (element, options, containerScrollPane) {
     this.element = element;
     this.oldElement = "";
     this.__delegate("addEventListener", "hasAttribute", "getAttribute", "setAttribute", "setAttributeNS", "removeAttribute", "removeAttributeNS", "dispatchEvent");
@@ -21,7 +21,7 @@ function Canvas(element, options, containerScrollPane) {
 
     this.options = options || {};
 
-    this.startAutoScrollFunction = function(func) {
+    this.startAutoScrollFunction = function (func) {
         if (this.autoScrollTimout == null) {
             // this.lockPointerFunction = function () {
             //     thiz.element.requestPointerLock();
@@ -30,7 +30,7 @@ function Canvas(element, options, containerScrollPane) {
             this.autoScrollTimout = window.setInterval(func, 50);
         }
     };
-    this.stopAutoScrollFunction = function() {
+    this.stopAutoScrollFunction = function () {
         if (this.autoScrollTimout) {
             // if (thiz.lockPointerFunction != null) {
             //     document.exitPointerLock();
@@ -42,8 +42,8 @@ function Canvas(element, options, containerScrollPane) {
     };
     this.focusableBox = this.element.parentNode;
 
-    this.addEventListener("mousedown", function(event) {
-        var inDrawing = Dom.findUpward(event.originalTarget, function(node) {
+    this.addEventListener("mousedown", function (event) {
+        var inDrawing = Dom.findUpward(event.originalTarget, function (node) {
             return (node == thiz.svg);
         });
         if (!inDrawing) {
@@ -52,7 +52,7 @@ function Canvas(element, options, containerScrollPane) {
         }
     }, false);
 
-    this.addEventListener("mouseup", function(event) {
+    this.addEventListener("mouseup", function (event) {
         if (thiz.duplicateMode) {
             thiz.mouseUp = true;
             thiz.duplicateMode = null;
@@ -175,21 +175,21 @@ function Canvas(element, options, containerScrollPane) {
     this.onScreenEditors = [];
 
     // register event handler
-    this.svg.addEventListener("click", function(event) {
+    this.svg.addEventListener("click", function (event) {
         thiz.handleClick(event);
     }, false);
-    (containerScrollPane || this.svg).addEventListener("mousedown", function(event) {
+    (containerScrollPane || this.svg).addEventListener("mousedown", function (event) {
         thiz.movementDisabled = Pencil.controller.movementDisabled || event.ctrlKey;
         // document.commandDispatcher.advanceFocus();
         thiz.focus();
         thiz.handleMouseDown(event);
     }, false);
 
-    this.element.addEventListener("mousewheel", function(event) {
+    this.element.addEventListener("mousewheel", function (event) {
         thiz.focus();
         thiz.handleMouseWheel(event);
     }, false);
-    this.svg.ownerDocument.addEventListener("mouseup", function(event) {
+    this.svg.ownerDocument.addEventListener("mouseup", function (event) {
         if (thiz.autoScrollTimout) {
             thiz.stopAutoScrollFunction();
         }
@@ -199,7 +199,7 @@ function Canvas(element, options, containerScrollPane) {
         }
         thiz.handleMouseUp(event);
     }, false);
-    this.svg.ownerDocument.addEventListener("mousemove", function(event) {
+    this.svg.ownerDocument.addEventListener("mousemove", function (event) {
         if (thiz.autoScrollTimout) {
             thiz.stopAutoScrollFunction();
         }
@@ -214,11 +214,11 @@ function Canvas(element, options, containerScrollPane) {
         thiz.handleMouseMove(event);
     }, false);
 
-    this.svg.addEventListener("mousemove", function(event) {
+    this.svg.addEventListener("mousemove", function (event) {
         thiz.lastMouse = {x: event.offsetX / thiz.zoom, y: event.offsetY / thiz.zoom};
     }, false);
 
-    this.focusableBox.addEventListener("keydown", function(event) {
+    this.focusableBox.addEventListener("keydown", function (event) {
         thiz.handleKeyPress(event);
     }, false);
 
@@ -258,7 +258,7 @@ function Canvas(element, options, containerScrollPane) {
     //     }
     // }, false);
 
-    this.svg.ownerDocument.addEventListener("keydown", function(event) {
+    this.svg.ownerDocument.addEventListener("keydown", function (event) {
         if (event.keyCode == DOM_VK_SPACE && thiz.spaceHeld == false) {
             thiz.spaceHeld = true;
             thiz._lastPX = thiz._currentPX;
@@ -268,22 +268,22 @@ function Canvas(element, options, containerScrollPane) {
             Dom.addClass(thiz, "PanDown");
         }
     }, false);
-    this.svg.ownerDocument.addEventListener("keyup", function(event) {
+    this.svg.ownerDocument.addEventListener("keyup", function (event) {
         if (event.keyCode == DOM_VK_SPACE && thiz.spaceHeld == true) {
             thiz.spaceHeld = false;
             Dom.removeClass(thiz, "PanDown");
         }
     }, false);
 
-    this.propertyMenuItem.addEventListener("command", function(event) {
+    this.propertyMenuItem.addEventListener("command", function (event) {
         // thiz.handlePropertyMenuItemCommand(event);
     }, false);
 
-    this.element.addEventListener("contextmenu", function(event) {
+    this.element.addEventListener("contextmenu", function (event) {
         thiz.handleContextMenuShow(event);
     }, false);
 
-    this.svg.addEventListener("dblclick", function(event) {
+    this.svg.addEventListener("dblclick", function (event) {
         stencilDebug("pCanvas, dblclick");
         thiz.handleDblclick(event);
     }, true);
@@ -328,18 +328,18 @@ function Canvas(element, options, containerScrollPane) {
     this.element.appendChild(this.dragOverlay);
     Dom.addClass(this.dragOverlay, "DragOverlay");
 
-    this.focusableBox.addEventListener("focus", function(event) {
+    this.focusableBox.addEventListener("focus", function (event) {
         Canvas.activeCanvas = thiz;
         Dom.cancelEvent(event);
     }, true);
 
     this.setupEventHandlers();
-    window.globalEventBus.listen("config-change", function(data) {
+    window.globalEventBus.listen("config-change", function (data) {
         if (["grid.enabled", "edit.gridSize", "edit.gridStyle"].indexOf(data.name) >= 0) {
             CanvasImpl.setupGrid.apply(this);
         }
     }.bind(this));
-    window.globalEventBus.listen("doc-options-change", function(data) {
+    window.globalEventBus.listen("doc-options-change", function (data) {
         CanvasImpl.drawMargin.apply(this);
         this.snappingHelper.rebuildSnappingGuide();
     }.bind(this));
@@ -350,7 +350,7 @@ function Canvas(element, options, containerScrollPane) {
     this.resizeInfoLabel = this.element.ownerDocument.createElement("span");
     this.resizer.appendChild(this.resizeInfoLabel);
 
-    this.resizer.addEventListener("mousedown", function(event) {
+    this.resizer.addEventListener("mousedown", function (event) {
         event.preventDefault();
         if (this.element.hasAttribute("resizing")) {
             this.resizing = true;
@@ -366,27 +366,27 @@ function Canvas(element, options, containerScrollPane) {
     }.bind(this), false);
 }
 
-SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function (elem) {
     return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
 };
 
 Object.defineProperty(Canvas.prototype, "ownerDocument", {
-    get: function() {
+    get: function () {
         return this.element.ownerDocument;
     }
 });
 
-Canvas.prototype.createElementByName = function(name) {
+Canvas.prototype.createElementByName = function (name) {
     return this.element.ownerDocument.createElement("span");
 };
-Canvas.prototype.__delegate = function() {
+Canvas.prototype.__delegate = function () {
     for (var i = 0; i < arguments.length; i ++) {
         this.__delegateOne(arguments[i]);
     }
 };
-Canvas.prototype.__delegateOne = function(name) {
+Canvas.prototype.__delegateOne = function (name) {
     var thiz = this;
-    this[name] = function() {
+    this[name] = function () {
         var f = thiz.element[name];
         var args = [];
         for (var i = 0; i < arguments.length; i ++) {
@@ -396,26 +396,26 @@ Canvas.prototype.__delegateOne = function(name) {
     };
 };
 
-Canvas.prototype.setupEventHandlers = function() {
+Canvas.prototype.setupEventHandlers = function () {
     var thiz = this;
-    Dom.registerEvent(this.element, "dragenter", function(event) {
+    Dom.registerEvent(this.element, "dragenter", function (event) {
         thiz.__dragenter(event);
     }, false);
-    Dom.registerEvent(this.dragOverlay, "dragleave", function(event) {
+    Dom.registerEvent(this.dragOverlay, "dragleave", function (event) {
         thiz.__dragleave(event);
     }, false);
-    Dom.registerEvent(this.element, "dragend", function(event) {
+    Dom.registerEvent(this.element, "dragend", function (event) {
         thiz.__dragend(event);
     }, false);
-    Dom.registerEvent(this.dragOverlay, "dragover", function(event) {
+    Dom.registerEvent(this.dragOverlay, "dragover", function (event) {
         thiz.__dragover(event);
     }, false);
-    Dom.registerEvent(this.dragOverlay, "drop", function(event) {
+    Dom.registerEvent(this.dragOverlay, "drop", function (event) {
         thiz.__drop(event);
     }, false);
 };
 
-Canvas.prototype.getEventLocation = function(event, withoutZoom) {
+Canvas.prototype.getEventLocation = function (event, withoutZoom) {
     var rect = this.svg.parentNode.getBoundingClientRect();
     var x = Math.round(event.clientX - rect.left);
     var y = Math.round(event.clientY - rect.top);
@@ -430,26 +430,26 @@ Canvas.prototype.getEventLocation = function(event, withoutZoom) {
         y: y
     };
 };
-Canvas.prototype.addToSelection = function(target) {
+Canvas.prototype.addToSelection = function (target) {
     var rect = document.createElementNS(PencilNamespaces.svg, "svg:rect");
     this.selectionContainer.appendChild(rect);
     rect._target = target;
 
     this._invalidateOneSelection(rect);
 };
-Canvas.prototype._invalidateOneSelection = function(rect) {
+Canvas.prototype._invalidateOneSelection = function (rect) {
     var bbox = rect._target.getBoundingRect();
     Svg.setX(rect, Math.round(bbox.x));
     Svg.setY(rect, Math.round(bbox.y));
     Svg.setWidth(rect, Math.round(bbox.width));
     Svg.setHeight(rect, Math.round(bbox.height));
 };
-Canvas.prototype._sayTargetChanged = function() {
+Canvas.prototype._sayTargetChanged = function () {
     Dom.emitEvent("p:TargetChanged", this.element, {
         canvas: this
     });
 };
-Canvas.prototype.getSelectedTargets = function() {
+Canvas.prototype.getSelectedTargets = function () {
     var targets = [];
     for (var i = 0; i < this.selectionContainer.childNodes.length; i++) {
         var rect = this.selectionContainer.childNodes[i];
@@ -460,13 +460,13 @@ Canvas.prototype.getSelectedTargets = function() {
 
     return targets;
 };
-Canvas.prototype.clearSelection = function() {
+Canvas.prototype.clearSelection = function () {
     while (this.selectionContainer.hasChildNodes()) {
         var child = this.selectionContainer.firstChild;
         this.selectionContainer.removeChild(child);
     }
 };
-Canvas.prototype.selectSibling = function(next) {
+Canvas.prototype.selectSibling = function (next) {
     var targets = this.getSelectedTargets();
     var node = null;
 
@@ -498,16 +498,16 @@ Canvas.prototype.selectSibling = function(next) {
 
     this.selectShape(sibling);
 };
-Canvas.prototype.invalidateAll = function(callback) {
+Canvas.prototype.invalidateAll = function (callback) {
     if (this.element.clientWidth <= 0) {
-        setTimeout(function() {
+        setTimeout(function () {
             this.invalidateAll(callback);
         }.bind(this), 10);
         return;
     }
 
     try {
-        Dom.workOn(".//svg:g[@p:type='Shape']", this.drawingLayer, function(node) {
+        Dom.workOn(".//svg:g[@p:type='Shape']", this.drawingLayer, function (node) {
             try {
                 var controller = this.createControllerFor(node);
                 if (controller && controller.validateAll) controller.validateAll();
@@ -519,10 +519,10 @@ Canvas.prototype.invalidateAll = function(callback) {
         if (callback) callback();
     }
 };
-Canvas.prototype.selectAll = function() {
+Canvas.prototype.selectAll = function () {
     this.clearSelection();
     var thiz = this;
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
         if (thiz.isShapeLocked(node)) {
             return;
         }
@@ -550,7 +550,7 @@ Canvas.prototype.selectAll = function() {
     this._attachEditors(this.currentController);
     this._sayTargetChanged();
 };
-Canvas.prototype.removeFromSelection = function(target) {
+Canvas.prototype.removeFromSelection = function (target) {
     var foundRect = null;
     for (var i = 0; i < this.selectionContainer.childNodes.length; i++) {
         var rect = this.selectionContainer.childNodes[i];
@@ -563,13 +563,13 @@ Canvas.prototype.removeFromSelection = function(target) {
         this.selectionContainer.removeChild(foundRect);
     }
 };
-Canvas.prototype.insertObject = function(obj) {
+Canvas.prototype.insertObject = function (obj) {
     this.drawingLayer.appendChild(obj);
 };
-Canvas.prototype.installControlSVGElement = function(obj) {
+Canvas.prototype.installControlSVGElement = function (obj) {
     this.controlLayer.appendChild(obj);
 };
-Canvas.prototype.zoomTo = function(factor) {
+Canvas.prototype.zoomTo = function (factor) {
     this.zoom = factor;
     this.drawingLayer.setAttribute("transform", "scale(" +
             [this.zoom, this.zoom] + ")");
@@ -588,7 +588,7 @@ Canvas.prototype.zoomTo = function(factor) {
         canvas: this
     });
 };
-Canvas.prototype.getZoomedGeo = function(target) {
+Canvas.prototype.getZoomedGeo = function (target) {
     if (!target) {
         return null;
     }
@@ -606,13 +606,13 @@ Canvas.prototype.getZoomedGeo = function(target) {
 
     return geo;
 };
-Canvas.prototype.getSize = function() {
+Canvas.prototype.getSize = function () {
     return {
         width: parseInt(this.svg.getAttribute("width"), 10),
         height: parseInt(this.svg.getAttribute("height"), 10)
     };
 };
-Canvas.prototype.getZoomedRect = function(rect) {
+Canvas.prototype.getZoomedRect = function (rect) {
     rect.x *= this.zoom;
     rect.y *= this.zoom;
     rect.width *= this.zoom;
@@ -620,14 +620,14 @@ Canvas.prototype.getZoomedRect = function(rect) {
 
     return rect;
 };
-Canvas.prototype.setZoomedGeo = function(target, geo, setter) {
+Canvas.prototype.setZoomedGeo = function (target, geo, setter) {
     geo = geo.clone(this.svg);
     geo.ctm.e /= this.zoom;
     geo.ctm.f /= this.zoom;
     geo.dim.w /= this.zoom;
     geo.dim.h /= this.zoom;
 
-    this.run(function() {
+    this.run(function () {
         target.setGeometry(geo);
     }, this, Util.getMessage("action.canvas.zoom"));
 
@@ -635,19 +635,19 @@ Canvas.prototype.setZoomedGeo = function(target, geo, setter) {
         setter: setter ? setter : null
     });
 };
-Canvas.prototype.redraw = function() {
+Canvas.prototype.redraw = function () {
     this.drawingLayer.ownerSVGElement.forceRedraw();
 };
-Canvas.prototype.getType = function(svg) {
+Canvas.prototype.getType = function (svg) {
     return svg.getAttributeNS(PencilNamespaces.p, "def");
 };
-Canvas.prototype.insertShape = function(shapeDef, bound, overridingValueMap) {
+Canvas.prototype.insertShape = function (shapeDef, bound, overridingValueMap) {
     this.run(this.insertShapeImpl_, this, Util.getMessage(
         "action.create.shape", shapeDef.displayName), [shapeDef,
         bound ? bound : null,
         overridingValueMap ? overridingValueMap : null]);
 };
-Canvas.prototype.invalidateShapeContent = function(shape, shapeDef) {
+Canvas.prototype.invalidateShapeContent = function (shape, shapeDef) {
     var count = shape.childNodes.length;
     for (var i = count - 1; i >= 0; i --) {
         var child = shape.childNodes[i];
@@ -660,7 +660,7 @@ Canvas.prototype.invalidateShapeContent = function(shape, shapeDef) {
     }
 
     // generate the ids
-    Dom.workOn(".//*[@p:name]", shape, function(node) {
+    Dom.workOn(".//*[@p:name]", shape, function (node) {
         var name = node.getAttributeNS(PencilNamespaces.p, "name");
         var oldId = node.getAttribute("id");
         if (oldId) {
@@ -676,7 +676,7 @@ Canvas.prototype.invalidateShapeContent = function(shape, shapeDef) {
 
     Dom.renewId(shape);
 };
-Canvas.prototype.insertShapeImpl_ = function(shapeDef, bound,
+Canvas.prototype.insertShapeImpl_ = function (shapeDef, bound,
     overridingValueMap) {
     // instantiate the shape using the shapedef
     var shape = this.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
@@ -712,7 +712,7 @@ Canvas.prototype.insertShapeImpl_ = function(shapeDef, bound,
     this.snappingHelper.updateSnappingGuide(this.currentController);
     DockingManager.enableDocking(this.currentController);
 };
-Canvas.prototype.selectShape = function(shape) {
+Canvas.prototype.selectShape = function (shape) {
     if (this.isShapeLocked(shape)) return;
     var controller = this.createControllerFor(shape);
 
@@ -732,7 +732,7 @@ Canvas.prototype.selectShape = function(shape) {
 
     this._sayTargetChanged();
 };
-Canvas.prototype.selectMultiple = function(shapes) {
+Canvas.prototype.selectMultiple = function (shapes) {
     this.clearSelection();
     for (i in shapes) {
         if (this.isShapeLocked(shapes[i])) {
@@ -760,7 +760,7 @@ Canvas.prototype.selectMultiple = function(shapes) {
 
     this._sayTargetChanged();
 };
-Canvas.prototype.selectNone = function() {
+Canvas.prototype.selectNone = function () {
     this.clearSelection();
     this._detachEditors();
     this.currentController = null;
@@ -771,7 +771,7 @@ Canvas.prototype.selectNone = function() {
     this.focus();
     this._sayTargetChanged();
 };
-Canvas.prototype.createControllerFor = function(top) {
+Canvas.prototype.createControllerFor = function (top) {
     var type = top.getAttributeNS(PencilNamespaces.p, "type");
     if (type == "Shape") {
         try {
@@ -783,7 +783,7 @@ Canvas.prototype.createControllerFor = function(top) {
     }
     return new Null(this, top);
 };
-Canvas.prototype._detachEditors = function() {
+Canvas.prototype._detachEditors = function () {
     for ( var editor in this.onScreenEditors) {
         this.onScreenEditors[editor].dettach();
     }
@@ -794,7 +794,7 @@ Canvas.prototype._detachEditors = function() {
         this.contextMenuEditor.dettach();
     }
 };
-Canvas.prototype.passivateEditors = function() {
+Canvas.prototype.passivateEditors = function () {
     for (editor in this.onScreenEditors) {
         this.onScreenEditors[editor].passivated = true;
     }
@@ -805,7 +805,7 @@ Canvas.prototype.passivateEditors = function() {
         this.contextMenuEditor.passivated = true;
     }
 };
-Canvas.prototype._attachEditors = function(controller) {
+Canvas.prototype._attachEditors = function (controller) {
     for (editor in this.onScreenEditors) {
         this.onScreenEditors[editor].attach(controller);
     }
@@ -815,7 +815,7 @@ Canvas.prototype._attachEditors = function(controller) {
     // if (this.contextMenuEditor && this.contextMenuEditor.attach)
     //     this.contextMenuEditor.attach(controller);
 };
-Canvas.prototype.finishMoving = function(event) {
+Canvas.prototype.finishMoving = function (event) {
     if (this.controllerHeld && this.currentController &&
             this.currentController.markAsMoving) {
         this.currentController.markAsMoving(false);
@@ -831,7 +831,7 @@ Canvas.prototype.finishMoving = function(event) {
 
         if (this.hasMoved) {
             // just to save state
-            this.run(function() {
+            this.run(function () {
             }, this, Util.getMessage("action.shape.finish.moving",
                 this.currentController.getName()));
         }
@@ -849,7 +849,7 @@ Canvas.prototype.finishMoving = function(event) {
         });
     }
 };
-Canvas.prototype.handleMouseWheel = function(event) {
+Canvas.prototype.handleMouseWheel = function (event) {
     if (event.ctrlKey) {
         Dom.cancelEvent(event);
 
@@ -871,7 +871,7 @@ Canvas.prototype.handleMouseWheel = function(event) {
     }
 };
 
-Canvas.prototype.handleScrollPane = function(event) {
+Canvas.prototype.handleScrollPane = function (event) {
     if (!this._scrollPane) return;
     var thiz = this;
     var scrollBarSize = 15;
@@ -882,7 +882,7 @@ Canvas.prototype.handleScrollPane = function(event) {
     var dx = scrollValue / thiz.zoom;
     var dy = scrollValue / thiz.zoom;
     if (loc.x > pane.right - scrollBarSize && loc.x < pane.right) {
-        fun = function() {
+        fun = function () {
             if (thiz._scrollPane.scrollLeft >= thiz._scrollPane.scrollWidth - thiz._scrollPane.offsetWidth) {
                 thiz._scrollPane.scrollLeft = thiz._scrollPane.scrollWidth;
                 thiz.stopAutoScrollFunction();
@@ -893,7 +893,7 @@ Canvas.prototype.handleScrollPane = function(event) {
         };
     }
     if (loc.x < pane.left && loc.x > pane.left - scrollBarSize) {
-        fun = function() {
+        fun = function () {
             if (thiz._scrollPane.scrollLeft <= 0) {
                 thiz.stopAutoScrollFunction();
                 return;
@@ -903,7 +903,7 @@ Canvas.prototype.handleScrollPane = function(event) {
         };
     }
     if (loc.y < pane.top && loc.y > pane.top - scrollBarSize) {
-        fun = function() {
+        fun = function () {
             if (thiz._scrollPane.scrollTop <= 0) {
                 thiz.stopAutoScrollFunction();
                 return;
@@ -913,7 +913,7 @@ Canvas.prototype.handleScrollPane = function(event) {
         };
     }
     if (loc.y > pane.bottom - scrollBarSize && loc.y < pane.bottom) {
-        fun = function() {
+        fun = function () {
             if (thiz._scrollPane.scrollTop >= thiz._scrollPane.scrollHeight - thiz._scrollPane.offsetHeight) {
                 thiz._scrollPane.scrollTop = thiz._scrollPane.scrollHeight;
                 thiz.stopAutoScrollFunction();
@@ -928,7 +928,7 @@ Canvas.prototype.handleScrollPane = function(event) {
     }
 };
 
-Canvas.prototype.handleMouseUp = function(event) {
+Canvas.prototype.handleMouseUp = function (event) {
     if (this.resizing) {
         this.commitResize(event);
         this.isSelectingRange = false;
@@ -965,7 +965,7 @@ Canvas.prototype.handleMouseUp = function(event) {
     }
     if (this.controllerHeld && this.hasMoved) {
         // just to save state
-        this.run(function() {
+        this.run(function () {
         }, this, Util.getMessage("action.move.shape"));
     }
 
@@ -984,7 +984,7 @@ Canvas.prototype.handleMouseUp = function(event) {
             this.clearSelection();
         }
         var thiz = this;
-        Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+        Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
             if (thiz.isShapeLocked(node)) {
                 return;
             }
@@ -1055,7 +1055,7 @@ Canvas.prototype.handleMouseUp = function(event) {
         //             && node.localName == "pcanvas";
         // });
 
-        var canvasElement = Dom.findTop(event.originalTarget, function(node) {
+        var canvasElement = Dom.findTop(event.originalTarget, function (node) {
             return node.getAttribute && node.getAttribute("pencil-canvas") == "true";
         });
 
@@ -1083,12 +1083,12 @@ Canvas.prototype.handleMouseUp = function(event) {
         Console.dumpError(e);
     }
 };
-Canvas.prototype.handleClick = function(event) {
+Canvas.prototype.handleClick = function (event) {
     // is it from an html:a?
     var a = Dom
         .findUpward(
             event.originalTarget,
-            function(node) {
+            function (node) {
                 return (node && node.nodeType == 1 &&
                                 node.localName.toLowerCase() == "a" && node.namespaceURI == PencilNamespaces.html);
             });
@@ -1101,7 +1101,7 @@ Canvas.prototype.handleClick = function(event) {
     var foreignObject = Dom
         .findUpward(
             a,
-            function(node) {
+            function (node) {
                 return (node && node.nodeType == 1 &&
                                 node.localName == "foreignObject" && node.namespaceURI == PencilNamespaces.svg);
             });
@@ -1112,7 +1112,7 @@ Canvas.prototype.handleClick = function(event) {
         event.cancelBubble = true;
     }
 };
-Canvas.prototype.commitResize = function(event) {
+Canvas.prototype.commitResize = function (event) {
     this.resizing = false;
     if (this.resizeInfo && this.resizeInfo.lastSize) {
         Pencil.controller.setActiveCanvasSize(this.resizeInfo.lastSize.w, this.resizeInfo.lastSize.h);
@@ -1120,7 +1120,7 @@ Canvas.prototype.commitResize = function(event) {
     this.resizeInfo = null;
     this.element.removeAttribute("resizing");
 };
-Canvas.prototype.handleResizeMouseMove = function(event) {
+Canvas.prototype.handleResizeMouseMove = function (event) {
     if (this.resizing) {
         var dw = Math.round((event.clientX - this.resizeInfo.ox) / this.zoom);
         var dh = Math.round((event.clientY - this.resizeInfo.oy) / this.zoom);
@@ -1162,7 +1162,7 @@ Canvas.prototype.handleResizeMouseMove = function(event) {
     if (event.clientX >= bound.x && event.clientX <= bound.x + bound.width &&
         event.clientY >= bound.y && event.clientY <= bound.y + bound.width) {
         if (!this.showResizerTimeout) {
-            this.showResizerTimeout = window.setTimeout(function() {
+            this.showResizerTimeout = window.setTimeout(function () {
                 thiz.showResizerTimeout = null;
                 thiz.element.setAttribute("resizing", "true");
                 thiz.resizeInfoLabel.innerHTML = thiz.width + " x " + thiz.height;
@@ -1175,7 +1175,7 @@ Canvas.prototype.handleResizeMouseMove = function(event) {
     }
     return false;
 };
-Canvas.prototype.handleMouseMove = function(event, fake) {
+Canvas.prototype.handleMouseMove = function (event, fake) {
     if (!fake && this.handleResizeMouseMove(event)) return;
 
     try {
@@ -1383,19 +1383,19 @@ Canvas.prototype.handleMouseMove = function(event, fake) {
         error(ex);
     }
 };
-Canvas.prototype.setRangeBoundStart = function(x, y) {
+Canvas.prototype.setRangeBoundStart = function (x, y) {
     Svg.setX(this.rangeBoundRect, x + 0.5);
     Svg.setY(this.rangeBoundRect, y + 0.5);
 };
-Canvas.prototype.setRangeBoundSize = function(w, h) {
+Canvas.prototype.setRangeBoundSize = function (w, h) {
     Svg.setWidth(this.rangeBoundRect, w);
     Svg.setHeight(this.rangeBoundRect, h);
 };
-Canvas.prototype.setRangeBoundVisibility = function(visible) {
+Canvas.prototype.setRangeBoundVisibility = function (visible) {
     this.rangeBoundRect.setAttributeNS(PencilNamespaces.p, "p:on",
         visible ? "true" : "false");
 };
-Canvas.prototype.handleKeyPress = function(event) {
+Canvas.prototype.handleKeyPress = function (event) {
     if (this != Pencil.activeCanvas) return;
 
     for (editor in this.onScreenEditors) {
@@ -1439,7 +1439,7 @@ Canvas.prototype.handleKeyPress = function(event) {
             dy *= gridSize.h;
         }
 
-        this.run(function() {
+        this.run(function () {
             // this.currentController.moveBy(dx, dy);
             this.currentController.moveBy(dx, dy, false, true);
 
@@ -1469,7 +1469,7 @@ Canvas.prototype.handleKeyPress = function(event) {
         });
     } else if (event.keyCode == DOM_VK_DELETE) {
         if (this.currentController) {
-            this.run(function() {
+            this.run(function () {
                 this.currentController.deleteTarget();
             }, this, Util.getMessage("action.delete.shape",
                 this.currentController.getName()));
@@ -1512,7 +1512,7 @@ Canvas.prototype.handleKeyPress = function(event) {
     //     }
     // }
 };
-Canvas.prototype.updateContextMenu = function(currentAction, prevAction) {
+Canvas.prototype.updateContextMenu = function (currentAction, prevAction) {
     this.undoContextMenu.setAttribute("label", Util
         .getMessage("menu.undo.label") +
             currentAction);
@@ -1520,7 +1520,7 @@ Canvas.prototype.updateContextMenu = function(currentAction, prevAction) {
         .getMessage("menu.redo.label") +
             prevAction);
 };
-Canvas.prototype.handleContextMenuShow = function(event) {
+Canvas.prototype.handleContextMenuShow = function (event) {
     if (this.currentController) {
         // attach now
         if (this.contextMenuEditor) {
@@ -1531,7 +1531,7 @@ Canvas.prototype.handleContextMenuShow = function(event) {
             controller: this.currentController
         };
     } else {
-        var top = Dom.findTop(event.originalTarget, function(node) {
+        var top = Dom.findTop(event.originalTarget, function (node) {
             return node.hasAttributeNS &&
                     node.hasAttributeNS(PencilNamespaces.p, "type");
         });
@@ -1657,7 +1657,7 @@ Canvas.prototype.handleContextMenuShow = function(event) {
 
 */
 
-Canvas.prototype.buildAttachMenuItem = function() {
+Canvas.prototype.buildAttachMenuItem = function () {
     if (this.attachToMenu) {
         this.popup.removeChild(this.attachToMenu);
         this.attachToMenu = null;
@@ -1705,14 +1705,14 @@ Canvas.prototype.buildAttachMenuItem = function() {
                 item._attachSlot = attachSlots[i];
             }
         }
-        this.attachToMenu.addEventListener("command", function(event) {
+        this.attachToMenu.addEventListener("command", function (event) {
             try {
                 var containerNode = Dom.findUpward(event.originalTarget,
-                    function(node) {
+                    function (node) {
                         return node._container;
                     });
                 var attachSlotNode = Dom.findUpward(event.originalTarget,
-                    function(node) {
+                    function (node) {
                         return node._attachSlot;
                     });
                 if (containerNode && containerNode._container && attachSlotNode &&
@@ -1740,7 +1740,7 @@ Canvas.prototype.buildAttachMenuItem = function() {
         }, false);
     }
 };
-Canvas.prototype.buildDetachMenuItem = function() {
+Canvas.prototype.buildDetachMenuItem = function () {
     if (this.detachFromMenu) {
         this.popup.removeChild(this.detachFromMenu);
         this.detachFromMenu = null;
@@ -1790,14 +1790,14 @@ Canvas.prototype.buildDetachMenuItem = function() {
         this.detachFromMenu
             .addEventListener(
                 "command",
-                function(event) {
+                function (event) {
                     try {
                         var containerNode = Dom.findUpward(
-                            event.originalTarget, function(node) {
+                            event.originalTarget, function (node) {
                                 return node._container;
                             });
                         var detachSlotNode = Dom.findUpward(
-                            event.originalTarget, function(node) {
+                            event.originalTarget, function (node) {
                                 return node._detachSlot;
                             });
                         if (containerNode && containerNode._container &&
@@ -1823,7 +1823,7 @@ Canvas.prototype.buildDetachMenuItem = function() {
                                                 .workOn(
                                                     "./p:property",
                                                     metaNode,
-                                                    function(
+                                                    function (
                                                         node) {
                                                         var name = node
                                                             .getAttribute("name");
@@ -1869,13 +1869,13 @@ Canvas.prototype.buildDetachMenuItem = function() {
                 }, false);
     }
 };
-Canvas.prototype.insertEditorContextMenuItem = function(menuItem) {
+Canvas.prototype.insertEditorContextMenuItem = function (menuItem) {
     var parent = this.popupSeparator.parentNode;
     menuItem._isEditor = true;
 
     parent.insertBefore(menuItem, this.popupSeparator);
 };
-Canvas.prototype.invalidateEditors = function(source) {
+Canvas.prototype.invalidateEditors = function (source) {
     for (editor in this.onScreenEditors) {
         var e = this.onScreenEditors[editor];
         if (!source || source != e) {
@@ -1890,20 +1890,20 @@ Canvas.prototype.invalidateEditors = function(source) {
         this._invalidateOneSelection(rect);
     }
 };
-Canvas.prototype._showPropertyDialog = function() {
+Canvas.prototype._showPropertyDialog = function () {
     if (this.propertyPageEditor && this.currentController) {
         this.propertyPageEditor.showAndAttach(this.currentController);
     }
 };
-Canvas.prototype.handlePropertyMenuItemCommand = function(event) {
+Canvas.prototype.handlePropertyMenuItemCommand = function (event) {
     this._showPropertyDialog();
 };
-Canvas.prototype.handleDblclick = function(event) {
+Canvas.prototype.handleDblclick = function (event) {
     stencilDebug("handleDblclick, start finding top");
 
     // find the top, get the def
     var thiz = this;
-    var top = Dom.findTop(event.originalTarget, function(node) {
+    var top = Dom.findTop(event.originalTarget, function (node) {
         return node.hasAttributeNS &&
                 node.hasAttributeNS(PencilNamespaces.p, "type") &&
                 node.getAttributeNS(PencilNamespaces.p, "type") == "Shape" &&
@@ -1926,13 +1926,13 @@ Canvas.prototype.handleDblclick = function(event) {
         clientY: event.clientY
     });
 };
-Canvas.prototype.focus = function() {
+Canvas.prototype.focus = function () {
     // document.getElementById("richTextEditorToolbar").focus();
     // document.commandDispatcher.rewindFocus();
     // document.commandDispatcher.advanceFocus();
     this.focusableBox.focus();
 };
-Canvas.prototype.doCopy = function() {
+Canvas.prototype.doCopy = function () {
     if (!this.currentController) {
         return;
     }
@@ -1953,7 +1953,7 @@ Canvas.prototype.doCopy = function() {
     clipboard.writeText(textualData);
 };
 Canvas.domParser = new DOMParser();
-Canvas.prototype.doPaste = function(withAlternative) {
+Canvas.prototype.doPaste = function (withAlternative) {
     this.useAlternativePasting = withAlternative ? true : false;
     var formats = clipboard.availableFormats();
     if (!formats) return;
@@ -1969,7 +1969,7 @@ Canvas.prototype.doPaste = function(withAlternative) {
         if (text) {
             var parsed = false;
 
-            function parseContent(string) {
+            function parseContent (string) {
                 var dom = Canvas.domParser.parseFromString(string, "text/xml");
                 if (dom) {
                     var node = dom.documentElement;
@@ -2094,7 +2094,7 @@ Canvas.prototype.doPaste = function(withAlternative) {
     }
 };
 
-Canvas.prototype.handleMouseDown = function(event) {
+Canvas.prototype.handleMouseDown = function (event) {
     this._mouseDownAt = event.timeStamp;
     event.preventDefault();
 
@@ -2113,12 +2113,12 @@ Canvas.prototype.handleMouseDown = function(event) {
     this._button = event.button;
 
     var thiz = this;
-    var isInControlLayer = Dom.findUpward(event.originalTarget, function(node) {
+    var isInControlLayer = Dom.findUpward(event.originalTarget, function (node) {
         return (node == thiz.controlLayer);
     });
     if (isInControlLayer) return;
 
-    var top = Dom.findTop(event.originalTarget, function(node) {
+    var top = Dom.findTop(event.originalTarget, function (node) {
         return node.hasAttributeNS &&
                 node.hasAttributeNS(PencilNamespaces.p, "type");
     });
@@ -2171,7 +2171,7 @@ Canvas.prototype.handleMouseDown = function(event) {
         this.mouseUp = false;
 
         var thiz = this;
-        this.duplicateFunc = function() {
+        this.duplicateFunc = function () {
             var target =thiz.currentController.createTransferableData();
             var contents = [];
 
@@ -2303,14 +2303,14 @@ Canvas.prototype.handleMouseDown = function(event) {
     }
 };
 
-Canvas.prototype.isEventWithControl = function(event) {
+Canvas.prototype.isEventWithControl = function (event) {
     return (event.ctrlKey && !IS_MAC) || (event.metaKey && IS_MAC);
 };
-Canvas.prototype.doGroup = function() {
+Canvas.prototype.doGroup = function () {
     this.run(this.doGroupImpl_, this, Util.getMessage("action.group.shapes"));
 };
 
-Canvas.prototype.doGroupImpl_ = function() {
+Canvas.prototype.doGroupImpl_ = function () {
     var targets = this.getSelectedTargets();
     if (targets.length <= 1) {
         return;
@@ -2322,7 +2322,7 @@ Canvas.prototype.doGroupImpl_ = function() {
 
     var nodes = [];
     var rect = null;
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
         for (t in targets) {
             if (targets[t].isFor(node)) {
                 nodes.push(node);
@@ -2356,14 +2356,14 @@ Canvas.prototype.doGroupImpl_ = function() {
             this.currentController.targets[t], true);
     }
 };
-Canvas.prototype.ensureControllerInView = function() {
+Canvas.prototype.ensureControllerInView = function () {
 
 };
-Canvas.prototype.doUnGroup = function() {
+Canvas.prototype.doUnGroup = function () {
     this.run(this.doUnGroupImpl_, this, Util
         .getMessage("action.ungroup.shapes"));
 };
-Canvas.prototype.doUnGroupImpl_ = function() {
+Canvas.prototype.doUnGroupImpl_ = function () {
     if (!this.currentController) {
         return;
     }
@@ -2387,13 +2387,13 @@ Canvas.prototype.doUnGroupImpl_ = function() {
         this.snappingHelper.updateSnappingGuide(this.currentController);
     }
 };
-Canvas.prototype.isShapeLocked = function(shape) {
+Canvas.prototype.isShapeLocked = function (shape) {
     return shape.getAttributeNS(PencilNamespaces.p, "locked") == "true";
 };
-Canvas.prototype.toggleLocking = function() {
+Canvas.prototype.toggleLocking = function () {
     this.run(this.toggleLockingImpl_, this, Util.getMessage("action.lock.shape"));
 };
-Canvas.prototype.toggleLockingImpl_ = function() {
+Canvas.prototype.toggleLockingImpl_ = function () {
     if (!this.lockingStatus) {
         return;
     }
@@ -2405,11 +2405,11 @@ Canvas.prototype.toggleLockingImpl_ = function() {
         this.selectShape(this.lockingStatus.node);
     }
 };
-Canvas.prototype.deleteSelected = function() {
+Canvas.prototype.deleteSelected = function () {
     this.run(this.deleteSelectedImpl_, this, Util
         .getMessage("action.delete.shape"));
 };
-Canvas.prototype.deleteSelectedImpl_ = function() {
+Canvas.prototype.deleteSelectedImpl_ = function () {
     // this.snappingHelper.updateSnappingGuide(this.currentController, true);
     this.currentController.deleteTarget();
     this.currentController = null;
@@ -2417,17 +2417,17 @@ Canvas.prototype.deleteSelectedImpl_ = function() {
     this.clearSelection();
     this._sayTargetChanged();
 };
-Canvas.prototype._sayContentModified = function() {
+Canvas.prototype._sayContentModified = function () {
     Dom.emitEvent("p:ContentModified", this.element);
 };
-Canvas.prototype._saveMemento = function(actionName) {
+Canvas.prototype._saveMemento = function (actionName) {
     this.careTaker.save(actionName);
 };
-Canvas.prototype.getMemento = function(actionName) {
+Canvas.prototype.getMemento = function (actionName) {
     return new CanvasMemento(this.drawingLayer.cloneNode(true), {width: this.width, height: this.height}, actionName);
 };
 
-Canvas.prototype.setMemento = function(memento) {
+Canvas.prototype.setMemento = function (memento) {
     this.selectNone();
     Dom.empty(this.drawingLayer);
 
@@ -2451,7 +2451,7 @@ Canvas.prototype.setMemento = function(memento) {
 
     this._sayContentModified();
 };
-Canvas.prototype.run = function(job, targetObject, actionName, args) {
+Canvas.prototype.run = function (job, targetObject, actionName, args) {
     try {
         // console.log();
         job.apply(targetObject, args);
@@ -2462,7 +2462,7 @@ Canvas.prototype.run = function(job, targetObject, actionName, args) {
         if (Pencil.controller && !Pencil.controller.activePageLoading) this._sayContentModified();
     }
 };
-Canvas.prototype.getCanvasState = function() {
+Canvas.prototype.getCanvasState = function () {
     var state = {
         zoom: this.zoom
     };
@@ -2474,11 +2474,11 @@ Canvas.prototype.getCanvasState = function() {
 
     return state;
 };
-Canvas.prototype.setCanvasState = function(state) {
+Canvas.prototype.setCanvasState = function (state) {
     if (state) {
         this.zoomTo(state.zoom);
         if (this._scrollPane) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 this._scrollPane.scrollTop = state.scrollTop;
                 this._scrollPane.scrollLeft = state.scrollLeft;
             }.bind(this), 10);
@@ -2486,14 +2486,14 @@ Canvas.prototype.setCanvasState = function(state) {
     } else {
         this.zoomTo(1);
         if (this._scrollPane) {
-            window.setTimeout(function() {
+            window.setTimeout(function () {
                 this._scrollPane.scrollTop = 0;
                 this._scrollPane.scrollLeft = 0;
             }.bind(this), 10);
         }
     }
 };
-Canvas.prototype.setBackgroundColor = function(color) {
+Canvas.prototype.setBackgroundColor = function (color) {
     if (color) {
         this.element.style.backgroundColor = color.toRGBAString();
     } else {
@@ -2501,11 +2501,11 @@ Canvas.prototype.setBackgroundColor = function(color) {
     }
 };
 
-Canvas.prototype.setSize = function(width, height) {
+Canvas.prototype.setSize = function (width, height) {
     this.run(this.setSizeImpl_, this, Util.getMessage(
         "action.canvas.resize"), [width, height]);
 };
-Canvas.prototype.setSizeImpl_ = function(width, height) {
+Canvas.prototype.setSizeImpl_ = function (width, height) {
     var thiz = this;
 
     // this.run()
@@ -2515,7 +2515,7 @@ Canvas.prototype.setSizeImpl_ = function(width, height) {
     this.svg.setAttribute("width", 10);
     this.svg.setAttribute("height", 10);
 
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.svg.setAttribute("width", Math.ceil(thiz.width * thiz.zoom));
         thiz.svg.setAttribute("height", Math.ceil(thiz.height * thiz.zoom));
 
@@ -2529,7 +2529,7 @@ Canvas.prototype.setSizeImpl_ = function(width, height) {
     this.snappingHelper.rebuildSnappingGuide();
 };
 
-Canvas.prototype.setBackgroundImageData = function(image, dimBackground) {
+Canvas.prototype.setBackgroundImageData = function (image, dimBackground) {
     if (!image) {
         this.backgroundImage.setAttributeNS(PencilNamespaces.xlink,
             "xlink:href", "");
@@ -2553,7 +2553,7 @@ Canvas.prototype.setBackgroundImageData = function(image, dimBackground) {
             "true");
     }
 };
-Canvas.prototype.setDimBackground = function(dimBackground) {
+Canvas.prototype.setDimBackground = function (dimBackground) {
     if (!dimBackground) {
         this.removeAttributeNS(PencilNamespaces.p, "with-background-dimmer");
     } else {
@@ -2561,15 +2561,15 @@ Canvas.prototype.setDimBackground = function(dimBackground) {
             "true");
     }
 };
-Canvas.prototype.sizeToContent = function(hPadding, vPadding) {
+Canvas.prototype.sizeToContent = function (hPadding, vPadding) {
     var newSize = null;
     var thiz = this;
-    this.run(function() {
+    this.run(function () {
         newSize = thiz.sizeToContent__(hPadding, vPadding);
     }, this, Util.getMessage("action.canvas.resize"));
     return newSize;
 };
-Canvas.prototype.sizeToContent__ = function(hPadding, vPadding) {
+Canvas.prototype.sizeToContent__ = function (hPadding, vPadding) {
     var pageMargin = Pencil.controller.getDocumentPageMargin() || 0;
 
     hPadding += pageMargin;
@@ -2579,11 +2579,11 @@ Canvas.prototype.sizeToContent__ = function(hPadding, vPadding) {
 
     var thiz = this;
     var maxBox = null;
-    function out(name, rect) {
+    function out (name, rect) {
         console.log(name, "left: ", rect.left, "top: ", rect.top, "width: ", rect.width, "height: ", rect.height);
     }
     out("this.svg", this.svg.getBoundingClientRect());
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
         try {
             var controller = thiz.createControllerFor(node);
             if (controller.def && controller.def.meta.excludeSizeCalculation) return;
@@ -2639,7 +2639,7 @@ Canvas.prototype.sizeToContent__ = function(hPadding, vPadding) {
     var dx = 0 - maxBox.x1 + hPadding;
     var dy = 0 - maxBox.y1 + vPadding;
 
-    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function(node) {
+    Dom.workOn("./svg:g[@p:type]", this.drawingLayer, function (node) {
         try {
             var controller = thiz.createControllerFor(node);
             var bbox = controller.getBoundingRect();
@@ -2658,7 +2658,7 @@ Canvas.prototype.sizeToContent__ = function(hPadding, vPadding) {
         height: height
     };
 };
-Canvas.prototype.addSelectedToMyCollection = function() {
+Canvas.prototype.addSelectedToMyCollection = function () {
     if (!this.currentController) return;
 
     var data = {
@@ -2666,7 +2666,7 @@ Canvas.prototype.addSelectedToMyCollection = function() {
         valueHolder: {}
     };
 
-    var run = function(data) {
+    var run = function (data) {
         try {
             var target = Pencil.getCurrentTarget();
             // generating text/xml+svg
@@ -2675,7 +2675,7 @@ Canvas.prototype.addSelectedToMyCollection = function() {
             var fakeDom = Controller.parser.parseFromString("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
             fakeDom.documentElement.appendChild(svg);
 
-            Pencil.controller.prepareForEmbedding(fakeDom, function() {
+            Pencil.controller.prepareForEmbedding(fakeDom, function () {
                 fakeDom.documentElement.removeChild(svg);
                 var valueHolder = data.valueHolder;
                 if (!valueHolder.shapeName) {
@@ -2706,7 +2706,7 @@ Canvas.prototype.addSelectedToMyCollection = function() {
                 Config.set("PrivateCollection.lastSelectCollection.id", collection.id);
                 debug("generating icon... :", valueHolder.autoGenerateIcon);
                 if (valueHolder.autoGenerateIcon) {
-                    Util.generateIcon(target, 64, 64, 2, null, function(icondata) {
+                    Util.generateIcon(target, 64, 64, 2, null, function (icondata) {
                         debug("\t done generating icon.");
                         shapeDef.iconData = icondata;
                         if (isNewCollection) {
@@ -2738,18 +2738,18 @@ Canvas.prototype.addSelectedToMyCollection = function() {
     var myCollectionDialog = new PrivateCollectionDialog();
     myCollectionDialog.open({
         valueHolder: data.valueHolder,
-        onDone: function(data) {
+        onDone: function (data) {
             data.valueHolder = data;
             run(data);
         }
     });
 };
-Canvas.prototype.insertPrivateShape = function(shapeDef, bound) {
+Canvas.prototype.insertPrivateShape = function (shapeDef, bound) {
     this.run(this.insertPrivateShapeImpl_, this, Util.getMessage(
         "action.create.shape", shapeDef.displayName), [shapeDef,
         bound ? bound : null]);
 };
-Canvas.prototype.insertPrivateShapeImpl_ = function(shapeDef, bound) {
+Canvas.prototype.insertPrivateShapeImpl_ = function (shapeDef, bound) {
     // debug("inserting private shape: " + shapeDef.displayName + ", id: " +
     // shapeDef.id);
     var g = this.ownerDocument.createElementNS(PencilNamespaces.svg, "g");
@@ -2764,7 +2764,7 @@ Canvas.prototype.insertPrivateShapeImpl_ = function(shapeDef, bound) {
     shape = this.ownerDocument.importNode(shape, true);
 
     // generate the ids
-    Dom.workOn(".//*[@p:name]", shape, function(node) {
+    Dom.workOn(".//*[@p:name]", shape, function (node) {
         var name = node.getAttributeNS(PencilNamespaces.p, "name");
         var oldId = node.getAttribute("id");
         if (oldId) {
@@ -2785,7 +2785,7 @@ Canvas.prototype.insertPrivateShapeImpl_ = function(shapeDef, bound) {
 
     this.drawingLayer.appendChild(shape);
 
-    Pencil.controller.invalidateContentNode(shape, function() {
+    Pencil.controller.invalidateContentNode(shape, function () {
         this.selectShape(shape);
         if (this.currentController.validateAll) this.currentController.validateAll();
         if (bound) {
@@ -2806,16 +2806,16 @@ Canvas.prototype.insertPrivateShapeImpl_ = function(shapeDef, bound) {
         this.invalidateEditors();
     }.bind(this));
 };
-Canvas.prototype.endFormatPainter = function() {
+Canvas.prototype.endFormatPainter = function () {
     Pencil._painterSourceTarget = null;
     Pencil._painterSourceProperties = null;
     Pencil.setPainterCommandChecked(false);
     return true;
 };
-Canvas.prototype.isFormatPainterAvailable = function() {
+Canvas.prototype.isFormatPainterAvailable = function () {
     return Pencil._painterSourceTarget && Pencil._painterSourceProperties;
 };
-Canvas.prototype.getPainterPropertyMap = function() {
+Canvas.prototype.getPainterPropertyMap = function () {
     var ppm = Config.get("painterPropertyMap");
     if (ppm == null || ppm == "") {
         ppm = "fillColor,foreColor,textColor,strokeColor,borderColor," +
@@ -2825,7 +2825,7 @@ Canvas.prototype.getPainterPropertyMap = function() {
     }
     return ppm.split(",");
 };
-Canvas.prototype.startFakeMove = function(event) {
+Canvas.prototype.startFakeMove = function (event) {
     this._button = 0;
     this.currentController = this.getSelectedTargets()[0];
     this.controllerHeld = true;
@@ -2845,7 +2845,7 @@ Canvas.prototype.startFakeMove = function(event) {
     this.lastTop = top;
     this._sayTargetChanged();
 };
-Canvas.prototype.checkDnDEventTimestamp = function(event) {
+Canvas.prototype.checkDnDEventTimestamp = function (event) {
     var now = new Date().getTime();
     if (!this.lastDragEnterExitEventTS) {
         this.lastDragEnterExitEventTS = now;
@@ -2860,7 +2860,7 @@ Canvas.prototype.checkDnDEventTimestamp = function(event) {
     return delta > 500;
 };
 
-Canvas.prototype.__dragenter = function(event) {
+Canvas.prototype.__dragenter = function (event) {
     if (event.target == this.dragOverlay) return;
     if (this.element.getAttribute("is-dragover") == "true") return;
     this.element.setAttribute("is-dragover", "true");
@@ -2885,7 +2885,7 @@ Canvas.prototype.__dragenter = function(event) {
         }
     }
 };
-Canvas.prototype.__dragleave = function(event) {
+Canvas.prototype.__dragleave = function (event) {
     // this.element.removeAttribute("p:selection");
     if (!this.currentDragObserver) {
         return;
@@ -2898,11 +2898,11 @@ Canvas.prototype.__dragleave = function(event) {
     this.element.removeAttribute("is-dragover");
     this.element.removeAttribute("p:holding");
 };
-Canvas.prototype.__dragend = function(event) {
+Canvas.prototype.__dragend = function (event) {
     this.element.removeAttribute("is-dragover");
     // debug("drag end...");
 };
-Canvas.prototype.__dragover = function(event) {
+Canvas.prototype.__dragover = function (event) {
     if (!this.currentDragObserver) {
         return;
     }
@@ -2932,7 +2932,7 @@ Canvas.prototype.__dragover = function(event) {
      *  }
      */
 };
-Canvas.prototype.__drop = function(event) {
+Canvas.prototype.__drop = function (event) {
     var thiz =this;
     var data = event.dataTransfer.getData("collectionId");
     var data = nsDragAndDrop.getData("collectionId");

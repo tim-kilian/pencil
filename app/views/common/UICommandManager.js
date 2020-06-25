@@ -1,11 +1,11 @@
-function UICommandManager() {
+function UICommandManager () {
 }
 
 UICommandManager.commands = [];
 UICommandManager.map = {};
 UICommandManager.keyMap = {};
 
-UICommandManager.mapKey = function(name, keyCode, pcName, macName, macKeyCode) {
+UICommandManager.mapKey = function (name, keyCode, pcName, macName, macKeyCode) {
     var key = {
         name: name,
         keyCode: IS_MAC ? (macKeyCode || keyCode) : keyCode,
@@ -129,15 +129,15 @@ UICommandManager.mapKey("BACK_SLASH", 220, "\\");
 UICommandManager.mapKey("CLOSE_BRACKET", 221, "]");
 UICommandManager.mapKey("QUOTE", 222, "'");
 
-window.addEventListener("load", function() {
+window.addEventListener("load", function () {
     document.addEventListener("keydown", UICommandManager.handleKeyEvent, false);
 }, false);
-window.document.addEventListener("focus", function(event) {
+window.document.addEventListener("focus", function (event) {
     UICommandManager.currentFocusedElement = event.target;
 }, true);
 
 
-UICommandManager.register = function(command, control) {
+UICommandManager.register = function (command, control) {
     command._run = command.run;
     command.run = UICommandManager.checkAndRunFunction;
 
@@ -149,7 +149,7 @@ UICommandManager.register = function(command, control) {
     UICommandManager.map[command.key] = command;
 
     if (command.watchEvents) {
-        var f = function() {
+        var f = function () {
             UICommandManager.invalidateCommand(command);
         };
 
@@ -165,11 +165,11 @@ UICommandManager.register = function(command, control) {
 
     return command;
 };
-UICommandManager.getCommand = function(commandKey) {
+UICommandManager.getCommand = function (commandKey) {
     if (!commandKey) return;
     return UICommandManager.map[commandKey];
 };
-UICommandManager.installControl = function(commandKey, control) {
+UICommandManager.installControl = function (commandKey, control) {
     var command = UICommandManager.map[commandKey];
     if (!command) return;
     if (!command.controls) {
@@ -177,13 +177,13 @@ UICommandManager.installControl = function(commandKey, control) {
     }
 
     command.controls.push(control);
-    control.addEventListener("click", function(event) {
+    control.addEventListener("click", function (event) {
         var valid = command._isValid ? command._isValid() : !command.disabled;
         if (!valid) return;
         command._run();
     }, false);
 };
-UICommandManager.invalidateCommand = function(command) {
+UICommandManager.invalidateCommand = function (command) {
     if (!command.controls) return;
     var valid = command.isValid ? command.isValid() : (command.isAvailable ? command.isAvailable() : !command.disabled);
     for (var i = 0; i < command.controls.length; i ++) {
@@ -191,13 +191,13 @@ UICommandManager.invalidateCommand = function(command) {
         if (command.controls[i].setEnabled) command.controls[i].setEnabled(valid);
     }
 };
-UICommandManager.invalidateCommands = function() {
+UICommandManager.invalidateCommands = function () {
     for (var i = 0; i < UICommandManager.commands.length; i ++) {
         var command = UICommandManager.commands[i];
         UICommandManager.invalidateCommand(command);
     }
 };
-UICommandManager.parseShortcut = function(command) {
+UICommandManager.parseShortcut = function (command) {
     const RE = /^(Ctrl\+)?(Alt\+)?(Shift\+)?(Cmd\+)?([a-z0-9_]+)$/i;
     command.parsedShortcut = null;
 
@@ -225,15 +225,15 @@ UICommandManager.parseShortcut = function(command) {
 
     command.parsedShortcut = shortcut;
 };
-UICommandManager.checkAndRunFunction = function(event) {
+UICommandManager.checkAndRunFunction = function (event) {
     if (UICommandManager.isApplicable(this, UICommandManager.currentFocusedElement)) {
         this._run(event);
     }
 };
-UICommandManager.isValidFunction = function(event) {
+UICommandManager.isValidFunction = function (event) {
     return UICommandManager.isApplicable(this, UICommandManager.currentFocusedElement) && (!this._isValid || this._isValid());
 };
-UICommandManager.shouldBeHandled = function(event) {
+UICommandManager.shouldBeHandled = function (event) {
     // Don't handle the key press when
     return !(
         // There is an open dialog
@@ -245,7 +245,7 @@ UICommandManager.shouldBeHandled = function(event) {
         UICommandManager.currentFocusedElement instanceof HTMLTextAreaElement
     );
 };
-UICommandManager.handleKeyEvent = function(event) {
+UICommandManager.handleKeyEvent = function (event) {
     if ((IS_MAC ? event.metaKey : event.ctrlKey) && event.altKey && event.shiftKey && event.keyCode == 80) {
         Pencil.app.mainWindow.openDevTools();
     }
@@ -275,14 +275,14 @@ UICommandManager.handleKeyEvent = function(event) {
         }
     }
 };
-UICommandManager.isApplicable = function(command, node) {
+UICommandManager.isApplicable = function (command, node) {
     if (command.applyWhenType) {
         var widget = Dom.findUpwardForData(node, "__widget");
         if (!widget) return false;
         return widget.constructor.name == command.applyWhenType;
     }
     if (command.applyWhenAttributeName) {
-        var n = Dom.findUpward(node, function(x) {
+        var n = Dom.findUpward(node, function (x) {
             return x.getAttribute(command.applyWhenAttributeName) == command.applyWhenAttributeValue;
         });
         return n ? true : false;

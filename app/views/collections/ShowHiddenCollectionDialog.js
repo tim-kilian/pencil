@@ -1,4 +1,4 @@
-function ShowHiddenCollectionDialog(collectionPanel) {
+function ShowHiddenCollectionDialog (collectionPanel) {
     Dialog.call(this);
     this.hiddenCollections = this.getHiddenCollection();
     if (this.hiddenCollections.length == 0) {
@@ -6,7 +6,7 @@ function ShowHiddenCollectionDialog(collectionPanel) {
     }
     this.collectionPanel = collectionPanel;
     this.bind("click", this.handleActionClick, this.dialogHeadCommand);
-    this.title = function() {
+    this.title = function () {
         return "Hidden Collections:";
     };
     this.hiddenCollections = this.getHiddenCollection();
@@ -14,7 +14,7 @@ function ShowHiddenCollectionDialog(collectionPanel) {
     for ( var i = 0; i < this.hiddenCollections.length; i++) {
         this.collectionContainer.appendChild(this.createCollectionButton(this.hiddenCollections[i]));
     }
-    this.collectionContainer.addEventListener("click", function(event) {
+    this.collectionContainer.addEventListener("click", function (event) {
         var node = Dom.findUpwardForNodeWithData(event.target, "_collection");
         var check = node.getAttribute("selected");
         if (check == "true") {
@@ -26,11 +26,11 @@ function ShowHiddenCollectionDialog(collectionPanel) {
 }
 __extend(Dialog, ShowHiddenCollectionDialog);
 
-ShowHiddenCollectionDialog.prototype.getCollectionIcon = function(collection) {
+ShowHiddenCollectionDialog.prototype.getCollectionIcon = function (collection) {
     return collection.icon || CollectionPane.ICON_MAP[collection.id] || "border_all";
 };
 
-ShowHiddenCollectionDialog.prototype.createCollectionButton = function(collection) {
+ShowHiddenCollectionDialog.prototype.createCollectionButton = function (collection) {
     var thiz = this;
     var icon = this.getCollectionIcon(collection);
     var button = Dom.newDOMElement({
@@ -52,7 +52,7 @@ ShowHiddenCollectionDialog.prototype.createCollectionButton = function(collectio
     return button;
 };
 
-ShowHiddenCollectionDialog.prototype.getHiddenCollection = function() {
+ShowHiddenCollectionDialog.prototype.getHiddenCollection = function () {
     var collections = CollectionManager.shapeDefinition.collections;
     var hiddenCollections = [];
     for (var i = 0; i < collections.length; i++) {
@@ -62,11 +62,11 @@ ShowHiddenCollectionDialog.prototype.getHiddenCollection = function() {
     }
     return hiddenCollections;
 };
-ShowHiddenCollectionDialog.prototype.getDialogActions = function() {
+ShowHiddenCollectionDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL,
         {type: "accept", title: "Show",
-            run: function() {
+            run: function () {
                 if (this.hiddenCollections.length > 0) {
                     var node = this.collectionContainer;
                     for ( var i = 0; i < node.children.length; i++) {
@@ -82,7 +82,7 @@ ShowHiddenCollectionDialog.prototype.getDialogActions = function() {
         },
         {
             type: "extra1", title: "Install New Collection",
-            run: function() {
+            run: function () {
                 CollectionManager.installNewCollection();
                 return true;
             }

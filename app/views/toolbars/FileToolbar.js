@@ -1,17 +1,17 @@
-function FileToolbar() {
+function FileToolbar () {
     ToolBar.call(this);
 }
 __extend(ToolBar, FileToolbar);
 
-FileToolbar.prototype.registerCommands = function() {
+FileToolbar.prototype.registerCommands = function () {
     UICommandManager.register({
         key: "newDocumentCommand",
         label: "New Document",
         icon: "note_add",
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             Pencil.documentHandler.newDocument();
             // Pencil.controller.newDocument();
         },
@@ -21,10 +21,10 @@ FileToolbar.prototype.registerCommands = function() {
         key: "openDocumentCommand",
         label: "Open...",
         icon: "open_in_browser",
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             Pencil.documentHandler.openDocument();
             // Pencil.controller.openDocument();
         },
@@ -34,10 +34,10 @@ FileToolbar.prototype.registerCommands = function() {
         key: "saveDocumentCommand",
         label: "Save",
         icon: "save",
-        isValid: function() {
+        isValid: function () {
             return Pencil.controller.doc;
         },
-        run: function() {
+        run: function () {
             Pencil.documentHandler.saveDocument();
         },
         shortcut: "Ctrl+S"
@@ -46,11 +46,11 @@ FileToolbar.prototype.registerCommands = function() {
         key: "closeDocumentCommand",
         label: "Close",
         icon: "close",
-        isValid: function() {
+        isValid: function () {
             return Pencil.controller.doc;
         },
-        run: function() {
-            Pencil.controller.confirmAndclose(function() {
+        run: function () {
+            Pencil.controller.confirmAndclose(function () {
                 ApplicationPane._instance.showStartupPane();
             });
         },
@@ -59,10 +59,10 @@ FileToolbar.prototype.registerCommands = function() {
     UICommandManager.register({
         key: "saveAsDocumentCommand",
         label: "Save As...",
-        isValid: function() {
+        isValid: function () {
             return Pencil.controller.doc && Pencil.controller.documentPath;
         },
-        run: function() {
+        run: function () {
             Pencil.documentHandler.saveAsDocument();
             // Pencil.controller.saveAsDocument();
         },
@@ -73,10 +73,10 @@ FileToolbar.prototype.registerCommands = function() {
         key: "exportDocumentCommand",
         label: "Export...",
         icon: "file_download",
-        isValid: function() {
+        isValid: function () {
             return Pencil.controller.doc;
         },
-        run: function() {
+        run: function () {
             Pencil.controller.exportCurrentDocument();
         },
         shortcut: "Ctrl+Shift+E"
@@ -85,10 +85,10 @@ FileToolbar.prototype.registerCommands = function() {
         key: "printDocumentCommand",
         label: "Print...",
         icon: "print",
-        isValid: function() {
+        isValid: function () {
             return Pencil.controller.doc;
         },
-        run: function() {
+        run: function () {
             Pencil.controller.printCurrentDocument();
         },
         shortcut: "Ctrl+P"
@@ -98,10 +98,10 @@ FileToolbar.prototype.registerCommands = function() {
     UICommandManager.register({
         key: "exportPageAsPNGButton",
         label: "Export page as PNG...",
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             if (this.page) {
                 Pencil.controller.rasterizeCurrentPage(this.page);
             }
@@ -112,10 +112,10 @@ FileToolbar.prototype.registerCommands = function() {
     UICommandManager.register({
         key: "copyPageBitmapCommand",
         label: "Copy Page Bitmap",
-        isValid: function() {
+        isValid: function () {
             return true;
         },
-        run: function() {
+        run: function () {
             Pencil.controller.copyPageBitmap(Pencil.controller.activePage);
         },
         shortcut: "Ctrl+Shift+C"
@@ -124,7 +124,7 @@ FileToolbar.prototype.registerCommands = function() {
     UICommandManager.register({
         key: "exportSelectionAsPNGButton",
         label: "Export selection as PNG...",
-        run: function(event) {
+        run: function (event) {
             Pencil.controller.rasterizeSelection({
                 target: event.shiftKey ? "clipboard" : "file"
             });

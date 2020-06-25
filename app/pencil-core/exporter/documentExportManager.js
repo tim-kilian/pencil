@@ -1,11 +1,11 @@
-function DocumentExportManager() {
+function DocumentExportManager () {
 }
 DocumentExportManager.parser = new DOMParser();
-DocumentExportManager.prototype.printDocument = function(doc) {
+DocumentExportManager.prototype.printDocument = function (doc) {
     this.exportDocument(doc, "PrintingExporter");
 };
-DocumentExportManager.prototype.exportDocument = function(doc, forcedExporterId) {
-    new ExportDialog().callback(function(params) {
+DocumentExportManager.prototype.exportDocument = function (doc, forcedExporterId) {
+    new ExportDialog().callback(function (params) {
         this.lastParamsDoc = doc;
         this.lastParams = params;
         this.exportDocumentWithParams(doc, forcedExporterId, params);
@@ -14,7 +14,7 @@ DocumentExportManager.prototype.exportDocument = function(doc, forcedExporterId)
         lastParams: doc == this.lastParamsDoc ? this.lastParams : null
     });
 };
-DocumentExportManager.prototype.exportDocumentWithParams = function(doc, forcedExporterId, params) {
+DocumentExportManager.prototype.exportDocumentWithParams = function (doc, forcedExporterId, params) {
     if (!params) return;
 
     try {
@@ -23,7 +23,7 @@ DocumentExportManager.prototype.exportDocumentWithParams = function(doc, forcedE
         console.error(e);
     }
 };
-DocumentExportManager.prototype.generateFriendlyId = function(page, usedFriendlyIds) {
+DocumentExportManager.prototype.generateFriendlyId = function (page, usedFriendlyIds) {
     var baseName = page.name.replace(/[^a-z0-9 ]+/gi, "").replace(/[ ]+/g, "_").toLowerCase();
     var name = baseName;
     var seed = 1;
@@ -35,7 +35,7 @@ DocumentExportManager.prototype.generateFriendlyId = function(page, usedFriendly
     usedFriendlyIds.push(name);
     return name;
 };
-DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, forcedExporterId, params) {
+DocumentExportManager.prototype._exportDocumentWithParamsImpl = function (doc, forcedExporterId, params) {
     var exporter = Pencil.getDocumentExporterById(params.exporterId);
     if (!exporter) return;
 
@@ -86,7 +86,7 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
 
     var linkRequiredPageIds = [];
 
-    function addLinkRequiredPage(pageId) {
+    function addLinkRequiredPage (pageId) {
         var page = pageMap[pageId];
         if (!page) return;
 
@@ -96,17 +96,17 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
         }
     }
 
-    pages.forEach(function(p) {
+    pages.forEach(function (p) {
         addLinkRequiredPage(p.id);
     });
 
-    var processMissingBackgroundLinks = function(callback, listener) {
-        var missingLinkRequiredPageIds = linkRequiredPageIds.filter(function(id) {
+    var processMissingBackgroundLinks = function (callback, listener) {
+        var missingLinkRequiredPageIds = linkRequiredPageIds.filter(function (id) {
             return !pageExtraInfos[id];
         });
 
         var backgroundIndex = -1;
-        (function next() {
+        (function next () {
             backgroundIndex ++;
             if (backgroundIndex >= missingLinkRequiredPageIds.length) {
                 callback();
@@ -120,7 +120,7 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
                 listener.onProgressUpdated(task, backgroundIndex + 1, missingLinkRequiredPageIds.length);
             }
 
-            Pencil.rasterizer.rasterizePageToUrl(page, function(data) {
+            Pencil.rasterizer.rasterizePageToUrl(page, function (data) {
                 pageExtraInfos[page.id] = {
                     objectsWithLinking: data.objectsWithLinking
                 };
@@ -130,16 +130,16 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
     };
 
     if (requireRasterizedData) {
-        starter = function(listener) {
-            var rasterizeNext = function() {
+        starter = function (listener) {
+            var rasterizeNext = function () {
                 try {
                     pageIndex ++;
                     if (pageIndex >= pages.length) {
-                        processMissingBackgroundLinks(function() {
+                        processMissingBackgroundLinks(function () {
                             listener.onProgressUpdated("Generating PDF...", pages.length, pages.length);
-                            thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function() {
+                            thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function () {
                                 listener.onTaskDone();
-                                NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function() {
+                                NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function () {
                                     shell.openItem(destFile);
                                 });
                             });
@@ -163,7 +163,7 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
                     };
                     pageExtraInfos[page.id] = pageExtraInfo;
 
-                    Pencil.rasterizer.rasterizePageToFile(page, pagePath, function(data) {
+                    Pencil.rasterizer.rasterizePageToFile(page, pagePath, function (data) {
                         pageExtraInfo.objectsWithLinking = data.objectsWithLinking;
                         window.setTimeout(rasterizeNext, 100);
                     }, params.bitmapScale, "parseLinks");
@@ -176,14 +176,14 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
             rasterizeNext();
         };
     } else {
-        starter = function(listener) {
+        starter = function (listener) {
             try {
-                processMissingBackgroundLinks(function() {
+                processMissingBackgroundLinks(function () {
                     listener.onProgressUpdated("Generating PDF...", pages.length, pages.length);
-                    thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function() {
+                    thiz._exportDocumentToXML(doc, pages, pageExtraInfos, destFile, params, function () {
                         listener.onTaskDone();
                         if (destFile) {
-                            NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function() {
+                            NotificationPopup.show(Util.getMessage("document.has.been.exported", destFile), "View", function () {
                                 shell.openItem(destFile);
                             });
                         } else {
@@ -208,7 +208,7 @@ DocumentExportManager.prototype._exportDocumentWithParamsImpl = function(doc, fo
     // take a shower, doit together!!!
     Util.beginProgressJob(Util.getMessage("export.documents"), starter);
 };
-DocumentExportManager.prototype._getPageLinks = function(page, pageExtraInfos, includeBackground) {
+DocumentExportManager.prototype._getPageLinks = function (page, pageExtraInfos, includeBackground) {
     var bgLinks = [];
 
     if (page.backgroundPage && page.copyBackgroundLinks) {
@@ -262,13 +262,13 @@ DocumentExportManager.prototype._getPageLinks = function(page, pageExtraInfos, i
 
     return validLinks;
 };
-DocumentExportManager._cleanupParseError = function(node) {
-    Dom.workOn("//html:parsererror", node, function(errorNode) {
+DocumentExportManager._cleanupParseError = function (node) {
+    Dom.workOn("//html:parsererror", node, function (errorNode) {
         var b = errorNode.parentNode;
         b.parentNode.removeChild(b);
     });
 };
-DocumentExportManager.prototype._exportDocumentToXML = function(doc, pages, pageExtraInfos, destFile, exportSelection, callback) {
+DocumentExportManager.prototype._exportDocumentToXML = function (doc, pages, pageExtraInfos, destFile, exportSelection, callback) {
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     var dom = Dom.parseDocument("<Document xmlns=\"" + PencilNamespaces.p + "\"></Document>", "text/xml");
@@ -404,7 +404,7 @@ DocumentExportManager.prototype._exportDocumentToXML = function(doc, pages, page
     var exporter = Pencil.getDocumentExporterById(exportSelection.exporterId);
 
     try {
-        exporter.export(this.doc, exportSelection, destFile, xmlFile.name, function() {
+        exporter.export(this.doc, exportSelection, destFile, xmlFile.name, function () {
             xmlFile.removeCallback();
             callback();
         });
@@ -414,9 +414,9 @@ DocumentExportManager.prototype._exportDocumentToXML = function(doc, pages, page
     }
 };
 
-DocumentExportManager.prototype._populateLinkTargetsInNote = function(htmlNode) {
+DocumentExportManager.prototype._populateLinkTargetsInNote = function (htmlNode) {
     var thiz = this;
-    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-id or starts-with(@href, '#id:')]", htmlNode, function (link) {
         var id = link.getAttribute("page-id");
         if (!id) {
             id = link.getAttribute("href").substring(4);
@@ -429,7 +429,7 @@ DocumentExportManager.prototype._populateLinkTargetsInNote = function(htmlNode) 
         link.setAttribute("page-fid", page.fid);
     });
 
-    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-fid or starts-with(@href, '#fid:')]", htmlNode, function (link) {
         var fid = link.getAttribute("page-fid");
         if (!fid) {
             fid = link.getAttribute("href").substring(5);
@@ -441,7 +441,7 @@ DocumentExportManager.prototype._populateLinkTargetsInNote = function(htmlNode) 
         link.setAttribute("page-id", page.id);
     });
 
-    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function(link) {
+    Dom.workOn("//html:a[@page-name or starts-with(@href, '#name:')]", htmlNode, function (link) {
         var name = link.getAttribute("page-name");
         if (!name) {
             name = link.getAttribute("href").substring(6);

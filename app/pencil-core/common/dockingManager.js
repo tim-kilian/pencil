@@ -1,4 +1,4 @@
-function DockingManager(target) {
+function DockingManager (target) {
     this.target = target;
     this.svg = target.svg;
 
@@ -24,7 +24,7 @@ function DockingManager(target) {
     };
 }
 
-DockingManager.prototype.handleMoveBy = function(dx, dy, targetSet, moving) {
+DockingManager.prototype.handleMoveBy = function (dx, dy, targetSet, moving) {
     this.lastMove = {
         dx: 0, dy: 0
     };
@@ -60,7 +60,7 @@ DockingManager.prototype.handleMoveBy = function(dx, dy, targetSet, moving) {
         }
     }
 };
-DockingManager.prototype.handleScaleTo = function(nw, nh, ow, oh, group) {
+DockingManager.prototype.handleScaleTo = function (nw, nh, ow, oh, group) {
     if (!group && !this.altKey) {
         var childTargets = this.getChildTargets();
         for (var i = 0; i < childTargets.length; i++) {
@@ -82,7 +82,7 @@ DockingManager.prototype.handleScaleTo = function(nw, nh, ow, oh, group) {
         dx: 0, dy: 0
     };
 };
-DockingManager.prototype.handleRotateBy = function(da) {
+DockingManager.prototype.handleRotateBy = function (da) {
     /* if (!this.altKey) {
         var childTargets = this.getChildTargets();
         for (var i = 0; i < childTargets.length; i++) {
@@ -113,7 +113,7 @@ DockingManager.prototype.handleRotateBy = function(da) {
         }
     }*/
 };
-DockingManager.prototype.deleteTarget = function() {
+DockingManager.prototype.deleteTarget = function () {
     var parent = this.getParentContainer();
     if (parent) {
         parent.dockingManager.removeChild(this.target);
@@ -123,7 +123,7 @@ DockingManager.prototype.deleteTarget = function() {
         children[i].dockingManager.removeParentContainer();
     }
 };
-DockingManager.prototype.createController = function(id, anchor) {
+DockingManager.prototype.createController = function (id, anchor) {
     if (id.indexOf("#") == 0) {
         id = id.substring(1);
     }
@@ -137,25 +137,25 @@ DockingManager.prototype.createController = function(id, anchor) {
     }
     return null;
 };
-DockingManager.prototype.getParentContainer = function() {
+DockingManager.prototype.getParentContainer = function () {
     if (this.parentContainerId) {
         return this.createController(this.parentContainerId);
     }
     return null;
 };
-DockingManager.prototype.removeParentContainer = function() {
+DockingManager.prototype.removeParentContainer = function () {
     this.parentContainerId = null;
     this.svg.removeAttribute("p:parentRef");
 };
-DockingManager.prototype.setParentContainer = function(parent) {
+DockingManager.prototype.setParentContainer = function (parent) {
     this.parentContainerId = parent.id;
     this.svg.setAttribute("p:parentRef", "#" + this.parentContainerId);
 };
-DockingManager.prototype.getChildTargets = function() {
+DockingManager.prototype.getChildTargets = function () {
     var children = [];
     var thiz = this;
     if (this.childTargetsNode) {
-        Dom.workOn(".//p:childTarget", this.childTargetsNode, function(node) {
+        Dom.workOn(".//p:childTarget", this.childTargetsNode, function (node) {
             var c = thiz.createController(node.getAttribute("childRef"), node.getAttribute("anchor"));
             if (c) {
                 children.push(c);
@@ -164,7 +164,7 @@ DockingManager.prototype.getChildTargets = function() {
     }
     return children;
 };
-DockingManager.prototype.addChildTarget = function(target) {
+DockingManager.prototype.addChildTarget = function (target) {
     var n = Dom.getSingle(".//*[@childRef='#" + target.id + "']", this.svg);
     if (n) {
         return;
@@ -174,13 +174,13 @@ DockingManager.prototype.addChildTarget = function(target) {
     n.setAttribute("anchor", target.anchor);
     this.childTargetsNode.appendChild(n);
 };
-DockingManager.prototype.removeChild = function(target) {
+DockingManager.prototype.removeChild = function (target) {
     var n = Dom.getSingle(".//*[@childRef='#" + target.id + "']", this.svg);
     if (n) {
         this.childTargetsNode.removeChild(n);
     }
 };
-DockingManager.prototype.getRelateTarget = function(pos) {
+DockingManager.prototype.getRelateTarget = function (pos) {
     var under = [];
     var previous = this.svg.previousSibling;
     while (previous != null) {
@@ -203,7 +203,7 @@ DockingManager.prototype.getRelateTarget = function(pos) {
     }
     return over;
 };
-DockingManager.prototype.findParentContainers = function() {
+DockingManager.prototype.findParentContainers = function () {
     var parents = [];
     var targets = this.getRelateTarget("under");
     for (var i = 0; i < targets.length; i++) {
@@ -231,7 +231,7 @@ DockingManager.prototype.findParentContainers = function() {
     }
     return parents;
 };
-DockingManager.prototype.invalidateChildTargets = function() {
+DockingManager.prototype.invalidateChildTargets = function () {
     var childTargets = this.getChildTargets();
     var targets = [];
 
@@ -263,7 +263,7 @@ DockingManager.prototype.invalidateChildTargets = function() {
         p[0].target.dockingManager.addChildTarget(this.target);
     }
 };
-DockingManager.enableDocking = function(controller) {
+DockingManager.enableDocking = function (controller) {
     if (controller && controller.dockingManager) {
         var parent = controller.dockingManager.getParentContainer();
         if (parent) {

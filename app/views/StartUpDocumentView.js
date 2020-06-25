@@ -1,4 +1,4 @@
-function StartUpDocumentView() {
+function StartUpDocumentView () {
     BaseTemplatedWidget.call(this);
 
     var gridViewCheck = Config.get("view.startupscreen.gridview.enabled");
@@ -12,9 +12,9 @@ function StartUpDocumentView() {
     } else {
         Dom.addClass(this.gridViewButton, "Active");
     }
-    this.recentDocumentRepeater.populator = function(doc, binding) {
+    this.recentDocumentRepeater.populator = function (doc, binding) {
         var filePath = doc.filePath;
-        var handler = function(error, thumbPath) {
+        var handler = function (error, thumbPath) {
             var stats = fs.statSync(filePath);
             if (stats) {
                 binding.name.innerHTML = Dom.htmlEncode(path.basename(filePath));
@@ -23,7 +23,7 @@ function StartUpDocumentView() {
                 var pinDocs = Config.get("pin-documents");
                 if (pinDocs && pinDocs.indexOf(filePath) >= 0) Dom.addClass(binding.pin, "Unpin");
                 if (thumbPath) {
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         Util.setupImage(binding.thumbnailImage, ImageData.filePathToURL(thumbPath), "center-crop", "allowUpscale");
                     }, 10);
                 }
@@ -42,8 +42,8 @@ function StartUpDocumentView() {
     };
 
     var thiz = this;
-    this.bind("click", function(ev) {
-        var button = Dom.findUpward(ev.target, function(node) {
+    this.bind("click", function (ev) {
+        var button = Dom.findUpward(ev.target, function (node) {
             if (node == thiz.listViewButton || node == thiz.gridViewButton) return true;
             return false;
         });
@@ -66,8 +66,8 @@ function StartUpDocumentView() {
         }
     }, this.changeViewButtons);
 
-    this.bind("click", function(event) {
-        var node = Dom.findUpward(event.target, function(node) {
+    this.bind("click", function (event) {
+        var node = Dom.findUpward(event.target, function (node) {
             if (node.getAttribute("command") == "pinDocument") return true;
             return false;
         });
@@ -100,7 +100,7 @@ function StartUpDocumentView() {
             Config.set("pin-documents-thumb-map", pinMaps);
             return;
         }
-        function handler() {
+        function handler () {
             Pencil.documentHandler.loadDocument(filePath);
         }
         if (Pencil.controller.modified) {
@@ -110,13 +110,13 @@ function StartUpDocumentView() {
         handler();
     }, this.recentDocumentRepeater);
 
-    Dom.doOnAllChildRecursively(this.node(), function(n) {
+    Dom.doOnAllChildRecursively(this.node(), function (n) {
         if (!n.getAttribute || !n.getAttribute("command")) return;
         var command = n.getAttribute("command");
         UICommandManager.installControl(command, n);
     });
 
-    this.bind("click", function() {
+    this.bind("click", function () {
         Controller._instance.handleGlobalScreencapture();
     }, this.takeScreenshotButton);
 }
@@ -124,7 +124,7 @@ function StartUpDocumentView() {
 __extend(BaseTemplatedWidget, StartUpDocumentView);
 
 
-StartUpDocumentView.prototype.reload = function() {
+StartUpDocumentView.prototype.reload = function () {
     var recentFiles = Config.get("recent-documents") || [];
     var pinFiles = Config.get("pin-documents") || [];
 
@@ -134,7 +134,7 @@ StartUpDocumentView.prototype.reload = function() {
     var recentDocs = [];
     var pinDocs = [];
 
-    var loadFiles = function(files, deletedFiles, pinFlag) {
+    var loadFiles = function (files, deletedFiles, pinFlag) {
         var doc = [];
         for (var i = 0; i < Math.min(files.length, 8); i++) {
             var checkExist = fs.existsSync(files[i]);
@@ -181,7 +181,7 @@ StartUpDocumentView.prototype.reload = function() {
         var docLeft = 8 - startDocs.length;
         startDocs = recentDocs.slice(0, Math.min(docLeft, recentDocs.length)).concat(startDocs);
     }
-    startDocs.sort(function(a, b) {
+    startDocs.sort(function (a, b) {
         var aIndex = recentFiles.indexOf(a.filePath);
         var bIndex = recentFiles.indexOf(b.filePath);
         return aIndex - bIndex;
@@ -194,7 +194,7 @@ StartUpDocumentView.prototype.reload = function() {
 
     var thiz = this;
     this.recentDocumentRepeater.node().style.visibility = "hidden";
-    setTimeout(function() {
+    setTimeout(function () {
         thiz.recentDocumentRepeater.setItems(startDocs);
         thiz.recentDocumentRepeater.node().style.visibility = "inherit";
     }, 200);

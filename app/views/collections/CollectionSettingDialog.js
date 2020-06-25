@@ -1,7 +1,7 @@
-function CollectionSettingDialog(collection) {
+function CollectionSettingDialog (collection) {
     Dialog.call(this);
     this.collection = collection;
-    this.title = function() {
+    this.title = function () {
         return this.collection.displayName + " Properties";
     };
     this.subTitle = "Configure default property values for shapes created from this collection.";
@@ -17,7 +17,7 @@ function CollectionSettingDialog(collection) {
 }
 __extend(Dialog, CollectionSettingDialog);
 
-CollectionSettingDialog.prototype.createGroupNode = function(propertyGroup) {
+CollectionSettingDialog.prototype.createGroupNode = function (propertyGroup) {
     var currentGroupNode = Dom.newDOMElement({
         "_name": "vbox",
         "class": "Group"
@@ -65,7 +65,7 @@ CollectionSettingDialog.prototype.createGroupNode = function(propertyGroup) {
     return currentGroupNode;
 };
 
-CollectionSettingDialog.prototype.setDefaultProperties = function() {
+CollectionSettingDialog.prototype.setDefaultProperties = function () {
     for (p in this.collection.properties) {
         var property = this.collection.properties[p];
         if (this.propertyEditors[property.name] && this.propertyEditors[property.name].getValue() != property.initialValue) {
@@ -75,12 +75,12 @@ CollectionSettingDialog.prototype.setDefaultProperties = function() {
     }
 };
 
-CollectionSettingDialog.prototype.getDialogActions = function() {
+CollectionSettingDialog.prototype.getDialogActions = function () {
     return [
         Dialog.ACTION_CANCEL,
         {
             type: "accept", title: "Apply",
-            run: function() {
+            run: function () {
                 for (propertyName in this.propertyEditors) {
                     var editor = this.propertyEditors[propertyName];
                     if (editor.modified == true) {
@@ -96,7 +96,7 @@ CollectionSettingDialog.prototype.getDialogActions = function() {
         },
         {
             type: "extra1", title: "Restore Default",
-            run: function() {
+            run: function () {
                 this.setDefaultProperties();
                 return false;
             }

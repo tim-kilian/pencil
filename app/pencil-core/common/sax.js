@@ -4,7 +4,7 @@
    * This is the constuctor
    */
 
-function SAXParser() {
+function SAXParser () {
     this.doc = false;
     this.handler = false;
     this.str = "";
@@ -21,7 +21,7 @@ function SAXParser() {
    *
    */
 
-SAXParser.prototype.setDocumentHandler = function(aHandler) {
+SAXParser.prototype.setDocumentHandler = function (aHandler) {
     this.handler = aHandler;
 };
 
@@ -33,7 +33,7 @@ SAXParser.prototype.setDocumentHandler = function(aHandler) {
    *
    */
 
-SAXParser.prototype.parse = function(aData) {
+SAXParser.prototype.parse = function (aData) {
     this.str += aData;
 
     if (this.handler == false) { // code exceptions :)
@@ -157,7 +157,7 @@ SAXParser.prototype.parse = function(aData) {
    *
    */
 
-SAXParser.prototype.indexEndElement = function(aStr) {
+SAXParser.prototype.indexEndElement = function (aStr) {
     var eq = sp = gt = 0;
 
     sp = aStr.indexOf(" ");
@@ -202,7 +202,7 @@ SAXParser.prototype.indexEndElement = function(aStr) {
    *
    */
 
-SAXParser.prototype.attribution = function(aStr) {
+SAXParser.prototype.attribution = function (aStr) {
     var attribs = [];
     var ids = Number();
     var eq = id1 = id2 = nextid = val = key = "";
@@ -254,7 +254,7 @@ SAXParser.prototype.attribution = function(aStr) {
    *
    */
 
-SAXParser.prototype.entityCheck = function(aStr) {
+SAXParser.prototype.entityCheck = function (aStr) {
     var A = [];
 
     A = aStr.split("&lt;");

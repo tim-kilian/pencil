@@ -1,4 +1,4 @@
-function ShadowStyle() {
+function ShadowStyle () {
     this.dx = 0;
     this.dy = 0;
     this.size = 3;
@@ -9,7 +9,7 @@ function ShadowStyle() {
 ShadowStyle.DEFAULT_COLOR = "#000000";
 
 ShadowStyle.REG_EX = /^([^\|]+)\|([^\|]+)\|([^\|]+)(\|([^\|]+))?(\|([^\|]+))?$/i;
-ShadowStyle.fromString = function(literal) {
+ShadowStyle.fromString = function (literal) {
     var shadowStyle = new ShadowStyle();
     if (literal.match(ShadowStyle.REG_EX)) {
         shadowStyle.dx = parseInt(RegExp.$1, 10);
@@ -23,17 +23,17 @@ ShadowStyle.fromString = function(literal) {
 
     return shadowStyle;
 };
-ShadowStyle.prototype.toString = function() {
+ShadowStyle.prototype.toString = function () {
     return [this.dx, this.dy, this.size, this.opacity, this.color || ShadowStyle.DEFAULT_COLOR].join("|");
 };
-ShadowStyle.prototype.toCSSString = function(color) {
+ShadowStyle.prototype.toCSSString = function (color) {
     var css = [this.dx + "px", this.dy + "px", Math.abs(this.size) + "px", color ? color.toRGBAString() : (this.color || ShadowStyle.DEFAULT_COLOR)].join(" ");
     if (this.size < 0) css = "inset " + css;
     return css;
 };
 
 pencilSandbox.ShadowStyle = {
-    newShadowStyle: function() {
+    newShadowStyle: function () {
         return new ShadowStyle();
     }
 };

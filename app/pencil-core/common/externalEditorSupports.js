@@ -1,6 +1,6 @@
 var ExternalEditorSupports = {};
 
-ExternalEditorSupports.getEditorPath = function(extension) {
+ExternalEditorSupports.getEditorPath = function (extension) {
     if (extension == "svg") return Config.get("external.editor.vector.path", "/usr/bin/inkscape %f");
     if (extension == "jpg" ||
         extension == "gif" ||
@@ -11,12 +11,12 @@ ExternalEditorSupports.getEditorPath = function(extension) {
 ExternalEditorSupports.queue = [];
 
 var spawn = require("child_process").spawn;
-ExternalEditorSupports.handleEditRequest = function(contentProvider, contentReceiver) {
+ExternalEditorSupports.handleEditRequest = function (contentProvider, contentReceiver) {
     var tmpFile = tmp.fileSync({postfix: "." + contentProvider.extension});
 
-    contentProvider.saveTo(tmpFile.name, function() {
+    contentProvider.saveTo(tmpFile.name, function () {
         var executableConfig = ExternalEditorSupports.getEditorPath(contentProvider.extension);
-        executableConfig = executableConfig.replace(/^(.+)\.exe/, function(zero, one) {
+        executableConfig = executableConfig.replace(/^(.+)\.exe/, function (zero, one) {
             return one.replace(/[ ]/g, "@space@") + ".exe";
         });
         var args = executableConfig.split(/[ ]+/);
@@ -41,7 +41,7 @@ ExternalEditorSupports.handleEditRequest = function(contentProvider, contentRece
         var process = spawn(executablePath, params);
 
         var timeOutId = null;
-        process.on("close", function() {
+        process.on("close", function () {
             try {
                 contentReceiver.update(tmpFile.name);
                 if (timeOutId) window.clearTimeout(timeOutId);
@@ -55,7 +55,7 @@ ExternalEditorSupports.handleEditRequest = function(contentProvider, contentRece
         var initialLastModifiedTime = fstat.mtime.getTime();
 
         // track the process and file for changes
-        var tracker = function() {
+        var tracker = function () {
             try {
                 fstat = fs.statSync(tmpFile.name);
                 var lmt = fstat.mtime.getTime();
@@ -75,14 +75,14 @@ ExternalEditorSupports.handleEditRequest = function(contentProvider, contentRece
     });
 };
 
-ExternalEditorSupports.edit = function(contentProvider, contentReceiver) {
+ExternalEditorSupports.edit = function (contentProvider, contentReceiver) {
     ExternalEditorSupports.queue.push({
         provider: contentProvider,
         receiver: contentReceiver
     });
 };
 
-ExternalEditorSupports.checkQueue = function() {
+ExternalEditorSupports.checkQueue = function () {
     if (ExternalEditorSupports.queue.length > 0) {
         try {
             var request = ExternalEditorSupports.queue.pop();
@@ -94,7 +94,7 @@ ExternalEditorSupports.checkQueue = function() {
     window.setTimeout(ExternalEditorSupports.checkQueue, 300);
 };
 
-ExternalEditorSupports.editImageData = function(imageData, ext, ownerObject) {
+ExternalEditorSupports.editImageData = function (imageData, ext, ownerObject) {
     var filePath = null;
     var refId = null;
     if (imageData.data.match(/^ref:\/\/.*\.(gif|jpg|png)$/)) {
@@ -110,21 +110,21 @@ ExternalEditorSupports.editImageData = function(imageData, ext, ownerObject) {
     var thiz = ownerObject;
     ExternalEditorSupports.edit({
         extension: ext,
-        saveTo: function(file, callback) {
+        saveTo: function (file, callback) {
             fs.writeFileSync(file, fs.readFileSync(filePath));
             callback();
         }
     }, {
-        update: function(file) {
-            window.setTimeout(function() {
-                var handler = function(updatedImageData) {
+        update: function (file) {
+            window.setTimeout(function () {
+                var handler = function (updatedImageData) {
                     thiz.setProperty("imageData", updatedImageData);
                 };
 
                 fs.writeFileSync(filePath, fs.readFileSync(file));
                 var url = Pencil.controller.refIdToUrl(refId);
                 var image = new Image();
-                image.onload = function() {
+                image.onload = function () {
                     handler(new ImageData(image.width, image.height, ImageData.idToRefString(refId)));
                     image.src = "";
                 };
@@ -134,7 +134,7 @@ ExternalEditorSupports.editImageData = function(imageData, ext, ownerObject) {
         }
     });
 };
-ExternalEditorSupports.editSVGData = function(originalDim, container, ownerObject) {
+ExternalEditorSupports.editSVGData = function (originalDim, container, ownerObject) {
     var svg = document.createElementNS(PencilNamespaces.svg, "svg");
     svg.setAttribute("width", originalDim.w);
     svg.setAttribute("height", originalDim.h);
@@ -142,7 +142,7 @@ ExternalEditorSupports.editSVGData = function(originalDim, container, ownerObjec
     var thiz = ownerObject;
     ExternalEditorSupports.edit({
         extension: "svg",
-        saveTo: function(file, callback) {
+        saveTo: function (file, callback) {
             if (container.firstChild) {
                 svg.appendChild(document.importNode(container.firstChild, true));
             }
@@ -151,7 +151,7 @@ ExternalEditorSupports.editSVGData = function(originalDim, container, ownerObjec
             callback();
         }
     }, {
-        update: function(file) {
+        update: function (file) {
             debug("Update SVG content from file: " + file);
             var dom = Dom.parseFile(file);
 

@@ -1,20 +1,20 @@
-function TemplateManagementDialog() {
+function TemplateManagementDialog () {
     Dialog.call(this);
     this.title = "Export Template Management";
 
-    this.templateTypeSelector.renderer = function(items) {
+    this.templateTypeSelector.renderer = function (items) {
         return items.displayName;
     };
     var thiz = this;
     this.templates;
-    this.templateTypeSelector.addEventListener("p:ItemSelected", function(event) {
+    this.templateTypeSelector.addEventListener("p:ItemSelected", function (event) {
         thiz.invalidateTemplateList();
     }, false);
 }
 
 __extend(Dialog, TemplateManagementDialog);
 
-TemplateManagementDialog.prototype.invalidateTemplateList = function() {
+TemplateManagementDialog.prototype.invalidateTemplateList = function () {
     var templateType = this.templateTypeSelector.getSelectedItem();
     var type = templateType.value;
 
@@ -34,25 +34,25 @@ TemplateManagementDialog.prototype.invalidateTemplateList = function() {
     this.templateTable.setItems(items);
 };
 
-TemplateManagementDialog.prototype.initializeTemplateTable = function() {
-    this.templateTable.column(new DataTable.PlainTextColumn("Template", function(data) {
+TemplateManagementDialog.prototype.initializeTemplateTable = function () {
+    this.templateTable.column(new DataTable.PlainTextColumn("Template", function (data) {
         return data.templateName;
     }).width("1*"));
-    this.templateTable.column(new DataTable.PlainTextColumn("Information", function(data) {
+    this.templateTable.column(new DataTable.PlainTextColumn("Information", function (data) {
         return data.description;
     }).width("1*"));
-    this.templateTable.column(new DataTable.PlainTextColumn("Author", function(data) {
+    this.templateTable.column(new DataTable.PlainTextColumn("Author", function (data) {
         return data.author;
     }).width("12em"));
     var actions = [{
         id: "remove", type: "delete", title: "Uninstall", icon: "delete",
-        isApplicable: function(item) {
+        isApplicable: function (item) {
             return item.template.userDefine ? true : false;
         },
-        handler: function(item) {
+        handler: function (item) {
             Dialog.confirm(
                 "Are you sure you really want to uninstall this template?", null,
-                "Uninstall", function() {
+                "Uninstall", function () {
                     ExportTemplateManager.uninstallTemplate(item.template);
                     thiz.invalidateTemplateList();
                 },
@@ -64,10 +64,10 @@ TemplateManagementDialog.prototype.initializeTemplateTable = function() {
     this.templateTable.selector(false);
 
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         this.templateTable.setup();
         this.templateTable.setDefaultSelectionHandler({
-            run: function(data) {
+            run: function (data) {
 
             }
         });
@@ -75,7 +75,7 @@ TemplateManagementDialog.prototype.initializeTemplateTable = function() {
         this.invalidateTemplateList();
     }.bind(this), 200);
 };
-TemplateManagementDialog.prototype.setup = function() {
+TemplateManagementDialog.prototype.setup = function () {
     var templateType = ExportTemplateManager.SUPPORTED_TYPES;
     var templateTypeName = ExportTemplateManager.SUPPORTED_TYPES_NAMES;
     var templateItems = [];
@@ -90,14 +90,14 @@ TemplateManagementDialog.prototype.setup = function() {
     this.initializeTemplateTable();
 };
 
-TemplateManagementDialog.prototype.getDialogActions = function() {
+TemplateManagementDialog.prototype.getDialogActions = function () {
     var thiz = this;
     return [
         {
             type: "extra", title: "Install new template...",
             isCloseHandler: true,
-            run: function() {
-                var onDone = function() {
+            run: function () {
+                var onDone = function () {
                     thiz.invalidateTemplateList();
                 };
                 ExportTemplateManager.installNewTemplate(thiz.templateTypeSelector.getSelectedItem().value, onDone);
@@ -107,7 +107,7 @@ TemplateManagementDialog.prototype.getDialogActions = function() {
         {
             type: "cancel", title: "Close",
             isCloseHandler: true,
-            run: function() {
+            run: function () {
                 return true;
             }
         }

@@ -1,4 +1,4 @@
-function UnimplementedExporter(name) {
+function UnimplementedExporter (name) {
     this.name = name;
     this.invalid = true;
     this.id = name;

@@ -132,12 +132,12 @@ const DOM_VK_QUOTE = 222;
 const DOM_VK_META = 224;
 
 Object.defineProperty(Event.prototype, "originalTarget", {
-    get: function() {
+    get: function () {
         return this.target;
     }
 });
 
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === "function" && define.amd) {
         define(factory);
     } else if (typeof exports === "object") {
@@ -145,7 +145,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
     } else {
         root.ResizeSensor = factory();
     }
-}(this, function() {
+}(this, function () {
     // Make sure it does not throw in a SSR (Server Side Rendering) situation
     if (typeof window === "undefined") {
         return null;
@@ -156,7 +156,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
     var requestAnimationFrame = window.requestAnimationFrame ||
         window.mozRequestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
-        function(fn) {
+        function (fn) {
             return window.setTimeout(fn, 20);
         };
 
@@ -166,7 +166,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
      * @param {HTMLElement|HTMLElement[]} elements
      * @param {Function}                  callback
      */
-    function forEachElement(elements, callback) {
+    function forEachElement (elements, callback) {
         var elementsType = Object.prototype.toString.call(elements);
         var isCollectionTyped = ("[object Array]" === elementsType ||
             ("[object NodeList]" === elementsType) ||
@@ -193,25 +193,25 @@ Object.defineProperty(Event.prototype, "originalTarget", {
      *
      * @constructor
      */
-    var ResizeSensor = function(element, callback) {
+    var ResizeSensor = function (element, callback) {
         /**
          *
          * @constructor
          */
-        function EventQueue() {
+        function EventQueue () {
             var q = [];
-            this.add = function(ev) {
+            this.add = function (ev) {
                 q.push(ev);
             };
 
             var i; var j;
-            this.call = function() {
+            this.call = function () {
                 for (i = 0, j = q.length; i < j; i++) {
                     q[i].call();
                 }
             };
 
-            this.remove = function(ev) {
+            this.remove = function (ev) {
                 var newQueue = [];
                 for (i = 0, j = q.length; i < j; i++) {
                     if (q[i] !== ev) newQueue.push(q[i]);
@@ -219,7 +219,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
                 q = newQueue;
             };
 
-            this.length = function() {
+            this.length = function () {
                 return q.length;
             };
         }
@@ -229,7 +229,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
          * @param {String}      prop
          * @returns {String|Number}
          */
-        function getComputedStyle(element, prop) {
+        function getComputedStyle (element, prop) {
             if (element.currentStyle) {
                 return element.currentStyle[prop];
             }
@@ -245,7 +245,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
          * @param {HTMLElement} element
          * @param {Function}    resized
          */
-        function attachResizeEvent(element, resized) {
+        function attachResizeEvent (element, resized) {
             if (element.resizedAttached) {
                 element.resizedAttached.add(resized);
                 return;
@@ -280,7 +280,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
             var lastWidth = element.offsetWidth;
             var lastHeight = element.offsetHeight;
 
-            var reset = function() {
+            var reset = function () {
                 expandChild.style.width = "100000px";
                 expandChild.style.height = "100000px";
 
@@ -293,7 +293,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
 
             reset();
 
-            var onResized = function() {
+            var onResized = function () {
                 rafId = 0;
 
                 if (!dirty) return;
@@ -306,7 +306,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
                 }
             };
 
-            var onScroll = function() {
+            var onScroll = function () {
                 newWidth = element.offsetWidth;
                 newHeight = element.offsetHeight;
                 dirty = newWidth != lastWidth || newHeight != lastHeight;
@@ -318,7 +318,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
                 reset();
             };
 
-            var addEvent = function(el, name, cb) {
+            var addEvent = function (el, name, cb) {
                 if (el.attachEvent) {
                     el.attachEvent("on" + name, cb);
                 } else {
@@ -330,17 +330,17 @@ Object.defineProperty(Event.prototype, "originalTarget", {
             addEvent(shrink, "scroll", onScroll);
         }
 
-        forEachElement(element, function(elem) {
+        forEachElement(element, function (elem) {
             attachResizeEvent(elem, callback);
         });
 
-        this.detach = function(ev) {
+        this.detach = function (ev) {
             ResizeSensor.detach(element, ev);
         };
     };
 
-    ResizeSensor.detach = function(element, ev) {
-        forEachElement(element, function(elem) {
+    ResizeSensor.detach = function (element, ev) {
+        forEachElement(element, function (elem) {
             if (elem.resizedAttached && typeof ev == "function") {
                 elem.resizedAttached.remove(ev);
                 if (elem.resizedAttached.length()) return;
@@ -358,44 +358,44 @@ Object.defineProperty(Event.prototype, "originalTarget", {
     return ResizeSensor;
 }));
 
-(function() {
+(function () {
     var attachEvent = document.attachEvent;
     var isIE = navigator.userAgent.match(/Trident/);
-    var requestFrame = (function() {
+    var requestFrame = (function () {
         var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
-        function(fn) {
+        function (fn) {
             return window.setTimeout(fn, 20);
         };
-        return function(fn) {
+        return function (fn) {
             return raf(fn);
         };
     })();
 
-    var cancelFrame = (function() {
+    var cancelFrame = (function () {
         var cancel = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame ||
            window.clearTimeout;
-        return function(id) {
+        return function (id) {
             return cancel(id);
         };
     })();
 
-    function resizeListener(e) {
+    function resizeListener (e) {
         var win = e.target || e.srcElement;
         if (win.__resizeRAF__) cancelFrame(win.__resizeRAF__);
-        win.__resizeRAF__ = requestFrame(function() {
+        win.__resizeRAF__ = requestFrame(function () {
             var trigger = win.__resizeTrigger__;
-            trigger.__resizeListeners__.forEach(function(fn) {
+            trigger.__resizeListeners__.forEach(function (fn) {
                 fn.call(trigger, e);
             });
         });
     }
 
-    function objectLoad(e) {
+    function objectLoad (e) {
         this.contentDocument.defaultView.__resizeTrigger__ = this.__resizeElement__;
         this.contentDocument.defaultView.addEventListener("resize", resizeListener);
     }
 
-    window.addResizeListener = function(element, fn) {
+    window.addResizeListener = function (element, fn) {
         if (!element.__resizeListeners__) {
             element.__resizeListeners__ = [];
             if (attachEvent) {
@@ -416,7 +416,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
         element.__resizeListeners__.push(fn);
     };
 
-    window.removeResizeListener = function(element, fn) {
+    window.removeResizeListener = function (element, fn) {
         element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
         if (!element.__resizeListeners__.length) {
             if (attachEvent) element.detachEvent("onresize", resizeListener);
@@ -430,7 +430,7 @@ Object.defineProperty(Event.prototype, "originalTarget", {
 
 /* class */ var Dom = {};
 
-/* static int */ Dom.workOn = function(xpath, node, worker) {
+/* static int */ Dom.workOn = function (xpath, node, worker) {
     var nodes = Dom.getList(xpath, node);
 
     for (var i = 0; i < nodes.length; i ++) {
@@ -438,23 +438,23 @@ Object.defineProperty(Event.prototype, "originalTarget", {
     }
     return nodes.length;
 };
-/* static int */ Dom.getText = function(node) {
+/* static int */ Dom.getText = function (node) {
     return node.textContent;
 };
 
-/* static Node */ Dom.getSingle = function(xpath, node) {
+/* static Node */ Dom.getSingle = function (xpath, node) {
     var doc = node.ownerDocument ? node.ownerDocument : node;
     var xpathResult = doc.evaluate(xpath, node, PencilNamespaces.resolve, XPathResult.ANY_TYPE, null);
     return xpathResult.iterateNext();
 };
-/* static Node */ Dom.getSingleValue = function(xpath, node) {
+/* static Node */ Dom.getSingleValue = function (xpath, node) {
     var doc = node.ownerDocument ? node.ownerDocument : node;
     var xpathResult = doc.evaluate(xpath, node, PencilNamespaces.resolve, XPathResult.ANY_TYPE, null);
     var node = xpathResult.iterateNext();
 
     return node ? node.nodeValue : null;
 };
-/* static Node[] */ Dom.getList = function(xpath, node) {
+/* static Node[] */ Dom.getList = function (xpath, node) {
     var doc = node.ownerDocument ? node.ownerDocument : node;
     var xpathResult = doc.evaluate(xpath, node, PencilNamespaces.resolve, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
     var nodes = [];
@@ -466,18 +466,18 @@ Object.defineProperty(Event.prototype, "originalTarget", {
 
     return nodes;
 };
-/* public static XmlDocument */ Dom.getImplementation = function() {
+/* public static XmlDocument */ Dom.getImplementation = function () {
     return document.implementation;
 };
 
 var domParser = new DOMParser();
 
-/* public static XmlDocument */ Dom.loadSystemXml = function(relPath) {
+/* public static XmlDocument */ Dom.loadSystemXml = function (relPath) {
     var absPath = getStaticFilePath(relPath);
     return Dom.parseFile(absPath);
 };
 
-Dom.isElementExistedInDocument = function(element) {
+Dom.isElementExistedInDocument = function (element) {
     while (element) {
         if (element == document) {
             return true;
@@ -486,40 +486,40 @@ Dom.isElementExistedInDocument = function(element) {
     }
     return false;
 };
-Dom.registerEvent = function(target, event, handler, capture) {
+Dom.registerEvent = function (target, event, handler, capture) {
     var useCapture = false;
     if (capture) {
         useCapture = true;
     }
     target.addEventListener(event, handler, useCapture);
 };
-Dom.getEvent = function(e) {
+Dom.getEvent = function (e) {
     return e;
 };
-Dom.disableEvent = function(node, event) {
-    Dom.registerEvent(node, event, function(ev) {
+Dom.disableEvent = function (node, event) {
+    Dom.registerEvent(node, event, function (ev) {
         Dom.cancelEvent(ev);
     }, true );
 };
-Dom.cancelEvent = function(e) {
+Dom.cancelEvent = function (e) {
     var event = Dom.getEvent(e);
     if (event.preventDefault) event.preventDefault();
     else event.returnValue = false;
 };
-Dom.getTarget = function(e) {
+Dom.getTarget = function (e) {
     if (!e) return {};
     var event = Dom.getEvent(e);
     return event.srcElement ? event.srcElement : (event.originalTarget ? event.originalTarget : event.target);
 };
-Dom.addClass = function(node, className) {
+Dom.addClass = function (node, className) {
     if (Dom.hasClass(node, className)) return;
     node.className += " " + className;
 };
-Dom.hasClass = function(node, className) {
+Dom.hasClass = function (node, className) {
     if ((" " + node.className + " ").indexOf(" " + className + " ") >= 0) return true;
     return false;
 };
-Dom.removeClass = function(node, className) {
+Dom.removeClass = function (node, className) {
     if (node.className == className) {
         node.className = "";
         return;
@@ -528,21 +528,21 @@ Dom.removeClass = function(node, className) {
     var reBlank = /(^[ ]+)|([ ]+$)/g;
     node.className = (node.className + "").replace(re, " ").replace(reBlank, "");
 };
-Dom.toggleClass = function(node, className, add) {
+Dom.toggleClass = function (node, className, add) {
     if (add) {
         Dom.addClass(node, className);
     } else {
         Dom.removeClass(node, className);
     }
 };
-Dom.getOffsetLeft = function(control) {
+Dom.getOffsetLeft = function (control) {
     var offset = control.offsetLeft;
     var parent = control.offsetParent;
     if (parent) if (parent != control) return offset + Dom.getOffsetLeft(parent);
     return offset;
 };
 
-Dom.getOffsetTop = function(control) {
+Dom.getOffsetTop = function (control) {
     var offset = control.offsetTop;
     var parent = control.offsetParent;
     if (parent) {
@@ -554,15 +554,15 @@ Dom.getOffsetTop = function(control) {
     return offset;
 };
 
-Dom.getOffsetHeight = function(control) {
+Dom.getOffsetHeight = function (control) {
     return control ? control.offsetHeight : 0;
 };
 
-Dom.getOffsetWidth = function(control) {
+Dom.getOffsetWidth = function (control) {
     return control ? control.offsetWidth : 0;
 };
 
-Dom.isChildOf = function(parent, child) {
+Dom.isChildOf = function (parent, child) {
     if (!parent || !child) {
         return false;
     }
@@ -571,7 +571,7 @@ Dom.isChildOf = function(parent, child) {
     }
     return Dom.isChildOf(parent, child.parentNode);
 };
-Dom.findUpwardWithEval = function(node, evaluator, limit) {
+Dom.findUpwardWithEval = function (node, evaluator, limit) {
     if (node == null || (limit && limit(node))) {
         return null;
     }
@@ -580,7 +580,7 @@ Dom.findUpwardWithEval = function(node, evaluator, limit) {
     }
     return Dom.findUpward(node.parentNode, evaluator);
 };
-Dom.findUpward = function(node, evaluator) {
+Dom.findUpward = function (node, evaluator) {
     try {
         if (node == null) {
             return null;
@@ -596,13 +596,13 @@ Dom.findUpward = function(node, evaluator) {
         return null;
     }
 };
-Dom.findUpwardForData = function(node, dataName) {
+Dom.findUpwardForData = function (node, dataName) {
     var n = Dom.findUpwardForNodeWithData(node, dataName);
     if (!n) return undefined;
     return n[dataName];
 };
-Dom.findUpwardForNodeWithData = function(node, dataName) {
-    var n = Dom.findUpward(node, function(x) {
+Dom.findUpwardForNodeWithData = function (node, dataName) {
+    var n = Dom.findUpward(node, function (x) {
         return typeof(x[dataName]) != "undefined";
     });
 
@@ -613,7 +613,7 @@ Dom.findUpwardForNodeWithData = function(node, dataName) {
 //         return node == parentNode;
 //     });
 // };
-Dom.doUpward = function(node, evaluator, worker) {
+Dom.doUpward = function (node, evaluator, worker) {
     if (node == null) {
         return;
     }
@@ -622,14 +622,14 @@ Dom.doUpward = function(node, evaluator, worker) {
     }
     return Dom.doUpward(node.parentNode, evaluator, worker);
 };
-function DomTagNameEvaluator(tagName) {
+function DomTagNameEvaluator (tagName) {
     this.tagName = tagName.toUpperCase();
 }
-DomTagNameEvaluator.prototype.eval = function(node) {
+DomTagNameEvaluator.prototype.eval = function (node) {
     return node && node.tagName && node.tagName.toUpperCase && (node.tagName.toUpperCase() == this.tagName);
 };
-Dom.findParentWithClass = function(node, className) {
-    return Dom.findUpward(node, function(node) {
+Dom.findParentWithClass = function (node, className) {
+    return Dom.findUpward(node, function (node) {
         var index = (" " + node.className + " ").indexOf(" " + className + " ") >= 0;
         if (index > 0) {
             return true;
@@ -638,13 +638,13 @@ Dom.findParentWithClass = function(node, className) {
         }
     });
 };
-Dom.findParentByTagName = function(node, tagName) {
+Dom.findParentByTagName = function (node, tagName) {
     tagName = tagName.toUpperCase();
-    return Dom.findUpward(node, function(n) {
+    return Dom.findUpward(node, function (n) {
         return n.tagName && n.tagName.toUpperCase && (n.tagName.toUpperCase() == tagName);
     });
 };
-Dom.doOnChildRecursively = function(node, evaluator, worker) {
+Dom.doOnChildRecursively = function (node, evaluator, worker) {
     if (!node || !node.childNodes) return null;
 
     for (var i = 0; i < node.childNodes.length; i++) {
@@ -653,7 +653,7 @@ Dom.doOnChildRecursively = function(node, evaluator, worker) {
         Dom.doOnChildRecursively(child, evaluator, worker);
     }
 };
-Dom.doOnChild = function(node, evaluator, worker) {
+Dom.doOnChild = function (node, evaluator, worker) {
     if (!node || !node.childNodes) return null;
 
     for (var i = 0; i < node.childNodes.length; i++) {
@@ -661,10 +661,10 @@ Dom.doOnChild = function(node, evaluator, worker) {
         if (evaluator.eval(child)) worker(child);
     }
 };
-Dom.doOnAllChildren = function(node, worker) {
+Dom.doOnAllChildren = function (node, worker) {
     Dom.doOnChild(node, DomAcceptAllEvaluator, worker);
 };
-Dom.doOnChildRecursively = function(node, evaluator, worker) {
+Dom.doOnChildRecursively = function (node, evaluator, worker) {
     if (!node || !node.childNodes) return null;
 
     for (var i = 0; i < node.childNodes.length; i++) {
@@ -673,7 +673,7 @@ Dom.doOnChildRecursively = function(node, evaluator, worker) {
         Dom.doOnChildRecursively(child, evaluator, worker);
     }
 };
-Dom.doOnAllChildRecursively = function(node, worker) {
+Dom.doOnAllChildRecursively = function (node, worker) {
     if (!node || !node.childNodes) return null;
 
     for (var i = 0; i < node.childNodes.length; i++) {
@@ -683,16 +683,16 @@ Dom.doOnAllChildRecursively = function(node, worker) {
     }
 };
 var DomAcceptAllEvaluator = {
-    eval: function(target) {
+    eval: function (target) {
         return true;
     }
 };
 
 
-Dom.findTop = function(node, evaluator) {
+Dom.findTop = function (node, evaluator) {
     var top = null;
     try {
-        Dom.doUpward(node, evaluator, function(node) {
+        Dom.doUpward(node, evaluator, function (node) {
             top = node;
         });
     } catch (e) {}
@@ -700,7 +700,7 @@ Dom.findTop = function(node, evaluator) {
     return top;
 };
 
-Dom.emitEvent = function(name, target, data) {
+Dom.emitEvent = function (name, target, data) {
     var event = target.ownerDocument.createEvent("Events");
     event.initEvent(name, true, false);
     if (Util.isXul6OrLater()) {
@@ -713,13 +713,13 @@ Dom.emitEvent = function(name, target, data) {
     target.dispatchEvent(event);
 };
 
-Dom.empty = function(node) {
+Dom.empty = function (node) {
     if (!node || !node.hasChildNodes) return;
     while (node.hasChildNodes()) node.removeChild(node.firstChild);
 };
 Dom.parser = new DOMParser();
 Dom.serializer = new XMLSerializer();
-Dom.parseToNode = function(xml, dom) {
+Dom.parseToNode = function (xml, dom) {
     var doc = Dom.parser.parseFromString(xml, "text/xml");
     if (!doc || !doc.documentElement ||
             doc.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml") {
@@ -730,7 +730,7 @@ Dom.parseToNode = function(xml, dom) {
 
     return node;
 };
-Dom.parseDocument = function(xml) {
+Dom.parseDocument = function (xml) {
     if (xml && xml.charCodeAt(0) === 0xFEFF) {
         xml = xml.substr(1);
     }
@@ -739,22 +739,22 @@ Dom.parseDocument = function(xml) {
     return dom;
 };
 
-Dom.serializeNode = function(node) {
+Dom.serializeNode = function (node) {
     return Dom.serializer.serializeToString(node);
 };
-Dom.serializeNodeToFile = function(node, file, additionalContentPrefixes) {
+Dom.serializeNodeToFile = function (node, file, additionalContentPrefixes) {
     var xml = Controller.serializer.serializeToString(node);
     var root = node.documentElement ? node.documentElement : node;
     if (root.namespaceURI == PencilNamespaces.html) {
         // this is actually an HTML document, performing a trick for supporting ">" chars inside <style> tags
-        xml = xml.replace(/(<style[^>]*>)([^<]+)(<\/style>)/g, function(whole, leading, content, trailing) {
+        xml = xml.replace(/(<style[^>]*>)([^<]+)(<\/style>)/g, function (whole, leading, content, trailing) {
             return leading + content.replace(/&gt;/g, ">") + trailing;
         });
     }
 
     fs.writeFileSync(file, xml, "utf8");
 };
-Dom._buildHiddenFrame = function() {
+Dom._buildHiddenFrame = function () {
     if (Dom._hiddenFrame) return;
 
     var iframe = document.createElementNS(PencilNamespaces.html, "html:iframe");
@@ -781,7 +781,7 @@ Dom._buildHiddenFrame = function() {
 this is the disabled code
 // */
 
-Dom.toXhtml = function(html) {
+Dom.toXhtml = function (html) {
     if (!Dom._dummyDiv) {
         Dom._dummyDiv = document.createElement("div");
         document.body.appendChild(Dom._dummyDiv);
@@ -798,13 +798,13 @@ Dom.toXhtml = function(html) {
     //    });
     return xhtml;
 };
-Dom.htmlEncode = function(text) {
+Dom.htmlEncode = function (text) {
     if (!Dom.htmlEncodeDiv) Dom.htmlEncodeDiv = document.createElement("div");
     Dom.htmlEncodeDiv.innerHTML = "";
     Dom.htmlEncodeDiv.appendChild(document.createTextNode(text));
     return Dom.htmlEncodeDiv.innerHTML;
 };
-Dom.attrEncode = function(s, preserveCR) {
+Dom.attrEncode = function (s, preserveCR) {
     preserveCR = preserveCR ? "&#13;" : "\n";
     return ("" + s) /* Forces the conversion to string. */
         .replace(/&/g, "&amp;") /* This MUST be the 1st replacement. */
@@ -820,7 +820,7 @@ Dom.attrEncode = function(s, preserveCR) {
         .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
         .replace(/[\r\n]/g, preserveCR);
 };
-Dom.htmlStrip = function(s) {
+Dom.htmlStrip = function (s) {
     if (!Dom.htmlEncodePlaceHolder) {
         Dom.htmlEncodePlaceHolder = document.createElement("div");
     }
@@ -830,37 +830,37 @@ Dom.htmlStrip = function(s) {
     return t;
 };
 
-Dom.getInnerText = function(node) {
+Dom.getInnerText = function (node) {
     return node.innerText || node.textContent ||
             ((node.firstChild && node.firstChild.value) ? node.firstChild.value : "");
 };
 
-Dom.setInnerText = function(element, text) {
+Dom.setInnerText = function (element, text) {
     element.innerHTML = "";
     element.appendChild(element.ownerDocument.createTextNode(text));
 };
-Dom.renewId = function(shape) {
+Dom.renewId = function (shape) {
     var seed = Math.round(Math.random() * 1000);
-    Dom.workOn(".//*/@id|/@id", shape, function(node) {
+    Dom.workOn(".//*/@id|/@id", shape, function (node) {
         var uuid = Util.newUUID();
         Dom.updateIdRef(shape, node.value, uuid);
         node.value = uuid;
     });
 };
-Dom.updateIdRef = function(shape, oldId, newId) {
-    Dom.workOn(".//*/@p:filter | .//*/@filter | .//*/@style | .//*/@xlink:href | .//*/@clip-path | .//*/@marker-end | .//*/@marker-start | .//*/@mask | .//*/@childRef | .//@p:parentRef", shape, function(node) {
+Dom.updateIdRef = function (shape, oldId, newId) {
+    Dom.workOn(".//*/@p:filter | .//*/@filter | .//*/@style | .//*/@xlink:href | .//*/@clip-path | .//*/@marker-end | .//*/@marker-start | .//*/@mask | .//*/@childRef | .//@p:parentRef", shape, function (node) {
         var value = node.value;
         if (value == "#" + oldId) {
             value = "#" + newId;
         } else {
-            value = value.replace(/url\(#([^\)]+)\)/g, function(zero, one) {
+            value = value.replace(/url\(#([^\)]+)\)/g, function (zero, one) {
                 if (one == oldId) {
                     return "url(#" + newId + ")";
                 } else {
                     return zero;
                 }
             });
-            value = value.replace(/url\("\#([^"]+)"\)/g, function(zero, one) {
+            value = value.replace(/url\("\#([^"]+)"\)/g, function (zero, one) {
                 if (one == oldId) {
                     return "url(#" + newId + ")";
                 } else {
@@ -871,16 +871,16 @@ Dom.updateIdRef = function(shape, oldId, newId) {
         node.value = value;
     });
 };
-Dom.resolveIdRef = function(shape, seed) {
-    Dom.workOn(".//*/@p:filter | .//*/@filter | .//*/@style | .//*/@xlink:href | .//*/@clip-path | .//*/@marker-end | .//*/@marker-start | .//*/@mask | .//*/@childRef | .//@p:parentRef", shape, function(node) {
+Dom.resolveIdRef = function (shape, seed) {
+    Dom.workOn(".//*/@p:filter | .//*/@filter | .//*/@style | .//*/@xlink:href | .//*/@clip-path | .//*/@marker-end | .//*/@marker-start | .//*/@mask | .//*/@childRef | .//@p:parentRef", shape, function (node) {
         var value = node.value;
         if (value.substring(0, 1) == "#") {
             value += seed;
         } else {
-            value = value.replace(/url\(#([^\)]+)\)/g, function(zero, one) {
+            value = value.replace(/url\(#([^\)]+)\)/g, function (zero, one) {
                 return "url(#" + one + seed + ")";
             });
-            value = value.replace(/url\("\#([^"]+)"\)/g, function(zero, one) {
+            value = value.replace(/url\("\#([^"]+)"\)/g, function (zero, one) {
                 return "url(#" + one + seed + ")";
             });
         }
@@ -888,15 +888,15 @@ Dom.resolveIdRef = function(shape, seed) {
     });
 };
 
-Dom.handleAttributeChange = function(node, attributeName, handler) {
-    node.addEventListener("DOMAttrModified", function(event) {
+Dom.handleAttributeChange = function (node, attributeName, handler) {
+    node.addEventListener("DOMAttrModified", function (event) {
         if (event.attrName == attributeName) {
             handler(event.prevValue, event.newValue);
         }
     }, false);
 };
 
-Dom.appendAfter = function(fragment, node) {
+Dom.appendAfter = function (fragment, node) {
     if (!node.parentNode) {
         return;
     }
@@ -906,7 +906,7 @@ Dom.appendAfter = function(fragment, node) {
         node.parentNode.appendChild(fragment);
     }
 };
-Dom.swapNode = function(node1, node2) {
+Dom.swapNode = function (node1, node2) {
     var parentNode = node1.parentNode;
 
     var ref = node2.nextSibling;
@@ -923,22 +923,22 @@ Dom.swapNode = function(node1, node2) {
     parentNode.removeChild(node1);
     parentNode.insertBefore(node1, ref);
 };
-Dom.parseFile = function(file) {
+Dom.parseFile = function (file) {
     var fileContents = fs.readFileSync(file, "utf8");
     var dom = Dom.parser.parseFromString(fileContents, "text/xml");
     return dom;
 };
 
-Dom.hide = function(node) {
+Dom.hide = function (node) {
     node._old_display = node.style.display;
     node.style.display = "none";
 };
-Dom.show = function(node) {
+Dom.show = function (node) {
     if (node.style.display != "none") return;
     node.style.display = node._old_display || "block";
 };
 
-Dom.newDOMElement = function(spec, doc, holder) {
+Dom.newDOMElement = function (spec, doc, holder) {
     var ownerDocument = doc ? doc : document;
     var e = spec._uri ? ownerDocument.createElementNS(spec._uri, spec._name) : ownerDocument.createElement(spec._name);
 
@@ -977,7 +977,7 @@ Dom.newDOMElement = function(spec, doc, holder) {
 
     return e;
 };
-Dom.newDOMFragment = function(specs, doc, holder) {
+Dom.newDOMFragment = function (specs, doc, holder) {
     var ownerDocument = doc ? doc : document;
     var f = ownerDocument.createDocumentFragment();
 
@@ -986,7 +986,7 @@ Dom.newDOMFragment = function(specs, doc, holder) {
     }
     return f;
 };
-Dom.populate = function(container, ids, doc) {
+Dom.populate = function (container, ids, doc) {
     var dom = doc ? doc : document;
     for (var i = 0; i < ids.length; i ++) {
         var id = ids[i];
@@ -995,49 +995,49 @@ Dom.populate = function(container, ids, doc) {
 };
 
 var Svg = {};
-Svg.setX = function(node, x) {
+Svg.setX = function (node, x) {
     node.x.baseVal.value = x;
 };
-Svg.setY = function(node, y) {
+Svg.setY = function (node, y) {
     node.y.baseVal.value = y;
 };
 
-Svg.setWidth = function(node, w) {
+Svg.setWidth = function (node, w) {
     node.width.baseVal.value = w;
 };
-Svg.setHeight = function(node, h) {
+Svg.setHeight = function (node, h) {
     node.height.baseVal.value = h;
 };
-Svg.setStyle = function(node, name, value) {
+Svg.setStyle = function (node, name, value) {
     if (value == null) {
         node.style.removeProperty(name);
         return;
     }
     node.style.setProperty(name, value, "");
 };
-Svg.getStyle = function(node, name) {
+Svg.getStyle = function (node, name) {
     return node.style.getPropertyValue(name, "");
 };
-Svg.removeStyle = function(node, name) {
+Svg.removeStyle = function (node, name) {
     node.style.removeProperty(name);
 };
-Svg.toTransformText = function(matrix) {
+Svg.toTransformText = function (matrix) {
     return "matrix(" + [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f].join(",") + ")";
 };
-Svg.ensureCTM = function(node, matrix) {
+Svg.ensureCTM = function (node, matrix) {
     // FIXME: this works when no parent transformation applied. fix this later
 
     var s = Svg.toTransformText(matrix);
     node.setAttribute("transform", s);
 };
-Svg.pointInCTM = function(x, y, ctm) {
+Svg.pointInCTM = function (x, y, ctm) {
     return {
         x: ctm.a * x + ctm.c * y + ctm.e,
         y: ctm.b * x + ctm.d * y + ctm.f
     };
 };
 
-Svg.vectorInCTM = function(point, userCTM, noTranslation) {
+Svg.vectorInCTM = function (point, userCTM, noTranslation) {
     var ctm = userCTM.inverse();
 
     var uPoint = new Point();
@@ -1046,10 +1046,10 @@ Svg.vectorInCTM = function(point, userCTM, noTranslation) {
 
     return uPoint;
 };
-Svg.getCTM = function(target) {
+Svg.getCTM = function (target) {
     return target.getTransformToElement(target.ownerSVGElement);
 };
-Svg.rotateMatrix = function(angle, center, element) {
+Svg.rotateMatrix = function (angle, center, element) {
     var matrix = element.ownerSVGElement.createSVGTransform().matrix;
     matrix = matrix.translate(center.x, center.y);
     matrix = matrix.rotate(angle);
@@ -1057,28 +1057,28 @@ Svg.rotateMatrix = function(angle, center, element) {
 
     return matrix;
 };
-Svg.getScreenLocation = function(element, point) {
+Svg.getScreenLocation = function (element, point) {
     var sctm = element.getScreenCTM().inverse();
     return Svg.vectorInCTM(point ? point : new Point(0, 0), sctm);
 };
 
-Svg.getAngle = function(dx, dy) {
+Svg.getAngle = function (dx, dy) {
     return Math.atan2(dy, dx) * 180 / Math.PI;
 };
 
-Svg.getRelativeAngle = function(from, to, center) {
+Svg.getRelativeAngle = function (from, to, center) {
     var startAngle = Svg.getAngle(from.x - center.x, from.y - center.y);
     var endAngle = Svg.getAngle(to.x - center.x, to.y - center.y);
 
     return endAngle - startAngle;
 };
-Svg.ensureRectContains = function(rect, point) {
+Svg.ensureRectContains = function (rect, point) {
     rect.left = Math.min(rect.left, point.x);
     rect.right = Math.max(rect.right, point.x);
     rect.top = Math.min(rect.top, point.y);
     rect.bottom = Math.max(rect.bottom, point.y);
 };
-Svg.getBoundRectInCTM = function(box, ctm) {
+Svg.getBoundRectInCTM = function (box, ctm) {
     var p = Svg.vectorInCTM({x: box.x, y: box.y}, ctm);
 
     var rect = {left: p.x, right: p.x, top: p.y, bottom: p.y};
@@ -1095,7 +1095,7 @@ Svg.getBoundRectInCTM = function(box, ctm) {
 
     return rect;
 };
-Svg.joinRect = function(rect1, rect2) {
+Svg.joinRect = function (rect1, rect2) {
     var minX = Math.min(rect1.x, rect2.x);
     var minY = Math.min(rect1.y, rect2.y);
 
@@ -1107,7 +1107,7 @@ Svg.joinRect = function(rect1, rect2) {
         width: maxX - minX,
         height: maxY - minY};
 };
-Svg.expandRectTo = function(rect, p) {
+Svg.expandRectTo = function (rect, p) {
     if (p.x < rect.x) {
         rect.width += rect.x - p.x;
         rect.x = p.x;
@@ -1122,15 +1122,15 @@ Svg.expandRectTo = function(rect, p) {
         rect.height = p.y - rect.y;
     }
 };
-Svg.contains = function(x, y, large) {
+Svg.contains = function (x, y, large) {
     return (large.x <= x && x <= large.x + large.width) &&
             (large.y <= y && y <= large.y + large.height);
 };
-Svg.isInside = function(small, large) {
+Svg.isInside = function (small, large) {
     return Svg.contains(small.x, small.y, large) && Svg.contains(small.x + small.width, small.y + small.height, large);
 };
 
-Svg.optimizeSpeed = function(target, on) {
+Svg.optimizeSpeed = function (target, on) {
     return;
     if (on) {
         target.setAttributeNS(PencilNamespaces.p, "p:moving", true);
@@ -1139,7 +1139,7 @@ Svg.optimizeSpeed = function(target, on) {
     }
 };
 Svg.UNIT = ["em", "ex", "px", "pt", "pc", "cm", "mm", "in", "%"];
-Svg.getWidth = function(dom) {
+Svg.getWidth = function (dom) {
     try {
         var width = Dom.getSingle("/svg:svg/@width", dom).nodeValue;
         for (var i = 0; i < Svg.UNIT.length; i++) {
@@ -1154,7 +1154,7 @@ Svg.getWidth = function(dom) {
     }
     return 0;
 };
-Svg.getHeight = function(dom) {
+Svg.getHeight = function (dom) {
     try {
         var height = Dom.getSingle("/svg:svg/@height", dom).nodeValue;
         for (var i = 0; i < Svg.UNIT.length; i++) {
@@ -1169,14 +1169,14 @@ Svg.getHeight = function(dom) {
     return 0;
 };
 Svg.SYMBOL_NAME_ATTR = "symbolName";
-Svg.getSymbolName = function(node) {
+Svg.getSymbolName = function (node) {
     if (node.hasAttributeNS(PencilNamespaces.p, Svg.SYMBOL_NAME_ATTR)) {
         return node.getAttributeNS(PencilNamespaces.p, Svg.SYMBOL_NAME_ATTR);
     } else {
         return null;
     }
 };
-Svg.setSymbolName = function(node, name) {
+Svg.setSymbolName = function (node, name) {
     if (typeof(name) === "undefined" || name === null) {
         node.remoteAttributeNS(PencilNamespaces.p, Svg.SYMBOL_NAME_ATTR);
     } else {
@@ -1185,7 +1185,7 @@ Svg.setSymbolName = function(node, name) {
 };
 
 var Local = {};
-Local.getInstalledFonts = function() {
+Local.getInstalledFonts = function () {
     var installedFaces = [];
     var localFonts = [];
     // document.fonts.forEach(function (face) {
@@ -1211,12 +1211,12 @@ Local.getInstalledFonts = function() {
 
     return localFonts;
 };
-Local.sortFont = function(fonts) {
-    fonts.sort(function(a, b) {
+Local.sortFont = function (fonts) {
+    fonts.sort(function (a, b) {
         return a.family.localeCompare(b.family);
     });
 };
-Local.chromeToPath = function(aPath) {
+Local.chromeToPath = function (aPath) {
     if (!aPath || !(/^chrome:/.test(aPath))) {
         return; // not a chrome url
     }
@@ -1235,7 +1235,7 @@ Local.chromeToPath = function(aPath) {
     return rv;
 };
 
-Local.urlToPath = function(aPath) {
+Local.urlToPath = function (aPath) {
     if (!aPath || !/^file:/.test(aPath)) {
         return;
     }
@@ -1247,7 +1247,7 @@ Local.urlToPath = function(aPath) {
     return rv;
 };
 
-Local.copyToChrome = function(src, dest) {
+Local.copyToChrome = function (src, dest) {
     var ios = Components.classes["@mozilla.org/network/io-service;1"].
         getService(Components.interfaces.nsIIOService);
     var url = ios.newURI(src, null, null);
@@ -1283,7 +1283,7 @@ Local.copyToChrome = function(src, dest) {
         stream.close();
     }
 };
-Local.installWebFont = function(name, url) {
+Local.installWebFont = function (name, url) {
     var filename = Util.newUUID() + ".woff";
     var index = url.lastIndexOf("/");
     if (index != -1) {
@@ -1303,7 +1303,7 @@ Local.installWebFont = function(name, url) {
         Services.obs.notifyObservers(null, "startupcache-invalidate", null);
     }
 };
-Local.isFontExisting = function(font) {
+Local.isFontExisting = function (font) {
     if (!Local.cachedLocalFonts) {
         Local.getInstalledFonts();
     }
@@ -1313,7 +1313,7 @@ Local.isFontExisting = function(font) {
 
     return false;
 };
-Local.openExtenstionManager = function() {
+Local.openExtenstionManager = function () {
     const EMTYPE = "Extension:Manager";
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
     var theEM = wm.getMostRecentWindow(EMTYPE);
@@ -1325,21 +1325,21 @@ Local.openExtenstionManager = function() {
     const EMFEATURES = "chrome,menubar,extra-chrome,toolbar,dialog=no,resizable";
     window.openDialog(EMURL, "", EMFEATURES);
 };
-Local.newTempFile = function(prefix, ext) {
+Local.newTempFile = function (prefix, ext) {
     return tmp.fileSync({prefix: prefix + "-", postfix: "." + ext, keep: false});
 };
-Local.createTempDir = function(prefix) {
+Local.createTempDir = function (prefix) {
     return tmp.dirSync({prefix: prefix + "-", keep: false});
 };
 
 var Console = {};
-Console.log = function(message) {
+Console.log = function (message) {
     if (console && console.log) console.log(message);
 };
-Console.dumpError = function(exception, toConsole) {
+Console.dumpError = function (exception, toConsole) {
     console.error(exception);
 };
-Console.alertError = function(exception, toConsole) {
+Console.alertError = function (exception, toConsole) {
     var s = [
         exception.message,
         "",
@@ -1352,25 +1352,25 @@ Console.alertError = function(exception, toConsole) {
 
 var Util = {};
 Util.uuidGenerator = {
-    generateUUID: function() {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    generateUUID: function () {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             var r = crypto.getRandomValues(new Uint8Array(1))[0]%16|0; var v = c == "x" ? r : (r&0x3|0x8);
             return v.toString(16);
         });
     }
 };
 
-Util.newUUID = function() {
+Util.newUUID = function () {
     var uuid = Util.uuidGenerator.generateUUID();
     return uuid.toString().replace(/[^0-9A-Z]+/gi, "");
 };
 
 Util.instanceToken = "" + (new Date()).getTime();
-Util.getInstanceToken = function() {
+Util.getInstanceToken = function () {
     return Util.instanceToken;
 };
 
-Util.gridNormalize = function(value, size) {
+Util.gridNormalize = function (value, size) {
     if (Config.get("edit.snap.grid", false) == false) {
         return value;
     }
@@ -1383,7 +1383,7 @@ Util.gridNormalize = function(value, size) {
         return value - r;
     }
 };
-Util.enumInterfaces = function(object) {
+Util.enumInterfaces = function (object) {
     var ifaces = [];
     for (name in Components.interfaces) {
         var iface = Components.interfaces[name];
@@ -1395,10 +1395,10 @@ Util.enumInterfaces = function(object) {
 
     return ifaces;
 };
-Util.handleTempImageLoad = function() {
+Util.handleTempImageLoad = function () {
     if (Util.handleTempImageLoadImpl) Util.handleTempImageLoadImpl();
 };
-Util.getClipboardImage = function(clipData, length, handler) {
+Util.getClipboardImage = function (clipData, length, handler) {
     var dataStream = clipData.QueryInterface(Components.interfaces.nsIInputStream);
 
     var bStream = Components.classes["@mozilla.org/binaryinputstream;1"]
@@ -1427,56 +1427,56 @@ Util.getClipboardImage = function(clipData, length, handler) {
 
     url += "?t=" + (new Date()).getTime();
 
-    ImageData.fromUrlEmbedded(url, function(imageData) {
+    ImageData.fromUrlEmbedded(url, function (imageData) {
         handler(imageData.w, imageData.h, imageData.data);
     });
 };
 Util.statusbarDisplay = null;
 Util.STATUSBAR_MESSAGE_AUTOHIDE = 4000;
-Util.showStatusBarInfo = function(message, autoHide) {
+Util.showStatusBarInfo = function (message, autoHide) {
     if (!Util.statusbarDisplay) return;
     Util.statusbarDisplay.setAttribute("src", "chrome://pencil/skin/images/dialog-information.png");
     Util.statusbarDisplay.label = message;
 
     if (autoHide) {
-        setTimeout(function() {
+        setTimeout(function () {
             Util.hideStatusbarMessage();
         }, Util.STATUSBAR_MESSAGE_AUTOHIDE);
     }
 };
-Util.showStatusBarWarning = function(message, autoHide) {
+Util.showStatusBarWarning = function (message, autoHide) {
     if (!Util.statusbarDisplay) return;
     Util.statusbarDisplay.setAttribute("src", "chrome://pencil/skin/images/dialog-warning.png");
     Util.statusbarDisplay.label = message;
 
     if (autoHide) {
-        setTimeout(function() {
+        setTimeout(function () {
             Util.hideStatusbarMessage();
         }, Util.STATUSBAR_MESSAGE_AUTOHIDE);
     }
 };
-Util.showStatusBarError = function(message, autoHide) {
+Util.showStatusBarError = function (message, autoHide) {
     if (!Util.statusbarDisplay) return;
     Util.statusbarDisplay.setAttribute("src", "chrome://pencil/skin/images/dialog-error.png");
     Util.statusbarDisplay.label = message;
 
     if (autoHide) {
-        setTimeout(function() {
+        setTimeout(function () {
             Util.hideStatusbarMessage();
         }, Util.STATUSBAR_MESSAGE_AUTOHIDE);
     }
 };
-Util.hideStatusbarMessage = function() {
+Util.hideStatusbarMessage = function () {
     Util.statusbarDisplay.removeAttribute("src");
     Util.statusbarDisplay.label = "";
 };
-Util.setPointerPosition = function(x, y) {
+Util.setPointerPosition = function (x, y) {
     if (!Util.statusbarPointer) {
         Util.statusbarPointer = document.getElementById("pencil-statusbar-pointer");
     }
     Util.statusbarPointer.label = x + ", " + y;
 };
-Util.dialog = function(title, description, buttonLabel) {
+Util.dialog = function (title, description, buttonLabel) {
     var message = {type: "info",
         title: title,
         description: description ? description : null,
@@ -1485,16 +1485,16 @@ Util.dialog = function(title, description, buttonLabel) {
     var returnValueHolder = {};
     var dialog = window.openDialog("chrome://pencil/content/messageDialog.xul", "pencilMessageDialog" + Util.getInstanceToken(), "modal,centerscreen", message, returnValueHolder);
 };
-Util.info = function(title, description, buttonLabel) {
+Util.info = function (title, description, buttonLabel) {
     Dialog.alert(title + "\n" + description);
 };
-Util.warn = function(title, description, buttonLabel) {
+Util.warn = function (title, description, buttonLabel) {
     Dialog.error(title + "\n" + description);
 };
-Util.error = function(title, description, buttonLabel) {
+Util.error = function (title, description, buttonLabel) {
     Dialog.error(title + "\n" + description);
 };
-Util.confirm = function(title, description, acceptLabel, cancelLabel) {
+Util.confirm = function (title, description, acceptLabel, cancelLabel) {
     var message = {type: "confirm",
         title: title,
         description: description ? description : null,
@@ -1505,7 +1505,7 @@ Util.confirm = function(title, description, acceptLabel, cancelLabel) {
     var dialog = window.openDialog("chrome://pencil/content/messageDialog.xul", "pencilMessageDialog" + Util.getInstanceToken(), "modal,centerscreen", message, returnValueHolder);
     return returnValueHolder.button == "accept";
 };
-Util.confirmWithWarning = function(title, description, acceptLabel, cancelLabel) {
+Util.confirmWithWarning = function (title, description, acceptLabel, cancelLabel) {
     var message = {type: "confirmWarned",
         title: title,
         description: description ? description : null,
@@ -1516,7 +1516,7 @@ Util.confirmWithWarning = function(title, description, acceptLabel, cancelLabel)
     var dialog = window.openDialog("chrome://pencil/content/messageDialog.xul", "pencilMessageDialog" + Util.getInstanceToken(), "modal,centerscreen", message, returnValueHolder);
     return returnValueHolder.button == "accept";
 };
-Util.confirmExtra = function(title, description, acceptLabel, extraLabel, cancelLabel) {
+Util.confirmExtra = function (title, description, acceptLabel, extraLabel, cancelLabel) {
     var message = {type: "confirm2",
         title: title,
         description: description ? description : null,
@@ -1534,19 +1534,19 @@ Util.confirmExtra = function(title, description, acceptLabel, extraLabel, cancel
 
     return result;
 };
-Util.beginProgressJob = function(jobName, jobStarter) {
+Util.beginProgressJob = function (jobName, jobStarter) {
     new ProgressiveJobDialog().open({
         title: jobName,
         starter: jobStarter
     });
 };
-Util.setNodeMetadata = function(node, name, value) {
+Util.setNodeMetadata = function (node, name, value) {
     node.setAttributeNS(PencilNamespaces.p, "p:" + name, value);
 };
-Util.getNodeMetadata = function(node, name) {
+Util.getNodeMetadata = function (node, name) {
     return node.getAttributeNS(PencilNamespaces.p, name);
 };
-Util.generateIcon = function(target, maxWidth, maxHeight, padding, iconPath, callback, rasterizer) {
+Util.generateIcon = function (target, maxWidth, maxHeight, padding, iconPath, callback, rasterizer) {
     console.log("generateIcon");
     try {
         if (!target || !target.svg) {
@@ -1597,9 +1597,9 @@ Util.generateIcon = function(target, maxWidth, maxHeight, padding, iconPath, cal
         console.log("iconPath:", iconPath);
         console.log("rasterizer:", rasterizer);
         if (iconPath) {
-            rasterizer.rasterizeDOM(svg, iconPath, function() {});
+            rasterizer.rasterizeDOM(svg, iconPath, function () {});
         } else {
-            rasterizer.rasterizeDOMToUrl(svg, function(data) {
+            rasterizer.rasterizeDOMToUrl(svg, function (data) {
                 if (callback) {
                     callback(data.url);
                 }
@@ -1609,18 +1609,18 @@ Util.generateIcon = function(target, maxWidth, maxHeight, padding, iconPath, cal
         Console.dumpError(ex);
     }
 };
-Util.compress = function(dir, zipFile, callback) {
+Util.compress = function (dir, zipFile, callback) {
     var archiver = require("archiver");
     var archive = archiver("zip");
     var output = fs.createWriteStream(zipFile);
-    output.on("close", function() {
+    output.on("close", function () {
         if (callback) callback();
     });
     archive.pipe(output);
     archive.directory(dir, "/", {});
     archive.finalize();
 };
-Util.writeDirToZip = function(dir, writer, prefix) {
+Util.writeDirToZip = function (dir, writer, prefix) {
     var items = dir.directoryEntries;
     while (items.hasMoreElements()) {
         var file = items.getNext().QueryInterface(Components.interfaces.nsIFile);
@@ -1635,7 +1635,7 @@ Util.writeDirToZip = function(dir, writer, prefix) {
         }
     }
 };
-Util.preloadFonts = function(doc) {
+Util.preloadFonts = function (doc) {
     var menupopup = document.createElementNS(PencilNamespaces.xul, "menupopup");
     var localFonts = Local.getInstalledFonts();
     for (var i in localFonts) {
@@ -1648,7 +1648,7 @@ Util.preloadFonts = function(doc) {
     doc.documentElement.appendChild(menupopup);
     Util.fontList = menupopup;
 };
-Util.openDonate = function() {
+Util.openDonate = function () {
     // try {
     //     var link = "http://pencil.evolus.vn/Donation.aspx";
     //
@@ -1678,22 +1678,22 @@ Util.openDonate = function() {
     // }
     require("shell").openExternal("http://pencil.evolus.vn/Donation.html");
 };
-Util.getMessage = function(msg, args) {
+Util.getMessage = function (msg, args) {
     var text = MESSAGES[msg];
     if (!text) return msg;
 
     if (typeof(args) == "undefined") return text;
     return text.replace(/%S/g, "" + args);
 };
-Util.showNotification = function(title, ms) {
+Util.showNotification = function (title, ms) {
     Components.classes["@mozilla.org/alerts-service;1"].
         getService(Components.interfaces.nsIAlertsService).
         showAlertNotification(null, title, ms, false, "", null);
 };
-Util.isXulrunner = function() {
+Util.isXulrunner = function () {
     return navigator.userAgent.indexOf("Firefox") == -1;
 };
-Util.getXulrunnerVersion = function() {
+Util.getXulrunnerVersion = function () {
     var agent = navigator.userAgent;
     var version = agent.match(/rv:([^\s\)]*)/i);
     if (version && version.length > 1) {
@@ -1701,7 +1701,7 @@ Util.getXulrunnerVersion = function() {
     }
     return "0";
 };
-Util.isXul6OrLater = function() {
+Util.isXul6OrLater = function () {
     var version = Util.getXulrunnerVersion();
     var q = version.split("\.");
     if (q.length > 0) {
@@ -1709,10 +1709,10 @@ Util.isXul6OrLater = function() {
     }
     return false;
 };
-Util.isMac = function() {
+Util.isMac = function () {
     return navigator.userAgent.indexOf("Intel Mac") != -1;
 };
-Util.em = function() {
+Util.em = function () {
     if (Util._calculatedEM) return Util._calculatedEM;
     var div = document.createElement("div");
     var s = "mmmmmmmmmmmmmmmmmmmmmmmmmmm";
@@ -1728,31 +1728,31 @@ Util.em = function() {
     document.body.removeChild(div);
     return Util._calculatedEM;
 };
-function debugx(ex) {
+function debugx (ex) {
     debug("debugx is no longer supported");
 }
 if (!window.dump) {
     if (console && console.log) {
-        window.dump = function(obj) {
+        window.dump = function (obj) {
             console.log(obj);
         };
     } else {
-        window.dump = function() {};
+        window.dump = function () {};
     }
 }
 
 if (typeof(console) == "undefined") {
     console = {
-        debug: function(value) {
+        debug: function (value) {
             dump("DEBUG: " + value + "\n");
         },
-        error: function(value) {
+        error: function (value) {
             dump("ERROR: " + value + "\n");
         },
-        info: function(value) {
+        info: function (value) {
             dump("INFO : " + value + "\n");
         },
-        warn: function(value) {
+        warn: function (value) {
             dump("WARN : " + value + "\n");
         }
     };
@@ -1760,10 +1760,10 @@ if (typeof(console) == "undefined") {
 
 const DEV_ENABLED = require("electron").remote.app.devEnable ? true : false;
 
-function debug() {
+function debug () {
     // if (DEV_ENABLED) console.log.apply(console, ["DEBUG>"].concat(Array.prototype.slice.call(arguments)));
 }
-function stackTrace() {
+function stackTrace () {
     // DEBUG_BEGIN
     var lines = [];
     for (var frame = Components.stack; frame; frame = frame.caller) {
@@ -1772,22 +1772,22 @@ function stackTrace() {
     debug(lines.join("\n"));
     // DEBUG_END
 }
-function warn(value) {
+function warn (value) {
     // console.warn(value);
     debug(value);
 }
-function info(value) {
+function info (value) {
     // DEBUG_BEGIN
     console.info(value);
     debug(value);
     // DEBUG_END
 }
-function error(value) {
+function error (value) {
     console.error(value);
     debug(value);
 }
 var lastTick = (new Date()).getTime();
-function tick(value) {
+function tick (value) {
     // DEBUG_BEGIN
     return;
     var date = new Date();
@@ -1801,7 +1801,7 @@ function tick(value) {
 }
 
 var Net = {};
-Net.uploadAndDownload = function(url, uploadFile, downloadTargetFile, listener, options) {
+Net.uploadAndDownload = function (url, uploadFile, downloadTargetFile, listener, options) {
     var ioService = Components.classes["@mozilla.org/network/io-service;1"]
         .getService(Components.interfaces.nsIIOService);
 
@@ -1816,15 +1816,15 @@ Net.uploadAndDownload = function(url, uploadFile, downloadTargetFile, listener, 
         listener: listener,
         size: 0,
 
-        writeMessage: function(message) {
+        writeMessage: function (message) {
             if (this.listener && this.listener.onMessage) {
                 this.listener.onMessage(message);
             }
         },
-        onStartRequest: function(request, context) {
+        onStartRequest: function (request, context) {
             this.writeMessage("Request started");
         },
-        onDataAvailable: function(request, context, stream, sourceOffset, length) {
+        onDataAvailable: function (request, context, stream, sourceOffset, length) {
             if (this.canceled) return;
 
             try {
@@ -1861,27 +1861,27 @@ Net.uploadAndDownload = function(url, uploadFile, downloadTargetFile, listener, 
                 alert("Saving error:\n" + e);
             }
         },
-        onStopRequest: function(request, context, status) {
+        onStopRequest: function (request, context, status) {
             this.foStream.close();
             this.writeMessage("Done");
             this.listener.onDone();
         },
-        onChannelRedirect: function(oldChannel, newChannel, flags) {
+        onChannelRedirect: function (oldChannel, newChannel, flags) {
         },
-        getInterface: function(aIID) {
+        getInterface: function (aIID) {
             try {
                 return this.QueryInterface(aIID);
             } catch (e) {
                 throw Components.results.NS_NOINTERFACE;
             }
         },
-        onProgress: function(aRequest, aContext, aProgress, aProgressMax) { },
-        onStatus: function(aRequest, aContext, aStatus, aStatusArg) {
+        onProgress: function (aRequest, aContext, aProgress, aProgressMax) { },
+        onStatus: function (aRequest, aContext, aStatus, aStatusArg) {
             this.writeMessage("onStatus: " + [aRequest, aContext, aStatus, aStatusArg]);
         },
-        onRedirect: function(aOldChannel, aNewChannel) { },
+        onRedirect: function (aOldChannel, aNewChannel) { },
 
-        QueryInterface: function(aIID) {
+        QueryInterface: function (aIID) {
             if (aIID.equals(Components.interfaces.nsISupports) ||
                 aIID.equals(Components.interfaces.nsIInterfaceRequestor) ||
                 aIID.equals(Components.interfaces.nsIChannelEventSink) ||
@@ -1917,7 +1917,7 @@ Net.uploadAndDownload = function(url, uploadFile, downloadTargetFile, listener, 
     channel.notificationCallbacks = listener;
     channel.asyncOpen(listener, null);
 };
-Net.submitMultiplart = function(url, parts, externalListener, options) {
+Net.submitMultiplart = function (url, parts, externalListener, options) {
     var ioService = Components.classes["@mozilla.org/network/io-service;1"]
         .getService(Components.interfaces.nsIIOService);
 
@@ -1932,37 +1932,37 @@ Net.submitMultiplart = function(url, parts, externalListener, options) {
         listener: externalListener,
         size: 0,
 
-        writeMessage: function(message) {
+        writeMessage: function (message) {
             if (this.listener && this.listener.onMessage) {
                 this.listener.onMessage(message);
             }
         },
-        onStartRequest: function(request, context) {
+        onStartRequest: function (request, context) {
             this.writeMessage("Request started");
         },
-        onDataAvailable: function(request, context, stream, sourceOffset, length) {
+        onDataAvailable: function (request, context, stream, sourceOffset, length) {
         },
-        onStopRequest: function(request, context, status) {
+        onStopRequest: function (request, context, status) {
             this.foStream.close();
             this.writeMessage("Done");
             this.listener.onDone();
         },
-        onChannelRedirect: function(oldChannel, newChannel, flags) {
+        onChannelRedirect: function (oldChannel, newChannel, flags) {
         },
-        getInterface: function(aIID) {
+        getInterface: function (aIID) {
             try {
                 return this.QueryInterface(aIID);
             } catch (e) {
                 throw Components.results.NS_NOINTERFACE;
             }
         },
-        onProgress: function(aRequest, aContext, aProgress, aProgressMax) { },
-        onStatus: function(aRequest, aContext, aStatus, aStatusArg) {
+        onProgress: function (aRequest, aContext, aProgress, aProgressMax) { },
+        onStatus: function (aRequest, aContext, aStatus, aStatusArg) {
             this.writeMessage("onStatus: " + [aRequest, aContext, aStatus, aStatusArg]);
         },
-        onRedirect: function(aOldChannel, aNewChannel) { },
+        onRedirect: function (aOldChannel, aNewChannel) { },
 
-        QueryInterface: function(aIID) {
+        QueryInterface: function (aIID) {
             if (aIID.equals(Components.interfaces.nsISupports) ||
                 aIID.equals(Components.interfaces.nsIInterfaceRequestor) ||
                 aIID.equals(Components.interfaces.nsIChannelEventSink) ||
@@ -2056,14 +2056,14 @@ Net.submitMultiplart = function(url, parts, externalListener, options) {
     channel.notificationCallbacks = listener;
     channel.asyncOpen(listener, null);
 };
-Net.createSimpleTextStream = function(text) {
+Net.createSimpleTextStream = function (text) {
     var stream = Components.classes["@mozilla.org/io/string-input-stream;1"]
         .createInstance(Components.interfaces.nsIStringInputStream);
     stream.setData(text, -1);
 
     return stream;
 };
-Net.downloadAsync = function(url, destPath, listener) {
+Net.downloadAsync = function (url, destPath, listener) {
     var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
         .createInstance(Components.interfaces.nsIWebBrowserPersist);
     var file = Components.classes["@mozilla.org/file/local;1"]
@@ -2086,14 +2086,14 @@ Net.downloadAsync = function(url, destPath, listener) {
     }*/
     persist.saveURI(obj_URI, null, null, null, "", file);
 };
-Util.goDoCommand = function(command, doc) {
+Util.goDoCommand = function (command, doc) {
     var dom = doc ? doc : document;
     var controller = dom.commandDispatcher.getControllerForCommand(command);
     if (controller && controller.isCommandEnabled(command)) {
         controller.doCommand(command);
     }
 };
-Util.getFileExtension = function(path) {
+Util.getFileExtension = function (path) {
     if (path) {
         var index = path.lastIndexOf(".");
         if (index != -1) {
@@ -2102,23 +2102,23 @@ Util.getFileExtension = function(path) {
     }
     return null;
 };
-Util.getCustomProperty = function(node, name, defaultValue) {
+Util.getCustomProperty = function (node, name, defaultValue) {
     if (node.hasAttributeNS(PencilNamespaces.p, name)) {
         return node.getAttributeNS(PencilNamespaces.p, name);
     }
 
     return defaultValue;
 };
-Util.getCustomNumberProperty = function(node, name, defaultValue) {
+Util.getCustomNumberProperty = function (node, name, defaultValue) {
     var v = Util.getCustomProperty(node, name, null);
     if (v == null) return defaultValue;
 
     return parseFloat(v);
 };
-Util.setCustomProperty = function(node, name, value) {
+Util.setCustomProperty = function (node, name, value) {
     node.setAttributeNS(PencilNamespaces.p, "p:" + name, value);
 };
-Util.imageOnloadListener = function(event) {
+Util.imageOnloadListener = function (event) {
     var image = event.target;
     var W = image.parentNode.clientWidth - 2;
     var H = image.parentNode.clientHeight - 2;
@@ -2146,7 +2146,7 @@ Util.imageOnloadListener = function(event) {
 
     image.style.visibility = "inherit";
 };
-Util.setupImage = function(image, src, mode, allowUpscale) {
+Util.setupImage = function (image, src, mode, allowUpscale) {
     image.onload = Util.imageOnloadListener;
     image.style.visibility = "hidden";
     image.style.width = "0px";
@@ -2156,15 +2156,15 @@ Util.setupImage = function(image, src, mode, allowUpscale) {
     image.src = src;
 };
 
-Util.isDev = function() {
+Util.isDev = function () {
     return process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath);
 };
 
-function stencilDebug(x) {
+function stencilDebug (x) {
     debug(x);
 }
 
-window.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("DOMContentLoaded", function () {
     document.documentElement.setAttribute("platform", navigator.platform.indexOf("Linux") < 0 ? "Other" : "Linux");
     Util.platform = navigator.platform.indexOf("Linux") < 0 ? "Other" : "Linux";
     Util.statusbarDisplay = document.getElementById("pencil-statusbar-display");
@@ -2173,7 +2173,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
 var propertyTypeArray = ["Alignment", "Bool", "Bound", "Color", "CSS", "Dimension", "Enum", "Font", "Handle", "ImageData", "PlainText", "Point", "RichText", "RichTextArray", "ShadowStyle", "SnappingData", "StrokeStyle", "Outlet"];
 
-Util.isXul17OrLater = function() {
+Util.isXul17OrLater = function () {
     var version = Util.getXulrunnerVersion();
     var q = version.split("\.");
     if (q.length > 0) {
@@ -2188,15 +2188,15 @@ pencilSandbox.Dom = Dom;
 pencilSandbox.Console = Console;
 pencilSandbox.PencilNamespaces = PencilNamespaces;
 
-Util.importSandboxFunctions = function() {
+Util.importSandboxFunctions = function () {
     for (var i = 0; i < arguments.length; i ++) {
         var f = arguments[i];
         pencilSandbox[f.name] = f;
     }
 };
-Util.workOnListAsync = function(list, worker, callback) {
+Util.workOnListAsync = function (list, worker, callback) {
     var index = -1;
-    var next = function() {
+    var next = function () {
         index ++;
         if (!list || index >= list.length) {
             if (callback) callback();
@@ -2208,7 +2208,7 @@ Util.workOnListAsync = function(list, worker, callback) {
     };
     next();
 };
-Util.compareVersion = function(version1, version2) {
+Util.compareVersion = function (version1, version2) {
     var a = version1.split(/\./);
     var b = version2.split(/\./);
 
@@ -2232,7 +2232,7 @@ Util.compareVersion = function(version1, version2) {
 };
 
 
-function pEval(expression, extra, codeLocation) {
+function pEval (expression, extra, codeLocation) {
     var result = null;
 
     try {
@@ -2249,10 +2249,10 @@ function pEval(expression, extra, codeLocation) {
 
     return result;
 }
-function doLater(f, ms, win) {
+function doLater (f, ms, win) {
     var w = win ? win : window;
     var start = new Date().getTime();
-    var g = function() {
+    var g = function () {
         var now = new Date().getTime();
         if (now - start > ms) {
             // alert(now - start);
@@ -2265,10 +2265,10 @@ function doLater(f, ms, win) {
     g();
 }
 
-function geo_translate(p, dx, dy) {
+function geo_translate (p, dx, dy) {
     return {x: p.x + dx, y: p.y + dy};
 }
-function geo_rotate(p, a) {
+function geo_rotate (p, a) {
     return {x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a)};
 }
 
@@ -2278,7 +2278,7 @@ function geo_rotate(p, a) {
  * d: new length
  * a: rotated angle
  */
-function geo_getRotatedPoint(p1, p2, d, a) {
+function geo_getRotatedPoint (p1, p2, d, a) {
     var p = geo_translate(p1, 0 - p2.x, 0 - p2.y);
     p = geo_rotate(p, a);
     p = geo_translate(p, p2.x, p2.y);
@@ -2295,23 +2295,23 @@ function geo_getRotatedPoint(p1, p2, d, a) {
 
     return p;
 }
-function geo_vectorLength(p1, p2) {
+function geo_vectorLength (p1, p2) {
     var dx = p1.x - p2.x;
     var dy = p1.y - p2.y;
 
     return Math.sqrt(dx * dx + dy * dy);
 }
 
-function geo_pointAngle(x, y) {
+function geo_pointAngle (x, y) {
     if (x == 0) return y > 0 ? Math.PI / 2 : 0 - Math.PI / 2;
     return Math.atan2(y, x);
 }
 
-function geo_vectorAngle(p1, p2, q1, q2) {
+function geo_vectorAngle (p1, p2, q1, q2) {
     return geo_pointAngle(q2.x - q1.x, q2.y - q1.y) - geo_pointAngle(p2.x - p1.x, p2.y - p1.y);
 }
 
-function geo_findIntersection(a1, b1, a2, b2) {
+function geo_findIntersection (a1, b1, a2, b2) {
     var x0 = a1.x;
     var y0 = a1.y;
     var a = b1.x - a1.x;
@@ -2332,7 +2332,7 @@ function geo_findIntersection(a1, b1, a2, b2) {
     };
 }
 
-function geo_buildQuickSmoothCurve(points, inputControlLength) {
+function geo_buildQuickSmoothCurve (points, inputControlLength) {
     debug("geo_buildQuickSmoothCurve: points = " + points.length + ", controlLength: " + inputControlLength);
     if (points.length != 4) {
         return geo_buildSmoothCurve(points);
@@ -2353,7 +2353,7 @@ function geo_buildQuickSmoothCurve(points, inputControlLength) {
 
     return spec;
 }
-function geo_buildSmoothCurve(points) {
+function geo_buildSmoothCurve (points) {
     var spec = [M(points[0].x, points[0].y)];
     var len = points.length;
     var lastAngle = null;
@@ -2386,7 +2386,7 @@ function geo_buildSmoothCurve(points) {
     return spec;
 }
 
-function fsExistSync(p) {
+function fsExistSync (p) {
     try {
         var stat = fs.statSync(p);
         return stat;
@@ -2395,7 +2395,7 @@ function fsExistSync(p) {
         throw e;
     }
 }
-function fsExistAsDirectorySync(p) {
+function fsExistAsDirectorySync (p) {
     try {
         var stat = fs.statSync(p);
         return stat.isDirectory();
@@ -2405,12 +2405,12 @@ function fsExistAsDirectorySync(p) {
     }
 }
 
-function deleteFileOrFolder(p) {
+function deleteFileOrFolder (p) {
     try {
         var stat = fs.statSync(p);
         if (stat.isDirectory()) {
             var children = fs.readdirSync(p);
-            children.forEach(function(child) {
+            children.forEach(function (child) {
                 if (child == "." || child == "..") return;
                 deleteFileOrFolder(path.join(p, child));
             });
@@ -2424,7 +2424,7 @@ function deleteFileOrFolder(p) {
 
 
 /* credit: http://stackoverflow.com/a/26038979/5746831 */
-function copyFileSync(source, target) {
+function copyFileSync (source, target) {
     var targetFile = target;
 
     if (fsExistSync(target)) {
@@ -2436,7 +2436,7 @@ function copyFileSync(source, target) {
     fs.writeFileSync(targetFile, fs.readFileSync(source));
 }
 
-function copyFolderRecursiveSync(source, target) {
+function copyFolderRecursiveSync (source, target) {
     var files = [];
 
     // check if folder needs to be created or integrated
@@ -2448,7 +2448,7 @@ function copyFolderRecursiveSync(source, target) {
     // copy
     if (fs.lstatSync(source).isDirectory()) {
         files = fs.readdirSync(source);
-        files.forEach(function(file) {
+        files.forEach(function (file) {
             var curSource = path.join(source, file);
             if (fs.lstatSync(curSource).isDirectory()) {
                 copyFolderRecursiveSync(curSource, targetFolder);
@@ -2459,7 +2459,7 @@ function copyFolderRecursiveSync(source, target) {
     }
 }
 
-function getStaticFilePath(subPath) {
+function getStaticFilePath (subPath) {
     var filePath = __dirname;
     if (!subPath) return filePath;
 
@@ -2471,22 +2471,22 @@ function getStaticFilePath(subPath) {
     return filePath;
 }
 
-function _before(before, fn) {
-    return function() {
+function _before (before, fn) {
+    return function () {
         before.apply(this, arguments);
         return fn.apply(this, arguments);
     };
 }
 
-function _after(fn, after) {
-    return function() {
+function _after (fn, after) {
+    return function () {
         var result = fn.apply(this, arguments);
         after.call(this, result);
         return result;
     };
 }
 
-function getRequiredValue(input, message, pattern) {
+function getRequiredValue (input, message, pattern) {
     var value = input.value;
     var valid = pattern ? value.match(pattern) : value.trim().length > 0;
     if (!valid) {
@@ -2498,10 +2498,10 @@ function getRequiredValue(input, message, pattern) {
 
     return value;
 }
-function handleCommonValidationError(e) {
+function handleCommonValidationError (e) {
     if (e._isValidationError) {
-        Dialog.error(e.message, "", function() {
-            setTimeout(function() {
+        Dialog.error(e.message, "", function () {
+            setTimeout(function () {
                 e._input.focus();
                 e._input.select();
             }, 250);
@@ -2513,14 +2513,14 @@ function handleCommonValidationError(e) {
     }
 }
 
-function contains(list, item, comparer) {
+function contains (list, item, comparer) {
     return findItemByComparer(list, item, comparer) >= 0;
 }
 
-function sameList(a, b, comparer) {
+function sameList (a, b, comparer) {
     return containsAll(a, b, comparer) && containsAll(b, a, comparer);
 }
-function containsAll(a, b, comparer) {
+function containsAll (a, b, comparer) {
     var c = comparer || sameId;
     for (var i = 0; i < b.length; i ++) {
         if (!contains(a, b[i], c)) return false;
@@ -2528,7 +2528,7 @@ function containsAll(a, b, comparer) {
 
     return true;
 }
-function intersect(a, b, comparer) {
+function intersect (a, b, comparer) {
     if (!a || !b) return [];
     var items = [];
     for (var i = 0; i < a.length; i ++) {
@@ -2540,14 +2540,14 @@ function intersect(a, b, comparer) {
     return items;
 }
 
-function findItemByComparer(list, item, comparer) {
+function findItemByComparer (list, item, comparer) {
     for (var i = 0; i < list.length; i ++) {
         if (comparer(list[i], item)) return i;
     }
 
     return -1;
 }
-function removeItemByComparer(list, item, comparer) {
+function removeItemByComparer (list, item, comparer) {
     var result = [];
     for (var i = 0; i < list.length; i ++) {
         if (!comparer(list[i], item)) {
@@ -2557,19 +2557,19 @@ function removeItemByComparer(list, item, comparer) {
 
     return result;
 }
-function find(list, matcher) {
+function find (list, matcher) {
     for (var i = 0; i < list.length; i ++) {
         if (matcher(list[i])) return list[i];
     }
 
     return null;
 }
-function findById(list, id) {
-    return find(list, function(u) {
+function findById (list, id) {
+    return find(list, function (u) {
         return u.id == id;
     });
 }
-function _export() {
+function _export () {
     var obj = {};
     for (var i = 0; i < arguments.length; i ++) {
         var f = arguments[i];
@@ -2579,16 +2579,16 @@ function _export() {
 
     return obj;
 }
-function sameId(a, b) {
+function sameId (a, b) {
     if (!a) return !b;
     if (!b) return false;
     return a.id == b.id;
 }
-function sameRelax(a, b) {
+function sameRelax (a, b) {
     return a == b;
 }
 
-process.on("uncaughtException", function(e) {
+process.on("uncaughtException", function (e) {
     console.error("UNCAUGHT EXCPTION", e);
 });
 

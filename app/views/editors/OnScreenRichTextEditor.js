@@ -1,4 +1,4 @@
-function OnScreenRichTextEditor() {
+function OnScreenRichTextEditor () {
     BaseTemplatedWidget.call(this);
 
     this.popup.allowMouseDragging = true;
@@ -12,10 +12,10 @@ OnScreenRichTextEditor.isEditing = false;
 OnScreenRichTextEditor._initialized = false;
 OnScreenRichTextEditor._activeEditor = null;
 
-OnScreenRichTextEditor.prototype.initialize = function() {
+OnScreenRichTextEditor.prototype.initialize = function () {
     this.popup.hide();
 };
-OnScreenRichTextEditor.prototype.install = function(canvas) {
+OnScreenRichTextEditor.prototype.install = function (canvas) {
     this.canvas = canvas;
     this.canvas.onScreenEditors.push(this);
     this.textToolOverlay.editor = this.textEditor;
@@ -23,14 +23,14 @@ OnScreenRichTextEditor.prototype.install = function(canvas) {
 
     var thiz = this;
 
-    this.canvas.addEventListener("p:ShapeInserted", function(ev) {
+    this.canvas.addEventListener("p:ShapeInserted", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:ShapeInserted", arguments.callee, false);
             return;
         }
         thiz.handleShapeDoubleClicked(ev);
     }, false);
-    this.canvas.addEventListener("p:ShapeDoubleClicked", function(ev) {
+    this.canvas.addEventListener("p:ShapeDoubleClicked", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:ShapeDoubleClicked", arguments.callee, false);
             return;
@@ -38,7 +38,7 @@ OnScreenRichTextEditor.prototype.install = function(canvas) {
         thiz.handleShapeDoubleClicked(ev);
     }, false);
 
-    this.canvas.addEventListener("p:TextEditingRequested", function(ev) {
+    this.canvas.addEventListener("p:TextEditingRequested", function (ev) {
         if (thiz.passivated) {
             thiz.canvas.removeEventListener("p:TextEditingRequested", arguments.callee, false);
             return;
@@ -46,7 +46,7 @@ OnScreenRichTextEditor.prototype.install = function(canvas) {
         thiz.handleShapeDoubleClicked(ev);
     }, false);
 
-    this.popup.addEventListener("p:PopupHidden", function(event) {
+    this.popup.addEventListener("p:PopupHidden", function (event) {
         thiz.commitChange(event);
     }, false);
     var thiz = this;
@@ -56,20 +56,20 @@ OnScreenRichTextEditor.prototype.install = function(canvas) {
     this.bind("keyup", this.handleKeyPress, this.container);
     this.bind("input", this.handleInput, this.container);
 };
-OnScreenRichTextEditor.prototype.addEditorEvent = function(name, handler) {
+OnScreenRichTextEditor.prototype.addEditorEvent = function (name, handler) {
     this.textEditor.addEventListener(name, handler, false);
 };
-OnScreenRichTextEditor.prototype.attach = function(targetObject) {
+OnScreenRichTextEditor.prototype.attach = function (targetObject) {
 };
-OnScreenRichTextEditor.prototype.invalidate = function() {
+OnScreenRichTextEditor.prototype.invalidate = function () {
 };
-OnScreenRichTextEditor.prototype.nextTool = function() {
+OnScreenRichTextEditor.prototype.nextTool = function () {
 };
-OnScreenRichTextEditor.prototype.dettach = function() {
+OnScreenRichTextEditor.prototype.dettach = function () {
 
 };
 
-OnScreenRichTextEditor.prototype.handleShapeDoubleClicked = function(event) {
+OnScreenRichTextEditor.prototype.handleShapeDoubleClicked = function (event) {
     this.currentTarget = event.controller;
     if (!this.currentTarget) return;
 
@@ -105,7 +105,7 @@ OnScreenRichTextEditor.prototype.handleShapeDoubleClicked = function(event) {
         }
     }
 };
-OnScreenRichTextEditor.prototype._setupEditor = function() {
+OnScreenRichTextEditor.prototype._setupEditor = function () {
     var geo = this.canvas.getZoomedGeo(this.currentTarget);
     // Svg.ensureCTM(this.svgElement, geo.ctm);
     this.geo = geo;
@@ -166,7 +166,7 @@ OnScreenRichTextEditor.prototype._setupEditor = function() {
     Svg.setStyle(this.textEditor, "height", this.textEditingInfo.multi ? (height + "px") : null);
 
     this.textEditorWrapper.style.fontFamily = this.textEditingInfo.font.family;
-    this.textEditorWrapper.style.fontSize = this.textEditingInfo.font.size.replace(/^([0-9\.]+)/, function(whole, one) {
+    this.textEditorWrapper.style.fontSize = this.textEditingInfo.font.size.replace(/^([0-9\.]+)/, function (whole, one) {
         return (parseFloat(one) * this.canvas.zoom);
     }.bind(this));
     this.textEditorWrapper.style.lineHeight = "1.1";
@@ -188,7 +188,7 @@ OnScreenRichTextEditor.prototype._setupEditor = function() {
     OnScreenRichTextEditor._activeEditor = this;
 
     var thiz = this;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         thiz.textEditor.focus();
         thiz.textToolOverlay.runEditorCommand("styleWithCSS", true);
         thiz.textToolOverlay.runEditorCommand("selectAll");
@@ -197,7 +197,7 @@ OnScreenRichTextEditor.prototype._setupEditor = function() {
     }, 10);
 };
 OnScreenRichTextEditor.MIN_AC_LENGTH = 5;
-OnScreenRichTextEditor.prototype.handleInput = function(event) {
+OnScreenRichTextEditor.prototype.handleInput = function (event) {
     var selection = window.getSelection();
     if (!selection || !selection.anchorNode) {
         this.hideAutoComplete();
@@ -223,14 +223,14 @@ OnScreenRichTextEditor.prototype.handleInput = function(event) {
     }
 };
 
-OnScreenRichTextEditor.prototype.showAutoComplete = function(set, node, offset) {
+OnScreenRichTextEditor.prototype.showAutoComplete = function (set, node, offset) {
     this.acMenu.items = [];
-    function createItem(acItem) {
+    function createItem (acItem) {
         var label = (typeof(acItem) == "string" ? acItem : (acItem.label || acItem.toString()));
         if (label.length > 40) label = label.substring(0, 40) + "... (" + label.length + " characters)";
         return {
             label: label,
-            run: function() {
+            run: function () {
                 var text = typeof(acItem) == "string" ? acItem : (acItem.content || acItem.toString());
 
                 var textContent = node.textContent;
@@ -253,12 +253,12 @@ OnScreenRichTextEditor.prototype.showAutoComplete = function(set, node, offset) 
     this.acSelectedItemIndex = -1;
     this.acMenu.showMenu(anchorNode, "left-inside", "bottom", 0, 5, true);
 };
-OnScreenRichTextEditor.prototype.hideAutoComplete = function() {
+OnScreenRichTextEditor.prototype.hideAutoComplete = function () {
     this.acMenu.hideMenu();
 };
 
 // TODO: Refactor this into AC set registration from stencil
-OnScreenRichTextEditor.prototype.getAutoCompleteSet = function(term, isFull) {
+OnScreenRichTextEditor.prototype.getAutoCompleteSet = function (term, isFull) {
     if (term && term.toLowerCase() == "lorem") {
         var items = [
             getLoremWord(),
@@ -283,7 +283,7 @@ OnScreenRichTextEditor.prototype.getAutoCompleteSet = function(term, isFull) {
 
     return null;
 };
-OnScreenRichTextEditor.prototype.handleACKeyDown = function(event) {
+OnScreenRichTextEditor.prototype.handleACKeyDown = function (event) {
     if (!this.acMenu.isVisible()) return;
     if (event.keyCode == DOM_VK_UP || event.keyCode == DOM_VK_DOWN) {
         var items = this.acMenu.getMenuItemNodes();
@@ -318,7 +318,7 @@ OnScreenRichTextEditor.prototype.handleACKeyDown = function(event) {
         this.cancelNextCommit = true;
     }
 };
-OnScreenRichTextEditor.prototype.handleKeyPress = function(event) {
+OnScreenRichTextEditor.prototype.handleKeyPress = function (event) {
     if (this.textToolOverlay.settingFont) {
         return;
     }
@@ -331,7 +331,7 @@ OnScreenRichTextEditor.prototype.handleKeyPress = function(event) {
         var insideList = null;
         try {
             var node = window.getSelection().anchorNode;
-            insideList = Dom.findUpward(node, function(n) {
+            insideList = Dom.findUpward(node, function (n) {
                 return n.localName == "li";
             });
         } catch (e) {}
@@ -346,10 +346,10 @@ OnScreenRichTextEditor.prototype.handleKeyPress = function(event) {
     }
 };
 
-OnScreenRichTextEditor.prototype.fixEditorContentStructure = function() {
+OnScreenRichTextEditor.prototype.fixEditorContentStructure = function () {
     for (var i = 0; i < this.textEditor.childNodes.length; i ++) this.fixStructure(this.textEditor.childNodes[i]);
 };
-OnScreenRichTextEditor.prototype.fixStructure = function(e) {
+OnScreenRichTextEditor.prototype.fixStructure = function (e) {
     if (e.nodeType != Node.ELEMENT_NODE || e.localName.toLowerCase() != "span") return;
     if (this.isInline(e) && this.containsNonInline(e)) {
         var div = e.ownerDocument.createElementNS(PencilNamespaces.html, "div");
@@ -366,7 +366,7 @@ OnScreenRichTextEditor.prototype.fixStructure = function(e) {
 
     for (var i = 0; i < e.childNodes.length; i ++) this.fixStructure(e.childNodes[i]);
 };
-OnScreenRichTextEditor.prototype.containsNonInline = function(e) {
+OnScreenRichTextEditor.prototype.containsNonInline = function (e) {
     if (!e || !e.childNodes || e.childNodes.length <= 0) return false;
     for (var i = 0; i < e.childNodes.length; i ++) {
         var child = e.childNodes[i];
@@ -377,11 +377,11 @@ OnScreenRichTextEditor.prototype.containsNonInline = function(e) {
 
     return false;
 };
-OnScreenRichTextEditor.prototype.isInline = function(node) {
+OnScreenRichTextEditor.prototype.isInline = function (node) {
     var display = node.ownerDocument.defaultView.getComputedStyle(node).display;
     return (display == "inline" || display == "inline-block");
 };
-OnScreenRichTextEditor.prototype.commitChange = function(event) {
+OnScreenRichTextEditor.prototype.commitChange = function (event) {
     if (!this._lastTarget || !this.textEditingInfo) return;
     try {
         this.fixEditorContentStructure();
@@ -391,23 +391,23 @@ OnScreenRichTextEditor.prototype.commitChange = function(event) {
     } finally {
         this.popup.hide("silent");
         this.textEditingInfo = null;
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             Pencil.activeCanvas.focus();
         }, 10);
     }
 };
-OnScreenRichTextEditor.prototype.cancelChange = function() {
+OnScreenRichTextEditor.prototype.cancelChange = function () {
     if (!this.textEditingInfo) return;
     this.popup.hide("silent");
     this.textEditingInfo = null;
-    window.setTimeout(function() {
+    window.setTimeout(function () {
         Pencil.activeCanvas.focus();
     }, 10);
 };
-OnScreenRichTextEditor.prototype.getRichtextValue = function() {
+OnScreenRichTextEditor.prototype.getRichtextValue = function () {
     return this.textEditor.innerHTML;
     var html = Dom.serializeNode(this.textEditor.innerHTML);
-    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function(zero) {
+    html = html.replace(/<[\/A-Z0-9]+[ \t\r\n>]/g, function (zero) {
         return zero.toLowerCase();
     });
     if (html.match(/^<body[^>]*>([^\0]*)<\/body>$/)) {
@@ -415,6 +415,6 @@ OnScreenRichTextEditor.prototype.getRichtextValue = function() {
     }
     return html;
 };
-OnScreenRichTextEditor.prototype.setRichtextValue = function(html) {
+OnScreenRichTextEditor.prototype.setRichtextValue = function (html) {
     this.textEditor.innerHTML = html;
 };

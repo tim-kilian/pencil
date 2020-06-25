@@ -1,5 +1,5 @@
 
-function OpenClipartSearch2() {
+function OpenClipartSearch2 () {
     this.title = "OpenClipart.org (API)";
     this.name = "OpenClipart.org (API)";
     this.uri = "http://openclipart.org/";
@@ -276,13 +276,13 @@ function OpenClipartSearch2() {
 }
 OpenClipartSearch2.prototype = new SearchEngine();
 
-OpenClipartSearch2.prototype.merge = function(o, n) {
+OpenClipartSearch2.prototype.merge = function (o, n) {
     for (var i in n) {
         o[i] = n[i];
     }
     return o;
 };
-OpenClipartSearch2.prototype.buildSearchUri = function(query, options) {
+OpenClipartSearch2.prototype.buildSearchUri = function (query, options) {
     var url = this.baseUri + "?query=" + query;
     var param = "";
     for (var i in options) {
@@ -291,7 +291,7 @@ OpenClipartSearch2.prototype.buildSearchUri = function(query, options) {
 
     return url + param;
 };
-OpenClipartSearch2.prototype.formatType = function(type) {
+OpenClipartSearch2.prototype.formatType = function (type) {
     if (type) {
         var idx = type.indexOf("/");
         if (idx != -1) {
@@ -301,7 +301,7 @@ OpenClipartSearch2.prototype.formatType = function(type) {
     return Util.getMessage("unknow.type");
 };
 
-OpenClipartSearch2.prototype.searchImpl = function(query, options, callback) {
+OpenClipartSearch2.prototype.searchImpl = function (query, options, callback) {
     this.options = this.merge(this.options, options);
     var url = this.buildSearchUri(query, this.options);
 
@@ -314,20 +314,20 @@ OpenClipartSearch2.prototype.searchImpl = function(query, options, callback) {
     var thiz = this;
     debug("OpenClipart: searching '" + query + "'");
     debug("url: " + url);
-    WebUtil.get(url, function(response) {
+    WebUtil.get(url, function (response) {
         var r = thiz.parseSearchResult(response);
         if (callback) {
             callback(r.result, r.resultCount);
         }
     }, this.req);
 };
-OpenClipartSearch2.prototype.parseSearchResult = function(response) {
+OpenClipartSearch2.prototype.parseSearchResult = function (response) {
     var r = {result: [], resultCount: 0};
     if (!response) return r;
     try {
         var dom = Dom.parseDocument(response);
 
-        Dom.workOn("//*/item", dom, function(itemNode) {
+        Dom.workOn("//*/item", dom, function (itemNode) {
             var item = {
                 name: Dom.getSingleValue("./title/text()", itemNode),
                 des: Dom.getSingleValue("./description/text()", itemNode),
@@ -348,19 +348,19 @@ OpenClipartSearch2.prototype.parseSearchResult = function(response) {
     return r;
 };
 
-function OpenClipartHandler() {
+function OpenClipartHandler () {
     this.items = [];
     this.currentItem = null;
     this.currentState = OpenClipartHandler.STATE_CHANNEL;
 }
 
-OpenClipartHandler.prototype.startDocument = function() {
+OpenClipartHandler.prototype.startDocument = function () {
 };
 
-OpenClipartHandler.prototype.endDocument = function() {
+OpenClipartHandler.prototype.endDocument = function () {
 };
 
-OpenClipartHandler.prototype.startElement = function(name, attribs) {
+OpenClipartHandler.prototype.startElement = function (name, attribs) {
     if (!name || name === "") return;
     if (name === "item") {
         this.currentState = OpenClipartHandler.STATE_ITEM;
@@ -389,7 +389,7 @@ OpenClipartHandler.prototype.startElement = function(name, attribs) {
         }
     }
 };
-OpenClipartHandler.prototype.endElement = function(name) {
+OpenClipartHandler.prototype.endElement = function (name) {
     if (!name || name === "") return;
     if (name === "item") {
         this.currentState = OpenClipartHandler.STATE_CHANNEL;
@@ -419,7 +419,7 @@ OpenClipartHandler.prototype.endElement = function(name) {
         }
     }
 };
-OpenClipartHandler.prototype.characters = function(data) {
+OpenClipartHandler.prototype.characters = function (data) {
     this.currentText = data;
 };
 

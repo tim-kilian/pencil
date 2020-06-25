@@ -1,4 +1,4 @@
-function GeometryEditor() {
+function GeometryEditor () {
     this.svgElement = null;
     this.canvas = null;
 
@@ -7,14 +7,14 @@ function GeometryEditor() {
 
 GeometryEditor.ANCHOR_SIZE = 4;
 GeometryEditor.configDoc = Dom.loadSystemXml("pencil-core/editor/geometryEditor.config.xml");
-GeometryEditor.prototype.resetAccomulatedChanges = function() {
+GeometryEditor.prototype.resetAccomulatedChanges = function () {
     this.adx = 0;
     this.ady = 0;
     this.adw = 0;
     this.adh = 0;
     this.ada = 0;
 };
-GeometryEditor.prototype.install = function(canvas) {
+GeometryEditor.prototype.install = function (canvas) {
     this.canvas = canvas;
     this.canvas.onScreenEditors.push(this);
     this.svgElement = canvas.ownerDocument.importNode(Dom.getSingle("/p:Config/svg:g", GeometryEditor.configDoc), true);
@@ -36,7 +36,7 @@ GeometryEditor.prototype.install = function(canvas) {
     this.anchor6 = Dom.getSingle(".//svg:rect[@p:name='BottomLeft']", this.svgElement);
     this.anchor7 = Dom.getSingle(".//svg:rect[@p:name='Left']", this.svgElement);
 
-    Dom.workOn(".//svg:rect[@class='Anchor']", this.svgElement, function(node) {
+    Dom.workOn(".//svg:rect[@class='Anchor']", this.svgElement, function (node) {
         node.setAttribute("width", GeometryEditor.ANCHOR_SIZE * 2);
         node.setAttribute("height", GeometryEditor.ANCHOR_SIZE * 2);
 
@@ -69,21 +69,21 @@ GeometryEditor.prototype.install = function(canvas) {
 
     // registering event on the outmost item to have better UI interation
     var outmostItem = this.svgElement.ownerDocument.documentElement;
-    outmostItem.addEventListener("mousedown", function(ev) {
+    outmostItem.addEventListener("mousedown", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousedown", arguments.callee, false);
             return;
         }
         thiz.handleMouseDown(ev);
     }, false);
-    outmostItem.addEventListener("mouseup", function(ev) {
+    outmostItem.addEventListener("mouseup", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mouseup", arguments.callee, false);
             return;
         }
         thiz.handleMouseUp(ev);
     }, false);
-    outmostItem.addEventListener("mousemove", function(ev) {
+    outmostItem.addEventListener("mousemove", function (ev) {
         if (thiz.passivated) {
             outmostItem.removeEventListener("mousemove", arguments.callee, false);
             return;
@@ -91,7 +91,7 @@ GeometryEditor.prototype.install = function(canvas) {
         thiz.handleMouseMove(ev);
     }, false);
 };
-GeometryEditor.dumpGeo = function(s, geo) {
+GeometryEditor.dumpGeo = function (s, geo) {
     var o = {};
     if (geo.ctm) {
         o.ctm = {
@@ -112,7 +112,7 @@ GeometryEditor.dumpGeo = function(s, geo) {
 
     debug(s + ": " + o.toSource());
 };
-GeometryEditor.prototype.attach = function(targetObject) {
+GeometryEditor.prototype.attach = function (targetObject) {
     if (!targetObject) return;
     if (targetObject.constructor == TargetSet) {
         this.dettach();
@@ -133,17 +133,17 @@ GeometryEditor.prototype.attach = function(targetObject) {
     }
 };
 
-GeometryEditor.prototype.dettach = function() {
+GeometryEditor.prototype.dettach = function () {
     this.targetObject = null;
     this.svgElement.style.visibility = "hidden";
 };
-GeometryEditor.prototype.invalidate = function() {
+GeometryEditor.prototype.invalidate = function () {
     if (!this.targetObject) return;
     var geo = this.canvas.getZoomedGeo(this.targetObject);
     this.setEditorGeometry(geo);
 };
 
-GeometryEditor.prototype.setEditorGeometry = function(geo) {
+GeometryEditor.prototype.setEditorGeometry = function (geo) {
     // transformation
     Svg.ensureCTM(this.svgElement, geo.ctm);
 
@@ -187,7 +187,7 @@ GeometryEditor.prototype.setEditorGeometry = function(geo) {
 
     this.geo = geo;
 };
-GeometryEditor.prototype.setBound = function(bound) {
+GeometryEditor.prototype.setBound = function (bound) {
     throw "@method: GeometryEditor.prototype.setBound is now depricated, using setEditorGeometry instead.";
 
     this.svgElement.setAttribute("transform", "translate(" + bound.x + "," + bound.y + ")");
@@ -219,15 +219,15 @@ GeometryEditor.prototype.setBound = function(bound) {
 
     this.bound = bound;
 };
-GeometryEditor.prototype.findAnchor = function(element) {
+GeometryEditor.prototype.findAnchor = function (element) {
     var thiz = this;
-    var anchor = Dom.findUpward(element, function(node) {
+    var anchor = Dom.findUpward(element, function (node) {
         return node._isAnchor && (node._editor == thiz);
     });
 
     return anchor;
 };
-GeometryEditor.prototype.handleMouseDown = function(event) {
+GeometryEditor.prototype.handleMouseDown = function (event) {
     if (!this.canvas.currentController) return;
     this.currentAnchor = this.findAnchor(event.originalTarget);
     this.oX = event.clientX;
@@ -289,10 +289,10 @@ GeometryEditor.prototype.handleMouseDown = function(event) {
     }
 };
 
-GeometryEditor.prototype.handleMouseUp = function(event) {
+GeometryEditor.prototype.handleMouseUp = function (event) {
     try {
         if (this.currentAnchor) {
-            this.canvas.run(function() {
+            this.canvas.run(function () {
                 try {
                     if (this.adx != 0 || this.ady != 0) {
                         this.targetObject.moveBy(this.adx / this.canvas.zoom, this.ady / this.canvas.zoom);
@@ -317,16 +317,16 @@ GeometryEditor.prototype.handleMouseUp = function(event) {
         this.currentAnchor = null;
     }
 };
-GeometryEditor.prototype.nextTool = function() {
+GeometryEditor.prototype.nextTool = function () {
     var next = (this.tool == "scale") ? "rotate" : "scale";
 
     this.setTool(next);
 };
-GeometryEditor.prototype.setTool = function(tool) {
+GeometryEditor.prototype.setTool = function (tool) {
     this.tool = tool;
     this.svgElement.setAttribute("class", "GeoEditor Tool_" + this.tool);
 
-    Dom.workOn(".//svg:rect[@class='Anchor']", this.svgElement, function(node) {
+    Dom.workOn(".//svg:rect[@class='Anchor']", this.svgElement, function (node) {
         if (tool == "rotate") {
             node.setAttribute("rx", GeometryEditor.ANCHOR_SIZE);
             node.setAttribute("ry", GeometryEditor.ANCHOR_SIZE);
@@ -340,7 +340,7 @@ GeometryEditor.prototype.setTool = function(tool) {
         }
     });
 };
-GeometryEditor.prototype.handleMouseMove = function(event) {
+GeometryEditor.prototype.handleMouseMove = function (event) {
     if (!this.currentAnchor) return;
     event.preventDefault();
 
@@ -590,7 +590,7 @@ GeometryEditor.prototype.handleMouseMove = function(event) {
 
     this.setEditorGeometry(newGeo);
 };
-GeometryEditor.prototype.handleMouseMove_old = function(event) {
+GeometryEditor.prototype.handleMouseMove_old = function (event) {
     event.preventDefault();
 
     if (!this.currentAnchor) return;
@@ -633,7 +633,7 @@ GeometryEditor.prototype.handleMouseMove_old = function(event) {
 
     this.setEditorGeometry(newGeo);
 };
-GeometryEditor.prototype.getLockingPolicy = function() {
+GeometryEditor.prototype.getLockingPolicy = function () {
     if (!this.targetObject) {
         return {x: true, y: true, width: true, height: true, rotation: true, ratio: true};
     }
@@ -651,7 +651,7 @@ GeometryEditor.prototype.getLockingPolicy = function() {
 
     return {x: false, y: false, width: lockW, height: lockH, rotation: lockR, ratio: lockRatio};
 };
-GeometryEditor.prototype.getMinDimension = function() {
+GeometryEditor.prototype.getMinDimension = function () {
     // FIXME: this value is picked up from either the current shape box constraint or the system fallback constraint
     var min = {w: 2, h: 2};
 
@@ -669,29 +669,29 @@ GeometryEditor.prototype.getMinDimension = function() {
 
     return min;
 };
-GeometryEditor.prototype.getGridSize = function() {
+GeometryEditor.prototype.getGridSize = function () {
     // FIXME: this value is defined in either system-wide config or document-wide config
     var grid = Pencil.getGridSize();
     return {x: grid.w, y: grid.h};
 };
-GeometryEditor.prototype.getZoomedGridSize = function() {
+GeometryEditor.prototype.getZoomedGridSize = function () {
     var size = this.getGridSize();
     return {x: size.x * this.canvas.zoom, y: size.y * this.canvas.zoom};
 };
-GeometryEditor.prototype.getRotationStep = function() {
+GeometryEditor.prototype.getRotationStep = function () {
     return 15; // degrees
 };
-GeometryEditor.prototype.getRotationCenterRatio = function() {
+GeometryEditor.prototype.getRotationCenterRatio = function () {
     return {rx: 0.5, ry: 0.5};
 };
-GeometryEditor.prototype.getRotationCenterScreenLocation = function() {
+GeometryEditor.prototype.getRotationCenterScreenLocation = function () {
     var point = Svg.getScreenLocation(this.borderRect);
 
     var centerRatio = this.getRotationCenterRatio();
 
     return {x: this.geo.dim.w * centerRatio.rx + point.x, y: this.geo.dim.h * centerRatio.ry + point.y};
 };
-GeometryEditor.prototype.rotate = function(from, to, event) {
+GeometryEditor.prototype.rotate = function (from, to, event) {
     var centerRatio = this.getRotationCenterRatio();
     /*
     var center = Svg.getScreenLocation(this.borderRect);
@@ -721,7 +721,7 @@ GeometryEditor.prototype.rotate = function(from, to, event) {
 
     this.ada = a;
 };
-GeometryEditor.prototype.validateGeometry = function(geo, matrix, locking) {
+GeometryEditor.prototype.validateGeometry = function (geo, matrix, locking) {
     var minDim = this.getMinDimension();
 
     var grid = this.getGridSize();

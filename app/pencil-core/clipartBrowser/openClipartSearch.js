@@ -1,4 +1,4 @@
-function OpenClipartSearch() {
+function OpenClipartSearch () {
     this.title = "OpenClipart.org";
     this.name = "OpenClipart.org";
     this.uri = "https://openclipart.org/";
@@ -13,14 +13,14 @@ function OpenClipartSearch() {
 }
 OpenClipartSearch.prototype = new SearchEngine();
 
-OpenClipartSearch.prototype.merge = function(o, n) {
+OpenClipartSearch.prototype.merge = function (o, n) {
     for (var i in n) {
         o[i] = n[i];
     }
     return o;
 };
 
-OpenClipartSearch.prototype.buildSearchUri = function(query, options) {
+OpenClipartSearch.prototype.buildSearchUri = function (query, options) {
     var url = this.baseUri + "?query=" + query;
 
     if (options.offset != null && options.limit != null) {
@@ -35,7 +35,7 @@ OpenClipartSearch.prototype.buildSearchUri = function(query, options) {
     return url + param;
 };
 
-OpenClipartSearch.prototype.searchImpl = function(query, options, callback) {
+OpenClipartSearch.prototype.searchImpl = function (query, options, callback) {
     this.options = this.merge(this.options, options);
     var url = this.buildSearchUri(query, this.options);
 
@@ -48,7 +48,7 @@ OpenClipartSearch.prototype.searchImpl = function(query, options, callback) {
     var thiz = this;
 
     console.log(`OpenClipart: searching ${query}`);
-    WebUtil.get(url, function(response) {
+    WebUtil.get(url, function (response) {
         var r = thiz.parseSearchResult(response);
         if (callback) {
             callback(r.result, r.resultCount);
@@ -56,7 +56,7 @@ OpenClipartSearch.prototype.searchImpl = function(query, options, callback) {
     }, this.req);
 };
 
-OpenClipartSearch.prototype.formatType = function(ty) {
+OpenClipartSearch.prototype.formatType = function (ty) {
     if (ty) {
         var idx = ty.indexOf("/");
         if (idx != -1) {
@@ -66,7 +66,7 @@ OpenClipartSearch.prototype.formatType = function(ty) {
     return Util.getMessage("unknow.type");
 };
 
-OpenClipartSearch.prototype.parseSearchResult = function(response) {
+OpenClipartSearch.prototype.parseSearchResult = function (response) {
     var result = {
         result: [],
         resultCount: 0
@@ -83,7 +83,7 @@ OpenClipartSearch.prototype.parseSearchResult = function(response) {
     result.resultCount = response.info.results;
     result.pages = response.info.pages;
 
-    _.forEach(response.payload, function(e) {
+    _.forEach(response.payload, function (e) {
         var item = {
             name: e.title,
             description: e.description,

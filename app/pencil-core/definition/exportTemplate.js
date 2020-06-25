@@ -1,8 +1,8 @@
-function ExportTemplate() {
+function ExportTemplate () {
 }
 ExportTemplate.domParser = new DOMParser();
 
-ExportTemplate.parse = function(dir) {
+ExportTemplate.parse = function (dir) {
     var filePath = path.join(dir, "Template.xml");
 
     var stat = fs.statSync(filePath.toString());
@@ -16,7 +16,7 @@ ExportTemplate.parse = function(dir) {
     var template = new ExportTemplate();
 
     template.editableProperties = [];
-    Dom.workOn("/*/p:Property", dom, function(propNode) {
+    Dom.workOn("/*/p:Property", dom, function (propNode) {
         var name = propNode.getAttribute("name");
         var value = propNode.textContent;
         template[name] = value;
@@ -40,9 +40,9 @@ ExportTemplate.parse = function(dir) {
         property.value = property.initialValue;
 
         // parsing meta
-        Dom.workOn("./@p:*", propNode, function(metaAttribute) {
+        Dom.workOn("./@p:*", propNode, function (metaAttribute) {
             var metaValue = metaAttribute.nodeValue;
-            metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function(zero, one) {
+            metaValue = metaValue.replace(/\$([a-z][a-z0-9]*)/gi, function (zero, one) {
                 property.relatedProperties[one] = true;
                 return "properties." + one;
             });
@@ -62,7 +62,7 @@ ExportTemplate.parse = function(dir) {
     return template;
 };
 
-ExportTemplate.prototype.findEditableProperty = function(name) {
+ExportTemplate.prototype.findEditableProperty = function (name) {
     if (!this.editableProperties) return null;
     for (var prop of this.editableProperties) {
         if (prop.name == name) return prop;

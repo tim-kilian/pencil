@@ -1,4 +1,4 @@
-function SharedGeomtryEditor() {
+function SharedGeomtryEditor () {
     BaseTemplatedWidget.call(this);
     Pencil.registerSharedEditor(this);
     this.target = null;
@@ -7,7 +7,7 @@ function SharedGeomtryEditor() {
 __extend(BaseTemplatedWidget, SharedGeomtryEditor);
 SharedGeomtryEditor.PROPERTY_NAME = "box";
 
-SharedGeomtryEditor.prototype.setup = function() {
+SharedGeomtryEditor.prototype.setup = function () {
     // grab control references
 
     this.shapeX.disabled = true;
@@ -18,25 +18,25 @@ SharedGeomtryEditor.prototype.setup = function() {
 
     var thiz = this;
 
-    this.container.addEventListener("input", function(event) {
+    this.container.addEventListener("input", function (event) {
         if (event.target != thiz.shapeAngle) {
             thiz.handleCommandEvent();
         }
     }, false);
 
-    this.shapeAngle.addEventListener("click", function(event) {
+    this.shapeAngle.addEventListener("click", function (event) {
         thiz.handleCommandEvent();
     }, false);
 
-    this.shapeAngle.addEventListener("change", function(event) {
+    this.shapeAngle.addEventListener("change", function (event) {
         thiz.handleCommandEvent();
     }, false);
 
-    this.shapeAngle.addEventListener("wheel", function(event) {
+    this.shapeAngle.addEventListener("wheel", function (event) {
         thiz.handleCommandEvent();
     }, false);
 
-    this.container.addEventListener("keypress", function(event) {
+    this.container.addEventListener("keypress", function (event) {
         if (event.keyCode == DOM_VK_UP || event.keyCode == DOM_VK_DOWN) {
             event.stopPropagation();
         }
@@ -45,11 +45,11 @@ SharedGeomtryEditor.prototype.setup = function() {
     var thiz = this;
     UICommandManager.register({
         key: "lockMovementCommand",
-        getLabel: function() {
+        getLabel: function () {
             return "Lock shape's movement";
         },
         shortcut: "F12",
-        run: function() {
+        run: function () {
             var locked = thiz.lockMovementButton.getAttribute("checked") == "true";
             if (locked) {
                 thiz.lockMovementButton.removeAttribute("checked");
@@ -61,12 +61,12 @@ SharedGeomtryEditor.prototype.setup = function() {
         }
     }, this.lockMovementButton);
 
-    this.container.ownerDocument.documentElement.addEventListener("p:ShapeGeometryModified", function(event) {
+    this.container.ownerDocument.documentElement.addEventListener("p:ShapeGeometryModified", function (event) {
         if (event.setter && event.setter == thiz) return;
         thiz.invalidate();
     }, false);
 };
-SharedGeomtryEditor.prototype.toggleMovementLocking = function() {
+SharedGeomtryEditor.prototype.toggleMovementLocking = function () {
     var locked = this.lockMovementButton.getAttribute("checked") == "true";
     if (locked) {
         this.lockMovementButton.removeAttribute("checked");
@@ -76,7 +76,7 @@ SharedGeomtryEditor.prototype.toggleMovementLocking = function() {
 
     Pencil.controller.movementDisabled = !locked;
 };
-SharedGeomtryEditor.prototype.handleCommandEvent = function() {
+SharedGeomtryEditor.prototype.handleCommandEvent = function () {
     var currentGeo = this.targetObject.getGeometry();
     var dx = this.shapeX.value - currentGeo.ctm.e;
     var dy = this.shapeY.value - currentGeo.ctm.f;
@@ -84,7 +84,7 @@ SharedGeomtryEditor.prototype.handleCommandEvent = function() {
     var a = Svg.getAngle(currentGeo.ctm.a, currentGeo.ctm.b);
     var da = this.shapeAngle.value - a;
 
-    Pencil.activeCanvas.run(function() {
+    Pencil.activeCanvas.run(function () {
         if (dx != 0 || dy != 0) {
             this.targetObject.moveBy(dx, dy);
         }
@@ -128,20 +128,20 @@ SharedGeomtryEditor.prototype.handleCommandEvent = function() {
     Pencil.activeCanvas.invalidateEditors(this);
 };
 
-SharedGeomtryEditor.prototype.isDisabled = function() {
+SharedGeomtryEditor.prototype.isDisabled = function () {
     // return this.geometryToolbar.getAttribute("disabled") == "true";
     return false;
 };
 
-SharedGeomtryEditor.prototype._applyValue = function() {
+SharedGeomtryEditor.prototype._applyValue = function () {
     var thiz = this;
-    Pencil.activeCanvas.run(function() {
+    Pencil.activeCanvas.run(function () {
     	return;
         this.setProperty(SharedGeomtryEditor.PROPERTY_NAME, thiz.font);
         console.log("applied: " + thiz.font);
     }, this.target);
 };
-SharedGeomtryEditor.prototype.attach = function(targetObject) {
+SharedGeomtryEditor.prototype.attach = function (targetObject) {
     if (this.isDisabled() || targetObject.constructor == TargetSet) {
         this.detach();
         return;
@@ -194,7 +194,7 @@ SharedGeomtryEditor.prototype.attach = function(targetObject) {
     this.shapeHeight.disabled = disableHeightInput;
     // this.geometryToolbar.style.display = '';
 };
-SharedGeomtryEditor.prototype.detach = function() {
+SharedGeomtryEditor.prototype.detach = function () {
     this.shapeX.disabled = true;
     this.shapeY.disabled = true;
     this.shapeWidth.disabled = true;
@@ -203,7 +203,7 @@ SharedGeomtryEditor.prototype.detach = function() {
     // this.geometryToolbar.style.display = 'none';
     this.targetObject = null;
 };
-SharedGeomtryEditor.prototype.invalidate = function() {
+SharedGeomtryEditor.prototype.invalidate = function () {
     if (!this.targetObject) {
         this.detach();
     } else {

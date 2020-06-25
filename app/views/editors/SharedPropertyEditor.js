@@ -1,4 +1,4 @@
-function SharedPropertyEditor() {
+function SharedPropertyEditor () {
     BaseTemplatedWidget.call(this);
     Pencil.registerSharedEditor(this);
     this.canAttach = true;
@@ -6,13 +6,13 @@ function SharedPropertyEditor() {
 }
 __extend(BaseTemplatedWidget, SharedPropertyEditor);
 
-SharedPropertyEditor.prototype.setup = function() {
+SharedPropertyEditor.prototype.setup = function () {
     this.propertyContainer.innerHTML = "";
     var thiz = this;
 
-    this.propertyContainer.addEventListener("p:ValueChanged", function(event) {
+    this.propertyContainer.addEventListener("p:ValueChanged", function (event) {
         if (!thiz.target) return;
-        var editor = Dom.findUpward(event.target, function(n) {
+        var editor = Dom.findUpward(event.target, function (n) {
             return n._property;
         });
         if (!editor) return;
@@ -24,30 +24,30 @@ SharedPropertyEditor.prototype.setup = function() {
     }, false);
     this.propertyContainer.style.display = "none";
 
-    this.propertyContainer.addEventListener("click", function(event) {
+    this.propertyContainer.addEventListener("click", function (event) {
         if (event.target.getAttribute("command") && event.target.getAttribute("command") == "setDefault") {
             thiz.setDefaultProperties();
         }
     }, false);
-    this.propertyContainer.addEventListener("input", function(event) {
+    this.propertyContainer.addEventListener("input", function (event) {
         if (event.target != thiz.symbolNameInput || !thiz.target || !thiz.target.setSymbolName) return;
         thiz.target.setSymbolName(event.target.value.trim());
     }, false);
 };
-SharedPropertyEditor.prototype.getTitle = function() {
+SharedPropertyEditor.prototype.getTitle = function () {
     return "Properties";
 };
-SharedPropertyEditor.prototype.getIconName = function() {
+SharedPropertyEditor.prototype.getIconName = function () {
     return "tune";
 };
-SharedPropertyEditor.prototype.sizeChanged = function(expanded) {
+SharedPropertyEditor.prototype.sizeChanged = function (expanded) {
     this.canAttach = expanded;
     if (this.canAttach && this.pendingTarget) {
         this.attach(this.pendingTarget);
         this.pendingTarget = null;
     }
 };
-SharedPropertyEditor.prototype.validationEditorUI = function() {
+SharedPropertyEditor.prototype.validationEditorUI = function () {
     if (!this.validationEditor) return;
 
     var allowDisabled = Config.get(Config.DEV_ENABLE_DISABLED_IN_PROP_PAGE);
@@ -60,7 +60,7 @@ SharedPropertyEditor.prototype.validationEditorUI = function() {
     }
 };
 
-SharedPropertyEditor.prototype.attach = function(target) {
+SharedPropertyEditor.prototype.attach = function (target) {
     if (!target) return;
     if (target && target.getAttributeNS && target.getAttributeNS(PencilNamespaces.p, "locked") == "true") {
         return;
@@ -144,7 +144,7 @@ SharedPropertyEditor.prototype.attach = function(target) {
     var uuid = Util.newUUID();
     this.currentExecutorUUID = uuid;
 
-    var executor = function() {
+    var executor = function () {
         if (!thiz.target || uuid != thiz.currentExecutorUUID) return;
         if (properties.length == 0) {
             if (thiz.target.def && thiz.target.def.collection.propertyGroups && thiz.target.def.collection.propertyGroups.length > 0) {
@@ -263,7 +263,7 @@ SharedPropertyEditor.prototype.attach = function(target) {
     Dom.emitEvent("p:TitleChanged", this.node(), {});
 };
 
-SharedPropertyEditor.prototype.setDefaultProperties = function() {
+SharedPropertyEditor.prototype.setDefaultProperties = function () {
     if (!this.target) return;
     var collection = this.target.def.collection;
     var defaultProperties = collection.properties;
@@ -285,14 +285,14 @@ SharedPropertyEditor.prototype.setDefaultProperties = function() {
     }
 };
 
-SharedPropertyEditor.prototype.detach = function() {
+SharedPropertyEditor.prototype.detach = function () {
     this.propertyContainer.style.display = "none";
     this.noTargetMessagePane.style.display = "flex";
     this.propertyContainer.innerHTML = "";
     this.target = null;
     Dom.emitEvent("p:TitleChanged", this.node(), {});
 };
-SharedPropertyEditor.prototype.invalidate = function() {
+SharedPropertyEditor.prototype.invalidate = function () {
     if (!this.target) {
         this.detach();
     } else {

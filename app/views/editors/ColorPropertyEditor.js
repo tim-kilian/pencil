@@ -1,10 +1,10 @@
-function ColorPropertyEditor() {
+function ColorPropertyEditor () {
     PropertyEditor.call(this);
-    this.bind("p:PopupHidden", function() {
+    this.bind("p:PopupHidden", function () {
     }, this.selectorContainer);
     var thiz = this;
-    this.selectorContainer.shouldCloseOnBlur = function(event) {
-        var found = Dom.findUpward(event.target, function(node) {
+    this.selectorContainer.shouldCloseOnBlur = function (event) {
+        var found = Dom.findUpward(event.target, function (node) {
             return node == thiz.colorButton;
         });
         return !found;
@@ -12,11 +12,11 @@ function ColorPropertyEditor() {
     this.selectorContainer.setPopupClass("ColorPropertyEditorPopup ColorPopup");
 }
 __extend(PropertyEditor, ColorPropertyEditor);
-ColorPropertyEditor.prototype.setup = function() {
+ColorPropertyEditor.prototype.setup = function () {
     this.color = Color.fromString("#DA8500");
     var thiz = this;
 
-    this.colorButton.addEventListener("click", function(event) {
+    this.colorButton.addEventListener("click", function (event) {
         if (thiz.selectorContainer.isVisible()) {
             thiz.selectorContainer.hide();
             return;
@@ -27,19 +27,19 @@ ColorPropertyEditor.prototype.setup = function() {
         event.cancelBubble = true;
     }, false);
 
-    this.selector.addEventListener("ValueChange", function(event) {
+    this.selector.addEventListener("ValueChange", function (event) {
         thiz.color = thiz.selector.getColor();
         thiz.onValueChanged(thiz.selector);
     }, false);
 
-    this.selector.addEventListener("p:CloseColorSelector", function(event) {
+    this.selector.addEventListener("p:CloseColorSelector", function (event) {
         if (thiz.selectorContainer.isVisible()) {
             thiz.selectorContainer.hide();
             return;
         }
     }, false);
 
-    this.colorText.addEventListener("change", function(event) {
+    this.colorText.addEventListener("change", function (event) {
         var val = thiz.colorText.value;
         if (val == "") {
             thiz.colorText.value = thiz.color.toRGBString();
@@ -108,12 +108,12 @@ ColorPropertyEditor.prototype.setup = function() {
         thiz.onValueChanged(thiz.colorText);
     }, false);
 };
-ColorPropertyEditor.prototype.setValue = function(color) {
+ColorPropertyEditor.prototype.setValue = function (color) {
     if (!color) return;
     this.color = color;
     this.onValueChanged();
 };
-ColorPropertyEditor.prototype.onValueChanged = function(element) {
+ColorPropertyEditor.prototype.onValueChanged = function (element) {
     if (element != this.colorText) {
         this.colorText.value = this.color.toRGBString();
     }
@@ -122,6 +122,6 @@ ColorPropertyEditor.prototype.onValueChanged = function(element) {
         this.fireChangeEvent();
     }
 };
-ColorPropertyEditor.prototype.getValue = function() {
+ColorPropertyEditor.prototype.getValue = function () {
     return this.color;
 };

@@ -1,19 +1,19 @@
-function FontEditor() {
+function FontEditor () {
     PropertyEditor.call(this);
 }
 __extend(PropertyEditor, FontEditor);
 
-FontEditor._setupFontCombo = function(fontCombo, changeEvent, withNullValue) {
-    fontCombo.renderer = function(font) {
+FontEditor._setupFontCombo = function (fontCombo, changeEvent, withNullValue) {
+    fontCombo.renderer = function (font) {
         return font ? font.family : "Font";
     };
-    fontCombo.comparer = function(a, b) {
+    fontCombo.comparer = function (a, b) {
         if (!a) return !b;
         if (!b) return false;
         return a.family == b.family;
     };
 
-    fontCombo.decorator = function(node, font) {
+    fontCombo.decorator = function (node, font) {
         if (font) {
             node.style.fontFamily = "'" + font.family + "'";
             if (font._type) {
@@ -23,30 +23,30 @@ FontEditor._setupFontCombo = function(fontCombo, changeEvent, withNullValue) {
     };
 
     FontEditor._loadFontItems(fontCombo, withNullValue);
-    fontCombo.addEventListener("p:ItemSelected", function(event) {
+    fontCombo.addEventListener("p:ItemSelected", function (event) {
         // if (OnScreenTextEditor.isEditing) return;
         changeEvent();
     }, false);
 };
-FontEditor._loadFontItems = function(fontCombo, withNullValue) {
+FontEditor._loadFontItems = function (fontCombo, withNullValue) {
     var localFonts = Local.getInstalledFonts();
     var items = localFonts;
     if (withNullValue) items.unshift("");
     fontCombo.setItems(items);
 };
-FontEditor.prototype.setup = function() {
+FontEditor.prototype.setup = function () {
     var thiz = this;
-    FontEditor._setupFontCombo(this.fontCombo, function() {
+    FontEditor._setupFontCombo(this.fontCombo, function () {
         thiz.fireChangeEvent();
     });
 
     this.bind("p:ItemSelected", this.invalidateWeightCombo, this.fontCombo);
 
-    this.pixelFontSize.addEventListener("input", function(event) {
+    this.pixelFontSize.addEventListener("input", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing || thiz.pixelFontSize.value == "" || thiz.pixelFontSize.value < 5) return;
         thiz.fireChangeEvent();
     }, false);
-    this.pixelFontSize.addEventListener("keyup", function(event) {
+    this.pixelFontSize.addEventListener("keyup", function (event) {
         if (event.keyCode == 13 || event.keyCode == 10) {
             if (!thiz.font || OnScreenTextEditor.isEditing) return;
             if (thiz.pixelFontSize.value == "" || thiz.pixelFontSize.value < 5) {
@@ -55,11 +55,11 @@ FontEditor.prototype.setup = function() {
             thiz.fireChangeEvent();
         }
     }, false);
-    this.pixelFontSize.addEventListener("wheel", function(event) {
+    this.pixelFontSize.addEventListener("wheel", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing || thiz.pixelFontSize.value == "" || thiz.pixelFontSize.value < 5) return;
         thiz.fireChangeEvent();
     });
-    this.pixelFontSize.addEventListener("change", function(event) {
+    this.pixelFontSize.addEventListener("change", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing) return;
         if (thiz.pixelFontSize.value == "" || thiz.pixelFontSize.value < 5) {
             thiz.pixelFontSize.value = 5;
@@ -67,7 +67,7 @@ FontEditor.prototype.setup = function() {
         thiz.fireChangeEvent();
     }, false);
 
-    this.boldButton.addEventListener("click", function(event) {
+    this.boldButton.addEventListener("click", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing) return;
         var checked = false;
         if (thiz.boldButton.hasAttribute("checked") && thiz.boldButton.getAttribute("checked") == "true") {
@@ -79,12 +79,12 @@ FontEditor.prototype.setup = function() {
         thiz.fireChangeEvent();
     }, false);
 
-    this.bind("p:ItemSelected", function() {
+    this.bind("p:ItemSelected", function () {
         if (!thiz.font || OnScreenTextEditor.isEditing) return;
         thiz.fireChangeEvent();
     }, this.weightCombo);
 
-    this.italicButton.addEventListener("click", function(event) {
+    this.italicButton.addEventListener("click", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing) return;
         var checked = false;
         if (thiz.italicButton.hasAttribute("checked") && thiz.italicButton.getAttribute("checked") == "true") {
@@ -97,7 +97,7 @@ FontEditor.prototype.setup = function() {
         thiz.fireChangeEvent();
     }, false);
 
-    this.lineHeight.addEventListener("keyup", function(event) {
+    this.lineHeight.addEventListener("keyup", function (event) {
         if (event.keyCode == 13 || event.keyCode == 10) {
             if (!thiz.font || OnScreenTextEditor.isEditing) return;
             if (thiz.lineHeight.value == "" || thiz.lineHeight.value < 0) {
@@ -106,11 +106,11 @@ FontEditor.prototype.setup = function() {
             thiz.fireChangeEvent();
         }
     }, false);
-    this.lineHeight.addEventListener("wheel", function(event) {
+    this.lineHeight.addEventListener("wheel", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing || thiz.lineHeight.value == "" || thiz.lineHeight.value < 0) return;
         thiz.fireChangeEvent();
     });
-    this.lineHeight.addEventListener("change", function(event) {
+    this.lineHeight.addEventListener("change", function (event) {
         if (!thiz.font || OnScreenTextEditor.isEditing) return;
         if (thiz.lineHeight.value == "" || thiz.lineHeight.value < 0) {
             thiz.lineHeight.value = 0;
@@ -120,13 +120,13 @@ FontEditor.prototype.setup = function() {
 
 
     this.weightCombo.useHtml = true;
-    this.weightCombo.renderer = function(weight, buttonDisplay) {
+    this.weightCombo.renderer = function (weight, buttonDisplay) {
         var w = FontRepository.WEIGHT_MAP[weight];
         return "<span style=\"font-family: " + this.fontCombo.getSelectedItem().family + "; font-weight: " + weight + ";\">" + (buttonDisplay ? w.shortName : w.displayName) + "</span>";
     }.bind(this);
 };
 
-FontEditor.prototype.invalidateWeightCombo = function() {
+FontEditor.prototype.invalidateWeightCombo = function () {
     var font = this.fontCombo.getSelectedItem();
     this.weightCombo.node().style.fontFamily = font.family;
     this.weightCombo.setItems(font.weights);
@@ -136,7 +136,7 @@ FontEditor.prototype.invalidateWeightCombo = function() {
 };
 
 
-FontEditor.prototype.setValue = function(font) {
+FontEditor.prototype.setValue = function (font) {
     if (!font) return;
     this.font = font;
     if (Local.isFontExisting(this.font.family)) {
@@ -177,7 +177,7 @@ FontEditor.prototype.setValue = function(font) {
     this.weightCombo.selectItem(this.font.weight);
 };
 
-FontEditor.prototype.getValue = function() {
+FontEditor.prototype.getValue = function () {
     var font = new Font();
     font.family = this.fontCombo.getSelectedItem().family;
     font.size = this.pixelFontSize.value + "px";
